@@ -2,9 +2,6 @@
 
 namespace PRLab.Value.Identifier;
 
-/// <summary>
-/// Strongly-typed identifier for a movement aggregate.
-/// </summary>
 public record struct MovementId(Guid Value)
 {
     public static MovementId New() => new(CoreUtilities.GuidGenerator.New());

@@ -1,4 +1,5 @@
 ﻿using PRLab.Model.Interface;
+using PRLab.Utilities;
 using PRLab.Value.Identifier;
 
 namespace PRLab.Model.Entity;
@@ -22,7 +23,7 @@ public sealed record Equipment : IAudited
         AuditInfo audit)
     {
         Id = id;
-        Name = name;
+        Name = FormatingUtilities.NormalizeName(name);
         Description = description;
         Audit = audit;
     }

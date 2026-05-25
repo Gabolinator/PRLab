@@ -11,25 +11,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="77c7beb0-2c00-46c0-83e2-a736a0ef0110" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Model/Entity/Description.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Model/Entity/Equipment.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Model/Entity/User.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Model/IDescribed.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Model/Interface/IAudited.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Model/Muscle.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/PRLab.Domain.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Utilities/Clock.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Utilities/CoreUtilities.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Utilities/GuidGenerator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Value/AuditInfo.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Value/Identifier/DescriptorId.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Value/Identifier/EquipmentId.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Value/Identifier/MovementCategoryId.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Value/Identifier/MovementId.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Value/Identifier/MovementIdList.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Value/Identifier/MuscleId.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Value/Identifier/MuscleIdList.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PRLab.Domain/Value/Identifier/UserId.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PRLab.Domain/Model/Muscle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PRLab.Domain/Model/Entity/Muscle.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,11 +22,11 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/PRLab.Domain/DomainEnum.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/PRLab.Domain/Model/Entity/Description.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/PRLab.Domain/Model/Entity/User.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/PRLab.Domain/Model/IDescribed.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/PRLab.Domain/Model/Interface/IAudited.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/PRLab.Domain/Model/Muscle.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/PRLab.Domain/Value/AuditInfo.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
@@ -83,7 +65,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779556936378</updated>
-      <workItem from="1779556940014" duration="3378000" />
+      <workItem from="1779556940014" duration="3815000" />
     </task>
     <servers />
   </component>
