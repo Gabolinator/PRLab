@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRLab.Domain", "PRLab.Domain\PRLab.Domain.csproj", "{299D2509-9218-4D88-BDE1-FF3DC195990C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRLab.API", "..\PRLab\PRLab.API\PRLab.API.csproj", "{D449F91A-52CB-4CF3-AE81-9B74F86A00AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRLab.Infrastructure", "PRLab.Infrastructure\PRLab.Infrastructure.csproj", "{A396EC6F-918F-4A9D-9D6F-E5D4F8494203}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRLab.Application", "PRLab.Application\PRLab.Application.csproj", "{0EFF57BF-CC72-48AF-897B-27C8559A7343}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{299D2509-9218-4D88-BDE1-FF3DC195990C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{299D2509-9218-4D88-BDE1-FF3DC195990C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{299D2509-9218-4D88-BDE1-FF3DC195990C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{299D2509-9218-4D88-BDE1-FF3DC195990C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D449F91A-52CB-4CF3-AE81-9B74F86A00AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D449F91A-52CB-4CF3-AE81-9B74F86A00AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D449F91A-52CB-4CF3-AE81-9B74F86A00AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D449F91A-52CB-4CF3-AE81-9B74F86A00AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A396EC6F-918F-4A9D-9D6F-E5D4F8494203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A396EC6F-918F-4A9D-9D6F-E5D4F8494203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A396EC6F-918F-4A9D-9D6F-E5D4F8494203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A396EC6F-918F-4A9D-9D6F-E5D4F8494203}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EFF57BF-CC72-48AF-897B-27C8559A7343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EFF57BF-CC72-48AF-897B-27C8559A7343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EFF57BF-CC72-48AF-897B-27C8559A7343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EFF57BF-CC72-48AF-897B-27C8559A7343}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

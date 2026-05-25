@@ -1,0 +1,52 @@
+﻿using System.ComponentModel.DataAnnotations;
+using PRLab.Domain;
+using PRLab.Domain.Value.Identifier;
+
+namespace PRLab.API.Dtos.PostDto;
+
+/// <summary>
+/// Payload used to create a movement category and its descriptor metadata.
+/// </summary>
+public record MovementCategoryPostDTO
+{
+    public MovementCategoryId? Id { get; init; } = MovementCategoryId.New();
+
+    [Required]
+    [StringLength(256, MinimumLength = 2)]
+    public string Name { get; init; } = string.Empty;
+
+    public MovementCategoryId? ParentCategoryId { get; init; }
+
+    [Required]
+    public IReadOnlyList<DomainEnum.BaseMovementCategory> BaseCategories { get; init; } =
+        Array.Empty<DomainEnum.BaseMovementCategory>();
+
+    public DescriptionPostDTO? Descriptor { get; init; }
+
+    [EnumDataType(typeof(DataAuthority))]
+    public DataAuthority Authority { get; init; } = DataAuthority.Bidirectional;
+
+    public string? CreatedBy { get; init; }
+}
+
+public static class MovementCategoryPostDTOExtensions
+{
+    public static string Print(this MovementCategoryPostDTO  entity)
+    {
+        if (entity is null)
+        {
+            return "MovementCategoryPostDTO <null>";
+        }
+
+        var baseCategories = entity.BaseCategories is { Count: > 0 }
+            ? string.Join(", ", entity.BaseCategories)
+            : "none";
+
+        var descriptor = entity.Descriptor is null
+            ? "null"
+            : $"{{ Id: {entity.Descriptor.Id}, DescriptionContent: \"{entity.Descriptor.DescriptionContent}\", Notes: \"{entity.Descriptor.Notes ?? "null"}\", Tags: [{(entity.Descriptor.Tags is { Count: > 0 } tags ? string.Join(", ", tags) : "none")}], Authority: {entity.Descriptor.Authority}, CreatedBy: {entity.Descriptor.CreatedBy ?? "null"} }}";
+
+        return
+            $"MovementCategoryPostDTO {{ Id: {entity.Id}, Name: \"{entity.Name}\", ParentCategoryId: {(entity.ParentCategoryId.HasValue ? entity.ParentCategoryId.ToString() : "null")}, BaseCategories: [{baseCategories}], Descriptor: {descriptor}, Authority: {entity.Authority}, CreatedBy: {entity.CreatedBy ?? "null"} }}";
+    }
+}
