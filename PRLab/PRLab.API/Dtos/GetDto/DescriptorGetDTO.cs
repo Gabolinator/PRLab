@@ -2,11 +2,13 @@
 
 namespace PRLab.API.Dtos.GetDto;
 
-public record DescriptorGetDTO(
-    DescriptionId Id, 
-    string Content, 
-    DateTimeOffset CreatedAtUtc,
-    DateTimeOffset UpdatedAtUtc,
-    long UpdatedSeq,
-    bool IsDeleted = false,
-    DataAuthority Authority = DataAuthority.Bidirectional );
+public record DescriptionGetDTO
+{
+    public DescriptionId Id { get; init; }
+
+    public string RequestedLanguage { get; init; } = string.Empty;
+
+    public string ResolvedLanguage { get; init; } = string.Empty;
+
+    public string Content { get; init; } = string.Empty;
+}

@@ -44,7 +44,7 @@ public static class MovementCategoryPostDTOExtensions
 
         var descriptor = entity.Descriptor is null
             ? "null"
-            : $"{{ Id: {entity.Descriptor.Id}, DescriptionContent: \"{entity.Descriptor.DescriptionContent}\", Notes: \"{entity.Descriptor.Notes ?? "null"}\", Tags: [{(entity.Descriptor.Tags is { Count: > 0 } tags ? string.Join(", ", tags) : "none")}], Authority: {entity.Descriptor.Authority}, CreatedBy: {entity.Descriptor.CreatedBy ?? "null"} }}";
+            : $"{{DescriptionContent: \"{entity.Descriptor.Content}\", Authority: {entity.Descriptor.Authority}, CreatedBy: {entity.Descriptor.CreatedBy ?? "null"} }}";
 
         return
             $"MovementCategoryPostDTO {{ Id: {entity.Id}, Name: \"{entity.Name}\", ParentCategoryId: {(entity.ParentCategoryId.HasValue ? entity.ParentCategoryId.ToString() : "null")}, BaseCategories: [{baseCategories}], Descriptor: {descriptor}, Authority: {entity.Authority}, CreatedBy: {entity.CreatedBy ?? "null"} }}";

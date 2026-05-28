@@ -3,6 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.Modularity;
 
 
 namespace PRLab.API.Modularity;
@@ -20,8 +21,6 @@ public static class BuilderExtensions
     }
     
     
-  
-    
  
    public static void ConfigureServices(this WebApplicationBuilder builder, IAppLogger logger, IClock clock)
    {
@@ -30,15 +29,16 @@ public static class BuilderExtensions
         
        services.AddSingleton<IAppLogger>(logger);
        services.AddSingleton<IClock>(clock);
-      
+
+       services.AddEntitiesRepositories();
        services.AddControllers();
        services.AddSwagger();
 
-        var connectionString = configuration.GetConnectionString("GainsLabDb");
+        var connectionString = configuration.GetConnectionString("PRLabDb");
         if (string.IsNullOrWhiteSpace(connectionString))
         {
             throw new InvalidOperationException(
-                "Missing ConnectionStrings:GainsLabDb. Add it to appsettings.Development.json or user-secrets.");
+                "Missing ConnectionStrings:PRLabDb. Add it to appsettings.Development.json or user-secrets.");
         }
 
         else logger.Log($"Conn (pre): '{connectionString}'");

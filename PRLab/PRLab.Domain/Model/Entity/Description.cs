@@ -26,21 +26,23 @@ public sealed record Description
         string defaultLanguageCode)
     {
         Id = id;
-        DefaultLanguageCode = FormatingUtilities.NormalizeLanguageCode(defaultLanguageCode);
+        DefaultLanguageCode = LocalizationHelper.ValidateLanguageOrDefault(defaultLanguageCode);
     }
 
     public static Description New(
         string? content,
-        string languageCode = "en")
+        string? languageCode = null)
     {
+        var language = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
+        
         var description = new Description(
             DescriptionId.New(),
-            languageCode
+            language
         );
 
         description.ChangeContent(
             content,
-            languageCode
+            language
         );
 
         return description;
@@ -48,11 +50,8 @@ public sealed record Description
 
     public string? GetContent(string? languageCode = null)
     {
-        var normalizedLanguageCode = FormatingUtilities.NormalizeLanguageCodeOrDefault(
-            languageCode,
-            DefaultLanguageCode
-        );
-
+        var normalizedLanguageCode = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
+        
         var translation = translations
             .FirstOrDefault(translation => translation.LanguageCode == normalizedLanguageCode);
 
@@ -67,11 +66,32 @@ public sealed record Description
         return defaultTranslation?.Content;
     }
 
+    public string GetResolvedLanguageCode(string? languageCode = null)
+    {
+        var normalizedLanguageCode = FormatingUtilities.NormalizeLanguageCodeOrDefault(
+            languageCode,
+            DefaultLanguageCode
+        );
+
+        var translation = translations
+            .FirstOrDefault(translation => translation.LanguageCode == normalizedLanguageCode);
+
+        if (translation is not null)
+        {
+            return translation.LanguageCode;
+        }
+
+        var defaultTranslation = translations
+            .FirstOrDefault(translation => translation.LanguageCode == DefaultLanguageCode);
+
+        return defaultTranslation?.LanguageCode ?? DefaultLanguageCode;
+    }
+    
     public Description ChangeContent(
         string? content,
-        string languageCode = "en")
+        string? languageCode = null)
     {
-        var normalizedLanguageCode = FormatingUtilities.NormalizeLanguageCode(languageCode);
+        var normalizedLanguageCode = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
         var normalizedContent = NormalizeContent(content);
 
         var translation = translations
@@ -95,9 +115,9 @@ public sealed record Description
         return this;
     }
 
-    public Description RemoveContent(string languageCode = "en")
+    public Description RemoveContent(string? languageCode = null)
     {
-        var normalizedLanguageCode = FormatingUtilities.NormalizeLanguageCode(languageCode);
+        var normalizedLanguageCode = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
 
         var translation = translations
             .FirstOrDefault(translation => translation.LanguageCode == normalizedLanguageCode);
@@ -114,7 +134,7 @@ public sealed record Description
 
     public void ChangeDefaultLanguage(string languageCode)
     {
-        DefaultLanguageCode = FormatingUtilities.NormalizeLanguageCode(languageCode);
+        DefaultLanguageCode = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
     }
 
     private static string? NormalizeContent(string? content)
@@ -131,7 +151,7 @@ public sealed record Description
     {
         var description = new Description(
             DescriptionId.New(),
-            DefaultLanguageCode
+            LocalizationHelper.DefaultLanguage
         );
 
         foreach (var translation in Translations)

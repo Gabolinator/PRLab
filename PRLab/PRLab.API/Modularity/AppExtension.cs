@@ -9,7 +9,6 @@ namespace PRLab.API.Modularity;
 
 public static class AppExtension
 {
-    
     public static void ConfigureRequestPipeline(this WebApplication app)
     {
         if (app.Environment.IsDevelopment())

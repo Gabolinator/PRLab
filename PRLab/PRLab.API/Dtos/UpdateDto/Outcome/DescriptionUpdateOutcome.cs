@@ -5,7 +5,7 @@ namespace PRLab.API.Dtos.UpdateDto.Outcome;
 
 public sealed record DescriptorUpdateOutcome(
     UpdateOutcome Outcome,
-    DescriptorGetDTO? UpdatedState,
+    DescriptionGetDTO? UpdatedState,
     IMessagesContainer? Message =null);
 
 

@@ -8,11 +8,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\PRLab.Application\PRLab.Application.csproj" />
       <ProjectReference Include="..\PRLab.Domain\PRLab.Domain.csproj" />
       <ProjectReference Include="..\PRLab.Infrastructure\PRLab.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
       <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
     </ItemGroup>
 

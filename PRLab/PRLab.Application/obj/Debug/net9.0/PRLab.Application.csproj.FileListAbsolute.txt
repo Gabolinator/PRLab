@@ -1,0 +1,16 @@
+D:\Projects\PRLab\PRLab\PRLab.Application\bin\Debug\net9.0\PRLab.Application.deps.json
+D:\Projects\PRLab\PRLab\PRLab.Application\bin\Debug\net9.0\PRLab.Application.dll
+D:\Projects\PRLab\PRLab\PRLab.Application\bin\Debug\net9.0\PRLab.Application.pdb
+D:\Projects\PRLab\PRLab\PRLab.Application\bin\Debug\net9.0\PRLab.Domain.dll
+D:\Projects\PRLab\PRLab\PRLab.Application\bin\Debug\net9.0\PRLab.Domain.pdb
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\PRLab.Application.csproj.AssemblyReference.cache
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\PRLab.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\PRLab.Application.AssemblyInfoInputs.cache
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\PRLab.Application.AssemblyInfo.cs
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\PRLab.Application.csproj.CoreCompileInputs.cache
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\PRLab.Application.sourcelink.json
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\PRLab.Ap.4A1FD9BB.Up2Date
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\PRLab.Application.dll
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\refint\PRLab.Application.dll
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\PRLab.Application.pdb
+D:\Projects\PRLab\PRLab\PRLab.Application\obj\Debug\net9.0\ref\PRLab.Application.dll

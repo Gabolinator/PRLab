@@ -11,13 +11,7 @@ public record DescriptionPutDTO
     
     [Required]
     [StringLength(1024, MinimumLength = 3)]
-    public string DescriptionContent { get; set; } = string.Empty;
-
-    [StringLength(2048)]
-    public string? Notes { get; set; }
-
-    [MaxLength(20)]
-    public IReadOnlyList<string>? Tags { get; set; }
+    public string Content { get; set; } = string.Empty;
 
     [EnumDataType(typeof(DataAuthority))]
     public DataAuthority Authority { get; set; } = DataAuthority.Bidirectional;

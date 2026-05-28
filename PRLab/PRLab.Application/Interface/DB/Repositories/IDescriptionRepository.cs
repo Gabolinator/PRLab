@@ -5,7 +5,9 @@ namespace PRLab.Application.Interface.DB.Repositories
 {
     public interface IDescriptionRepository
     {
-        Task<Description?> GetByIdAsync(DescriptionId id, CancellationToken ct);
+        Task<IReadOnlyList<Description>> GetAllAsync(CancellationToken ct);
+        
+        Task<Description?> GetByIdAsync(DescriptionId id,CancellationToken ct);
 
         Task<Description> CreateAsync(Description description, CancellationToken ct);
 
@@ -13,6 +15,6 @@ namespace PRLab.Application.Interface.DB.Repositories
 
         Task<Description> GetOrCreateAsync(Description description, CancellationToken ct);
 
-        Task<bool> ExistsAsync(DescriptionId id, CancellationToken ct);
+        Task<bool> ExistsByIdAsync(DescriptionId id, CancellationToken ct);
     }
 }

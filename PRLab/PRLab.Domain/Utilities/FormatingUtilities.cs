@@ -8,8 +8,8 @@ public static class FormatingUtilities
         {
             throw new ArgumentException("Name is required.", nameof(name));
         }
-            
-        return name.Trim();
+
+        return NormalizeNonNullString(name);
     }
     
     public static string NormalizeLanguageCode(string languageCode)
@@ -19,7 +19,7 @@ public static class FormatingUtilities
             throw new ArgumentException("Language code is required.");
         }
 
-        return languageCode.Trim().ToLowerInvariant();
+        return NormalizeNonNullString(languageCode);
     }
 
     public static string NormalizeLanguageCodeOrDefault(
@@ -33,4 +33,11 @@ public static class FormatingUtilities
 
         return NormalizeLanguageCode(languageCode);
     }
+
+    public static string NormalizeNullableString(string? content)
+        => !string.IsNullOrWhiteSpace(content) ?  NormalizeNonNullString(content) : string.Empty;
+
+    public static string NormalizeNonNullString(string content)
+        => content.Trim().ToLowerInvariant();
+
 }

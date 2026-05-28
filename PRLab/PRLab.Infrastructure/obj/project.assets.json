@@ -913,6 +913,22 @@
           "buildTransitive/net6.0/_._": {}
         }
       },
+      "PRLab.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "PRLab.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/PRLab.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/PRLab.Application.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "PRLab.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
@@ -2785,6 +2801,11 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "PRLab.Application/1.0.0": {
+      "type": "project",
+      "path": "../PRLab.Application/PRLab.Application.csproj",
+      "msbuildProject": "../PRLab.Application/PRLab.Application.csproj"
+    },
     "PRLab.Domain/1.0.0": {
       "type": "project",
       "path": "../PRLab.Domain/PRLab.Domain.csproj",
@@ -2796,6 +2817,7 @@
       "Microsoft.EntityFrameworkCore >= 9.0.0",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.0",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 9.0.0",
+      "PRLab.Application >= 1.0.0",
       "PRLab.Domain >= 1.0.0"
     ]
   },
@@ -2832,6 +2854,9 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
+            "D:\\Projects\\PRLab\\PRLab\\PRLab.Application\\PRLab.Application.csproj": {
+              "projectPath": "D:\\Projects\\PRLab\\PRLab\\PRLab.Application\\PRLab.Application.csproj"
+            },
             "D:\\Projects\\PRLab\\PRLab\\PRLab.Domain\\PRLab.Domain.csproj": {
               "projectPath": "D:\\Projects\\PRLab\\PRLab\\PRLab.Domain\\PRLab.Domain.csproj"
             }

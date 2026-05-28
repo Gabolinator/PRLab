@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\PRLab.Domain\PRLab.Domain.csproj" />
-      <ProjectReference Include="..\PRLab.Infrastructure\PRLab.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
