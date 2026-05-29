@@ -1,4 +1,166 @@
-﻿// using GainsLab.Application.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
+using PRLab.API.Dtos.PostDto;
+using PRLab.API.Dtos.PutDto;
+using PRLab.API.Mapper;
+using PRLab.Application.Interface.DB.Repositories;
+using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Value.Update;
+
+namespace PRLab.API.Controller;
+
+[ApiController]
+[Route("equipments")]
+public sealed class EquipmentController : ControllerBase
+{
+    private readonly IEquipmentRepository repo;
+    private readonly IAppLogger logger;
+
+    public EquipmentController(
+        IEquipmentRepository repo,
+        IAppLogger logger)
+    {
+        this.repo = repo;
+        this.logger = logger;
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetEquipment(
+        Guid id,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Equipment id cannot be empty.");
+        }
+
+        try
+        {
+            var equipment = await repo.GetByIdAsync(EquipmentId.FromGuid(id), ct);
+
+            if (equipment is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(EquipmentMapper.ToGetDTO(equipment));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(EquipmentController),
+                $"Failed to get Equipment {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+    
+    [HttpGet()]
+    public async Task<IActionResult> GetAllEquipments(
+        CancellationToken ct = default)
+    {
+        try
+        {
+            var equipments = await repo.ListAsync(ct);
+
+            return Ok(EquipmentMapper.ToGetDTOs(equipments));
+        }
+        catch (Exception exception)
+        {
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> PostEquipment(
+        [FromBody] EquipmentPostDTO? payload,
+        CancellationToken ct = default)
+    {
+        if (payload is null)
+        {
+            return BadRequest("Payload cannot be null.");
+        }
+
+        try
+        {
+            var equipment = EquipmentMapper.ToEntity(payload);
+
+            var createdEquipment = await repo.CreateAsync(equipment, ct);
+
+            var response = EquipmentMapper.ToGetDTO(createdEquipment);
+
+            return CreatedAtAction(
+                nameof(GetEquipment),
+                new { id = response.Id },
+                response);
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(EquipmentController),
+                $"Failed to create Equipment: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred {exception.GetBaseException().Message}.");
+        }
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> PutEquipment(
+        Guid id,
+        [FromBody] EquipmentPutDTO? payload,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Equipment id cannot be empty.");
+        }
+
+        if (payload is null)
+        {
+            return BadRequest("Payload cannot be null.");
+        }
+
+        try
+        {
+            var equipment = await repo.GetByIdAsync(
+                EquipmentId.FromGuid(id),
+                ct);
+
+            if (equipment is null)
+            {
+                return NotFound();
+            }
+
+            equipment.Update(EquipmentUpdateMapper.ToUpdate(payload));
+
+            var updatedEquipment = await repo.UpdateAsync(equipment, ct);
+
+            return Ok(EquipmentMapper.ToGetDTO(updatedEquipment));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(EquipmentController),
+                $"Failed to update Equipment {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                "An unexpected error occurred.");
+        }
+    }
+}
+
+
+
+// using GainsLab.Application.Interfaces;
 // using GainsLab.Application.Interfaces.DataManagement.Repository;
 // using GainsLab.Application.Results.APIResults;
 // using GainsLab.Contracts.Dtos.GetDto;

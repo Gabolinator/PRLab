@@ -3,6 +3,7 @@ using PRLab.API.Dtos.PostDto;
 using PRLab.API.Dtos.PutDto;
 using PRLab.API.Mapper;
 using PRLab.Application.Interface.DB.Repositories;
+using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Domain.Value.Identifier;
 
@@ -66,9 +67,8 @@ public sealed class DescriptionController : ControllerBase
     {
         try
         {
-            IReadOnlyList<Description> descriptions = await repo.GetAllAsync(ct);
-
-            return Ok(DescriptionMapper.ToGetDTOs(descriptions, languageCode));
+            var descriptions = await repo.ListAsync(ct);
+            return Ok(DescriptionMapper.ToGetDTOs(descriptions.ToList(), LocalizationHelper.ValidateLanguageOrDefault(languageCode)));
         }
         catch (Exception exception)
         {

@@ -2,13 +2,14 @@
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
 using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Value.Update;
 
 namespace PRLab.Domain.Model.Entity;
 
 public sealed record Equipment : IAudited, IDescribed
 {
     public EquipmentId Id { get; init; }
-    public string Name { get; init; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
     public Description Description { get; private set; } = null!;
     public AuditInfo Audit { get; private set; } = null!;
 
@@ -39,9 +40,65 @@ public sealed record Equipment : IAudited, IDescribed
         );
     }
 
+    public static Equipment New(
+        string name,
+        Description description,
+        User? createdBy = null)
+    {
+        ArgumentNullException.ThrowIfNull(description);
+
+        return new Equipment(
+            EquipmentId.New(),
+            name,
+            description,
+            AuditInfo.New(createdBy)
+        );
+    }
+    
+    public void Update(EquipmentUpdate update)
+    {
+        ArgumentNullException.ThrowIfNull(update);
+
+        var hasChanged = false;
+
+        if (!string.IsNullOrWhiteSpace(update.Name))
+        {
+            Name = FormatingUtilities.NormalizeName(update.Name);
+            hasChanged = true;
+        }
+
+        if (update.DescriptionUpdate is not null)
+        {
+            Description = Description.ChangeContent(
+                update.DescriptionUpdate.Content,
+                update.DescriptionUpdate.Language
+            );
+
+            hasChanged = true;
+        }
+
+        if (hasChanged)
+        {
+            MarkUpdated(update.UpdatedBy);
+        }
+    }
+    
+    public void ChangeName(
+        string name,
+        User? changedBy = null)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Equipment name cannot be empty.", nameof(name));
+        }
+
+        Name = FormatingUtilities.NormalizeName(name);
+        MarkUpdated(changedBy);
+    }
+
     public void ChangeDescription(
         string? content,
-        string languageCode = "en",
+        LocalizationHelper.Language? languageCode,
         User? changedBy = null)
     {
         Description = Description.ChangeContent(content, languageCode);
@@ -49,7 +106,7 @@ public sealed record Equipment : IAudited, IDescribed
     }
 
     public void RemoveDescription(
-        string languageCode = "en",
+        LocalizationHelper.Language? languageCode,
         User? changedBy = null)
     {
         Description = Description.RemoveContent(languageCode);
@@ -75,5 +132,4 @@ public sealed record Equipment : IAudited, IDescribed
     {
         Audit = Audit.MarkDeleted(deletedBy);
     }
-
 }

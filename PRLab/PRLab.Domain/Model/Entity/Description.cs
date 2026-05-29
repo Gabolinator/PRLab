@@ -2,6 +2,8 @@
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value.Identifier;
 
+namespace PRLab.Domain.Model.Entity;
+
 public sealed record Description
 {
     public DescriptionId Id { get; init; }
@@ -26,15 +28,24 @@ public sealed record Description
         string defaultLanguageCode)
     {
         Id = id;
-        DefaultLanguageCode = LocalizationHelper.ValidateLanguageOrDefault(defaultLanguageCode);
+        DefaultLanguageCode = LocalizationHelper.ToLanguageCode(defaultLanguageCode);
+    }
+
+    private Description(
+        DescriptionId id,
+        LocalizationHelper.Language language)
+        : this(
+            id,
+            LocalizationHelper.ToLanguageCode(language))
+    {
     }
 
     public static Description New(
         string? content,
         string? languageCode = null)
     {
-        var language = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
-        
+        var language = LocalizationHelper.ToLanguageCode(languageCode);
+
         var description = new Description(
             DescriptionId.New(),
             language
@@ -48,12 +59,116 @@ public sealed record Description
         return description;
     }
 
+    public static Description New(
+        string? content,
+        LocalizationHelper.Language? language)
+    {
+        var languageCode = LocalizationHelper.ToLanguageCodeOrDefault(language);
+
+        return New(
+            content,
+            languageCode
+        );
+    }
+
     public string? GetContent(string? languageCode = null)
     {
-        var normalizedLanguageCode = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
-        
+        var normalizedLanguageCode = LocalizationHelper.ToLanguageCode(languageCode);
+
+        return GetContentByLanguageCode(normalizedLanguageCode);
+    }
+
+    public string? GetContent(LocalizationHelper.Language? language)
+    {
+        var normalizedLanguageCode = LocalizationHelper.ToLanguageCodeOrDefault(language);
+
+        return GetContentByLanguageCode(normalizedLanguageCode);
+    }
+
+    public string GetResolvedLanguageCode(string? languageCode = null)
+    {
+        var normalizedLanguageCode = LocalizationHelper.ToLanguageCode(languageCode);
+
+        return GetResolvedLanguageCodeByLanguageCode(normalizedLanguageCode);
+    }
+
+    public string GetResolvedLanguageCode(LocalizationHelper.Language? language)
+    {
+        var normalizedLanguageCode = LocalizationHelper.ToLanguageCodeOrDefault(language);
+
+        return GetResolvedLanguageCodeByLanguageCode(normalizedLanguageCode);
+    }
+
+    public Description ChangeContent(
+        string? content,
+        string? languageCode = null)
+    {
+        var normalizedLanguageCode = LocalizationHelper.ToLanguageCode(languageCode);
+
+        return ChangeContentByLanguageCode(
+            content,
+            normalizedLanguageCode
+        );
+    }
+
+    public Description ChangeContent(
+        string? content,
+        LocalizationHelper.Language? language)
+    {
+        var normalizedLanguageCode = LocalizationHelper.ToLanguageCodeOrDefault(language);
+
+        return ChangeContentByLanguageCode(
+            content,
+            normalizedLanguageCode
+        );
+    }
+
+    public Description RemoveContent(string? languageCode = null)
+    {
+        var normalizedLanguageCode = LocalizationHelper.ToLanguageCode(languageCode);
+
+        return RemoveContentByLanguageCode(normalizedLanguageCode);
+    }
+
+    public Description RemoveContent(LocalizationHelper.Language? language)
+    {
+        var normalizedLanguageCode = LocalizationHelper.ToLanguageCodeOrDefault(language);
+
+        return RemoveContentByLanguageCode(normalizedLanguageCode);
+    }
+
+    public void ChangeDefaultLanguage(string? languageCode)
+    {
+        DefaultLanguageCode = LocalizationHelper.ToLanguageCode(languageCode);
+    }
+
+    public void ChangeDefaultLanguage(LocalizationHelper.Language? language)
+    {
+        DefaultLanguageCode = LocalizationHelper.ToLanguageCodeOrDefault(language);
+    }
+
+    public Description Copy()
+    {
+        var description = new Description(
+            DescriptionId.New(),
+            DefaultLanguageCode
+        );
+
+        foreach (var translation in Translations)
+        {
+            description.ChangeContent(
+                translation.Content,
+                translation.LanguageCode
+            );
+        }
+
+        return description;
+    }
+
+    private string? GetContentByLanguageCode(string languageCode)
+    {
         var translation = translations
-            .FirstOrDefault(translation => translation.LanguageCode == normalizedLanguageCode);
+            .FirstOrDefault(translation => translation.LanguageCode == languageCode);
 
         if (translation is not null)
         {
@@ -66,15 +181,10 @@ public sealed record Description
         return defaultTranslation?.Content;
     }
 
-    public string GetResolvedLanguageCode(string? languageCode = null)
+    private string GetResolvedLanguageCodeByLanguageCode(string languageCode)
     {
-        var normalizedLanguageCode = FormatingUtilities.NormalizeLanguageCodeOrDefault(
-            languageCode,
-            DefaultLanguageCode
-        );
-
         var translation = translations
-            .FirstOrDefault(translation => translation.LanguageCode == normalizedLanguageCode);
+            .FirstOrDefault(translation => translation.LanguageCode == languageCode);
 
         if (translation is not null)
         {
@@ -86,23 +196,22 @@ public sealed record Description
 
         return defaultTranslation?.LanguageCode ?? DefaultLanguageCode;
     }
-    
-    public Description ChangeContent(
+
+    private Description ChangeContentByLanguageCode(
         string? content,
-        string? languageCode = null)
+        string languageCode)
     {
-        var normalizedLanguageCode = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
         var normalizedContent = NormalizeContent(content);
 
         var translation = translations
-            .FirstOrDefault(translation => translation.LanguageCode == normalizedLanguageCode);
+            .FirstOrDefault(translation => translation.LanguageCode == languageCode);
 
         if (translation is null)
         {
             translations.Add(
                 DescriptionTranslation.New(
                     Id,
-                    normalizedLanguageCode,
+                    languageCode,
                     normalizedContent
                 )
             );
@@ -115,12 +224,10 @@ public sealed record Description
         return this;
     }
 
-    public Description RemoveContent(string? languageCode = null)
+    private Description RemoveContentByLanguageCode(string languageCode)
     {
-        var normalizedLanguageCode = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
-
         var translation = translations
-            .FirstOrDefault(translation => translation.LanguageCode == normalizedLanguageCode);
+            .FirstOrDefault(translation => translation.LanguageCode == languageCode);
 
         if (translation is null)
         {
@@ -132,11 +239,6 @@ public sealed record Description
         return this;
     }
 
-    public void ChangeDefaultLanguage(string languageCode)
-    {
-        DefaultLanguageCode = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
-    }
-
     private static string? NormalizeContent(string? content)
     {
         if (string.IsNullOrWhiteSpace(content))
@@ -145,23 +247,5 @@ public sealed record Description
         }
 
         return content.Trim();
-    }
-
-    public Description Copy()
-    {
-        var description = new Description(
-            DescriptionId.New(),
-            LocalizationHelper.DefaultLanguage
-        );
-
-        foreach (var translation in Translations)
-        {
-            description.ChangeContent(
-                translation.Content,
-                translation.LanguageCode
-            );
-        }
-
-        return description;
     }
 }

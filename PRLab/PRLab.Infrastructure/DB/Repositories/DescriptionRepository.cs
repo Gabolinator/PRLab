@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Repositories;
+using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Domain.Value.Identifier;
@@ -7,7 +8,7 @@ using PRLab.Infrastructure.DB.Context;
 
 public class DescriptionRepository(PRLabPgDBContext db, IClock clock) : IDescriptionRepository
 {
-    public async Task<IReadOnlyList<Description>> GetAllAsync(CancellationToken ct)
+    public async Task<IReadOnlyCollection<Description>> ListAsync(CancellationToken ct)
     {
         return await db.Description
             .AsNoTracking()
@@ -111,7 +112,7 @@ public class DescriptionRepository(PRLabPgDBContext db, IClock clock) : IDescrip
     public async Task<bool> ExistsByContentAsync(
         string? content,
         CancellationToken ct,
-        string? languageCode = null)
+        LocalizationHelper.Language? languageCode = null)
     {
         if (string.IsNullOrWhiteSpace(content))
         {
@@ -119,7 +120,7 @@ public class DescriptionRepository(PRLabPgDBContext db, IClock clock) : IDescrip
         }
 
         var normalizedContent = FormatingUtilities.NormalizeNullableString(content);
-        var normalizedLanguageCode = FormatingUtilities.NormalizeLanguageCodeOrDefault(languageCode, LocalizationHelper.DefaultLanguage);
+        var normalizedLanguageCode = LocalizationHelper.ToLanguageCodeOrDefault(languageCode);
 
         return await db.DescriptionTranslations
             .AsNoTracking()

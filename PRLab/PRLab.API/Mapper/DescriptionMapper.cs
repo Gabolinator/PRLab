@@ -1,40 +1,67 @@
-﻿
-using PRLab.API.Dtos.GetDto;
+﻿using PRLab.API.Dtos.GetDto;
 using PRLab.API.Dtos.PostDto;
+using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.API.Mapper;
 
 public static class DescriptionMapper
 {
+    
+    public static Description ToEntity(DescriptionPostDTO payload)
+    {
+        ArgumentNullException.ThrowIfNull(payload);
+
+        return Description.New(
+            payload.Content,
+            payload.Language
+        );
+    }
+    
     public static DescriptionGetDTO ToGetDTO(
         Description description,
-        string? languageCode = null)
+        string? languageCode)
     {
-        var requestedLanguage = LocalizationHelper.ValidateLanguageOrDefault(languageCode);
-        var resolvedLanguage = description.GetResolvedLanguageCode(requestedLanguage);
+        LocalizationHelper.Language? requestedLanguage = string.IsNullOrWhiteSpace(languageCode)
+            ? null
+            : LocalizationHelper.ValidateLanguageOrDefault(languageCode);
+
+        return ToGetDTO(description, requestedLanguage);
+    }
+
+    public static DescriptionGetDTO ToGetDTO(
+        Description description,
+        LocalizationHelper.Language? language = (LocalizationHelper.Language?)null)
+    {
+        var resolvedLanguageCode = description.GetResolvedLanguageCode(language);
+        var resolvedLanguage = LocalizationHelper.ValidateLanguageOrDefault(resolvedLanguageCode);
 
         return new DescriptionGetDTO
         {
             Id = description.Id,
-            RequestedLanguage = requestedLanguage,
+            RequestedLanguage = language,
             ResolvedLanguage = resolvedLanguage,
-            Content = description.GetContent(requestedLanguage) ?? string.Empty,
+            Content = description.GetContent(language) ?? string.Empty,
         };
     }
-    
-
-    public static Description ToEntity(DescriptionPostDTO payload) =>
-        Description.New(payload.Content, payload.Language);
-    
 
     public static IReadOnlyList<DescriptionGetDTO> ToGetDTOs(
         IReadOnlyList<Description> descriptions,
-        string? languageCode = null)
+        string? languageCode)
+    {
+        LocalizationHelper.Language? requestedLanguage = string.IsNullOrWhiteSpace(languageCode)
+            ? null
+            : LocalizationHelper.ValidateLanguageOrDefault(languageCode);
+
+        return ToGetDTOs(descriptions, requestedLanguage);
+    }
+
+    public static IReadOnlyList<DescriptionGetDTO> ToGetDTOs(
+        IReadOnlyList<Description> descriptions,
+        LocalizationHelper.Language? language = (LocalizationHelper.Language?)null)
     {
         return descriptions
-            .Select(description => ToGetDTO(description, languageCode))
+            .Select(description => ToGetDTO(description, language))
             .ToList();
     }
-    
 }

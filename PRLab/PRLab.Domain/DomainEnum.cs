@@ -2,6 +2,7 @@
 
 public static class DomainEnum
 {
+  
   public enum BaseMovementCategory
   {
     BodyWeight,

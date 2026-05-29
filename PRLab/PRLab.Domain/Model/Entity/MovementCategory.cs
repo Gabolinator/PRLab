@@ -53,7 +53,7 @@ public sealed record MovementCategory : IAudited, IDescribed
     
     public void ChangeDescription(
         string? content,
-        string languageCode = "en",
+        LocalizationHelper.Language? languageCode,
         User? changedBy = null)
     {
         Description = Description.ChangeContent(content, languageCode);
@@ -61,7 +61,7 @@ public sealed record MovementCategory : IAudited, IDescribed
     }
 
     public void RemoveDescription(
-        string languageCode = "en",
+        LocalizationHelper.Language? languageCode,
         User? changedBy = null)
     {
         Description = Description.RemoveContent(languageCode);

@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Interface;
 
@@ -8,10 +9,10 @@ public interface IDescribed
 
     void ChangeDescription(
         string? content,
-        string languageCode = "en",
+        LocalizationHelper.Language? languageCode,
         User? changedBy = null);
 
     void RemoveDescription(
-        string languageCode = "en",
+        LocalizationHelper.Language? languageCode,
         User? changedBy = null);
 }

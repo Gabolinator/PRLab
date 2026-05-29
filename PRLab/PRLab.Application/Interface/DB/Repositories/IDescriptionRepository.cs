@@ -1,11 +1,11 @@
-﻿using PRLab.Application.Results.APIResults;
+﻿using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Application.Interface.DB.Repositories
 {
     public interface IDescriptionRepository
     {
-        Task<IReadOnlyList<Description>> GetAllAsync(CancellationToken ct);
+        Task<IReadOnlyCollection<Description>> ListAsync(CancellationToken ct);
         
         Task<Description?> GetByIdAsync(DescriptionId id,CancellationToken ct);
 

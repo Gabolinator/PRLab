@@ -33,6 +33,12 @@ public static class FormatingUtilities
 
         return NormalizeLanguageCode(languageCode);
     }
+    
+    public static string LanguageCodeToString(
+        LocalizationHelper.Language? languageCode,
+        LocalizationHelper.Language defaultLanguageCode)
+            => languageCode?.ToString().ToLowerInvariant() ??  defaultLanguageCode.ToString().ToLowerInvariant();
+    
 
     public static string NormalizeNullableString(string? content)
         => !string.IsNullOrWhiteSpace(content) ?  NormalizeNonNullString(content) : string.Empty;
