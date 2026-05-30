@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PRLab.API.Dtos.PostDto;
-using PRLab.API.Dtos.PutDto;
-using PRLab.API.Mapper;
-using PRLab.Application.Interface.DB;
-using PRLab.Application.Interface.DB.Repositories;
-using PRLab.Domain.Utilities;
-using PRLab.Domain.Utilities.Interface;
-using PRLab.Domain.Value.Identifier;
+﻿using Microsoft.AspNetCore.Mvc;using PRLab.API.Dtos.PostDto;using PRLab.API.Dtos.PutDto;using PRLab.API.Mapper;
+using PRLab.API.Mapper.UpdateMapper;
+using PRLab.Application.Interface.DB;using PRLab.Application.Interface.DB.Repositories;using PRLab.Domain.Utilities;using PRLab.Domain.Utilities.Interface;using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.API.Controller;
 
@@ -101,7 +95,7 @@ public sealed class MuscleController : ControllerBase
             {
                 return Conflict("A muscle with this name already exists.");
             }
-            
+
             var activeUser = await userService.GetActiveUserAsync(ct);
             var muscle = MuscleMapper.ToEntity(payload, activeUser);
 
@@ -140,12 +134,12 @@ public sealed class MuscleController : ControllerBase
             var muscleId = MuscleId.FromGuid(id);
 
             var muscle = await repo.GetByIdAsync(muscleId, ct);
-            
+
             if (muscle is null)
             {
                 return NotFound();
             }
-            
+
             var nameExists = await repo.NameExistsAsync(
                 payload.Name,
                 muscleId,
@@ -277,7 +271,7 @@ public sealed class MuscleController : ControllerBase
                 $"An unexpected error occurred. {exception.GetBaseException().Message}");
         }
     }
-    
+
     [HttpPut("{id:guid}/antagonists")]
     public async Task<IActionResult> UpdateAntagonists(
         Guid id,
@@ -302,7 +296,7 @@ public sealed class MuscleController : ControllerBase
         try
         {
             var muscleId = MuscleId.FromGuid(id);
-            
+
             var muscleExists = await repo.ExistsAsync(muscleId, ct);
 
             if (!muscleExists)

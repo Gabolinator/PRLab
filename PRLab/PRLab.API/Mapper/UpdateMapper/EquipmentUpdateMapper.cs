@@ -2,22 +2,17 @@
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Update;
 
-namespace PRLab.API.Mapper;
+namespace PRLab.API.Mapper.UpdateMapper;
 
-public static class MuscleUpdateMapper
+public static class EquipmentUpdateMapper
 {
-    public static MuscleUpdate ToUpdate(
-        MusclePutDTO payload,
-        User? currentUser)
+    public static EquipmentUpdate ToUpdate(EquipmentPutDTO payload, User? currentUser)
     {
         ArgumentNullException.ThrowIfNull(payload);
 
-        return new MuscleUpdate
+        return new EquipmentUpdate
         {
             Name = payload.Name,
-            LatinName = payload.LatinName,
-            LatinNameWasProvided = true,
-            BodySection = payload.BodySection,
             DescriptionUpdate = DescriptionUpdateMapper.ToUpdate(payload.Description),
             UpdatedBy = currentUser,
         };

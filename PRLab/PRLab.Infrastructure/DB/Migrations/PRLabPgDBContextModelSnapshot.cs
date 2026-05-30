@@ -73,6 +73,46 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.ToTable("Equipment", "public");
                 });
 
+            modelBuilder.Entity("PRLab.Domain.Model.Entity.MovementCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BaseMovementCategory")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<Guid>("DescriptionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("NameKey")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BaseMovementCategory");
+
+                    b.HasIndex("DescriptionId");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("\"IsDeleted\" = false");
+
+                    b.HasIndex("NameKey")
+                        .IsUnique()
+                        .HasFilter("\"IsDeleted\" = false");
+
+                    b.ToTable("MovementCategory", "public");
+                });
+
             modelBuilder.Entity("PRLab.Domain.Model.Entity.Muscle", b =>
                 {
                     b.Property<Guid>("Id")
@@ -230,6 +270,57 @@ namespace PRLab.Infrastructure.DB.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("EquipmentId");
+                        });
+
+                    b.Navigation("Audit")
+                        .IsRequired();
+
+                    b.Navigation("Description");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Entity.MovementCategory", b =>
+                {
+                    b.HasOne("PRLab.Domain.Model.Entity.Description", "Description")
+                        .WithMany()
+                        .HasForeignKey("DescriptionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("PRLab.Domain.Value.AuditInfo", "Audit", b1 =>
+                        {
+                            b1.Property<Guid>("MovementCategoryId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTimeOffset>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid>("CreatedBy")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTimeOffset?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid?>("DeletedBy")
+                                .HasColumnType("uuid");
+
+                            b1.Property<bool>("IsDeleted")
+                                .HasColumnType("boolean")
+                                .HasColumnName("IsDeleted");
+
+                            b1.Property<DateTimeOffset?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid?>("UpdatedBy")
+                                .HasColumnType("uuid");
+
+                            b1.HasKey("MovementCategoryId");
+
+                            b1.HasIndex("IsDeleted");
+
+                            b1.ToTable("MovementCategory", "public");
+
+                            b1.WithOwner()
+                                .HasForeignKey("MovementCategoryId");
                         });
 
                     b.Navigation("Audit")

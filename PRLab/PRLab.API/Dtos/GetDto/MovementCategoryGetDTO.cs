@@ -8,7 +8,7 @@ namespace PRLab.API.Dtos.GetDto;
 public record MovementCategoryGetDTO(
     MovementCategoryId Id,
     string Name,
-    DescriptionSummaryDTO? Descriptor,
-    IReadOnlyList<DomainEnum.BaseMovementCategory>? BaseCategoriesEnum)
+    DescriptionGetDTO? Description,
+    DomainEnum.BaseMovementCategory BaseCategory)
 {
 }

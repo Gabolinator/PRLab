@@ -4,7 +4,7 @@ public sealed record WorkTarget
 {
     public decimal Value { get; private set; }
 
-    public DomainEnum.RepType RepType { get; private set; }
+    public DomainEnum.WorkTargetType TargetType { get; private set; }
 
     private WorkTarget()
     {
@@ -13,15 +13,15 @@ public sealed record WorkTarget
 
     private WorkTarget(
         decimal value,
-        DomainEnum.RepType repType)
+        DomainEnum.WorkTargetType targetType)
     {
         Value = ValidateValue(value);
-        RepType = repType;
+        TargetType = targetType;
     }
 
     public static WorkTarget New(
         decimal value,
-        DomainEnum.RepType repType)
+        DomainEnum.WorkTargetType repType)
     {
         return new WorkTarget(
             value,

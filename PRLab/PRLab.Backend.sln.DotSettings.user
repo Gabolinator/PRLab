@@ -1,8 +1,27 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ADbSet_00601_002Ecs_002Fl_003AC_0021_003FUsers_003Flalib_003FAppData_003FRoaming_003FJetBrains_003FRider2026_002E1_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F0b7856b364e04283a10bb924825b197f28f228_003F87_003F0a77a75e_003FDbSet_00601_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ALateBoundTestFramework_002Ecs_002Fl_003AC_0021_003FUsers_003Flalib_003FAppData_003FRoaming_003FJetBrains_003FRider2026_002E1_003Fresharper_002Dhost_003FSourcesCache_003Fcffa676d9bfc6c7a1c9d0d25ead15b3b0c9e12e3187bf397eaa52260e5fd91_003FLateBoundTestFramework_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ANullable_002Ecs_002Fl_003AC_0021_003FUsers_003Flalib_003FAppData_003FRoaming_003FJetBrains_003FRider2026_002E1_003Fresharper_002Dhost_003FSourcesCache_003F5acc345db3c207bc9d886a36ff14867ef8d65557432172c2a42f19aeac04d1b_003FNullable_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=9ec0b93e_002Dca8c_002D4cb6_002D90a3_002Dbe1384d4601a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="EquipmentTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.DomainTests.EquipmentTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.DomainTests.EquipmentTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.DomainTests.UserTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.DomainTests.DescriptionTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.DomainTests.MuscleTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.DomainTests.MovementCategoryTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.DomainTests.MovementTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.DomainTests.Exercices.WorkTargetTests.New_ShouldCreateWorkTarget_WithValueAndTargetType&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.Domain.RestTargetTests.None_ShouldCreateEmptyRestTarget&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.Domain.RepExecutionDetailsTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.InfrastructureTests.EquipmentRepositoryTests.CreateAsync_ShouldPersistEquipment&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.InfrastructureTests.EquipmentRepositoryTests.CreateAsync_ShouldThrow_WhenEquipmentIsNull&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.InfrastructureTests.EquipmentRepositoryTests.GetByIdAsync_ShouldReturnEquipment_WithDescriptionTranslations&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.InfrastructureTests.EquipmentRepositoryTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.InfrastructureTests.DescriptionRepositoryTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.InfrastructureTests.MuscleRepositoryTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::2DFD8771-926D-479A-B5C5-E08FF01C64B2::net9.0::PRLab.Tests.InfrastructureTests.Repository.MovementCategoryRepositoryTests&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;ProjectFolder&gt;2DFD8771-926D-479A-B5C5-E08FF01C64B2/d:DomainTests/d:Exercices&lt;/ProjectFolder&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

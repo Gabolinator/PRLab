@@ -14,6 +14,7 @@ public static class DIExtensions
        services.AddScoped<IDescriptionRepository, DescriptionRepository>();
        services.AddScoped<IEquipmentRepository, EquipmentRepository>();
        services.AddScoped<IMuscleRepository, MuscleRepository>();
+       services.AddScoped<IMovementCategoryRepository, MovementCategoryRepository>();
     }
     
     public static void AddUserService(this IServiceCollection services)

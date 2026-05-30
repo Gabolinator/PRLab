@@ -201,7 +201,7 @@ public sealed record Description
         string? content,
         string languageCode)
     {
-        var normalizedContent = NormalizeContent(content);
+        var normalizedContent = FormatingUtilities.NormalizeDescriptionContent(content);
 
         var translation = translations
             .FirstOrDefault(translation => translation.LanguageCode == languageCode);
@@ -237,15 +237,5 @@ public sealed record Description
         translations.Remove(translation);
 
         return this;
-    }
-
-    private static string? NormalizeContent(string? content)
-    {
-        if (string.IsNullOrWhiteSpace(content))
-        {
-            return null;
-        }
-
-        return content.Trim();
     }
 }

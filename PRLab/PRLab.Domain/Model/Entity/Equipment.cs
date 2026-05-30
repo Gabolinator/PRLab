@@ -89,13 +89,7 @@ public sealed record Equipment : IAudited, IDescribed
         string name,
         User? changedBy = null)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Equipment name cannot be empty.", nameof(name));
-        }
-
         SetName(name);
-        
         MarkUpdated(changedBy);
     }
 

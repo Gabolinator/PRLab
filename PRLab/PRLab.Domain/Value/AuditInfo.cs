@@ -50,4 +50,19 @@ public sealed record AuditInfo(
             UpdatedBy = userId
         };
     }
+
+    public AuditInfo MarkRestored(User? restoredBy)
+    {
+        var userId = ResolveUserId(restoredBy);
+        var now = CoreUtilities.Clock.UtcNow;
+
+        return this with
+        {
+            IsDeleted = false,
+            DeletedAt = now,
+            DeletedBy = userId,
+            UpdatedAt = now,
+            UpdatedBy = userId
+        };
+    }
 }

@@ -2,6 +2,7 @@
 using PRLab.API.Dtos.PostDto;
 using PRLab.API.Dtos.PutDto;
 using PRLab.API.Mapper;
+using PRLab.API.Mapper.UpdateMapper;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Repositories;
 using PRLab.Domain.Utilities.Interface;

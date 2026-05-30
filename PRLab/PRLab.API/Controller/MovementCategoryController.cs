@@ -1,115 +1,223 @@
-﻿// using GainsLab.Application.Interfaces;
-// using GainsLab.Application.Interfaces.DataManagement.Repository;
-// using GainsLab.Application.Results.APIResults;
-// using GainsLab.Contracts.Dtos.GetDto;
-// using GainsLab.Contracts.Dtos.PostDto;
-// using GainsLab.Contracts.Dtos.PutDto;
-// using GainsLab.Contracts.Dtos.SyncDto;
-// using GainsLab.Contracts.Dtos.UpdateDto;
-// using GainsLab.Contracts.Dtos.UpdateDto.Outcome;
-// using GainsLab.Domain.Entities.Identifier;
-// using GainsLab.Infrastructure.SyncService;
-// using Microsoft.AspNetCore.Mvc;
-// using ILogger = GainsLab.Domain.Interfaces.ILogger;
-//
-// namespace GainsLab.Api.Controller;
-//
-// [ApiController]
-// [Route("movementcategories")]
-// public class MovementCategoryController : ControllerBase
-// {
-//     private readonly IMovementCategoryRepository _repo;
-//     private readonly ISyncService<MovementCategorySyncDTO> _svc;
-//     private readonly ILogger _log;
-//
-//
-//     public MovementCategoryController(IMovementCategoryRepository repo, ISyncService<MovementCategorySyncDTO> svc, ILogger logger)
-//     {
-//         _repo = repo;
-//         _svc = svc;
-//         _log = logger;
-//     }
-//
-//
-//      [HttpGet("sync")]
-//     public async Task<IActionResult> GetCategories(
-//         [FromQuery] DateTimeOffset? ts, [FromQuery] long? seq, [FromQuery] int take = 200, CancellationToken ct = default)
-//     {
-//         
-//         var cursor = new SyncCursor(ts ?? DateTimeOffset.MinValue, seq ?? 0);
-//         take = Math.Clamp(take, 1, 500);
-//
-//         var page = await _svc.PullAsync(cursor, take, ct);
-//         return Ok(page);
-//     }
-//     
-//     [HttpGet("{id:guid}")]
-//     public async Task<IActionResult> GetCategory(
-//         Guid id, CancellationToken ct = default)
-//     {
-//         
-//         
-//         if( id == Guid.Empty)  return BadRequest();
-//         
-//         var result = await _repo.PullByIdAsync(MovementCategoryId.FromGuid(id),ct);
-//
-//         return  APIResultValidation.ValidateResult<MovementCategoryGetDTO>(this,result);
-//     }
-//     
-//        
-//     [HttpPost()]
-//     public async Task<IActionResult> PostCategory(
-//         [FromBody] MovementCategoryPostDTO? payload, CancellationToken ct = default)
-//     {
-//
-//         if (payload == null)
-//         {
-//             _log.LogError(nameof(MovementCategoryController), "No Payload provided");
-//             return BadRequest();
-//         }
-//         
-//         _log.Log(nameof(MovementCategoryController), $"Try to post {payload.Print()}");
-//         var result = await _repo.PostAsync(payload,ct);
-//         
-//         return APIResultValidation.ValidateResult<MovementCategoryGetDTO>(this, result,
-//             result.Value != null ? new ActionResultInfo(GetActionName(), result.Value.Id) : null);
-//     }
-//
-//     [HttpPut("{id:guid}")]
-//     public async Task<IActionResult> PutCategory(
-//        Guid id, [FromBody] MovementCategoryPutDTO? payload  , CancellationToken ct = default)
-//     {
-//         if(payload == null)  return BadRequest();
-//         
-//         var result = await _repo.PutAsync(MovementCategoryId.FromGuid(id),payload,ct);
-//         
-//         return  APIResultValidation.ValidateResult<MovementCategoryPutDTO>(this,result, new ActionResultInfo(GetActionName(),id));
-//         
-//     }
-//     
-//     
-//     [HttpPatch("{id:guid}")] 
-//     public async Task<IActionResult> PatchCategory(
-//         Guid id, [FromBody] MovementCategoryUpdateDTO? payload, CancellationToken ct = default)
-//     {
-//         if(payload == null|| id == Guid.Empty)  return BadRequest();
-//         
-//         var result = await _repo.PatchAsync(MovementCategoryId.FromGuid(id),payload,ct);
-//         return  APIResultValidation.ValidateResult<MovementCategoryUpdateOutcome>(this,result);
-//     
-//     }
-//     
-//    
-//
-//     [HttpDelete("{id:guid}")]
-//     public async Task<IActionResult> DeleteCategory(Guid id, CancellationToken ct = default)
-//     {
-//         if (id == Guid.Empty) return BadRequest();
-//
-//         var result = await _repo.DeleteAsync(MovementCategoryId.FromGuid(id), ct);
-//         return APIResultValidation.ValidateResult<MovementCategoryGetDTO>(this, result);
-//     }
-//
-//     private string GetActionName() => nameof(GetCategory);
-//     
-// }
+﻿using Microsoft.AspNetCore.Mvc;
+using PRLab.API.Dtos.PostDto;
+using PRLab.API.Dtos.PutDto;
+using PRLab.API.Mapper;
+using PRLab.API.Mapper.UpdateMapper;
+using PRLab.Application.Interface.DB;
+using PRLab.Application.Interface.DB.Repositories;
+using PRLab.Domain;
+using PRLab.Domain.Utilities;
+using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Identifier;
+
+namespace PRLab.API.Controller;
+
+[ApiController]
+[Route("movement-categories")]
+public sealed class MovementCategoryController : ControllerBase
+{
+    private readonly IMovementCategoryRepository repo;
+    private readonly IAppLogger logger;
+    private readonly IUserService userService;
+
+    public MovementCategoryController(
+        IMovementCategoryRepository repo,
+        IUserService userService,
+        IAppLogger logger)
+    {
+        this.repo = repo;
+        this.logger = logger;
+        this.userService = userService;
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetMovementCategory(
+        Guid id,
+        [FromQuery] LocalizationHelper.Language? language = null,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Movement category id cannot be empty.");
+        }
+
+        try
+        {
+            var movementCategory = await repo.GetByIdAsync(
+                MovementCategoryId.FromGuid(id),
+                ct);
+
+            if (movementCategory is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(MovementCategoryMapper.ToGetDTO(movementCategory, language));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MovementCategoryController),
+                $"Failed to get movement category {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllMovementCategories(
+        [FromQuery] LocalizationHelper.Language? language = null,
+        [FromQuery] DomainEnum.BaseMovementCategory? baseCategory = null,
+        CancellationToken ct = default)
+    {
+        try
+        {
+            var movementCategories = baseCategory.HasValue
+                ? await repo.ListByBaseCategoryAsync(baseCategory.Value, ct)
+                : await repo.ListAsync(ct);
+
+            return Ok(MovementCategoryMapper.ToGetDTOs(movementCategories, language));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MovementCategoryController),
+                $"Failed to get movement categories: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpGet("by-name/{name}")]
+    public async Task<IActionResult> GetMovementCategoryByName(
+        string name,
+        [FromQuery] LocalizationHelper.Language? language = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return BadRequest("Movement category name cannot be empty.");
+        }
+
+        try
+        {
+            var movementCategory = await repo.GetByNameAsync(name, ct);
+
+            if (movementCategory is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(MovementCategoryMapper.ToGetDTO(movementCategory, language));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MovementCategoryController),
+                $"Failed to get movement category by name {name}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateMovementCategory(
+        MovementCategoryPostDTO payload,
+        CancellationToken ct = default)
+    {
+        try
+        {
+            var nameExists = await repo.NameExistsAsync(
+                payload.Name,
+                null,
+                ct);
+
+            if (nameExists)
+            {
+                return Conflict("A movement category with this name already exists.");
+            }
+
+            var activeUser = await userService.GetActiveUserAsync(ct);
+            var movementCategory = MovementCategoryMapper.ToEntity(payload, activeUser);
+
+            var createdMovementCategory = await repo.CreateAsync(movementCategory, ct);
+
+            return CreatedAtAction(
+                nameof(GetMovementCategory),
+                new { id = createdMovementCategory.Id.Value },
+                MovementCategoryMapper.ToGetDTO(createdMovementCategory));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MovementCategoryController),
+                $"Failed to create movement category: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateMovementCategory(
+        Guid id,
+        MovementCategoryPutDTO payload,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Movement category id cannot be empty.");
+        }
+
+        try
+        {
+            var movementCategoryId = MovementCategoryId.FromGuid(id);
+
+            var movementCategory = await repo.GetByIdAsync(movementCategoryId, ct);
+
+            if (movementCategory is null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrWhiteSpace(payload.Name))
+            {
+                var nameExists = await repo.NameExistsAsync(
+                    payload.Name,
+                    movementCategoryId,
+                    ct);
+
+                if (nameExists)
+                {
+                    return Conflict("Another movement category with this name already exists.");
+                }
+            }
+
+            var activeUser = await userService.GetActiveUserAsync(ct);
+            var update = MovementCategoryUpdateMapper.ToUpdate(payload, activeUser);
+
+            movementCategory.Update(update);
+
+            await repo.UpdateAsync(movementCategory, ct);
+
+            return Ok(MovementCategoryMapper.ToGetDTO(movementCategory));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MovementCategoryController),
+                $"Failed to update movement category {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+}

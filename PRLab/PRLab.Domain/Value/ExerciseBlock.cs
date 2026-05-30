@@ -17,6 +17,12 @@ public sealed record ExerciseBlock
 
     public WorkTarget Target { get; private set; } = null!;
 
+    public LoadTarget LoadTarget { get; private set; } = null!;
+
+    public RestTarget RestBetweenReps { get; private set; } = null!;
+
+    public RestTarget TransitionAfterBlock { get; private set; } = null!;
+
     public RepExecutionDetails ExecutionDetails { get; private set; } = null!;
 
     private ExerciseBlock()
@@ -30,13 +36,25 @@ public sealed record ExerciseBlock
         MovementId movementId,
         int sequence,
         WorkTarget target,
+        LoadTarget loadTarget,
+        RestTarget restBetweenReps,
+        RestTarget transitionAfterBlock,
         RepExecutionDetails executionDetails)
     {
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(loadTarget);
+        ArgumentNullException.ThrowIfNull(restBetweenReps);
+        ArgumentNullException.ThrowIfNull(transitionAfterBlock);
+        ArgumentNullException.ThrowIfNull(executionDetails);
+
         Id = id;
         ExerciseId = exerciseId;
         MovementId = movementId;
         Sequence = ValidateSequence(sequence);
         Target = target;
+        LoadTarget = loadTarget;
+        RestBetweenReps = restBetweenReps;
+        TransitionAfterBlock = transitionAfterBlock;
         ExecutionDetails = executionDetails;
     }
 
@@ -45,25 +63,73 @@ public sealed record ExerciseBlock
         MovementId movementId,
         int sequence,
         WorkTarget target,
+        LoadTarget? loadTarget = null,
+        RestTarget? restBetweenReps = null,
+        RestTarget? transitionAfterBlock = null,
         RepExecutionDetails? executionDetails = null)
     {
+        ArgumentNullException.ThrowIfNull(target);
+
         return new ExerciseBlock(
             ExerciseBlockId.New(),
             exerciseId,
             movementId,
             sequence,
             target,
+            loadTarget ?? LoadTarget.None(),
+            restBetweenReps ?? RestTarget.None(),
+            transitionAfterBlock ?? RestTarget.None(),
             executionDetails ?? RepExecutionDetails.Empty()
         );
     }
 
     public void ChangeTarget(WorkTarget target)
     {
+        ArgumentNullException.ThrowIfNull(target);
+
         Target = target;
+    }
+
+    public void ChangeLoadTarget(LoadTarget loadTarget)
+    {
+        ArgumentNullException.ThrowIfNull(loadTarget);
+
+        LoadTarget = loadTarget;
+    }
+
+    public void RemoveLoadTarget()
+    {
+        LoadTarget = LoadTarget.None();
+    }
+
+    public void ChangeRestBetweenReps(RestTarget restBetweenReps)
+    {
+        ArgumentNullException.ThrowIfNull(restBetweenReps);
+
+        RestBetweenReps = restBetweenReps;
+    }
+
+    public void RemoveRestBetweenReps()
+    {
+        RestBetweenReps = RestTarget.None();
+    }
+
+    public void ChangeTransitionAfterBlock(RestTarget transitionAfterBlock)
+    {
+        ArgumentNullException.ThrowIfNull(transitionAfterBlock);
+
+        TransitionAfterBlock = transitionAfterBlock;
+    }
+
+    public void RemoveTransitionAfterBlock()
+    {
+        TransitionAfterBlock = RestTarget.None();
     }
 
     public void ChangeExecutionDetails(RepExecutionDetails executionDetails)
     {
+        ArgumentNullException.ThrowIfNull(executionDetails);
+
         ExecutionDetails = executionDetails;
     }
 

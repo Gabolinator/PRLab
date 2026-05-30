@@ -29,5 +29,8 @@ public interface IMovementCategoryRepository
 
     Task<bool> ExistsAsync(MovementCategoryId id, CancellationToken ct);
 
-    Task<bool> NameExistsAsync(string name, CancellationToken ct);
+    Task<bool> NameExistsAsync(
+        string name,
+        MovementCategoryId? excludedMovementCategoryId,
+        CancellationToken ct);
 }

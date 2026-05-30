@@ -1,7 +1,7 @@
 ﻿using PRLab.API.Dtos.PutDto;
 using PRLab.Domain.Value.Update;
 
-namespace PRLab.API.Mapper;
+namespace PRLab.API.Mapper.UpdateMapper;
 
 public static class DescriptionUpdateMapper
 {

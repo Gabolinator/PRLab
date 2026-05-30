@@ -1,4 +1,4 @@
-﻿namespace PRLab.API.Mapper;
+﻿namespace PRLab.API.Mapper.UpdateMapper;
 
 public class MuscleAntagonistsUpdateMapper
 {

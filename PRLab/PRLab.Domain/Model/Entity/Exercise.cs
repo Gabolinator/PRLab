@@ -10,6 +10,8 @@ public sealed record Exercise : IAudited, IDescribed
     public ExerciseId Id { get; init; }
 
     public string Name { get; private set; } = string.Empty;
+    
+    public string NameKey { get; private set; } = string.Empty;
 
     public Description Description { get; private set; } = null!;
 
@@ -20,10 +22,6 @@ public sealed record Exercise : IAudited, IDescribed
     public IReadOnlyCollection<ExerciseBlock> Blocks => blocks
         .OrderBy(block => block.Sequence)
         .ToList();
-
-    private HashSet<MovementId> MovementIDs => Blocks
-        .Select(block => block.MovementId)
-        .ToHashSet();
 
     private Exercise()
     {
@@ -37,7 +35,7 @@ public sealed record Exercise : IAudited, IDescribed
         AuditInfo audit)
     {
         Id = id;
-        Name = FormatingUtilities.NormalizeName(name);
+        SetName(name);
         Description = description;
         Audit = audit;
     }
@@ -58,10 +56,15 @@ public sealed record Exercise : IAudited, IDescribed
     public static Exercise FromMovement(
         Movement movement,
         decimal value,
-        DomainEnum.RepType repType,
+        DomainEnum.WorkTargetType targetType,
+        LoadTarget? loadTarget = null,
+        RestTarget? restBetweenReps = null,
+        RestTarget? transitionAfterBlock = null,
         RepExecutionDetails? executionDetails = null,
         User? createdBy = null)
     {
+        ArgumentNullException.ThrowIfNull(movement);
+
         var exercise = new Exercise(
             ExerciseId.New(),
             movement.Name,
@@ -71,41 +74,58 @@ public sealed record Exercise : IAudited, IDescribed
 
         exercise.blocks.Add(
             ExerciseBlock.New(
-                exercise.Id,
-                movement.Id,
-                1,
-                WorkTarget.New(value, repType),
-                executionDetails
+                exerciseId: exercise.Id,
+                movementId: movement.Id,
+                sequence: 1,
+                target: WorkTarget.New(value, targetType),
+                loadTarget: loadTarget,
+                restBetweenReps: restBetweenReps,
+                transitionAfterBlock: transitionAfterBlock,
+                executionDetails: executionDetails
             )
         );
 
         return exercise;
     }
     
-    public void Rename(string name, User? changedBy = null)
+    private void SetName(string name)
     {
         Name = FormatingUtilities.NormalizeName(name);
+        NameKey = FormatingUtilities.NormalizeNameKey(name);
+    }
+
+    public void Rename(string name, User? changedBy = null)
+    {
+        SetName(name);
         MarkUpdated(changedBy);
     }
 
     public void AddBlock(
         MovementId movementId,
         decimal value,
-        DomainEnum.RepType targetType,
+        DomainEnum.WorkTargetType targetType,
+        LoadTarget? loadTarget = null,
+        RestTarget? restBetweenReps = null,
+        RestTarget? transitionAfterBlock = null,
+        RepExecutionDetails? executionDetails = null,
         User? changedBy = null)
     {
         var sequence = GetNextSequence();
 
         blocks.Add(
             ExerciseBlock.New(
-                Id,
-                movementId,
-                sequence,
-                WorkTarget.New(value, targetType)
+                exerciseId: Id,
+                movementId: movementId,
+                sequence: sequence,
+                target: WorkTarget.New(value, targetType),
+                loadTarget: loadTarget,
+                restBetweenReps: restBetweenReps,
+                transitionAfterBlock: transitionAfterBlock,
+                executionDetails: executionDetails
             )
         );
 
-       MarkUpdated(changedBy);
+        MarkUpdated(changedBy);
     }
 
     public void RemoveBlock(ExerciseBlockId exerciseBlockId, User? changedBy = null)
@@ -141,7 +161,17 @@ public sealed record Exercise : IAudited, IDescribed
             return;
         }
 
-        block.ChangeSequence(newSequence);
+        blocks.Remove(block);
+
+        var targetIndex = Math.Min(
+            newSequence - 1,
+            blocks.Count
+        );
+
+        blocks.Insert(
+            targetIndex,
+            block
+        );
 
         ResequenceBlocks();
 
@@ -164,7 +194,7 @@ public sealed record Exercise : IAudited, IDescribed
         Description = Description.RemoveContent(languageCode);
         MarkUpdated(changedBy);
     }
-    
+
     public void MarkUpdated(User? changedBy = null)
     {
         Audit = Audit.MarkUpdated(changedBy);
@@ -174,7 +204,7 @@ public sealed record Exercise : IAudited, IDescribed
     {
         Audit = Audit.MarkDeleted(deletedBy);
     }
-    
+
     void IAudited.MarkUpdated(User? changedBy)
     {
         MarkUpdated(changedBy);
@@ -184,15 +214,14 @@ public sealed record Exercise : IAudited, IDescribed
     {
         MarkDeleted(deletedBy);
     }
-    
+
     public void ChangeBlockTarget(
         ExerciseBlockId exerciseBlockId,
         decimal value,
-        DomainEnum.RepType targetType,
+        DomainEnum.WorkTargetType targetType,
         User? changedBy = null)
     {
-        var block = blocks
-            .FirstOrDefault(block => block.Id == exerciseBlockId);
+        var block = GetBlockOrDefault(exerciseBlockId);
 
         if (block is null)
         {
@@ -201,7 +230,145 @@ public sealed record Exercise : IAudited, IDescribed
 
         block.ChangeTarget(WorkTarget.New(value, targetType));
 
-        Audit = Audit.MarkUpdated(changedBy);
+        MarkUpdated(changedBy);
+    }
+
+    public void ChangeBlockLoadTarget(
+        ExerciseBlockId exerciseBlockId,
+        LoadTarget loadTarget,
+        User? changedBy = null)
+    {
+        var block = GetBlockOrDefault(exerciseBlockId);
+
+        if (block is null)
+        {
+            return;
+        }
+
+        block.ChangeLoadTarget(loadTarget);
+
+        MarkUpdated(changedBy);
+    }
+
+    public void RemoveBlockLoadTarget(
+        ExerciseBlockId exerciseBlockId,
+        User? changedBy = null)
+    {
+        var block = GetBlockOrDefault(exerciseBlockId);
+
+        if (block is null)
+        {
+            return;
+        }
+
+        block.RemoveLoadTarget();
+
+        MarkUpdated(changedBy);
+    }
+
+    public void ChangeBlockRestBetweenReps(
+        ExerciseBlockId exerciseBlockId,
+        RestTarget restBetweenReps,
+        User? changedBy = null)
+    {
+        var block = GetBlockOrDefault(exerciseBlockId);
+
+        if (block is null)
+        {
+            return;
+        }
+
+        block.ChangeRestBetweenReps(restBetweenReps);
+
+        MarkUpdated(changedBy);
+    }
+
+    public void RemoveBlockRestBetweenReps(
+        ExerciseBlockId exerciseBlockId,
+        User? changedBy = null)
+    {
+        var block = GetBlockOrDefault(exerciseBlockId);
+
+        if (block is null)
+        {
+            return;
+        }
+
+        block.RemoveRestBetweenReps();
+
+        MarkUpdated(changedBy);
+    }
+
+    public void ChangeBlockTransitionAfterBlock(
+        ExerciseBlockId exerciseBlockId,
+        RestTarget transitionAfterBlock,
+        User? changedBy = null)
+    {
+        var block = GetBlockOrDefault(exerciseBlockId);
+
+        if (block is null)
+        {
+            return;
+        }
+
+        block.ChangeTransitionAfterBlock(transitionAfterBlock);
+
+        MarkUpdated(changedBy);
+    }
+
+    public void RemoveBlockTransitionAfterBlock(
+        ExerciseBlockId exerciseBlockId,
+        User? changedBy = null)
+    {
+        var block = GetBlockOrDefault(exerciseBlockId);
+
+        if (block is null)
+        {
+            return;
+        }
+
+        block.RemoveTransitionAfterBlock();
+
+        MarkUpdated(changedBy);
+    }
+
+    public void ChangeBlockExecutionDetails(
+        ExerciseBlockId exerciseBlockId,
+        RepExecutionDetails executionDetails,
+        User? changedBy = null)
+    {
+        var block = GetBlockOrDefault(exerciseBlockId);
+
+        if (block is null)
+        {
+            return;
+        }
+
+        block.ChangeExecutionDetails(executionDetails);
+
+        MarkUpdated(changedBy);
+    }
+
+    public void RemoveBlockExecutionDetails(
+        ExerciseBlockId exerciseBlockId,
+        User? changedBy = null)
+    {
+        var block = GetBlockOrDefault(exerciseBlockId);
+
+        if (block is null)
+        {
+            return;
+        }
+
+        block.RemoveExecutionDetails();
+
+        MarkUpdated(changedBy);
+    }
+
+    private ExerciseBlock? GetBlockOrDefault(ExerciseBlockId exerciseBlockId)
+    {
+        return blocks
+            .FirstOrDefault(block => block.Id == exerciseBlockId);
     }
 
     private int GetNextSequence()
@@ -216,13 +383,9 @@ public sealed record Exercise : IAudited, IDescribed
 
     private void ResequenceBlocks()
     {
-        var orderedBlocks = blocks
-            .OrderBy(block => block.Sequence)
-            .ToList();
-
-        for (var index = 0; index < orderedBlocks.Count; index++)
+        for (var index = 0; index < blocks.Count; index++)
         {
-            orderedBlocks[index].ChangeSequence(index + 1);
+            blocks[index].ChangeSequence(index + 1);
         }
     }
 }

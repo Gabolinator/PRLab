@@ -222,6 +222,32 @@ public sealed record Muscle : IAudited, IDescribed
         MarkUpdated(changedBy);
     }
 
+    
+    public void Delete(User? deletedBy = null)
+    {
+        if (Audit.IsDeleted)
+        {
+            return;
+        }
+
+        MarkDeleted(deletedBy);
+    }
+    
+    public void Restore(User? restoredBy = null)
+    {
+        if (!Audit.IsDeleted)
+        {
+            return;
+        }
+
+        MarkRestored(restoredBy);
+    }
+
+    private void MarkRestored(User? restoredBy)
+    {
+        Audit = Audit.MarkRestored(restoredBy);
+    }
+
     void IAudited.MarkDeleted(User? deletedBy)
     {
         MarkDeleted(deletedBy);
@@ -246,4 +272,5 @@ public sealed record Muscle : IAudited, IDescribed
     {
         Audit = Audit.MarkDeleted(deletedBy);
     }
+    
 }

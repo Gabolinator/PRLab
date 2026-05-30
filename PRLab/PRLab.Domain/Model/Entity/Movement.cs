@@ -11,6 +11,8 @@ public sealed record Movement : IAudited, IDescribed
     public MovementId Id { get; init; }
 
     public string Name { get; private set; } = string.Empty;
+    
+    public string NameKey { get; private set; } = string.Empty;
 
     public MovementCategoryId MovementCategoryId { get; private set; }
 
@@ -23,13 +25,23 @@ public sealed record Movement : IAudited, IDescribed
     private readonly List<Movement> variants = [];
 
     public IReadOnlyCollection<Movement> Variants => variants;
+    
+    public DomainEnum.MovementPattern? PrimaryPattern { get; private set; }
+
+    private readonly List<MovementPatternTag> patterns = [];
+
+    public IReadOnlyCollection<MovementPatternTag> Patterns => patterns;
+
+    private HashSet<DomainEnum.MovementPattern> PatternValues => Patterns
+        .Select(patternTag => patternTag.Pattern)
+        .ToHashSet();
 
     private readonly List<MovementMuscle> muscles = [];
 
     public IReadOnlyCollection<MovementMuscle> Muscles => muscles;
 
     private readonly List<MovementEquipment> equipments = [];
-
+    
     public IReadOnlyCollection<MovementEquipment> Equipments => equipments;
 
     public Description Description { get; private set; } = null!;
@@ -71,7 +83,7 @@ public sealed record Movement : IAudited, IDescribed
         AuditInfo audit)
     {
         Id = id;
-        Name = FormatingUtilities.NormalizeName(name);
+        SetName(name);
         MovementCategoryId = movementCategoryId;
         Description = description;
         Audit = audit;
@@ -91,10 +103,16 @@ public sealed record Movement : IAudited, IDescribed
             AuditInfo.New(createdBy)
         );
     }
+    
+    private void SetName(string name)
+    {
+        Name = FormatingUtilities.NormalizeName(name);
+        NameKey = FormatingUtilities.NormalizeNameKey(name);
+    }
 
     public void Rename(string name, User? changedBy = null)
     {
-        Name = FormatingUtilities.NormalizeName(name);
+        SetName(name);
         MarkUpdated(changedBy);
     }
 
@@ -323,13 +341,106 @@ public sealed record Movement : IAudited, IDescribed
         MarkUpdated(changedBy);
     }
     
+    public void AddPattern(
+        DomainEnum.MovementPattern pattern,
+        User? changedBy = null)
+    {
+        if (pattern == DomainEnum.MovementPattern.Complex)
+        {
+            throw new ArgumentException(
+                "Complex should be used as a primary pattern summary, not as a specific pattern tag.",
+                nameof(pattern));
+        }
+
+        if (PatternValues.Contains(pattern))
+        {
+            return;
+        }
+
+        patterns.Add(
+            MovementPatternTag.New(Id, pattern)
+        );
+
+        MarkUpdated(changedBy);
+    }
+
+    public void RemovePattern(
+        DomainEnum.MovementPattern pattern,
+        User? changedBy = null)
+    {
+        if (!PatternValues.Contains(pattern))
+        {
+            return;
+        }
+
+        var patternTag = patterns
+            .FirstOrDefault(patternTag => patternTag.Pattern == pattern);
+
+        if (patternTag is null)
+        {
+            return;
+        }
+
+        patterns.Remove(patternTag);
+
+        if (PrimaryPattern == pattern)
+        {
+            PrimaryPattern = ResolvePrimaryPatternOrNull();
+        }
+
+        MarkUpdated(changedBy);
+    }
+
+    public void SetPrimaryPattern(
+        DomainEnum.MovementPattern pattern,
+        User? changedBy = null)
+    {
+        if (pattern != DomainEnum.MovementPattern.Complex
+            && !PatternValues.Contains(pattern))
+        {
+            patterns.Add(
+                MovementPatternTag.New(Id, pattern)
+            );
+        }
+
+        PrimaryPattern = pattern;
+        MarkUpdated(changedBy);
+    }
+
+    public void ClearPrimaryPattern(User? changedBy = null)
+    {
+        if (PrimaryPattern is null)
+        {
+            return;
+        }
+
+        PrimaryPattern = null;
+        MarkUpdated(changedBy);
+    }
+
+    public void AutoResolvePrimaryPattern(User? changedBy = null)
+    {
+        PrimaryPattern = ResolvePrimaryPatternOrNull();
+        MarkUpdated(changedBy);
+    }
+
+    private DomainEnum.MovementPattern? ResolvePrimaryPatternOrNull()
+    {
+        return patterns.Count switch
+        {
+            0 => null,
+            1 => patterns[0].Pattern,
+            _ => DomainEnum.MovementPattern.Complex,
+        };
+    }
+    
     private void MarkUpdated(User? changedBy = null)
     {
         Audit = Audit.MarkUpdated(changedBy);
     }
 
     private void MarkDeleted(User? deletedBy = null)
-    {
+    { 
         Audit = Audit.MarkDeleted(deletedBy);
     }
 }

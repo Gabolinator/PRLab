@@ -12,8 +12,8 @@ namespace PRLab.Infrastructure.DB.Context;
 //db context for postgress
 public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbContext(options) 
 {
-    private IAppLogger? _logger;
-    private IClock _clock;
+    private IAppLogger? logger;
+    private IClock clock;
 
     #region DB SETS
 
@@ -28,7 +28,7 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
      public DbSet<MuscleAntagonist> MuscleAntagonists => Set<MuscleAntagonist>();
 
     //categories 
-    //public DbSet<MovementCategory> MovementCategories => Set<MovementCategory>();
+    public DbSet<MovementCategory> MovementCategories => Set<MovementCategory>();
     
     //movement
     // public DbSet<Movement> Movement => Set<Movement>();
@@ -44,7 +44,7 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        _logger?.Log("PRLabPgDBContext", "Model Creating");
+        logger?.Log("PRLabPgDBContext", "Model Creating");
         modelBuilder.HasDefaultSchema("public");
         modelBuilder.CreateUserTableModel();
         
@@ -56,6 +56,8 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
         modelBuilder.CreateMuscleTableModel();
         modelBuilder.CreateMuscleAntagonistTableModel();
         
+        modelBuilder.CreateMovementCategoryTableModel();
+        
         AddIndexes(modelBuilder);
     }
 
@@ -65,16 +67,17 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
         modelBuilder.AddUserIndexes();
         modelBuilder.AddEquipmentIndexes();
         modelBuilder.AddMuscleIndexes();
+        modelBuilder.AddMovementCategoryIndexes();
     }
 
     public void AddLogger(IAppLogger logger)
     {
-        _logger = logger;
+        this.logger = logger;
     }
 
     public void AddClock(IClock clock)
     {
-        _clock = clock;
+        this.clock = clock;
     }
         
 }

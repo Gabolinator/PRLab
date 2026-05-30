@@ -74,4 +74,14 @@ public static class FormatingUtilities
                 " ")
             .ToLowerInvariant();
     }
+
+    public static string? NormalizeDescriptionContent(string? content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+        { 
+            return null;
+        }
+        
+        return content.Trim();
+    }
 }

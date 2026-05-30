@@ -44,8 +44,7 @@ public class DescriptionRepository(PRLabPgDBContext db, IClock clock) : IDescrip
     {
         ArgumentNullException.ThrowIfNull(description);
 
-        var exists = await ExistsByIdAsync(description.Id, ct) 
-                     || await ExistsByContentAsync(description.GetContent(), ct);
+        var exists = await ExistsByIdAsync(description.Id, ct);
 
         if (exists)
         {
@@ -121,7 +120,7 @@ public class DescriptionRepository(PRLabPgDBContext db, IClock clock) : IDescrip
             throw new ArgumentException("Description content cannot be empty.", nameof(content));
         }
 
-        var normalizedContent = FormatingUtilities.NormalizeNullableString(content);
+        var normalizedContent = FormatingUtilities.NormalizeDescriptionContent(content);
         var normalizedLanguageCode = LocalizationHelper.ToLanguageCodeOrDefault(languageCode);
 
         return await db.DescriptionTranslations
