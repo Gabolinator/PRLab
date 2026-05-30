@@ -24,11 +24,7 @@ public static class EquipmentMapper
         return new EquipmentGetDTO(
             equipment.Id,
             equipment.Name,
-            DescriptionMapper.ToGetDTO(equipment.Description, language),
-            equipment.Audit.CreatedAt.ToUniversalTime(),
-            (equipment.Audit.UpdatedAt ?? equipment.Audit.CreatedAt).ToUniversalTime(),
-            equipment.Audit.IsDeleted,
-            DataAuthority.Bidirectional
+            DescriptionMapper.ToGetDTO(equipment.Description, language)
         );
     }
 
@@ -52,7 +48,7 @@ public static class EquipmentMapper
             .ToList();
     }
 
-    public static Equipment ToEntity(EquipmentPostDTO payload)
+    public static Equipment ToEntity(EquipmentPostDTO payload, User? currentUser)
     {
         ArgumentNullException.ThrowIfNull(payload);
 
@@ -62,7 +58,8 @@ public static class EquipmentMapper
 
         return Equipment.New(
             payload.Name,
-            description
+            description,
+            currentUser
         );
     }
 }

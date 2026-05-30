@@ -11,9 +11,4 @@ public record MovementGetDTO(
     IReadOnlyList<EquipmentSummaryDTO> Equipments,
     IReadOnlyList<SummaryDto.MuscleSummaryDTO> PrimaryMuscles,
     IReadOnlyList<SummaryDto.MuscleSummaryDTO> SecondaryMuscles,
-    MovementSummaryDTO? VariantOfMovement,
-    DateTimeOffset CreatedAtUtc,
-    DateTimeOffset UpdatedAtUtc,
-    long UpdatedSeq,
-    bool IsDeleted = false,
-    DataAuthority Authority = DataAuthority.Bidirectional);
+    MovementSummaryDTO? VariantOfMovement);

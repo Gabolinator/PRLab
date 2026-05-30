@@ -62,7 +62,7 @@ public sealed class DescriptionController : ControllerBase
     
     [HttpGet()]
     public async Task<IActionResult> GetAllDescriptions(
-        [FromQuery] string? languageCode = null,
+        [FromQuery] LocalizationHelper.Language? languageCode = null,
         CancellationToken ct = default)
     {
         try

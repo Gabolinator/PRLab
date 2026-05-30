@@ -10,6 +10,8 @@ public sealed record Equipment : IAudited, IDescribed
 {
     public EquipmentId Id { get; init; }
     public string Name { get; private set; } = string.Empty;
+    
+    public string NameKey { get; private set; } = string.Empty;
     public Description Description { get; private set; } = null!;
     public AuditInfo Audit { get; private set; } = null!;
 
@@ -25,7 +27,7 @@ public sealed record Equipment : IAudited, IDescribed
         AuditInfo audit)
     {
         Id = id;
-        Name = FormatingUtilities.NormalizeName(name);
+        SetName(name);
         Description = description;
         Audit = audit;
     }
@@ -63,7 +65,7 @@ public sealed record Equipment : IAudited, IDescribed
 
         if (!string.IsNullOrWhiteSpace(update.Name))
         {
-            Name = FormatingUtilities.NormalizeName(update.Name);
+            SetName(update.Name);
             hasChanged = true;
         }
 
@@ -83,7 +85,7 @@ public sealed record Equipment : IAudited, IDescribed
         }
     }
     
-    public void ChangeName(
+    public void Rename(
         string name,
         User? changedBy = null)
     {
@@ -92,8 +94,15 @@ public sealed record Equipment : IAudited, IDescribed
             throw new ArgumentException("Equipment name cannot be empty.", nameof(name));
         }
 
-        Name = FormatingUtilities.NormalizeName(name);
+        SetName(name);
+        
         MarkUpdated(changedBy);
+    }
+
+    private void SetName(string name)
+    {
+        Name = FormatingUtilities.NormalizeName(name);
+        NameKey = FormatingUtilities.NormalizeNameKey(name);
     }
 
     public void ChangeDescription(

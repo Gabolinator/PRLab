@@ -1,4 +1,6 @@
-﻿namespace PRLab.Domain.Utilities;
+﻿using System.Text.RegularExpressions;
+
+namespace PRLab.Domain.Utilities;
 
 public static class FormatingUtilities
 {
@@ -11,7 +13,22 @@ public static class FormatingUtilities
 
         return NormalizeNonNullString(name);
     }
-    
+
+    public static string NormalizeNameKey(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Name is required.", nameof(name));
+        }
+
+        var normalizedName = NormalizeNonNullString(name);
+
+        return Regex.Replace(
+            normalizedName,
+            @"[\s\-_]+",
+            string.Empty);
+    }
+
     public static string NormalizeLanguageCode(string languageCode)
     {
         if (string.IsNullOrWhiteSpace(languageCode))
@@ -33,17 +50,28 @@ public static class FormatingUtilities
 
         return NormalizeLanguageCode(languageCode);
     }
-    
+
     public static string LanguageCodeToString(
         LocalizationHelper.Language? languageCode,
         LocalizationHelper.Language defaultLanguageCode)
-            => languageCode?.ToString().ToLowerInvariant() ??  defaultLanguageCode.ToString().ToLowerInvariant();
-    
+    {
+        return languageCode?.ToString().ToLowerInvariant() ??
+               defaultLanguageCode.ToString().ToLowerInvariant();
+    }
 
     public static string NormalizeNullableString(string? content)
-        => !string.IsNullOrWhiteSpace(content) ?  NormalizeNonNullString(content) : string.Empty;
+    {
+        return !string.IsNullOrWhiteSpace(content)
+            ? NormalizeNonNullString(content)
+            : string.Empty;
+    }
 
     public static string NormalizeNonNullString(string content)
-        => content.Trim().ToLowerInvariant();
-
+    {
+        return Regex.Replace(
+                content.Trim(),
+                @"\s+",
+                " ")
+            .ToLowerInvariant();
+    }
 }

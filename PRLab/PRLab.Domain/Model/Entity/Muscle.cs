@@ -3,6 +3,7 @@ using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
 using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Value.Update;
 
 namespace PRLab.Domain.Model.Entity;
 
@@ -11,6 +12,10 @@ public sealed record Muscle : IAudited, IDescribed
     public MuscleId Id { get; init; }
 
     public string Name { get; private set; } = string.Empty;
+    
+    public string NameKey { get; private set; } = string.Empty;
+
+    public string? LatinName { get; private set; }
 
     public DomainEnum.BodySection BodySection { get; private set; }
 
@@ -34,12 +39,14 @@ public sealed record Muscle : IAudited, IDescribed
     private Muscle(
         MuscleId id,
         string name,
+        string? latinName,
         DomainEnum.BodySection bodySection,
         Description description,
         AuditInfo audit)
     {
         Id = id;
-        Name = FormatingUtilities.NormalizeName(name);
+        SetName(name);
+        LatinName = NormalizeLatinName(latinName);
         BodySection = bodySection;
         Description = description;
         Audit = audit;
@@ -47,6 +54,26 @@ public sealed record Muscle : IAudited, IDescribed
 
     public static Muscle New(
         string name,
+        string? latinName,
+        DomainEnum.BodySection bodySection,
+        Description description,
+        User? createdBy = null)
+    {
+        ArgumentNullException.ThrowIfNull(description);
+
+        return new Muscle(
+            MuscleId.New(),
+            name,
+            latinName,
+            bodySection,
+            description,
+            AuditInfo.New(createdBy)
+        );
+    }
+
+    public static Muscle New(
+        string name,
+        string? latinName,
         DomainEnum.BodySection bodySection,
         string? description,
         User? createdBy = null)
@@ -54,10 +81,57 @@ public sealed record Muscle : IAudited, IDescribed
         return new Muscle(
             MuscleId.New(),
             name,
+            latinName,
             bodySection,
             Description.New(description),
             AuditInfo.New(createdBy)
         );
+    }
+
+    public void Update(MuscleUpdate update)
+    {
+        ArgumentNullException.ThrowIfNull(update);
+
+        var hasChanged = false;
+
+        if (!string.IsNullOrWhiteSpace(update.Name))
+        {
+            SetName(update.Name);
+            hasChanged = true;
+        }
+
+        if (update.LatinNameWasProvided)
+        {
+            LatinName = NormalizeLatinName(update.LatinName);
+            hasChanged = true;
+        }
+
+        if (update.BodySection.HasValue)
+        {
+            BodySection = update.BodySection.Value;
+            hasChanged = true;
+        }
+
+        if (update.DescriptionUpdate is not null)
+        {
+            Description = Description.ChangeContent(
+                update.DescriptionUpdate.Content,
+                update.DescriptionUpdate.Language
+            );
+
+            hasChanged = true;
+        }
+
+        if (hasChanged)
+        {
+            MarkUpdated(update.UpdatedBy);
+        }
+    }
+    
+    private void SetName(string name)
+    {
+        Name = FormatingUtilities.NormalizeName(name);
+        NameKey = FormatingUtilities.NormalizeNameKey(name);
     }
 
     public void ChangeBodySection(
@@ -68,13 +142,25 @@ public sealed record Muscle : IAudited, IDescribed
         MarkUpdated(changedBy);
     }
 
-    public void Rename(string name, User? changedBy = null)
+    public void Rename(
+        string name,
+        User? changedBy = null)
     {
-        Name = FormatingUtilities.NormalizeName(name);
+        SetName(name);
         MarkUpdated(changedBy);
     }
 
-    public void AddAntagonist(MuscleId antagonistMuscleId, User? changedBy = null)
+    public void ChangeLatinName(
+        string? latinName,
+        User? changedBy = null)
+    {
+        LatinName = NormalizeLatinName(latinName);
+        MarkUpdated(changedBy);
+    }
+
+    public void AddAntagonist(
+        MuscleId antagonistMuscleId,
+        User? changedBy = null)
     {
         if (antagonistMuscleId == Id)
         {
@@ -93,7 +179,9 @@ public sealed record Muscle : IAudited, IDescribed
         MarkUpdated(changedBy);
     }
 
-    public void RemoveAntagonist(MuscleId antagonistMuscleId, User? changedBy = null)
+    public void RemoveAntagonist(
+        MuscleId antagonistMuscleId,
+        User? changedBy = null)
     {
         if (!AntagonistIDs.Contains(antagonistMuscleId))
         {
@@ -111,7 +199,7 @@ public sealed record Muscle : IAudited, IDescribed
         antagonists.Remove(relation);
         MarkUpdated(changedBy);
     }
-    
+
     public void ChangeDescription(
         string? content,
         LocalizationHelper.Language? languageCode,
@@ -128,7 +216,7 @@ public sealed record Muscle : IAudited, IDescribed
         Description = Description.RemoveContent(languageCode);
         MarkUpdated(changedBy);
     }
-    
+
     void IAudited.MarkUpdated(User? changedBy)
     {
         MarkUpdated(changedBy);
@@ -138,7 +226,17 @@ public sealed record Muscle : IAudited, IDescribed
     {
         MarkDeleted(deletedBy);
     }
-    
+
+    private static string? NormalizeLatinName(string? latinName)
+    {
+        if (string.IsNullOrWhiteSpace(latinName))
+        {
+            return null;
+        }
+
+        return latinName.Trim();
+    }
+
     private void MarkUpdated(User? changedBy = null)
     {
         Audit = Audit.MarkUpdated(changedBy);

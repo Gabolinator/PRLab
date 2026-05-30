@@ -23,7 +23,7 @@ namespace PRLab.Infrastructure.DB.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Description", b =>
+            modelBuilder.Entity("PRLab.Domain.Model.Entity.Description", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -53,13 +53,70 @@ namespace PRLab.Infrastructure.DB.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
+                    b.Property<string>("NameKey")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DescriptionId");
 
-                    b.HasIndex("Name");
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("\"IsDeleted\" = false");
+
+                    b.HasIndex("NameKey")
+                        .IsUnique()
+                        .HasFilter("\"IsDeleted\" = false");
 
                     b.ToTable("Equipment", "public");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Entity.Muscle", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BodySection")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<Guid>("DescriptionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LatinName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("NameKey")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BodySection");
+
+                    b.HasIndex("DescriptionId");
+
+                    b.HasIndex("LatinName");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("\"IsDeleted\" = false");
+
+                    b.HasIndex("NameKey")
+                        .IsUnique()
+                        .HasFilter("\"IsDeleted\" = false");
+
+                    b.ToTable("Muscle", "public");
                 });
 
             modelBuilder.Entity("PRLab.Domain.Model.Entity.User", b =>
@@ -115,9 +172,24 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.ToTable("DescriptionTranslations", "public");
                 });
 
+            modelBuilder.Entity("PRLab.Domain.Model.Join.MuscleAntagonist", b =>
+                {
+                    b.Property<Guid>("MuscleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AntagonistMuscleId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("MuscleId", "AntagonistMuscleId");
+
+                    b.HasIndex("AntagonistMuscleId");
+
+                    b.ToTable("MuscleAntagonist", "public");
+                });
+
             modelBuilder.Entity("PRLab.Domain.Model.Entity.Equipment", b =>
                 {
-                    b.HasOne("Description", "Description")
+                    b.HasOne("PRLab.Domain.Model.Entity.Description", "Description")
                         .WithMany()
                         .HasForeignKey("DescriptionId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -141,7 +213,8 @@ namespace PRLab.Infrastructure.DB.Migrations
                                 .HasColumnType("uuid");
 
                             b1.Property<bool>("IsDeleted")
-                                .HasColumnType("boolean");
+                                .HasColumnType("boolean")
+                                .HasColumnName("IsDeleted");
 
                             b1.Property<DateTimeOffset?>("UpdatedAt")
                                 .HasColumnType("timestamp with time zone");
@@ -157,6 +230,57 @@ namespace PRLab.Infrastructure.DB.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("EquipmentId");
+                        });
+
+                    b.Navigation("Audit")
+                        .IsRequired();
+
+                    b.Navigation("Description");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Entity.Muscle", b =>
+                {
+                    b.HasOne("PRLab.Domain.Model.Entity.Description", "Description")
+                        .WithMany()
+                        .HasForeignKey("DescriptionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("PRLab.Domain.Value.AuditInfo", "Audit", b1 =>
+                        {
+                            b1.Property<Guid>("MuscleId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTimeOffset>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid>("CreatedBy")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTimeOffset?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid?>("DeletedBy")
+                                .HasColumnType("uuid");
+
+                            b1.Property<bool>("IsDeleted")
+                                .HasColumnType("boolean")
+                                .HasColumnName("IsDeleted");
+
+                            b1.Property<DateTimeOffset?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid?>("UpdatedBy")
+                                .HasColumnType("uuid");
+
+                            b1.HasKey("MuscleId");
+
+                            b1.HasIndex("IsDeleted");
+
+                            b1.ToTable("Muscle", "public");
+
+                            b1.WithOwner()
+                                .HasForeignKey("MuscleId");
                         });
 
                     b.Navigation("Audit")
@@ -209,16 +333,40 @@ namespace PRLab.Infrastructure.DB.Migrations
 
             modelBuilder.Entity("PRLab.Domain.Model.Join.DescriptionTranslation", b =>
                 {
-                    b.HasOne("Description", null)
+                    b.HasOne("PRLab.Domain.Model.Entity.Description", null)
                         .WithMany("Translations")
                         .HasForeignKey("DescriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Description", b =>
+            modelBuilder.Entity("PRLab.Domain.Model.Join.MuscleAntagonist", b =>
+                {
+                    b.HasOne("PRLab.Domain.Model.Entity.Muscle", "AntagonistMuscle")
+                        .WithMany()
+                        .HasForeignKey("AntagonistMuscleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PRLab.Domain.Model.Entity.Muscle", "Muscle")
+                        .WithMany("Antagonists")
+                        .HasForeignKey("MuscleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AntagonistMuscle");
+
+                    b.Navigation("Muscle");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Entity.Description", b =>
                 {
                     b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Entity.Muscle", b =>
+                {
+                    b.Navigation("Antagonists");
                 });
 #pragma warning restore 612, 618
         }

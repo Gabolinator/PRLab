@@ -21,6 +21,6 @@ public interface IEquipmentRepository
 
     Task<bool> ExistsAsync(EquipmentId id, CancellationToken ct);
 
-    Task<bool> NameExistsAsync(string name, CancellationToken ct);
+    Task<bool> NameExistsAsync(string name, EquipmentId? excludedEquipmentId, CancellationToken ct);
 
 }

@@ -24,8 +24,8 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
     public DbSet<DescriptionTranslation> DescriptionTranslations => Set<DescriptionTranslation>();
     
     //muscles
-    // public DbSet<Muscle> Muscles => Set<Muscle>();
-    // public DbSet<MuscleAntagonist> MuscleAntagonists => Set<MuscleAntagonist>();
+     public DbSet<Muscle> Muscles => Set<Muscle>();
+     public DbSet<MuscleAntagonist> MuscleAntagonists => Set<MuscleAntagonist>();
 
     //categories 
     //public DbSet<MovementCategory> MovementCategories => Set<MovementCategory>();
@@ -47,9 +47,14 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
         _logger?.Log("PRLabPgDBContext", "Model Creating");
         modelBuilder.HasDefaultSchema("public");
         modelBuilder.CreateUserTableModel();
+        
         modelBuilder.CreateEquipmentTableModel();
+        
         modelBuilder.CreateDescriptionTableModel();
         modelBuilder.CreateDescriptionTranslationTableModel();
+        
+        modelBuilder.CreateMuscleTableModel();
+        modelBuilder.CreateMuscleAntagonistTableModel();
         
         AddIndexes(modelBuilder);
     }
@@ -59,6 +64,7 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
         modelBuilder.AddDescriptionIndexes();
         modelBuilder.AddUserIndexes();
         modelBuilder.AddEquipmentIndexes();
+        modelBuilder.AddMuscleIndexes();
     }
 
     public void AddLogger(IAppLogger logger)

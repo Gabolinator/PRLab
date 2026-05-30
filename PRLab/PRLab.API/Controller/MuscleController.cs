@@ -1,104 +1,342 @@
-﻿// using GainsLab.Application.Interfaces.DataManagement.Repository;
-// using GainsLab.Application.Results.APIResults;
-// using GainsLab.Contracts.Dtos.GetDto;
-// using GainsLab.Contracts.Dtos.PostDto;
-// using GainsLab.Contracts.Dtos.PutDto;
-// using GainsLab.Contracts.Dtos.SyncDto;
-// using GainsLab.Contracts.Dtos.UpdateDto;
-// using GainsLab.Contracts.Dtos.UpdateDto.Outcome;
-// using GainsLab.Domain.Entities.Identifier;
-// using GainsLab.Infrastructure.SyncService;
-// using Microsoft.AspNetCore.Mvc;
-//
-// namespace GainsLab.Api.Controller;
-//
-// [ApiController]
-// [Route("muscles")]
-// public class MuscleController : ControllerBase
-// {
-//     private readonly IMuscleRepository _repo;
-//     private readonly ISyncService<MuscleSyncDTO> _svc;
-//    
-//
-//     public MuscleController(IMuscleRepository repo, ISyncService<MuscleSyncDTO> svc)
-//     {
-//         _repo = repo;
-//         _svc = svc;
-//     }
-//
-//
-//      [HttpGet("sync")]
-//     public async Task<IActionResult> GetMuscles(
-//         [FromQuery] DateTimeOffset? ts, [FromQuery] long? seq, [FromQuery] int take = 200, CancellationToken ct = default)
-//     {
-//         
-//         var cursor = new SyncCursor(ts ?? DateTimeOffset.MinValue, seq ?? 0);
-//         take = Math.Clamp(take, 1, 500);
-//
-//         var page = await _svc.PullAsync(cursor, take, ct);
-//         return Ok(page);
-//     }
-//     
-//     [HttpGet("{id:guid}")]
-//     public async Task<IActionResult> GetMuscle(
-//         Guid id, CancellationToken ct = default)
-//     {
-//         
-//         if( id == Guid.Empty)  return BadRequest();
-//         
-//         var result = await _repo.PullByIdAsync(MuscleId.FromGuid(id),ct);
-//
-//         return  APIResultValidation.ValidateResult<MuscleGetDTO>(this,result);
-//     }
-//     
-//        
-//     [HttpPost()]
-//     public async Task<IActionResult> PostMuscle(
-//         [FromBody] MusclePostDTO? payload, CancellationToken ct = default)
-//     {
-//         
-//         if(payload == null)  return BadRequest();
-//         
-//         var result = await _repo.PostAsync(payload,ct);
-//    
-//         return APIResultValidation.ValidateResult<MuscleGetDTO>(this, result,
-//             result.Value != null ? new ActionResultInfo(GetActionName(), result.Value.Id) : null);
-//     }
-//
-//     [HttpPut("{id:guid}")]
-//     public async Task<IActionResult> PutMuscle(
-//        Guid id, [FromBody] MusclePutDTO? payload  , CancellationToken ct = default)
-//     {
-//         if(payload == null)  return BadRequest();
-//         
-//         var result = await _repo.PutAsync(MuscleId.FromGuid(id),payload,ct);
-//         
-//         return  APIResultValidation.ValidateResult<MusclePutDTO>(this,result, new ActionResultInfo(GetActionName(),id));
-//         
-//     }
-//     
-//     
-//     [HttpPatch("{id:guid}")] 
-//     public async Task<IActionResult> PatchMuscle(
-//         Guid id, [FromBody] MuscleUpdateDTO? payload, CancellationToken ct = default)
-//     {
-//         if(payload == null|| id == Guid.Empty)  return BadRequest();
-//         
-//         var result = await _repo.PatchAsync(MuscleId.FromGuid(id),payload,ct);
-//         return  APIResultValidation.ValidateResult<MuscleUpdateOutcome>(this,result);
-//     
-//     }
-//     
-//    
-//
-//     [HttpDelete("{id:guid}")]
-//     public async Task<IActionResult> DeleteMuscle(Guid id, CancellationToken ct = default)
-//     {
-//         if (id == Guid.Empty) return BadRequest();
-//
-//         var result = await _repo.DeleteAsync(MuscleId.FromGuid(id), ct);
-//         return APIResultValidation.ValidateResult<MuscleGetDTO>(this, result);
-//     }
-//
-//     private string GetActionName() => nameof(GetMuscle);
-// }
+﻿using Microsoft.AspNetCore.Mvc;
+using PRLab.API.Dtos.PostDto;
+using PRLab.API.Dtos.PutDto;
+using PRLab.API.Mapper;
+using PRLab.Application.Interface.DB;
+using PRLab.Application.Interface.DB.Repositories;
+using PRLab.Domain.Utilities;
+using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Identifier;
+
+namespace PRLab.API.Controller;
+
+[ApiController]
+[Route("muscles")]
+public sealed class MuscleController : ControllerBase
+{
+    private readonly IMuscleRepository repo;
+    private readonly IAppLogger logger;
+    private readonly IUserService userService;
+
+    public MuscleController(
+        IMuscleRepository repo,
+        IUserService userService,
+        IAppLogger logger)
+    {
+        this.repo = repo;
+        this.logger = logger;
+        this.userService = userService;
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetMuscle(
+        Guid id,
+        [FromQuery] LocalizationHelper.Language? language = null,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Muscle id cannot be empty.");
+        }
+
+        try
+        {
+            var muscle = await repo.GetByIdAsync(MuscleId.FromGuid(id), ct);
+
+            if (muscle is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(MuscleMapper.ToGetDTO(muscle, language));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MuscleController),
+                $"Failed to get muscle {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllMuscles(
+        [FromQuery] LocalizationHelper.Language? language = null,
+        CancellationToken ct = default)
+    {
+        try
+        {
+            var muscles = await repo.ListAsync(ct);
+
+            return Ok(MuscleMapper.ToGetDTOs(muscles, language));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MuscleController),
+                $"Failed to get muscles: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred.{exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateMuscle(
+        MusclePostDTO payload,
+        CancellationToken ct = default)
+    {
+        try
+        {
+            var nameExists = await repo.NameExistsAsync(
+                payload.Name,
+                null,
+                ct);
+
+            if (nameExists)
+            {
+                return Conflict("A muscle with this name already exists.");
+            }
+            
+            var activeUser = await userService.GetActiveUserAsync(ct);
+            var muscle = MuscleMapper.ToEntity(payload, activeUser);
+
+            var createdMuscle = await repo.CreateAsync(muscle, ct);
+
+            return CreatedAtAction(
+                nameof(GetMuscle),
+                new { id = createdMuscle.Id.Value },
+                MuscleMapper.ToGetDTO(createdMuscle));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MuscleController),
+                $"Failed to create muscle: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateMuscle(
+        Guid id,
+        MusclePutDTO payload,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Muscle id cannot be empty.");
+        }
+
+        try
+        {
+            var muscleId = MuscleId.FromGuid(id);
+
+            var muscle = await repo.GetByIdAsync(muscleId, ct);
+            
+            if (muscle is null)
+            {
+                return NotFound();
+            }
+            
+            var nameExists = await repo.NameExistsAsync(
+                payload.Name,
+                muscleId,
+                ct);
+
+            if (nameExists)
+            {
+                return Conflict("Another muscle with this name already exists.");
+            }
+
+            var activeUser = await userService.GetActiveUserAsync(ct);
+            var update = MuscleUpdateMapper.ToUpdate(payload, activeUser);
+
+            muscle.Update(update);
+
+            await repo.UpdateAsync(muscle, ct);
+
+            return Ok(MuscleMapper.ToGetDTO(muscle));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MuscleController),
+                $"Failed to update muscle {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpPost("{id:guid}/antagonists/{antagonistId:guid}")]
+    public async Task<IActionResult> AddAntagonist(
+        Guid id,
+        Guid antagonistId,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Muscle id cannot be empty.");
+        }
+
+        if (antagonistId == Guid.Empty)
+        {
+            return BadRequest("Antagonist muscle id cannot be empty.");
+        }
+
+        if (id == antagonistId)
+        {
+            return BadRequest("A muscle cannot be its own antagonist.");
+        }
+
+        try
+        {
+            var muscleId = MuscleId.FromGuid(id);
+            var antagonistMuscleId = MuscleId.FromGuid(antagonistId);
+
+            var muscle = await repo.GetByIdAsync(muscleId, ct);
+
+            if (muscle is null)
+            {
+                return NotFound("Muscle was not found.");
+            }
+
+            var antagonistExists = await repo.ExistsAsync(antagonistMuscleId, ct);
+
+            if (!antagonistExists)
+            {
+                return NotFound("Antagonist muscle was not found.");
+            }
+
+            muscle.AddAntagonist(antagonistMuscleId);
+
+            await repo.UpdateAsync(muscle, ct);
+
+            return Ok(MuscleMapper.ToGetDTO(muscle));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MuscleController),
+                $"Failed to add antagonist {antagonistId} to muscle {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpDelete("{id:guid}/antagonists/{antagonistId:guid}")]
+    public async Task<IActionResult> RemoveAntagonist(
+        Guid id,
+        Guid antagonistId,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Muscle id cannot be empty.");
+        }
+
+        if (antagonistId == Guid.Empty)
+        {
+            return BadRequest("Antagonist muscle id cannot be empty.");
+        }
+
+        try
+        {
+            var muscle = await repo.GetByIdAsync(MuscleId.FromGuid(id), ct);
+
+            if (muscle is null)
+            {
+                return NotFound();
+            }
+
+            muscle.RemoveAntagonist(MuscleId.FromGuid(antagonistId));
+
+            await repo.UpdateAsync(muscle, ct);
+
+            return Ok(MuscleMapper.ToGetDTO(muscle));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MuscleController),
+                $"Failed to remove antagonist {antagonistId} from muscle {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+    
+    [HttpPut("{id:guid}/antagonists")]
+    public async Task<IActionResult> UpdateAntagonists(
+        Guid id,
+        MuscleAntagonistsPutDTO payload,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Muscle id cannot be empty.");
+        }
+
+        if (payload.AntagonistIds.Any(antagonistId => antagonistId.Value == Guid.Empty))
+        {
+            return BadRequest("Antagonist ids cannot contain empty values.");
+        }
+
+        if (payload.AntagonistIds.Any(antagonistId => antagonistId.Value == id))
+        {
+            return BadRequest("A muscle cannot be its own antagonist.");
+        }
+
+        try
+        {
+            var muscleId = MuscleId.FromGuid(id);
+            
+            var muscleExists = await repo.ExistsAsync(muscleId, ct);
+
+            if (!muscleExists)
+            {
+                return NotFound("Muscle was not found.");
+            }
+
+            var distinctAntagonistIds = payload.AntagonistIds
+                .Distinct()
+                .ToList();
+
+            var allAntagonistsExist = await repo.AllExistAsync(distinctAntagonistIds, ct);
+
+            if (!allAntagonistsExist)
+            {
+                return NotFound("One or more antagonist muscles were not found.");
+            }
+
+            var updatedMuscle = await repo.UpdateAntagonistsAsync(
+                muscleId,
+                distinctAntagonistIds,
+                ct);
+
+            return Ok(MuscleMapper.ToGetDTO(updatedMuscle));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MuscleController),
+                $"Failed to update antagonists for muscle {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+}

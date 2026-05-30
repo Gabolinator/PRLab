@@ -79,7 +79,7 @@ public sealed record User : IAudited
     
     public static class DefaultAdmin
     {
-        public static readonly UserId Id = new(CoreUtilities.GuidGenerator.AdminId);
+        public static readonly UserId Id = new(CoreUtilities.GuidGenerator.Empty);
 
         public const string Name = "Admin";
     }

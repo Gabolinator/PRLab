@@ -23,6 +23,10 @@ public static class EquipmentModelBuilder
             equipment.Property(equipment => equipment.Name)
                 .HasMaxLength(150)
                 .IsRequired();
+            
+            equipment.Property(equipment => equipment.NameKey)
+                .HasMaxLength(150)
+                .IsRequired();
 
             equipment.HasOne(equipment => equipment.Description)
                 .WithMany()
@@ -48,6 +52,7 @@ public static class EquipmentModelBuilder
                         value => value.HasValue ? UserId.FromGuid(value.Value) : null);
 
                 audit.Property(auditInfo => auditInfo.IsDeleted)
+                    .HasColumnName("IsDeleted")
                     .IsRequired();
 
                 audit.HasIndex(auditInfo => auditInfo.IsDeleted);
@@ -66,8 +71,14 @@ public static class EquipmentModelBuilder
     {
         modelBuilder.Entity<Equipment>(equipment =>
         {
-            equipment.HasIndex(equipment => equipment.Name);
-
+          equipment.HasIndex(equipment => equipment.Name)
+                .IsUnique()
+                .HasFilter("\"IsDeleted\" = false");
+            
+          equipment.HasIndex(equipment => equipment.NameKey)
+              .IsUnique()
+              .HasFilter("\"IsDeleted\" = false");
+          
             equipment.HasIndex("DescriptionId");
         });
     }

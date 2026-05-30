@@ -8,19 +8,10 @@ namespace PRLab.API.Dtos.PutDto;
 /// </summary>
 public record EquipmentPutDTO
 {
-    public EquipmentId? Id { get; set; }
-
-    public UpsertOutcome Outcome { get; set; } = UpsertOutcome.Failed;
-
     [Required]
     [StringLength(256, MinimumLength = 2)]
     public string Name { get; set; } = string.Empty;
 
     [Required]
     public DescriptionPutDTO Description { get; set; } = default!;
-
-    [EnumDataType(typeof(DataAuthority))]
-    public DataAuthority Authority { get; set; } = DataAuthority.Bidirectional;
-
-    public string? UpdatedBy { get; set; }
 }

@@ -6,6 +6,8 @@ using PRLab.Domain.Utilities.Interface;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Context;
 
+namespace PRLab.Infrastructure.DB.Repositories;
+
 public class DescriptionRepository(PRLabPgDBContext db, IClock clock) : IDescriptionRepository
 {
     public async Task<IReadOnlyCollection<Description>> ListAsync(CancellationToken ct)

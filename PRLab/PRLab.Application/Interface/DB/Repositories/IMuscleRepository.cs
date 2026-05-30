@@ -1,21 +1,13 @@
-﻿using PRLab.Application.Results.APIResults;
-using PRLab.Domain;
-using PRLab.Domain.Model.Entity;
+﻿using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Application.Interface.DB.Repositories;
 
 public interface IMuscleRepository
 {
+    Task<IReadOnlyList<Muscle>> ListAsync(CancellationToken ct);
+
     Task<Muscle?> GetByIdAsync(MuscleId id, CancellationToken ct);
-
-    Task<Muscle?> GetByNameAsync(string name, CancellationToken ct);
-
-    Task<IReadOnlyCollection<Muscle>> ListAsync(CancellationToken ct);
-
-    Task<IReadOnlyCollection<Muscle>> ListByBodySectionAsync(
-        DomainEnum.BodySection bodySection,
-        CancellationToken ct);
 
     Task<Muscle> CreateAsync(Muscle muscle, CancellationToken ct);
 
@@ -23,5 +15,17 @@ public interface IMuscleRepository
 
     Task<bool> ExistsAsync(MuscleId id, CancellationToken ct);
 
-    Task<bool> NameExistsAsync(string name, CancellationToken ct);
+    Task<bool> AllExistAsync(
+        IReadOnlyCollection<MuscleId> ids,
+        CancellationToken ct);
+
+    Task<Muscle> UpdateAntagonistsAsync(
+        MuscleId id,
+        IReadOnlyCollection<MuscleId> antagonistIds,
+        CancellationToken ct);
+    
+    Task<bool> NameExistsAsync(
+        string name,
+        MuscleId? excludedMuscleId,
+        CancellationToken ct);
 }

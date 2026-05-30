@@ -16,8 +16,6 @@ public record MovementPostDTO
     [EnumDataType(typeof(DataAuthority))]
     public DataAuthority Authority { get; init; } = DataAuthority.Bidirectional;
 
-    public string? CreatedBy { get; init; }
-
     public MovementId? VariantOfMovementGuid { get; init; }
     
     public IReadOnlyList<MuscleId>? PrimaryMusclesIds { get; init; }

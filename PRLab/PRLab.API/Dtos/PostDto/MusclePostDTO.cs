@@ -9,9 +9,6 @@ namespace PRLab.API.Dtos.PostDto;
 /// </summary>
 public record MusclePostDTO
 {
-
-    public MuscleId? Id { get; init; } = MuscleId.New();
-
     [Required]
     [StringLength(256, MinimumLength = 2)]
     public string Name { get; init; } = string.Empty;
@@ -26,11 +23,6 @@ public record MusclePostDTO
     public DescriptionPostDTO? Descriptor { get; init; }
 
     public IReadOnlyList<MuscleId>? AntagonistIds { get; init; }
-
-    [EnumDataType(typeof(DataAuthority))]
-    public DataAuthority Authority { get; init; } = DataAuthority.Bidirectional;
-
-    public string? CreatedBy { get; init; }
 }
 
 public static class MusclePostDTOExtensions
@@ -48,10 +40,10 @@ public static class MusclePostDTOExtensions
 
         var descriptor = entity.Descriptor is null
             ? "null"
-            : $"{{DescriptionContent: \"{entity.Descriptor.Content}\", Authority: {entity.Descriptor.Authority}, CreatedBy: {entity.Descriptor.CreatedBy ?? "null"} }}";
+            : $"{{DescriptionContent: \"{entity.Descriptor.Content}\"}}";
 
         return
-            $"MusclePostDTO {{ Id: {entity.Id}, Name: \"{entity.Name}\", BodySection  {entity.BodySection} Antagonists: [{antagonists}], Descriptor: {descriptor}, Authority: {entity.Authority}, CreatedBy: {entity.CreatedBy ?? "null"} }}";
+            $"MusclePostDTO {{ Name: \"{entity.Name}\", BodySection  {entity.BodySection} Antagonists: [{antagonists}], Descriptor: {descriptor}}}";
 
     }
 }

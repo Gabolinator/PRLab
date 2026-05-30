@@ -22,11 +22,6 @@ public record MovementCategoryPostDTO
         Array.Empty<DomainEnum.BaseMovementCategory>();
 
     public DescriptionPostDTO? Descriptor { get; init; }
-
-    [EnumDataType(typeof(DataAuthority))]
-    public DataAuthority Authority { get; init; } = DataAuthority.Bidirectional;
-
-    public string? CreatedBy { get; init; }
 }
 
 public static class MovementCategoryPostDTOExtensions
@@ -44,9 +39,9 @@ public static class MovementCategoryPostDTOExtensions
 
         var descriptor = entity.Descriptor is null
             ? "null"
-            : $"{{DescriptionContent: \"{entity.Descriptor.Content}\", Authority: {entity.Descriptor.Authority}, CreatedBy: {entity.Descriptor.CreatedBy ?? "null"} }}";
+            : $"{{DescriptionContent: \"{entity.Descriptor.Content}\" }}";
 
         return
-            $"MovementCategoryPostDTO {{ Id: {entity.Id}, Name: \"{entity.Name}\", ParentCategoryId: {(entity.ParentCategoryId.HasValue ? entity.ParentCategoryId.ToString() : "null")}, BaseCategories: [{baseCategories}], Descriptor: {descriptor}, Authority: {entity.Authority}, CreatedBy: {entity.CreatedBy ?? "null"} }}";
+            $"MovementCategoryPostDTO {{ Id: {entity.Id}, Name: \"{entity.Name}\", ParentCategoryId: {(entity.ParentCategoryId.HasValue ? entity.ParentCategoryId.ToString() : "null")}, BaseCategories: [{baseCategories}], Descriptor: {descriptor}}}";
     }
 }

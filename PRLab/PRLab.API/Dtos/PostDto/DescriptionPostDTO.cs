@@ -11,9 +11,4 @@ public record DescriptionPostDTO
     public string Content { get; init; } = string.Empty;
     
     public LocalizationHelper.Language? Language { get; init; }
-
-    [EnumDataType(typeof(DataAuthority))]
-    public DataAuthority Authority { get; init; } = DataAuthority.Bidirectional;
-    
-    public string? CreatedBy { get; init; }
 }
