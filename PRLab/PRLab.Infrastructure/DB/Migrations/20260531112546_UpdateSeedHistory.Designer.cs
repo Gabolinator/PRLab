@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PRLab.Infrastructure.DB.Context;
@@ -11,9 +12,11 @@ using PRLab.Infrastructure.DB.Context;
 namespace PRLab.Infrastructure.DB.Migrations
 {
     [DbContext(typeof(PRLabPgDBContext))]
-    partial class PRLabPgDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260531112546_UpdateSeedHistory")]
+    partial class UpdateSeedHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

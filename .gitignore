@@ -1,0 +1,30 @@
+# .NET build output
+[Bb]in/
+[Oo]bj/
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build artifacts
+*.dll
+*.pdb
+*.exe
+*.cache
+*.log
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# OS files
+.DS_Store
+Thumbs.db

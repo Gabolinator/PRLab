@@ -35,7 +35,8 @@ public sealed class DevelopmentMovementCategorySeedFactory(IUserService userServ
             .Select(movementCategory =>
                 new SeedItem<MovementCategory>(
                     SeedKeyGenerator.GenerateMovementCategoryKey(movementCategory),
-                    movementCategory))
+                    movementCategory,
+                    SeedAction.CreateIfMissing))
             .ToList();
     }
 }

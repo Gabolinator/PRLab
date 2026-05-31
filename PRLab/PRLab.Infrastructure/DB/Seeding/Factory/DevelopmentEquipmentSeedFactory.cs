@@ -24,7 +24,7 @@ public sealed class DevelopmentEquipmentSeedFactory(IUserService userService) : 
 
         var jumpRope = Equipment.New(
             "Jump Rope",
-            Description.None(),
+            Description.New("Jump rope description."),
             SeedUser
         );
 
@@ -33,12 +33,12 @@ public sealed class DevelopmentEquipmentSeedFactory(IUserService userService) : 
             new SeedItem<Equipment>(
                 SeedKeyGenerator.GenerateEquipmentKey(barbell),
                 barbell,
-                SeedAction.CreateOrUpdate),
+                SeedAction.Ignore),
 
             new SeedItem<Equipment>(
                 SeedKeyGenerator.GenerateEquipmentKey(dumbbell),
                 dumbbell,
-                SeedAction.CreateOrUpdate),
+                SeedAction.Ignore),
 
             new SeedItem<Equipment>(
                 SeedKeyGenerator.GenerateEquipmentKey(jumpRope),

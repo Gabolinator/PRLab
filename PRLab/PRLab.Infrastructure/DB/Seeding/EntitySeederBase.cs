@@ -11,15 +11,15 @@ public abstract class EntitySeederBase(PRLabPgDBContext db) : IEntitySeeder
     public abstract int Order { get; }
     public abstract string Name { get; }
     public abstract string Version { get; }
-    
     public abstract User SeedUser { get; }
-
-    private string SeedName => $"{Name}_v{Version}";
 
     public async Task SeedAsync(CancellationToken ct = default)
     {
         var alreadySeeded = await db.SeedHistory
-            .AnyAsync(seedHistory => seedHistory.Name == SeedName, ct);
+            .AnyAsync(
+                seedHistory => seedHistory.Name == Name 
+                               && seedHistory.Version == Version ,
+                ct);
 
         if (alreadySeeded)
         {
@@ -29,7 +29,7 @@ public abstract class EntitySeederBase(PRLabPgDBContext db) : IEntitySeeder
         await SeedEntityAsync(ct);
 
         await db.SeedHistory.AddAsync(
-            SeedHistory.New(SeedName, DateTimeOffset.UtcNow),
+            SeedHistory.New(Name, Version ,DateTimeOffset.UtcNow),
             ct);
 
         await db.SaveChangesAsync(ct);

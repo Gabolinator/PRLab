@@ -155,7 +155,8 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         .Select(muscle =>
             new SeedItem<Muscle>(
                 SeedKeyGenerator.GenerateMuscleKey(muscle),
-                muscle))
+                muscle,
+                SeedAction.CreateIfMissing))
         .ToList();
 }
 
