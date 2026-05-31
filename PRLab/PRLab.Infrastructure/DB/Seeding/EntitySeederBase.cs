@@ -15,6 +15,7 @@ public abstract class EntitySeederBase(PRLabPgDBContext db) : IEntitySeeder
 
     public async Task SeedAsync(CancellationToken ct = default)
     {
+        //just a test
         var alreadySeeded = await db.SeedHistory
             .AnyAsync(
                 seedHistory => seedHistory.Name == Name 
