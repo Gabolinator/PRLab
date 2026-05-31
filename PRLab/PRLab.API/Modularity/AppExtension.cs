@@ -1,6 +1,5 @@
-﻿
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
@@ -22,18 +21,21 @@ public static class AppExtension
         // app.UseCors();
     }
 
-
     public static void MapEndpoints(this WebApplication app)
     {
         app.MapControllers();
         app.MapGet("/healthz", HandleHealthz);
     }
 
-    public static async Task RunApplicationAsync(this WebApplication app, IAppLogger logger, Clock clock)
+    public static async Task RunApplicationAsync(
+        this WebApplication app,
+        IAppLogger logger,
+        Clock clock)
     {
         using var scope = app.Services.CreateScope();
+
         var db = scope.ServiceProvider.GetRequiredService<PRLabPgDBContext>();
-       
+
         db.AddLogger(logger);
         db.AddClock(clock);
 
@@ -50,13 +52,31 @@ public static class AppExtension
         logger.Log("Can connect: " + await db.Database.CanConnectAsync());
         logger.Log("Database provider: " + db.Database.ProviderName);
         logger.Log("Connection string hash (for sanity): " + db.Database.GetDbConnection().ConnectionString.GetHashCode());
-        
 
-        //todo remove me after testing , we will seed db from the data management console.
+        await app.SeedInitialData(scope, logger);
 
         await app.RunAsync();
     }
 
-    static IResult HandleHealthz() => Results.Ok(new { ok = true });
-    
+    private static async Task SeedInitialData(
+        this WebApplication app,
+        IServiceScope scope,
+        IAppLogger logger)
+    {
+        if (!app.Environment.IsDevelopment())
+        {
+            return;
+        }
+
+        var seeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
+
+        logger.Log("Seeding development data");
+        await seeder.SeedAsync();
+        logger.Log("Seeding development data - Completed");
+    }
+
+    private static IResult HandleHealthz()
+    {
+        return Results.Ok(new { ok = true });
+    }
 }

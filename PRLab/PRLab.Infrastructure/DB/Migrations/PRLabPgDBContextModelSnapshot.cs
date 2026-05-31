@@ -227,6 +227,20 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.ToTable("MuscleAntagonist", "public");
                 });
 
+            modelBuilder.Entity("PRLab.Infrastructure.DB.Seeding.SeedHistory", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTimeOffset>("AppliedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("SeedHistory", "public");
+                });
+
             modelBuilder.Entity("PRLab.Domain.Model.Entity.Equipment", b =>
                 {
                     b.HasOne("PRLab.Domain.Model.Entity.Description", "Description")

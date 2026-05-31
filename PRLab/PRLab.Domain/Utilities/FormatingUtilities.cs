@@ -10,8 +10,8 @@ public static class FormatingUtilities
         {
             throw new ArgumentException("Name is required.", nameof(name));
         }
-
-        return NormalizeNonNullString(name);
+            
+        return name.Trim();
     }
 
     public static string NormalizeNameKey(string name)

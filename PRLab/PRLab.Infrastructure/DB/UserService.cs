@@ -6,9 +6,11 @@ namespace PRLab.Infrastructure.DB;
 
 public class UserService(IUserRepository userRepository) : IUserService
 {
+    public User GetAdminUser(string? name = null) => User.Admin(name);
+    
     public async Task<User?> GetActiveUserAsync(CancellationToken ct)
     {
         //todo right now we get admin user
-        return User.Admin();
+        return GetAdminUser();
     }
 }

@@ -108,20 +108,16 @@ public static class DomainEnum
   public enum EntityType
   {
     User, 
-    Descriptor,
+    Description,
     Equipment,
-    EquipmentList,
     MovementCategory,
     Muscle,
-    MuscleGroup,
+    MuscleAntagonist,
     Movement,
     WorkloadProfile,
     Exercise,
-    ExerciseBlock,
-    WorkoutBlock,
     Workout,
     Program,
-    unidentified,
   }
   
 }

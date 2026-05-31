@@ -1,0 +1,6 @@
+﻿namespace PRLab.Application.Interface.DB.Repositories;
+
+public interface ISeedHistoryRepository
+{
+    Task<IReadOnlyList<SeedHistory>> ListAsync(CancellationToken ct);
+}

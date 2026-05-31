@@ -23,4 +23,7 @@ public sealed record DescriptionUpdate
             UpdatedBy = updatedBy,
         };
     }
+
+    public static DescriptionUpdate FromDescription(Description description, LocalizationHelper.Language? language,  User? updatedBy)
+        => New(description.GetContent(language), language, updatedBy);
 }

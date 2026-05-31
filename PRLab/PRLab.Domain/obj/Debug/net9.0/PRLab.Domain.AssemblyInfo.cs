@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PRLab.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e2200451a8607b29d11ed65ac7fa84140dc31e42")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed78803b218eca32d9860e355f6f8e21de24443a")]
 [assembly: System.Reflection.AssemblyProductAttribute("PRLab.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PRLab.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

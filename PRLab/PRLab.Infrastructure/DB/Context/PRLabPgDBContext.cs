@@ -1,11 +1,13 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
+using PRLab.Application.Interface.DB;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.ModelBuilders;
+using PRLab.Infrastructure.DB.Seeding;
 
 namespace PRLab.Infrastructure.DB.Context;
 
@@ -17,6 +19,8 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
 
     #region DB SETS
 
+    public DbSet<SeedHistory> SeedHistory => Set<SeedHistory>();
+    
     public DbSet<Equipment> Equipments => Set<Equipment>();
     
     //descriptions
@@ -46,6 +50,9 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
         base.OnModelCreating(modelBuilder);
         logger?.Log("PRLabPgDBContext", "Model Creating");
         modelBuilder.HasDefaultSchema("public");
+        
+        modelBuilder.CreateSeedHistoryTableModel();
+        
         modelBuilder.CreateUserTableModel();
         
         modelBuilder.CreateEquipmentTableModel();

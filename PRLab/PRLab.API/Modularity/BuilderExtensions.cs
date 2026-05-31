@@ -33,7 +33,10 @@ public static class BuilderExtensions
        services.AddEntitiesRepositories();
        services.AddControllers();
        services.AddSwagger();
+       
        services.AddUserService();
+       
+       services.AddDataSeeder();
 
         var connectionString = configuration.GetConnectionString("PRLabDb");
         if (string.IsNullOrWhiteSpace(connectionString))

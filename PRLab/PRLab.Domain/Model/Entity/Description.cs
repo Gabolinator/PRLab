@@ -71,6 +71,8 @@ public sealed record Description
         );
     }
 
+    public static Description None() => New(null, language: null);
+    
     public string? GetContent(string? languageCode = null)
     {
         var normalizedLanguageCode = LocalizationHelper.ToLanguageCode(languageCode);
@@ -238,4 +240,5 @@ public sealed record Description
 
         return this;
     }
+    
 }

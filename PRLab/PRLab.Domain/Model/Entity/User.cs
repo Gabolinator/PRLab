@@ -67,11 +67,11 @@ public sealed record User : IAudited
         );
     }
 
-    public static User Admin()
+    public static User Admin(string? name = null)
     {
         return new User(
             DefaultAdmin.Id,
-            DefaultAdmin.Name,
+            !string.IsNullOrWhiteSpace(name) ? name : DefaultAdmin.Name,
             DomainEnum.UserRole.Admin,
             AuditInfo.New(null)
         );

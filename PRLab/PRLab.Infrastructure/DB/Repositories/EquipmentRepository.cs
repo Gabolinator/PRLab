@@ -21,7 +21,7 @@ public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipment
             .AsNoTracking()
             .Include(equipment => equipment.Description)
             .ThenInclude(description => description.Translations)
-            .FirstOrDefaultAsync(equipment => equipment.Id == id, ct);
+            .FirstOrDefaultAsync(equipment => equipment.Id == id && !equipment.Audit.IsDeleted, ct);
     }
 
     public async Task<Equipment?> GetByNameAsync(string name, CancellationToken ct)
@@ -30,13 +30,16 @@ public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipment
         {
             throw new ArgumentException("Equipment name cannot be empty.", nameof(name));
         }
+        
+        var nameKey = FormatingUtilities.NormalizeNameKey(name);
 
         return await db.Equipments
             .AsNoTracking()
             .Include(equipment => equipment.Description)
             .ThenInclude(description => description.Translations)
             .FirstOrDefaultAsync(
-                equipment => equipment.Name.ToLower() == name.Trim().ToLower(),
+                equipment => equipment.NameKey == nameKey 
+                             && !equipment.Audit.IsDeleted, 
                 ct);
     }
 
