@@ -4,6 +4,7 @@ using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Infrastructure.DB.Seeding;
 using PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 using PRLab.Infrastructure.DB.Seeding.Factory;
+using PRLab.Infrastructure.DB.Seeding.Factory.Muscle;
 
 namespace PRLab.Infrastructure.Modularity;
 

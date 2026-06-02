@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PRLab.Application.Interface.DB;
+﻿using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
+using PRLab.Application.Interface.DB.Seeding.Catalog;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Helpers;
 
 namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 
@@ -22,54 +24,34 @@ public sealed class MuscleAntagonistSeeder(
 
     protected override async Task SeedEntityAsync(CancellationToken ct)
     {
-        var muscleAntagonistSeedItems = seedFactory.CreateInitialData();
+        var muscleCatalog = await SeedCatalogBuilder.CreateMuscleCatalog(db, ct);
 
-        var musclesByKey = await db.Muscles
-            .Include(muscle => muscle.Antagonists)
-            .ToDictionaryAsync(
-                muscle => SeedKeyGenerator.GenerateMuscleKey(muscle),
-                muscle => muscle,
-                ct);
-
+        var muscleAntagonistSeedItems = seedFactory.CreateInitialData(muscleCatalog);
+        
         foreach (var muscleAntagonistSeedItem in muscleAntagonistSeedItems)
         {
             ApplyMuscleAntagonistSeedItem(
                 muscleAntagonistSeedItem,
-                musclesByKey);
+                muscleCatalog);
         }
     }
 
     private static void ApplyMuscleAntagonistSeedItem(
-        SeedRelationItem muscleAntagonistSeedItem,
-        IReadOnlyDictionary<string, Muscle> musclesByKey)
+        SeedRelationItem<MuscleId> muscleAntagonistSeedItem,
+        MuscleSeedCatalog muscleCatalog)
     {
         if (muscleAntagonistSeedItem.Action == SeedAction.Ignore)
         {
             return;
         }
 
-        var sourceMuscle = GetRequiredMuscle(
-            musclesByKey,
-            muscleAntagonistSeedItem.SourceKey);
+        var sourceMuscle = muscleCatalog.GetRequiredById(
+            muscleAntagonistSeedItem.SourceId);
 
-        var targetMuscle = GetRequiredMuscle(
-            musclesByKey,
-            muscleAntagonistSeedItem.TargetKey);
+        var targetMuscle = muscleCatalog.GetRequiredById(
+            muscleAntagonistSeedItem.TargetId);
 
         AddAntagonistPairIfMissing(sourceMuscle, targetMuscle);
-    }
-
-    private static Muscle GetRequiredMuscle(
-        IReadOnlyDictionary<string, Muscle> musclesByKey,
-        string muscleKey)
-    {
-        if (musclesByKey.TryGetValue(muscleKey, out var muscle))
-        {
-            return muscle;
-        }
-
-        throw new InvalidOperationException(
-            $"Seed muscle '{muscleKey}' was not found.");
     }
 
     private static void AddAntagonistPairIfMissing(

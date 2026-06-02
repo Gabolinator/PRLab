@@ -2,17 +2,16 @@
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
-using PRLab.Infrastructure.DB.Seeding;
 
-namespace PRLab.Infrastructure.DB.Seeding.Factory;
+namespace PRLab.Infrastructure.DB.Seeding.Factory.Muscle;
 
 public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMuscleSeedFactory
 {
     private User SeedUser => userService.GetAdminUser("Seed");
     
-  public IReadOnlyList<SeedItem<Muscle>> CreateInitialData()
+  public IReadOnlyList<SeedItem<Domain.Model.Entity.Muscle>> CreateInitialData()
 {
-    var chest = Muscle.New(
+    var chest = Domain.Model.Entity.Muscle.New(
         "Chest",
         latinName: "Musculus pectoralis major",
         DomainEnum.BodySection.UpperBody,
@@ -20,7 +19,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var lats = Muscle.New(
+    var lats = Domain.Model.Entity.Muscle.New(
         "Lats",
         latinName: "Musculus latissimus dorsi",
         DomainEnum.BodySection.UpperBody,
@@ -28,7 +27,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var frontDelts = Muscle.New(
+    var frontDelts = Domain.Model.Entity.Muscle.New(
         "Front Delts",
         latinName: "Musculus deltoideus pars clavicularis",
         DomainEnum.BodySection.UpperBody,
@@ -36,7 +35,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var rearDelts = Muscle.New(
+    var rearDelts = Domain.Model.Entity.Muscle.New(
         "Rear Delts",
         latinName: "Musculus deltoideus pars spinalis",
         DomainEnum.BodySection.UpperBody,
@@ -44,7 +43,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var biceps = Muscle.New(
+    var biceps = Domain.Model.Entity.Muscle.New(
         "Biceps",
         latinName: "Musculus biceps brachii",
         DomainEnum.BodySection.UpperBody,
@@ -52,7 +51,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var triceps = Muscle.New(
+    var triceps = Domain.Model.Entity.Muscle.New(
         "Triceps",
         latinName: "Musculus triceps brachii",
         DomainEnum.BodySection.UpperBody,
@@ -60,7 +59,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var abs = Muscle.New(
+    var abs = Domain.Model.Entity.Muscle.New(
         "Abs",
         latinName: "Musculus rectus abdominis",
         DomainEnum.BodySection.MidSection,
@@ -68,7 +67,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var spinalErectors = Muscle.New(
+    var spinalErectors = Domain.Model.Entity.Muscle.New(
         "Spinal Erectors",
         latinName: "Musculus erector spinae",
         DomainEnum.BodySection.MidSection,
@@ -76,7 +75,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var quads = Muscle.New(
+    var quads = Domain.Model.Entity.Muscle.New(
         "Quads",
         latinName: "Musculus quadriceps femoris",
         DomainEnum.BodySection.LowerBody,
@@ -84,7 +83,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var hamstrings = Muscle.New(
+    var hamstrings = Domain.Model.Entity.Muscle.New(
         "Hamstrings",
         latinName: "Musculi ischiocrurales",
         DomainEnum.BodySection.LowerBody,
@@ -92,7 +91,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var glutes = Muscle.New(
+    var glutes = Domain.Model.Entity.Muscle.New(
         "Glutes",
         latinName: "Musculus gluteus maximus",
         DomainEnum.BodySection.LowerBody,
@@ -100,7 +99,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var hipFlexors = Muscle.New(
+    var hipFlexors = Domain.Model.Entity.Muscle.New(
         "Hip Flexors",
         latinName: "Musculus iliopsoas",
         DomainEnum.BodySection.LowerBody,
@@ -108,7 +107,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var calves = Muscle.New(
+    var calves = Domain.Model.Entity.Muscle.New(
         "Calves",
         latinName: "Musculus gastrocnemius",
         DomainEnum.BodySection.LowerBody,
@@ -116,7 +115,7 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    var shins = Muscle.New(
+    var shins = Domain.Model.Entity.Muscle.New(
         "Shins",
         latinName: "Musculus tibialis anterior",
         DomainEnum.BodySection.LowerBody,
@@ -124,16 +123,8 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
         SeedUser
     );
 
-    AddAntagonistPair(chest, lats);
-    AddAntagonistPair(frontDelts, rearDelts);
-    AddAntagonistPair(biceps, triceps);
-    AddAntagonistPair(abs, spinalErectors);
-    AddAntagonistPair(quads, hamstrings);
-    AddAntagonistPair(glutes, hipFlexors);
-    AddAntagonistPair(calves, shins);
-
     var muscles =
-        new List<Muscle>
+        new List<Domain.Model.Entity.Muscle>
         {
             chest,
             lats,
@@ -153,16 +144,10 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
 
     return muscles
         .Select(muscle =>
-            new SeedItem<Muscle>(
+            new SeedItem<Domain.Model.Entity.Muscle>(
                 SeedKeyGenerator.GenerateMuscleKey(muscle),
                 muscle,
                 SeedAction.CreateIfMissing))
         .ToList();
-}
-
-private static void AddAntagonistPair(Muscle firstMuscle, Muscle secondMuscle)
-{
-    firstMuscle.AddAntagonist(secondMuscle.Id);
-    secondMuscle.AddAntagonist(firstMuscle.Id);
 }
 }

@@ -6,6 +6,15 @@ namespace PRLab.Infrastructure.DB.Seeding;
 
 public static class SeedKeyGenerator
 {
+    public static string GenerateMovementKey(Movement movement)
+    {
+        ArgumentNullException.ThrowIfNull(movement);
+
+        return GenerateKey(
+            DomainEnum.EntityType.Movement,
+            movement.NameKey);
+    }
+    
     public static string GenerateEquipmentKey(Equipment equipment)
     {
         ArgumentNullException.ThrowIfNull(equipment);

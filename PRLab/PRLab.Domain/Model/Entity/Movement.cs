@@ -3,6 +3,7 @@ using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
 using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Value.Update;
 
 namespace PRLab.Domain.Model.Entity;
 
@@ -78,6 +79,21 @@ public sealed record Movement : IAudited, IDescribed
     private Movement(
         MovementId id,
         string name,
+        MovementCategory movementCategory,
+        Description description,
+        AuditInfo audit)
+    {
+        Id = id;
+        SetName(name);
+        MovementCategory = movementCategory;
+        MovementCategoryId = movementCategory.Id;
+        Description = description;
+        Audit = audit;
+    }
+    
+    private Movement(
+        MovementId id,
+        string name,
         MovementCategoryId movementCategoryId,
         Description description,
         AuditInfo audit)
@@ -100,6 +116,21 @@ public sealed record Movement : IAudited, IDescribed
             name,
             movementCategoryId,
             Description.New(description),
+            AuditInfo.New(createdBy)
+        );
+    }
+    
+    public static Movement New(
+        string name,
+        MovementCategory movementCategory,
+        Description description,
+        User? createdBy = null)
+    {
+        return new Movement(
+            MovementId.New(),
+            name,
+            movementCategory,
+            description,
             AuditInfo.New(createdBy)
         );
     }
@@ -424,6 +455,99 @@ public sealed record Movement : IAudited, IDescribed
         MarkUpdated(changedBy);
     }
 
+    public void Update(MovementUpdate update, User? changedBy = null)
+    {
+        ArgumentNullException.ThrowIfNull(update);
+
+        var updatedBy = update.UpdatedBy ?? changedBy;
+        var hasChanged = false;
+
+        if (!string.IsNullOrWhiteSpace(update.Name))
+        {
+            SetName(update.Name);
+            hasChanged = true;
+        }
+
+        if (update.Description is not null)
+        {
+            Description = Description.ChangeContent(
+                update.Description.Content,
+                update.Description.Language);
+
+            hasChanged = true;
+        }
+
+        if (update.MovementCategory is not null
+            && MovementCategoryId != update.MovementCategory.Id)
+        {
+            MovementCategoryId = update.MovementCategory.Id;
+            MovementCategory = update.MovementCategory;
+
+            hasChanged = true;
+        }
+
+        if (update.WasVariantOfProvided)
+        {
+            if (update.VariantOf is null)
+            {
+                if (VariantOfId is not null)
+                {
+                    VariantOfId = null;
+                    VariantOf = null;
+
+                    hasChanged = true;
+                }
+            }
+            else
+            {
+                if (update.VariantOf.Id == Id)
+                {
+                    throw new ArgumentException("A movement cannot be a variant of itself.");
+                }
+
+                if (VariantOfId != update.VariantOf.Id)
+                {
+                    VariantOfId = update.VariantOf.Id;
+                    VariantOf = update.VariantOf;
+
+                    hasChanged = true;
+                }
+            }
+        }
+
+        if (update.PrimaryPattern.HasValue
+            && PrimaryPattern != update.PrimaryPattern.Value)
+        {
+            SetPrimaryPatternWithoutAudit(update.PrimaryPattern.Value);
+            hasChanged = true;
+        }
+
+        if (update.Patterns is not null)
+        {
+            hasChanged |= ReplacePatterns(update.Patterns);
+        }
+
+        if (update.Muscles is not null)
+        {
+            hasChanged |= ReplaceMuscles(update.Muscles);
+        }
+
+        if (update.Equipments is not null)
+        {
+            hasChanged |= ReplaceEquipments(update.Equipments);
+        }
+
+        if (update.Variants is not null)
+        {
+            hasChanged |= ReplaceVariants(update.Variants, updatedBy);
+        }
+
+        if (hasChanged)
+        {
+            MarkUpdated(updatedBy);
+        }
+    }
+
     private DomainEnum.MovementPattern? ResolvePrimaryPatternOrNull()
     {
         return patterns.Count switch
@@ -432,6 +556,142 @@ public sealed record Movement : IAudited, IDescribed
             1 => patterns[0].Pattern,
             _ => DomainEnum.MovementPattern.Complex,
         };
+    }
+    
+    private void SetPrimaryPatternWithoutAudit(DomainEnum.MovementPattern pattern)
+    {
+        if (pattern != DomainEnum.MovementPattern.Complex
+            && !PatternValues.Contains(pattern))
+        {
+            patterns.Add(
+                MovementPatternTag.New(Id, pattern)
+            );
+        }
+
+        PrimaryPattern = pattern;
+    }
+
+    private bool ReplacePatterns(IReadOnlyCollection<MovementPatternTag> updatedPatterns)
+    {
+        var updatedPatternValues = updatedPatterns
+            .Select(patternTag => patternTag.Pattern)
+            .ToHashSet();
+
+        if (updatedPatternValues.Contains(DomainEnum.MovementPattern.Complex))
+        {
+            throw new ArgumentException(
+                "Complex should be used as a primary pattern summary, not as a specific pattern tag.",
+                nameof(updatedPatterns));
+        }
+
+        if (PatternValues.SetEquals(updatedPatternValues))
+        {
+            return false;
+        }
+
+        patterns.Clear();
+
+        foreach (var pattern in updatedPatternValues)
+        {
+            patterns.Add(
+                MovementPatternTag.New(Id, pattern)
+            );
+        }
+
+        if (PrimaryPattern.HasValue
+            && PrimaryPattern.Value != DomainEnum.MovementPattern.Complex
+            && !updatedPatternValues.Contains(PrimaryPattern.Value))
+        {
+            PrimaryPattern = ResolvePrimaryPatternOrNull();
+        }
+
+        return true;
+    }
+
+    private bool ReplaceMuscles(IReadOnlyCollection<MovementMuscle> updatedMuscles)
+    {
+        var hasSameMuscles = Muscles.Count == updatedMuscles.Count
+                             && Muscles.All(movementMuscle => updatedMuscles.Any(updatedMuscle =>
+                                 updatedMuscle.MuscleId == movementMuscle.MuscleId
+                                 && updatedMuscle.Role == movementMuscle.Role));
+
+        if (hasSameMuscles)
+        {
+            return false;
+        }
+
+        muscles.Clear();
+
+        foreach (var updatedMuscle in updatedMuscles)
+        {
+            muscles.Add(
+                MovementMuscle.New(
+                    Id,
+                    updatedMuscle.MuscleId,
+                    updatedMuscle.Role)
+            );
+        }
+
+        return true;
+    }
+
+    private bool ReplaceEquipments(IReadOnlyCollection<MovementEquipment> updatedEquipments)
+    {
+        var updatedEquipmentIDs = updatedEquipments
+            .Select(movementEquipment => movementEquipment.EquipmentId)
+            .ToHashSet();
+
+        if (EquipmentIDs.SetEquals(updatedEquipmentIDs))
+        {
+            return false;
+        }
+
+        equipments.Clear();
+
+        foreach (var equipmentId in updatedEquipmentIDs)
+        {
+            equipments.Add(
+                MovementEquipment.New(
+                    Id,
+                    equipmentId)
+            );
+        }
+
+        return true;
+    }
+
+    private bool ReplaceVariants(
+        IReadOnlyCollection<Movement> updatedVariants,
+        User? changedBy = null)
+    {
+        if (updatedVariants.Any(variant => variant.Id == Id))
+        {
+            throw new ArgumentException("A movement cannot be a variant of itself.");
+        }
+
+        var updatedVariantIDs = updatedVariants
+            .Select(variant => variant.Id)
+            .ToHashSet();
+
+        if (VariantIDs.SetEquals(updatedVariantIDs))
+        {
+            return false;
+        }
+
+        foreach (var variant in variants)
+        {
+            variant.RemoveVariantParent(changedBy);
+        }
+
+        variants.Clear();
+
+        foreach (var updatedVariant in updatedVariants)
+        {
+            updatedVariant.MakeVariantOf(Id, changedBy);
+            variants.Add(updatedVariant);
+        }
+
+        return true;
     }
     
     private void MarkUpdated(User? changedBy = null)

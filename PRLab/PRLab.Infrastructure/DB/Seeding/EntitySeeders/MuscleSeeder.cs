@@ -45,7 +45,6 @@ public sealed class MuscleSeeder(
         var existingMuscle = await db.Muscles
             .Include(muscle => muscle.Description)
                 .ThenInclude(description => description.Translations)
-            .Include(muscle => muscle.Antagonists)
             .FirstOrDefaultAsync(
                 muscle => muscle.NameKey == seedMuscle.NameKey,
                 ct);

@@ -35,7 +35,7 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
     public DbSet<MovementCategory> MovementCategories => Set<MovementCategory>();
     
     //movement
-    // public DbSet<Movement> Movement => Set<Movement>();
+     public DbSet<Movement> Movements => Set<Movement>();
     // public DbSet<MovementMuscle> MovementMuscleRelations => Set<MovementMuscle>();
     // public DbSet<MovementEquipment> MovementEquipmentRelations => Set<MovementEquipment>();
 
