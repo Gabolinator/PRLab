@@ -1,0 +1,56 @@
+[
+  {
+    "Id": "491f5821-79f1-491e-bbbd-a842b1931c57",
+    "Name": "Barbell",
+    "NameKey": "barbell",
+    "Description": {
+      "Content": "Long metal bar used for loaded strength training."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "a7c9fcad-ae65-4c77-bed6-86645a689a85",
+    "Name": "Dumbbell",
+    "NameKey": "dumbbell",
+    "Description": {
+      "Content": "Short handheld weight used for unilateral exercises, bilateral strength work, presses, rows, curls, and accessory training."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ffe3052c-8a09-49d7-a42c-0c6f17d956a8",
+    "Name": "Jump Rope",
+    "NameKey": "jumprope",
+    "Description": {
+      "Content": "Lightweight rope with handles used for conditioning, coordination, footwork, agility, and jumping movements such as single unders and double unders."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "cb6cef99-d25b-40f2-be85-0c80c70308c6",
+    "Name": "Kettlebell",
+    "NameKey": "kettlebell",
+    "Description": {
+      "Content": "A kettlebell is a compact cast-iron or steel weight with a handle, used for strength, power, conditioning, and dynamic full-body movements such as swings, cleans, presses, squats, and carries."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "b6fab579-8d60-4664-a4bf-f36dc44605ef",
+    "Name": "Pull-up Bar",
+    "NameKey": "pullupbar",
+    "Description": {
+      "Content": "Fixed or mounted bar used for pull-ups, hangs, and other bodyweight pulling movements."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "f28ba6b8-e448-444b-9e1f-4454542d845f",
+    "Name": "Resistance Band",
+    "NameKey": "resistanceband",
+    "Description": {
+      "Content": "Elastic training band used to add variable resistance, assistance, or mobility work to strength and conditioning movements."
+    },
+    "Action": "Ignore"
+  }
+]

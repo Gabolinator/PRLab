@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRLab.Application", "PRLab.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRLab.Tests", "PRLab.Tests\PRLab.Tests.csproj", "{2DFD8771-926D-479A-B5C5-E08FF01C64B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRLab.Tools", "PRLab.Tools\PRLab.Tools.csproj", "{C13FB7D0-1D0F-4870-B067-D026662F742C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{2DFD8771-926D-479A-B5C5-E08FF01C64B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DFD8771-926D-479A-B5C5-E08FF01C64B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DFD8771-926D-479A-B5C5-E08FF01C64B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C13FB7D0-1D0F-4870-B067-D026662F742C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C13FB7D0-1D0F-4870-B067-D026662F742C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C13FB7D0-1D0F-4870-B067-D026662F742C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C13FB7D0-1D0F-4870-B067-D026662F742C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -32,12 +32,36 @@ public sealed record Equipment : IAudited, IDescribed
         Audit = audit;
     }
 
-    public static Equipment New(string name, string? description, User? createdBy = null)
+    public static Equipment New(
+        string name, 
+        string? description, 
+        User? createdBy = null)
     {
         return new Equipment(
             EquipmentId.New(),
             name,
             Description.New(description),
+            AuditInfo.New(createdBy)
+        );
+    }
+    
+    public static Equipment NewWithId(
+        EquipmentId id,
+        string name,
+        Description description,
+        User? createdBy = null)
+    {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Equipment id cannot be empty.", nameof(id));
+        }
+
+        ArgumentNullException.ThrowIfNull(description);
+
+        return new Equipment(
+            id,
+            name,
+            description,
             AuditInfo.New(createdBy)
         );
     }
@@ -57,7 +81,7 @@ public sealed record Equipment : IAudited, IDescribed
         );
     }
     
-    public void Update(EquipmentUpdate update)
+    public bool Update(EquipmentUpdate update)
     {
         ArgumentNullException.ThrowIfNull(update);
 
@@ -83,6 +107,8 @@ public sealed record Equipment : IAudited, IDescribed
         {
             MarkUpdated(update.UpdatedBy);
         }
+        
+        return hasChanged;
     }
     
     public void Rename(

@@ -56,8 +56,8 @@ public sealed record MovementCategory : IAudited, IDescribed
     
     public static MovementCategory New(
         string name,
-        Description description,
         DomainEnum.BaseMovementCategory baseMovementCategory,
+        Description description,
         User? createdBy = null)
     {
         ArgumentNullException.ThrowIfNull(description);
@@ -70,13 +70,29 @@ public sealed record MovementCategory : IAudited, IDescribed
             AuditInfo.New(createdBy));
     }
     
+    public static MovementCategory NewWithId(
+        MovementCategoryId id,
+        string name,
+        DomainEnum.BaseMovementCategory baseMovementCategory,
+        Description description,
+        User createdBy)
+    {
+        return new MovementCategory(
+            id,
+            name,
+            baseMovementCategory,
+            description,
+            AuditInfo.New(createdBy)
+        );
+    }
+    
     private void SetName(string name)
     {
         Name = FormatingUtilities.NormalizeName(name);
         NameKey = FormatingUtilities.NormalizeNameKey(name);
     }
     
-    public void Update(MovementCategoryUpdate update)
+    public bool Update(MovementCategoryUpdate update)
     {
         ArgumentNullException.ThrowIfNull(update);
 
@@ -107,6 +123,8 @@ public sealed record MovementCategory : IAudited, IDescribed
         {
             MarkUpdated(update.UpdatedBy);
         }
+
+        return hasChanged;
     }
     
     private void Rename(string name, User? updatedBy = null)
@@ -151,5 +169,4 @@ public sealed record MovementCategory : IAudited, IDescribed
     {
         Audit = Audit.MarkDeleted(deletedBy);
     }
-    
 }

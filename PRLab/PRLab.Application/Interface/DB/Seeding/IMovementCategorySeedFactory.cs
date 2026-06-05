@@ -1,4 +1,5 @@
-﻿using PRLab.Domain.Model.Entity;
+﻿using PRLab.Application.Models.DB.Seeding;
+using PRLab.Domain.Model.Entity;
 
 namespace PRLab.Application.Interface.DB.Seeding;
 

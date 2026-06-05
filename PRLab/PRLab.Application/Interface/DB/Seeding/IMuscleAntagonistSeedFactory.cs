@@ -1,4 +1,5 @@
-﻿using PRLab.Application.Interface.DB.Seeding.Catalog;
+﻿using PRLab.Application.Models.DB.Seeding;
+using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Application.Interface.DB.Seeding;

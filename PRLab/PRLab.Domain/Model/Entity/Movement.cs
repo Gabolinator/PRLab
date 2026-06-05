@@ -455,7 +455,7 @@ public sealed record Movement : IAudited, IDescribed
         MarkUpdated(changedBy);
     }
 
-    public void Update(MovementUpdate update, User? changedBy = null)
+    public bool Update(MovementUpdate update, User? changedBy = null)
     {
         ArgumentNullException.ThrowIfNull(update);
 
@@ -546,6 +546,8 @@ public sealed record Movement : IAudited, IDescribed
         {
             MarkUpdated(updatedBy);
         }
+        
+        return hasChanged;
     }
 
     private DomainEnum.MovementPattern? ResolvePrimaryPatternOrNull()

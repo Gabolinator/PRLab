@@ -21,48 +21,14 @@ public static class BuilderExtensions
     }
     
     
- 
    public static void ConfigureServices(this WebApplicationBuilder builder, IAppLogger logger, IClock clock)
    {
        IServiceCollection services = builder.Services;
        IConfiguration configuration =  builder.Configuration;
-        
-       services.AddSingleton<IAppLogger>(logger);
-       services.AddSingleton<IClock>(clock);
 
-       services.AddEntitiesRepositories();
-       services.AddControllers();
-       services.AddSwagger();
-       
-       services.AddUserService();
-       
-       services.AddDataSeeder();
-
-        var connectionString = configuration.GetConnectionString("PRLabDb");
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            throw new InvalidOperationException(
-                "Missing ConnectionStrings:PRLabDb. Add it to appsettings.Development.json or user-secrets.");
-        }
-
-        else logger.Log($"Conn (pre): '{connectionString}'");
-        
-       
-        
-        services.AddDbContext<PRLabPgDBContext>(options =>
-            options.UseNpgsql(
-                connectionString, 
-                npgsql => npgsql.EnableRetryOnFailure())
-                .EnableSensitiveDataLogging()
-                .EnableDetailedErrors().LogTo(
-                    message => logger.Log(message),
-                    LogLevel.Debug)
-            );
-
-        
-        services.AddEntitiesRepositories();
-  
-      
-    }
-   
+       services.AddUtilities(clock, logger)
+           .AddInfrastructure(configuration, logger)
+           .AddSwagger()
+           .AddControllers();
+   }
 }

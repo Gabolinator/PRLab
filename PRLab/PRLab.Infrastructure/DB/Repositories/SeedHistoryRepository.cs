@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Repositories;
+using PRLab.Application.Models.DB.Seeding;
 using PRLab.Infrastructure.DB.Context;
 
 namespace PRLab.Infrastructure.DB.Repositories;

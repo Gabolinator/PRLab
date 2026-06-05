@@ -88,7 +88,7 @@ public sealed record Muscle : IAudited, IDescribed
         );
     }
 
-    public void Update(MuscleUpdate update)
+    public bool Update(MuscleUpdate update)
     {
         ArgumentNullException.ThrowIfNull(update);
 
@@ -126,6 +126,8 @@ public sealed record Muscle : IAudited, IDescribed
         {
             MarkUpdated(update.UpdatedBy);
         }
+
+        return hasChanged;
     }
     
     private void SetName(string name)

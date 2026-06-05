@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PRLab.Application.Interface.DB.Seeding.Catalog;
+using Microsoft.Extensions.Logging;
+using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Domain.Model.Catalog;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Identifier;
@@ -55,7 +56,15 @@ public static class SeedCatalogBuilder
             new EntityCatalog<MovementCategoryId, MovementCategory>(
                 movementCategories,
                 movementCategory => movementCategory.Id,
-                movementCategory => movementCategory.NameKey));
+                AddNameKey(movementCategories)));
+    }
+
+    private static Func<MovementCategory, string> AddNameKey(List<MovementCategory> movementCategories)
+    {
+       return movementCategory =>
+       {
+           return movementCategory.NameKey;
+       };
     }
 
     public static async Task<MovementSeedCatalog> CreateMovementCatalog(

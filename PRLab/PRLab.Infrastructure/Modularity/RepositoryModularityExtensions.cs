@@ -5,13 +5,12 @@ using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Infrastructure.DB;
 using PRLab.Infrastructure.DB.Repositories;
 using PRLab.Infrastructure.DB.Seeding;
-using PRLab.Infrastructure.DB.Seeding.Factory;
 
 namespace PRLab.Infrastructure.Modularity;
 
 public static class RepositoryModularityExtensions
 {
-    public static void AddEntitiesRepositories(this IServiceCollection services)
+    public static IServiceCollection AddEntitiesRepositories(this IServiceCollection services)
     {
         services.AddScoped<ISeedHistoryRepository, SeedHistoryRepository>();
         
@@ -20,11 +19,15 @@ public static class RepositoryModularityExtensions
        services.AddScoped<IEquipmentRepository, EquipmentRepository>();
        services.AddScoped<IMuscleRepository, MuscleRepository>();
        services.AddScoped<IMovementCategoryRepository, MovementCategoryRepository>();
+       
+       return services; 
     }
     
-    public static void AddUserService(this IServiceCollection services)
+    public static IServiceCollection AddUserService(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
+        
+        return services; 
     }
     
 }

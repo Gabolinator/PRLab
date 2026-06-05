@@ -1,4 +1,6 @@
-﻿namespace PRLab.Domain.Utilities.Interface;
+﻿using System.Drawing;
+
+namespace PRLab.Domain.Utilities.Interface;
 
 
 /// <summary>
@@ -6,6 +8,14 @@
 /// </summary>
 public interface IAppLogger
 {
+
+    public enum AppLogLevel
+    {
+        Info,
+        Warning,
+        Error,
+    }
+
     /// <summary>
     /// Gets a value indicating whether logging is currently enabled.
     /// </summary>
@@ -29,6 +39,18 @@ public interface IAppLogger
     /// </summary>
     /// <param name="message">The message to emit.</param>
     void Log(string message);
+
+    public void Log(
+        string? context,
+        string message,
+        Color? messageColor,
+        Color? headerColor = null,
+        Color? contextColor = null);
+    
+    public void Log(
+        string message,
+        Color? messageColor,
+        Color? headerColor = null);
     
     /// <summary>
     /// Writes an informational message including a context label.
@@ -50,4 +72,19 @@ public interface IAppLogger
     /// <param name="context">Logical context describing the source of the error.</param>
     /// <param name="message">The error message to emit.</param>
     void LogError(string context,string message);
+    
+    
+    /// <summary>
+    /// Writes a warning message associated with the supplied context.
+    /// </summary>
+    /// <param name="context">Logical context describing the source of the warning.</param>
+    /// <param name="message">The warning message to emit.</param>
+    void LogWarning(string message);
+    
+    /// <summary>
+    /// Writes an error message associated with the supplied context.
+    /// </summary>
+    /// <param name="context">Logical context describing the source of the error.</param>
+    /// <param name="message">The error message to emit.</param>
+    void LogError(string message);
 }

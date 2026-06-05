@@ -92,12 +92,14 @@ public static class MuscleModelBuilder
                 .HasConversion(
                     muscleId => muscleId.Value,
                     value => MuscleId.FromGuid(value))
+                .ValueGeneratedNever()
                 .IsRequired();
 
             muscleAntagonist.Property(muscleAntagonist => muscleAntagonist.AntagonistMuscleId)
                 .HasConversion(
                     muscleId => muscleId.Value,
                     value => MuscleId.FromGuid(value))
+                .ValueGeneratedNever()
                 .IsRequired();
 
             muscleAntagonist.HasOne(muscleAntagonist => muscleAntagonist.Muscle)

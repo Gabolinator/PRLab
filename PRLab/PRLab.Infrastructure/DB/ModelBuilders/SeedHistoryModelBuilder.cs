@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
+using PRLab.Application.Models.DB.Seeding;
 
 namespace PRLab.Infrastructure.DB.ModelBuilders;
 

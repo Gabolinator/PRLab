@@ -19,7 +19,7 @@ public sealed class EntityCatalog<TId, TEntity>
         entitiesById = entityList.ToDictionary(idSelector);
 
         entitiesByNameKey = entityList.ToDictionary(
-            entity => nameKeySelector(entity),
+            nameKeySelector,
             entity => entity);
     }
 

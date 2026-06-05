@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
+using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Utilities.Interface;
 using PRLab.Domain.Value.Update;
 using PRLab.Infrastructure.DB.Context;
 
@@ -11,39 +13,48 @@ namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 public sealed class EquipmentSeeder(
     PRLabPgDBContext db,
     IUserService userService, 
-    IEquipmentSeedFactory seedFactory) : EntitySeederBase(db)
+    IEquipmentSeedFactory seedFactory,
+    IAppLogger logger) : EntitySeederBase(db, logger)
 {
-    public override int Order => SeedPolicy.GetSeedOrder(DomainEnum.EntityType.Equipment);
+    public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.Equipment;
     public override string Name => "DevelopmentEquipmentSeed";
 
-    public override string Version => "1.0.0";
+    public override string Version => "1.0.4";
 
     public override User SeedUser => userService.GetAdminUser("Seed");
 
-    protected override async Task SeedEntityAsync(CancellationToken ct)
+    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
     {
         var equipmentSeedItems = seedFactory.CreateInitialData();
+        var changes = new List<SeedChange>();
 
         foreach (var equipmentSeedItem in equipmentSeedItems)
         {
-            await ApplyEquipmentSeedItem(equipmentSeedItem, ct);
+            var result = await ApplyEquipmentSeedItem(equipmentSeedItem, ct);
+
+            if (result.change is not null)
+            {
+                changes.Add(result.change);
+            }
         }
+
+        return changes;
     }
 
-    private async Task<Equipment?> ApplyEquipmentSeedItem(
+    private async Task<(Equipment? entity, SeedChange? change)> ApplyEquipmentSeedItem(
         SeedItem<Equipment> equipmentSeedItem,
         CancellationToken ct)
     {
         if (equipmentSeedItem.Action == SeedAction.Ignore)
         {
-            return null;
+            return (null, null);
         }
 
         var seedEquipment = equipmentSeedItem.Entity;
 
         var existingEquipment = await db.Equipments
             .Include(equipment => equipment.Description)
-                .ThenInclude(description => description.Translations)
+            .ThenInclude(description => description.Translations)
             .FirstOrDefaultAsync(
                 equipment => equipment.NameKey == seedEquipment.NameKey,
                 ct);
@@ -52,20 +63,28 @@ public sealed class EquipmentSeeder(
         {
             await db.Equipments.AddAsync(seedEquipment, ct);
 
-            return seedEquipment;
+            logger.Log($"Seeded - {EntityType} : {seedEquipment.NameKey}");
+
+            return (
+                seedEquipment,
+                new SeedChange(seedEquipment.NameKey, SeedChangeType.Created));
         }
 
         if (equipmentSeedItem.Action == SeedAction.CreateIfMissing)
         {
-            return existingEquipment;
+            return (existingEquipment, null);
         }
 
-        existingEquipment.Update(
+        logger.Log($"Seeder Updating - {EntityType} : {seedEquipment.NameKey}");
+
+        var hasChanged = existingEquipment.Update(
             EquipmentUpdate.FromEquipment(
                 seedEquipment,
                 null,
                 SeedUser));
 
-        return existingEquipment;
+        return hasChanged
+            ? (existingEquipment, new SeedChange(seedEquipment.NameKey, SeedChangeType.Updated))
+            : (existingEquipment, null);
     }
 }

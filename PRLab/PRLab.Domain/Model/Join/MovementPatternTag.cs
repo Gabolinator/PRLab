@@ -1,10 +1,11 @@
 ﻿using PRLab.Domain;
+using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Identifier;
 
 public sealed record MovementPatternTag
 {
     public MovementId MovementId { get; init; }
-
+    
     public DomainEnum.MovementPattern Pattern { get; init; }
 
     private MovementPatternTag()

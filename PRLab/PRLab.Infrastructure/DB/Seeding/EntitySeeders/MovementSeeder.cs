@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
+using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Utilities.Interface;
 using PRLab.Domain.Value.Update;
 using PRLab.Infrastructure.DB.Context;
 using PRLab.Infrastructure.DB.Helpers;
@@ -12,70 +14,97 @@ namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 public class MovementSeeder(
     PRLabPgDBContext db,
     IUserService userService,
-    IMovementSeedFactory seedFactory) : EntitySeederBase(db)
+    IMovementSeedFactory seedFactory,
+    IAppLogger logger) : EntitySeederBase(db, logger)
 {
-    public override int Order => SeedPolicy.GetSeedOrder(DomainEnum.EntityType.Movement);
-
     public override string Name => "DevelopmentMovementSeed";
 
-    public override string Version => "1.0.0";
+    public override string Version => "1.0.1";
+
+    public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.Movement;
 
     public override User SeedUser => userService.GetAdminUser("Seed");
 
-    protected override async Task SeedEntityAsync(CancellationToken ct)
+    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
     {
-        
         var equipmentCatalog = await SeedCatalogBuilder.CreateEquipmentCatalog(db, ct);
         var muscleCatalog = await SeedCatalogBuilder.CreateMuscleCatalog(db, ct);
         var movementCategoryCatalog = await SeedCatalogBuilder.CreateMovementCategoryCatalog(db, ct);
-        
-        var movementCategorySeedItems = seedFactory.CreateInitialData(
+
+        var movementSeedItems = seedFactory.CreateInitialData(
             equipmentCatalog,
             muscleCatalog,
             movementCategoryCatalog);
 
-        foreach (var movementCategorySeedItem in movementCategorySeedItems)
+        var changes = new List<SeedChange>();
+
+        foreach (var movementSeedItem in movementSeedItems)
         {
-            await ApplyMovementSeedItem(movementCategorySeedItem, ct);
+            var result = await ApplyMovementSeedItem(movementSeedItem, ct);
+
+            if (result.change is not null)
+            {
+                changes.Add(result.change);
+            }
         }
+
+        return changes;
     }
 
-    private async Task<Movement?> ApplyMovementSeedItem(
-        SeedItem<Movement> movementCategorySeedItem,
+    private async Task<(Movement? entity, SeedChange? change)> ApplyMovementSeedItem(
+        SeedItem<Movement> movementSeedItem,
         CancellationToken ct)
     {
-        if (movementCategorySeedItem.Action == SeedAction.Ignore)
+        if (movementSeedItem.Action == SeedAction.Ignore)
         {
-            return null;
+            return (null, null);
         }
 
-        var seedMovement = movementCategorySeedItem.Entity;
+        var seedMovement = movementSeedItem.Entity;
 
         var existingMovement = await db.Movements
-            .Include(movementCategory => movementCategory.Description)
-            .ThenInclude(description => description.Translations)
+            .Include(movement => movement.Description)
+                .ThenInclude(description => description.Translations)
+            .Include(movement => movement.MovementCategory)
+            .Include(movement => movement.Muscles)
+            .Include(movement => movement.Equipments)
+            .Include(movement => movement.Patterns)
             .FirstOrDefaultAsync(
-                movementCategory => movementCategory.NameKey == seedMovement.NameKey,
+                movement => movement.NameKey == seedMovement.NameKey,
                 ct);
 
         if (existingMovement is null)
         {
             await db.Movements.AddAsync(seedMovement, ct);
 
-            return seedMovement;
+            logger.Log($"Seeded - {EntityType} : {seedMovement.NameKey}");
+
+            return (
+                seedMovement,
+                new SeedChange(
+                    seedMovement.NameKey,
+                    SeedChangeType.Created));
         }
 
-        if (movementCategorySeedItem.Action == SeedAction.CreateIfMissing)
+        if (movementSeedItem.Action == SeedAction.CreateIfMissing)
         {
-            return existingMovement;
+            return (existingMovement, null);
         }
 
-        existingMovement.Update(
+        logger.Log($"Seeder Updating - {EntityType} : {seedMovement.NameKey}");
+
+        var hasChanged = existingMovement.Update(
             MovementUpdate.FromMovement(
                 seedMovement,
                 null,
                 SeedUser));
 
-        return existingMovement;
+        return hasChanged
+            ? (
+                existingMovement,
+                new SeedChange(
+                    seedMovement.NameKey,
+                    SeedChangeType.Updated))
+            : (existingMovement, null);
     }
 }

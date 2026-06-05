@@ -2,17 +2,16 @@
 
 public static class DIExtensions
 {
-    public static void AddSwagger(this IServiceCollection services)
+    public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
-        services.AddEndpointsApiExplorer();
-
-        services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("v1", new()
+       return services.AddEndpointsApiExplorer()
+            .AddSwaggerGen(options =>
             {
-                Title = "PRLab API",
-                Version = "v1"
+                options.SwaggerDoc("v1", new()
+                {
+                    Title = "PRLab API",
+                    Version = "v1"
+                });
             });
-        });
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace PRLab.Application.Interface.DB.Seeding;
+﻿using PRLab.Domain;
+
+namespace PRLab.Application.Interface.DB.Seeding;
 
 public interface IEntitySeeder
 {
@@ -7,6 +9,7 @@ public interface IEntitySeeder
     string Name { get; }
 
     string Version { get; }
+    DomainEnum.EntityType EntityType { get;}
 
-    Task SeedAsync(CancellationToken ct = default);
+    Task<SeedResult> SeedAsync(CancellationToken ct = default);
 }

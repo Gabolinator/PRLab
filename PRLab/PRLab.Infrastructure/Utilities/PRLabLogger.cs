@@ -1,163 +1,280 @@
-﻿using PRLab.Domain.Utilities.Interface;
+﻿using System.Drawing;
+using PRLab.Domain.Utilities.Interface;
 
 namespace PRLab.Infrastructure.Utilities;
 
 /// <summary>
-/// Console-based logger with colored output for GainsLab components.
+/// Console-based logger with colored output for PRLab components.
 /// </summary>
 public class PRLabLogger : IAppLogger
 {
+    private static readonly Color DefaultMessageColor = Color.White;
+    private static readonly Color DefaultHeaderColor = Color.Green;
+    private static readonly Color DefaultContextColor = Color.Cyan;
+    private static readonly Color DefaultWarningColor = Color.Yellow;
+    private static readonly Color DefaultErrorColor = Color.Red;
+
+    private bool enabled = true;
+    private bool decorate = true;
+
+    private readonly Color currentHeaderColor = DefaultHeaderColor;
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="GainsLabLogger"/> class using the default name.
+    /// Gets the display name of the logger.
+    /// </summary>
+    public readonly string LoggerName = "Logger";
+
+    /// <inheritdoc />
+    public bool Enabled => enabled;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PRLabLogger"/> class using the default name.
     /// </summary>
     public PRLabLogger()
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GainsLabLogger"/> class with a custom name.
+    /// Initializes a new instance of the <see cref="PRLabLogger"/> class with a custom name.
     /// </summary>
     /// <param name="name">The label displayed in logging output.</param>
     public PRLabLogger(string name)
     {
         LoggerName = name;
     }
-    
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="GainsLabLogger"/> class with custom name and color.
+    /// Initializes a new instance of the <see cref="PRLabLogger"/> class with custom name and header color.
     /// </summary>
     /// <param name="name">The label displayed in logging output.</param>
-    /// <param name="colorHeader">ANSI color code applied to the logger header.</param>
-    public PRLabLogger(string name, DecoratorColor colorHeader)
+    /// <param name="currentHeaderColor">The color applied to the logger header.</param>
+    public PRLabLogger(string name, Color currentHeaderColor)
     {
         LoggerName = name;
-        _colorHeader = colorHeader;
-        _decorate = _colorHeader != DecoratorColor.None;
+        this.currentHeaderColor = currentHeaderColor;
+        decorate = currentHeaderColor != Color.Empty && currentHeaderColor != Color.Transparent;
     }
-
-    public enum DecoratorColorContext
-    {
-        Reset,
-        Info,
-        Context,
-       Header,
-        WarningText,
-       WarningHeader,
-        ErrorText,
-       ErrorHeader,
-       None
-    }
-    
-    public enum DecoratorColor
-    {
-       White,
-       Cyan,
-       Green,
-       Yellow,
-       Red,
-       Reset,
-       None,
-    }
-
-    private bool _enabled = true;
-    /// <inheritdoc />
-    public bool Enabled => _enabled;
-
-    private bool _decorate = true;
-
-    
-    /// <summary>
-    /// Gets the display name of the logger.
-    /// </summary>
-    public readonly string LoggerName = "Logger";
-
-    private readonly DecoratorColor _colorHeader = DecoratorColor.Green;
-
-
-    public string GetColor( DecoratorColorContext colorContext )
-    {
-        if (!_decorate) colorContext = DecoratorColorContext.None;
-        
-        return colorContext switch
-        {
-            DecoratorColorContext.Reset => GetColorString(DecoratorColor.Reset),
-            DecoratorColorContext.Info => GetColorString(DecoratorColor.White),
-            DecoratorColorContext.Context => GetColorString(DecoratorColor.Cyan),
-            DecoratorColorContext.Header =>  GetColorString(_colorHeader),
-            DecoratorColorContext.WarningText => GetColorString(DecoratorColor.Yellow),
-            DecoratorColorContext.WarningHeader => GetColorString(DecoratorColor.Yellow),
-            DecoratorColorContext.ErrorText => GetColorString(DecoratorColor.Red),
-            DecoratorColorContext.ErrorHeader =>  GetColorString(DecoratorColor.Red),
-            _ =>  GetColorString(DecoratorColor.None),
-        };
-        
-    }
-    
-    public string GetColorString(DecoratorColor color)
-    {
-        return color switch
-        {
-            DecoratorColor.White =>"\u001b[37m",
-            DecoratorColor.Cyan =>  "\u001b[36m",
-            DecoratorColor.Green => "\u001b[32m",
-            DecoratorColor.Yellow =>  "\u001b[33m",
-            DecoratorColor.Red => "\u001b[31m",
-            DecoratorColor.Reset => "\u001b[0m",
-            DecoratorColor.None => "",
-            _ => ""
-        };
-    }
-
-    private string ColorReset => GetColor(DecoratorColorContext.Reset); //"\u001b[0m";
-    private string ColorInfo  => GetColor(DecoratorColorContext.Info); // "\u001b[37m";   // White
-    private string ColorContext  => GetColor(DecoratorColorContext.Context); //"\u001b[36m"; // Cyan
-    private string ColorHeader => GetColor(DecoratorColorContext.Header); // "\u001b[32m"; // Green
-    private string ColorWarningText  => GetColor(DecoratorColorContext.WarningText); // "\u001b[33m"; // Yellow
-    private  string ColorWarningHeader => GetColor(DecoratorColorContext.WarningHeader); // "\u001b[33m"; // Yellow
-    private  string ColorErrorText => GetColor(DecoratorColorContext.ErrorText); // "\u001b[31m";   // Red
-    private string ColorErrorHeader => GetColor(DecoratorColorContext.ErrorHeader); // "\u001b[31m";   // Red
 
     public void ToggleDecoration(bool state)
     {
-        _decorate = state;
+        decorate = state;
     }
 
     /// <inheritdoc />
     public void ToggleLogging(bool state)
     {
-        Console.WriteLine($"{ColorHeader}[{LoggerName}] Toggled logging {state}");
-        _enabled = state;
+        WriteLog(
+            null,
+            $"Toggled logging {state}",
+            null,
+            DefaultMessageColor,
+            currentHeaderColor,
+            DefaultContextColor);
+
+        enabled = state;
     }
 
     /// <inheritdoc />
     public void Log(string message)
     {
-        if (!Enabled) return;
-
-        Console.WriteLine($"{ColorHeader}[{LoggerName}] {ColorInfo}{message}{ColorReset}");
+        Log(
+            null,
+            message,
+            DefaultMessageColor,
+            currentHeaderColor);
     }
 
     /// <inheritdoc />
-    public void Log(string context, string message)
+    public void Log(
+        string context,
+        string message)
     {
-        if (!Enabled) return;
+        Log(
+            context,
+            message,
+            DefaultMessageColor,
+            currentHeaderColor,
+            DefaultContextColor);
+    }
 
-        Console.WriteLine($"{ColorHeader}[{LoggerName}] - {ColorContext}[{context}] {ColorInfo}{message}{ColorReset}");
+    public void Log(
+        string message,
+        Color? messageColor,
+        Color? headerColor = null)
+    {
+        WriteLog(
+            null,
+            message,
+            null,
+            messageColor,
+            headerColor,
+            null);
+    }
+
+    public void Log(
+        string? context,
+        string message,
+        Color? messageColor,
+        Color? headerColor = null,
+        Color? contextColor = null)
+    {
+        WriteLog(
+            context,
+            message,
+            null,
+            messageColor,
+            headerColor,
+            contextColor);
+    }
+
+    /// <inheritdoc />
+    public void LogWarning(string message)
+    {
+        WriteLog(
+            null,
+            message,
+            IAppLogger.AppLogLevel.Warning,
+            DefaultWarningColor,
+            currentHeaderColor,
+            DefaultContextColor,
+            DefaultWarningColor);
     }
 
     /// <inheritdoc />
     public void LogWarning(string context, string message)
     {
-        if (!Enabled) return;
+        WriteLog(
+            context,
+            message,
+            IAppLogger.AppLogLevel.Warning,
+            DefaultWarningColor,
+            currentHeaderColor,
+            DefaultContextColor,
+            DefaultWarningColor);
+    }
 
-        Console.WriteLine($"{ColorWarningHeader}[{LoggerName}]-WARNING - {ColorContext}[{context}] {ColorWarningText}{message}{ColorReset}");
+    /// <inheritdoc />
+    public void LogError(string message)
+    {
+        WriteLog(
+            null,
+            message,
+            IAppLogger.AppLogLevel.Error,
+            DefaultErrorColor,
+            currentHeaderColor,
+            DefaultContextColor,
+            DefaultErrorColor);
     }
 
     /// <inheritdoc />
     public void LogError(string context, string message)
     {
-        if (!Enabled) return;
+        WriteLog(
+            context,
+            message,
+            IAppLogger.AppLogLevel.Error,
+            DefaultErrorColor,
+            currentHeaderColor,
+            DefaultContextColor,
+            DefaultErrorColor);
+    }
 
-        Console.WriteLine($"{ColorErrorHeader}[{LoggerName}]-ERROR -  {ColorContext}[{context}] {ColorErrorText}{message}{ColorReset}");
+    private void WriteLog(
+        string? context,
+        string message,
+        IAppLogger.AppLogLevel? level,
+        Color? messageColor = null,
+        Color? headerColor = null,
+        Color? contextColor = null,
+        Color? levelColor = null)
+    {
+        if (!Enabled)
+        {
+            return;
+        }
+
+        var resolvedMessageColor = GetColorString(messageColor ?? DefaultMessageColor);
+        var resolvedHeaderColor = GetColorString(headerColor ?? this.currentHeaderColor);
+        var resolvedContextColor = GetColorString(contextColor ?? DefaultContextColor);
+        var resolvedLevelColor = GetColorString(levelColor ?? GetDefaultLevelColor(level));
+        
+        var resetColor = GetResetColorString();
+
+        bool hasContext = !string.IsNullOrWhiteSpace(context);
+        bool hasLevel = level != null && level != IAppLogger.AppLogLevel.Info;
+        
+        var levelText = !hasLevel
+            ? string.Empty
+            : $"{resolvedLevelColor} {level} {(hasContext ? "" : " -")}";
+
+        var contextText = !hasContext
+            ? string.Empty
+            : $" - {resolvedContextColor}[{context}]";
+
+        var headerText = $"{resolvedHeaderColor}[{LoggerName}]";
+        
+        Console.WriteLine(
+            $"{headerText}{levelText} {contextText} {resolvedMessageColor}{message}{resetColor}");
+    }
+
+    private Color GetDefaultLevelColor(IAppLogger.AppLogLevel? level) =>
+        level switch
+        {
+            IAppLogger.AppLogLevel.Info => DefaultMessageColor,
+            IAppLogger.AppLogLevel.Warning => DefaultWarningColor,
+            IAppLogger.AppLogLevel.Error => DefaultErrorColor,
+            null => DefaultMessageColor,
+            _ => throw new ArgumentOutOfRangeException(nameof(level), level, null)
+        };
+   
+
+    private string GetColorString(Color color)
+    {
+        if (!decorate)
+        {
+            return string.Empty;
+        }
+
+        if (color == Color.Empty || color == Color.Transparent)
+        {
+            return string.Empty;
+        }
+
+        if (color == Color.White)
+        {
+            return "\u001b[37m";
+        }
+
+        if (color == Color.Cyan)
+        {
+            return "\u001b[36m";
+        }
+
+        if (color == Color.Green)
+        {
+            return "\u001b[32m";
+        }
+
+        if (color == Color.Yellow)
+        {
+            return "\u001b[33m";
+        }
+
+        if (color == Color.Red)
+        {
+            return "\u001b[31m";
+        }
+
+        return $"\u001b[38;2;{color.R};{color.G};{color.B}m";
+    }
+
+    private string GetResetColorString()
+    {
+        if (!decorate)
+        {
+            return string.Empty;
+        }
+
+        return "\u001b[0m";
     }
 }

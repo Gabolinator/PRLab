@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
+using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
@@ -65,6 +66,11 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
         
         modelBuilder.CreateMovementCategoryTableModel();
         
+        modelBuilder.CreateMovementTableModel();
+        modelBuilder.CreateMovementPatternTagTableModel();
+        modelBuilder.CreateMovementMuscleTableModel();
+        modelBuilder.CreateMovementEquipmentTableModel();
+        
         AddIndexes(modelBuilder);
     }
 
@@ -75,6 +81,7 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
         modelBuilder.AddEquipmentIndexes();
         modelBuilder.AddMuscleIndexes();
         modelBuilder.AddMovementCategoryIndexes();
+        modelBuilder.AddMovementIndexes();
     }
 
     public void AddLogger(IAppLogger logger)
