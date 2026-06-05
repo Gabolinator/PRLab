@@ -18,7 +18,7 @@ public sealed class MovementCategorySeeder(
 {
     public override string Name => "DevelopmentMovementCategorySeed";
 
-    public override string Version => "1.0.0";
+    public override string Version => "1.0.1";
 
     public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.MovementCategory;
 

@@ -25,7 +25,10 @@ builder.Services.AddUtilities(clock, logger);
 
 builder.Services.AddInfrastructure(builder.Configuration, logger);
 
-builder.Services.AddScoped<ToolCommandHandler>();
+builder.Services.AddScoped<ToolCommandHandler>()
+    .AddScoped<ToolCommandUsageLogger>()
+    .AddScoped<SeedToolCommandHandler>()
+    .AddScoped<ExportSeedToolCommandHandler>();
 
 using var host = builder.Build();
 

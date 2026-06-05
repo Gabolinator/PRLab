@@ -9,8 +9,8 @@ public static class SeedReferences
         new Dictionary<DomainEnum.EntityType, string>
         {
             [DomainEnum.EntityType.Equipment] = "equipment",
-            [DomainEnum.EntityType.Muscle] = "muscles",
-            [DomainEnum.EntityType.MovementCategory] = "movement-categories",
+            [DomainEnum.EntityType.Muscle] = "muscle",
+            [DomainEnum.EntityType.MovementCategory] = "movement-category",
             [DomainEnum.EntityType.Movement] = "movements",
         };
     

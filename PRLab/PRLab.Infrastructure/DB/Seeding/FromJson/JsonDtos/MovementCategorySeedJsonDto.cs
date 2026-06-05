@@ -27,6 +27,7 @@ public class MovementCategorySeedJsonDto
             Id = category.Id.Value,
             Name = category.Name,
             NameKey = category.NameKey,
+            BaseMovementCategory =  category.BaseMovementCategory,
             Description = category.Description is null
                 ? null
                 : DescriptionSeedJsonDto.FromDescription(category.Description),

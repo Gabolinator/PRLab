@@ -1,0 +1,152 @@
+[
+  {
+    "Id": "4cf80344-c533-4c93-b3cd-2040895c0a41",
+    "Name": "Bodyweight",
+    "NameKey": "bodyweight",
+    "BaseMovementCategory": "BodyWeight",
+    "Description": {
+      "Content": "Movements performed mainly with body weight."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "f567ed15-77b2-4fb4-a8d7-4ab2bbe4fbbf",
+    "Name": "Calisthenics",
+    "NameKey": "calisthenics",
+    "BaseMovementCategory": "BodyWeight",
+    "Description": {
+      "Content": "Bodyweight movements focused on strength, control, coordination, and skill-based progression."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "e5a3b0dc-fc62-4edf-9411-015b332030f6",
+    "Name": "Cardio",
+    "NameKey": "cardio",
+    "BaseMovementCategory": "Cardio",
+    "Description": {
+      "Content": "Movements focused on cardiovascular conditioning, endurance, or sustained rhythmic effort."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "6dac43db-54a0-47e9-9858-ab7ffba564fb",
+    "Name": "CrossFit",
+    "NameKey": "crossfit",
+    "BaseMovementCategory": "Hybrid",
+    "Description": {
+      "Content": "Mixed-modal movements commonly used in functional fitness, combining strength, conditioning, gymnastics, and skill work."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "729ebab4-168e-4c3e-959e-dcdb205ea9f3",
+    "Name": "Hybrid Conditioning",
+    "NameKey": "hybridconditioning",
+    "BaseMovementCategory": "Hybrid",
+    "Description": {
+      "Content": "Movements that combine strength, endurance, coordination, and conditioning demands in the same training context."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "e83690f3-51ff-4060-896f-2a2926ff9134",
+    "Name": "Hyrox",
+    "NameKey": "hyrox",
+    "BaseMovementCategory": "Hybrid",
+    "Description": {
+      "Content": "Race-style functional fitness movements combining running, loaded carries, sled work, rowing, skiing, lunges, and wall balls."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "e84379d8-37f6-4524-99ef-c3812e9bb6b3",
+    "Name": "Mobility",
+    "NameKey": "mobility",
+    "BaseMovementCategory": "Mobility",
+    "Description": {
+      "Content": "Movements focused on joint range of motion, control, stability, and movement quality."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "12799eee-5aa5-4219-989e-3438d711c933",
+    "Name": "Olympic Weightlifting",
+    "NameKey": "olympicweightlifting",
+    "BaseMovementCategory": "Resistance",
+    "Description": {
+      "Content": "Explosive barbell movements based on the snatch, clean, jerk, and their related variations."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "cc17e46a-9388-4dfc-9fd5-e79bc6b7c791",
+    "Name": "Plyometrics",
+    "NameKey": "plyometrics",
+    "BaseMovementCategory": "Hybrid",
+    "Description": {
+      "Content": "Explosive movements using jumps, bounds, hops, or rapid force production to develop power and reactivity."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "c334102b-f652-43c9-b6a1-9fd0ce726532",
+    "Name": "Powerlifting",
+    "NameKey": "powerlifting",
+    "BaseMovementCategory": "Resistance",
+    "Description": {
+      "Content": "Strength movements centered around squat, bench press, deadlift, and related variations."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "a1f2f629-0bbc-4c60-850f-b36da0d65d90",
+    "Name": "Running",
+    "NameKey": "running",
+    "BaseMovementCategory": "Cardio",
+    "Description": {
+      "Content": "Locomotion movements based on jogging, running, sprinting, or interval-based run work."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "dfecdf9d-e21f-409a-9970-ae6df6aa5d3d",
+    "Name": "Strength Training",
+    "NameKey": "strengthtraining",
+    "BaseMovementCategory": "Resistance",
+    "Description": {
+      "Content": "Resistance-based movements focused on building force production, muscle strength, and controlled loading."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "d8232bd1-6cc5-4453-92f3-b6344d0c7781",
+    "Name": "Stretching",
+    "NameKey": "stretching",
+    "BaseMovementCategory": "Mobility",
+    "Description": {
+      "Content": "Movements focused on improving or maintaining flexibility through held, active, or dynamic stretches."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "066dfa75-3e0c-4a5d-a9f1-1d71f1d7e5b9",
+    "Name": "Weightlifting",
+    "NameKey": "weightlifting",
+    "BaseMovementCategory": "Resistance",
+    "Description": {
+      "Content": "Movements performed with external loads."
+    },
+    "Action": "Ignore"
+  },
+  {
+    "Id": "f9fc0430-af7f-4954-9a27-03b52a29de5f",
+    "Name": "Yoga",
+    "NameKey": "yoga",
+    "BaseMovementCategory": "Mobility",
+    "Description": {
+      "Content": "Movements and positions focused on mobility, flexibility, balance, breathing, body control, and mindful movement."
+    },
+    "Action": "Ignore"
+  }
+]
