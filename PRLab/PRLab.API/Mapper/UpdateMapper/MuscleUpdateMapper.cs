@@ -1,4 +1,4 @@
-﻿using PRLab.API.Dtos.PutDto;
+﻿using PRLab.API.DTO.Muscle;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Update;
 

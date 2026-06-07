@@ -11,13 +11,17 @@ public static class InfrastructureModularity
         return services.AddSingleton<IAppLogger>(logger)
             .AddSingleton<IClock>(clock);
     }
-        
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, IAppLogger logger)
+
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration,
+        IAppLogger logger, bool addSeeding = false)
+
     {
-        return  services.AddDBContextConfiguration(configuration, logger)
-            .AddEntitiesRepositories()
-            .AddUserService()
-            .AddDataSeeding(configuration, logger);
+        var updatedServices = services
+            .AddDBContextConfiguration(configuration, logger)
+            .AddRepositories()
+            .AddUserService();
+
+        return !addSeeding ? updatedServices : updatedServices.AddDataSeeding(configuration, logger);
     }
-    
+
 }

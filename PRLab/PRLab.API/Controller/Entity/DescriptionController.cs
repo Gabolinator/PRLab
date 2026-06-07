@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PRLab.API.Dtos.PostDto;
-using PRLab.API.Dtos.PutDto;
+using PRLab.API.DTO.Description;
 using PRLab.API.Mapper;
 using PRLab.Application.Interface.DB.Repositories;
 using PRLab.Domain.Utilities;

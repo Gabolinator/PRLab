@@ -1,96 +1,179 @@
-﻿// using GainsLab.Application.Interfaces.DataManagement.Repository;
-// using GainsLab.Application.Results.APIResults;
-// using GainsLab.Contracts.Dtos.GetDto;
-// using GainsLab.Contracts.Dtos.PostDto;
-// using GainsLab.Contracts.Dtos.PutDto;
-// using GainsLab.Contracts.Dtos.SyncDto;
-// using GainsLab.Contracts.Dtos.UpdateDto;
-// using GainsLab.Contracts.Dtos.UpdateDto.Outcome;
-// using GainsLab.Domain.Entities.Identifier;
-// using GainsLab.Infrastructure.SyncService;
-// using Microsoft.AspNetCore.Mvc;
-//
-// namespace GainsLab.Api.Controller;
-//
-// [ApiController]
-// [Route("movements")]
-// public class MovementController(IMovementRepository repo, ISyncService<MovementSyncDTO> svc)
-//     : ControllerBase
-// {
-//
-//     [HttpGet("sync")]
-//     public async Task<IActionResult> GetMovements(
-//         [FromQuery] DateTimeOffset? ts, [FromQuery] long? seq, [FromQuery] int take = 200, CancellationToken ct = default)
-//     {
-//         
-//         var cursor = new SyncCursor(ts ?? DateTimeOffset.MinValue, seq ?? 0);
-//         take = Math.Clamp(take, 1, 500);
-//
-//         var page = await svc.PullAsync(cursor, take, ct);
-//         return Ok(page);
-//     }
-//     
-//     [HttpGet("{id:guid}")]
-//     public async Task<IActionResult> GetMovement(
-//         Guid id, CancellationToken ct = default)
-//     {
-//         
-//         
-//         if( id == Guid.Empty)  return BadRequest();
-//         
-//         var result = await repo.PullByIdAsync(MovementId.FromGuid(id),ct);
-//
-//         return  APIResultValidation.ValidateResult<MovementGetDTO>(this,result);
-//     }
-//     
-//        
-//     [HttpPost()]
-//     public async Task<IActionResult> PostMovement(
-//         [FromBody] MovementPostDTO? payload, CancellationToken ct = default)
-//     {
-//         
-//         if(payload == null)  return BadRequest();
-//         
-//         var result = await repo.PostAsync(payload,ct);
-//    
-//         return APIResultValidation.ValidateResult<MovementGetDTO>(this, result,
-//             result.Value != null ? new ActionResultInfo(GetActionName(), result.Value.Id) : null);
-//     }
-//
-//     [HttpPut("{id:guid}")]
-//     public async Task<IActionResult> PutMovement(
-//        Guid id, [FromBody] MovementPutDTO? payload  , CancellationToken ct = default)
-//     {
-//         if(payload == null)  return BadRequest();
-//         
-//         var result = await repo.PutAsync(MovementId.FromGuid(id),payload,ct);
-//         
-//         return  APIResultValidation.ValidateResult<MovementPutDTO>(this,result, new ActionResultInfo(GetActionName(),id));
-//         
-//     }
-//     
-//     
-//     [HttpPatch("{id:guid}")] 
-//     public async Task<IActionResult> PatchMovement(
-//         Guid id, [FromBody] MovementUpdateDTO? payload, CancellationToken ct = default)
-//     {
-//         if(payload == null|| id == Guid.Empty)  return BadRequest();
-//         
-//         var result = await repo.PatchAsync(MovementId.FromGuid(id),payload,ct);
-//         return  APIResultValidation.ValidateResult<MovementUpdateOutcome>(this,result);
-//     
-//     }
-//     
-//    
-//
-//     [HttpDelete("{id:guid}")]
-//     public async Task<IActionResult> DeleteMovement(Guid id, CancellationToken ct = default)
-//     {
-//         if (id == Guid.Empty) return BadRequest();
-//
-//         var result = await repo.DeleteAsync(MovementId.FromGuid(id), ct);
-//         return APIResultValidation.ValidateResult<MovementGetDTO>(this, result);
-//     }
-//
-//     private string GetActionName() => nameof(GetMovement);
-// }
+﻿using Microsoft.AspNetCore.Mvc;
+using PRLab.API.DTO.Movement;
+using PRLab.API.Mapper;
+using PRLab.API.Mapper.UpdateMapper;
+using PRLab.Application.Interface.DB;
+using PRLab.Application.Interface.DB.Repositories;
+using PRLab.Domain.Utilities;
+using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Identifier;
+
+namespace PRLab.API.Controller.Entity;
+
+[ApiController]
+[Route("movements")]
+public sealed class MovementController : ControllerBase
+{
+    private readonly IMovementRepository repo;
+    private readonly IAppLogger logger;
+    private readonly IUserService userService;
+
+    public MovementController(
+        IMovementRepository repo,
+        IUserService userService,
+        IAppLogger logger)
+    {
+        this.repo = repo;
+        this.logger = logger;
+        this.userService = userService;
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetMovement(
+        Guid id,
+        [FromQuery] LocalizationHelper.Language? language = null,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Movement id cannot be empty.");
+        }
+
+        try
+        {
+            var movement = await repo.GetByIdAsync(MovementId.FromGuid(id), ct);
+
+            if (movement is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(MovementMapper.ToGetDTO(movement, language));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MovementController),
+                $"Failed to get movement {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllMovements(
+        [FromQuery] LocalizationHelper.Language? language = null,
+        CancellationToken ct = default)
+    {
+        try
+        {
+            var movements = await repo.ListAsync(ct);
+
+            return Ok(MovementMapper.ToGetDTOs(movements, language));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MovementController),
+                $"Failed to get movements: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateMovement(
+        MovementPostDTO payload,
+        CancellationToken ct = default)
+    {
+        try
+        {
+            var nameExists = await repo.NameExistsAsync(
+                payload.Name,
+                null,
+                ct);
+
+            if (nameExists)
+            {
+                return Conflict("A movement with this name already exists.");
+            }
+
+            var activeUser = await userService.GetActiveUserAsync(ct);
+            var movement = MovementMapper.ToEntity(payload, activeUser);
+
+            var createdMovement = await repo.CreateAsync(movement, ct);
+
+            return CreatedAtAction(
+                nameof(GetMovement),
+                new { id = createdMovement.Id.Value },
+                MovementMapper.ToGetDTO(createdMovement));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MovementController),
+                $"Failed to create movement: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateMovement(
+        Guid id,
+        MovementPutDTO payload,
+        CancellationToken ct = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("Movement id cannot be empty.");
+        }
+
+        try
+        {
+            var movementId = MovementId.FromGuid(id);
+
+            var movement = await repo.GetByIdAsync(movementId, ct);
+
+            if (movement is null)
+            {
+                return NotFound();
+            }
+
+            var nameExists = await repo.NameExistsAsync(
+                payload.Name,
+                movementId,
+                ct);
+
+            if (nameExists)
+            {
+                return Conflict("Another movement with this name already exists.");
+            }
+
+            var activeUser = await userService.GetActiveUserAsync(ct);
+            var update = MovementUpdateMapper.ToUpdate(movement, payload, activeUser);
+
+            movement.Update(update);
+
+            await repo.UpdateAsync(movement, ct);
+
+            return Ok(MovementMapper.ToGetDTO(movement));
+        }
+        catch (Exception exception)
+        {
+            logger.Log(
+                nameof(MovementController),
+                $"Failed to update movement {id}: {exception.Message}");
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                $"An unexpected error occurred. {exception.GetBaseException().Message}");
+        }
+    }
+}

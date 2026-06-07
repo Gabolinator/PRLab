@@ -524,16 +524,22 @@ public sealed record Movement : IAudited, IDescribed
         MarkUpdated(changedBy);
     }
 
-    public bool Update(MovementUpdate update, User? changedBy = null)
+    public bool Update(MovementUpdate update)
     {
         ArgumentNullException.ThrowIfNull(update);
 
-        var updatedBy = update.UpdatedBy ?? changedBy;
         var hasChanged = false;
 
         if (!string.IsNullOrWhiteSpace(update.Name))
         {
             SetName(update.Name);
+            hasChanged = true;
+        }
+
+        if (update.MovementCategoryId.HasValue
+            && MovementCategoryId != update.MovementCategoryId.Value)
+        {
+            MovementCategoryId = update.MovementCategoryId.Value;
             hasChanged = true;
         }
 
@@ -546,54 +552,9 @@ public sealed record Movement : IAudited, IDescribed
             hasChanged = true;
         }
 
-        if (update.MovementCategory is not null
-            && MovementCategoryId != update.MovementCategory.Id)
+        if (update.EquipmentRequirements is not null)
         {
-            MovementCategoryId = update.MovementCategory.Id;
-            MovementCategory = update.MovementCategory;
-
-            hasChanged = true;
-        }
-
-        if (update.WasVariantOfProvided)
-        {
-            if (update.VariantOf is null)
-            {
-                if (VariantOfId is not null)
-                {
-                    VariantOfId = null;
-                    VariantOf = null;
-
-                    hasChanged = true;
-                }
-            }
-            else
-            {
-                if (update.VariantOf.Id == Id)
-                {
-                    throw new ArgumentException("A movement cannot be a variant of itself.");
-                }
-
-                if (VariantOfId != update.VariantOf.Id)
-                {
-                    VariantOfId = update.VariantOf.Id;
-                    VariantOf = update.VariantOf;
-
-                    hasChanged = true;
-                }
-            }
-        }
-
-        if (update.PrimaryPattern.HasValue
-            && PrimaryPattern != update.PrimaryPattern.Value)
-        {
-            SetPrimaryPatternWithoutAudit(update.PrimaryPattern.Value);
-            hasChanged = true;
-        }
-
-        if (update.Patterns is not null)
-        {
-            hasChanged |= ReplacePatterns(update.Patterns);
+            hasChanged |= ReplaceEquipments(update.EquipmentRequirements);
         }
 
         if (update.Muscles is not null)
@@ -601,21 +562,38 @@ public sealed record Movement : IAudited, IDescribed
             hasChanged |= ReplaceMuscles(update.Muscles);
         }
 
-        if (update.Equipments is not null)
+        if (update.Patterns is not null)
         {
-            hasChanged |= ReplaceEquipments(update.Equipments);
+            hasChanged |= ReplacePatterns(update.Patterns);
         }
 
-        if (update.Variants is not null)
+        if (update.PrimaryPattern.HasValue)
         {
-            hasChanged |= ReplaceVariants(update.Variants, updatedBy);
+            if (PrimaryPattern != update.PrimaryPattern.Value)
+            {
+                SetPrimaryPattern(update.PrimaryPattern.Value);
+                hasChanged = true;
+            }
+        }
+        else if (update.Patterns is not null)
+        {
+            var previousPrimaryPattern = PrimaryPattern;
+
+            AutoResolvePrimaryPattern();
+
+            hasChanged |= previousPrimaryPattern != PrimaryPattern;
+        }
+
+        if (update.WasVariantOfProvided)
+        {
+            hasChanged |= ReplaceVariantOf(update.VariantOfId);
         }
 
         if (hasChanged)
         {
-            MarkUpdated(updatedBy);
+            MarkUpdated(update.UpdatedBy);
         }
-        
+
         return hasChanged;
     }
 
@@ -684,6 +662,24 @@ public sealed record Movement : IAudited, IDescribed
         return true;
     }
 
+    private bool ReplaceVariantOf(MovementId? variantOfId)
+    {
+        if (variantOfId == Id)
+        {
+            throw new ArgumentException("A movement cannot be a variant of itself.");
+        }
+
+        if (VariantOfId == variantOfId)
+        {
+            return false;
+        }
+
+        VariantOfId = variantOfId;
+        VariantOf = null;
+
+        return true;
+    }
+    
     private bool ReplaceMuscles(IReadOnlyCollection<MovementMuscle> updatedMuscles)
     {
         var hasSameMuscles = Muscles.Count == updatedMuscles.Count

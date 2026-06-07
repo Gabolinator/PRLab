@@ -1,4 +1,4 @@
-﻿using PRLab.API.Dtos.PutDto;
+﻿using PRLab.API.DTO.Description;
 using PRLab.Domain.Value.Update;
 
 namespace PRLab.API.Mapper.UpdateMapper;

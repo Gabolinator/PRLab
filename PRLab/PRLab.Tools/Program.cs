@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.Modularity;
 using PRLab.Infrastructure.Utilities;
 using PRLab.Tools;
@@ -28,7 +27,7 @@ builder.Services.Configure<PRToolOptions>(
 
 builder.Services.AddUtilities(clock, logger);
 
-builder.Services.AddInfrastructure(builder.Configuration, logger);
+builder.Services.AddInfrastructure(builder.Configuration, logger, addSeeding: true);
 
 builder.Services.AddScoped<ToolCommandHandler>()
     .AddScoped<ToolCommandUsageLogger>()

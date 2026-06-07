@@ -1,5 +1,4 @@
-﻿using PRLab.API.Dtos.GetDto;
-using PRLab.API.Dtos.PostDto;
+﻿using PRLab.API.DTO.Description;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
 

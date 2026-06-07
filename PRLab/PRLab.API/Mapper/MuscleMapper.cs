@@ -1,6 +1,4 @@
-﻿using PRLab.API.Dtos.GetDto;
-using PRLab.API.Dtos.PostDto;
-using PRLab.API.Dtos.SummaryDto;
+﻿using PRLab.API.DTO.Muscle;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
 

@@ -1,5 +1,5 @@
-﻿using PRLab.API.Dtos.GetDto;
-using PRLab.API.Dtos.PostDto;
+﻿using PRLab.API.DTO.MovementCategory;
+using PRLab.API.DTO.Muscle;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
 
@@ -65,4 +65,7 @@ public static class MovementCategoryMapper
             payload.BaseCategory,
             createdBy);
     }
+
+    public static MovementCategorySummaryDTO? ToSummaryDTO(MovementCategory category) =>
+        new(category.Id, category.Name);
 }

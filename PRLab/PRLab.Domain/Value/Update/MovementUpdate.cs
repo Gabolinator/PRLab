@@ -1,47 +1,52 @@
 ﻿using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Domain.Value.Update;
 
-public class MovementUpdate
+public sealed class MovementUpdate
 {
-    public string? Name { get; private set; }
-    public User? UpdatedBy { get; private set; }
-    public DescriptionUpdate? Description { get; private set; }
-    public DomainEnum.MovementPattern? PrimaryPattern { get; private set; }
-    public IReadOnlyCollection<MovementPatternTag>? Patterns { get; private set; }
-    public IReadOnlyCollection<MovementMuscle>? Muscles { get; private set; }
-    
-    public MovementCategory? MovementCategory { get; private set; }
-    
-    public Movement? VariantOf { get; private set; }
-    
-    public IReadOnlyCollection<Movement>? Variants  { get; private set; }
-    public IReadOnlyCollection<MovementEquipmentRequirement>? Equipments { get; private set; }
-    public bool WasVariantOfProvided { get; private set; }
-    
+    public string? Name { get; init; }
+
+    public MovementCategoryId? MovementCategoryId { get; init; }
+
+    public DescriptionUpdate? Description { get; init; }
+
+    public IReadOnlyCollection<MovementEquipmentRequirement>? EquipmentRequirements { get; init; }
+
+    public IReadOnlyCollection<MovementMuscle>? Muscles { get; init; }
+
+    public DomainEnum.MovementPattern? PrimaryPattern { get; init; }
+
+    public IReadOnlyCollection<MovementPatternTag>? Patterns { get; init; }
+
+    public MovementId? VariantOfId { get; init; }
+
+    public bool WasVariantOfProvided { get; init; }
+
+    public User? UpdatedBy { get; init; }
+
     public static MovementUpdate FromMovement(
         Movement movement,
         LocalizationHelper.Language? language,
-        User updatedBy)
-        => new()
+        User? user)
+    {
+        return new MovementUpdate
         {
-            UpdatedBy = updatedBy,
             Name = movement.Name,
+            MovementCategoryId = movement.MovementCategoryId,
             Description = DescriptionUpdate.FromDescription(
                 movement.Description,
                 language,
-                updatedBy),
+                user),
+            EquipmentRequirements = movement.EquipmentRequirements,
+            Muscles = movement.Muscles,
             PrimaryPattern = movement.PrimaryPattern,
             Patterns = movement.Patterns,
-            Muscles = movement.Muscles,
-            Equipments = movement.EquipmentRequirements,
-            MovementCategory = movement.MovementCategory,
-            Variants = movement.Variants,
-            VariantOf = movement.VariantOf,
+            VariantOfId = movement.VariantOfId,
             WasVariantOfProvided = true,
+            UpdatedBy = user
         };
-
-    
+    }
 }

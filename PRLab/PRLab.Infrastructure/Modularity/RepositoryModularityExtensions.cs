@@ -10,15 +10,23 @@ namespace PRLab.Infrastructure.Modularity;
 
 public static class RepositoryModularityExtensions
 {
+    public static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<ISeedHistoryRepository, SeedHistoryRepository>()
+            .AddEntitiesRepositories();
+        
+        return services; 
+    }
+    
     public static IServiceCollection AddEntitiesRepositories(this IServiceCollection services)
     {
-        services.AddScoped<ISeedHistoryRepository, SeedHistoryRepository>();
-        
-       services.AddScoped<IUserRepository, UserRepository>();
-       services.AddScoped<IDescriptionRepository, DescriptionRepository>();
-       services.AddScoped<IEquipmentRepository, EquipmentRepository>();
-       services.AddScoped<IMuscleRepository, MuscleRepository>();
-       services.AddScoped<IMovementCategoryRepository, MovementCategoryRepository>();
+
+        services.AddScoped<IUserRepository, UserRepository>()
+            .AddScoped<IDescriptionRepository, DescriptionRepository>()
+            .AddScoped<IEquipmentRepository, EquipmentRepository>()
+            .AddScoped<IMuscleRepository, MuscleRepository>()
+            .AddScoped<IMovementCategoryRepository, MovementCategoryRepository>()
+            .AddScoped<IMovementRepository, MovementRepository>();
        
        return services; 
     }

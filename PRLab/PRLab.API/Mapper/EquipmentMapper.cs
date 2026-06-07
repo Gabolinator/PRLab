@@ -1,5 +1,5 @@
-﻿using PRLab.API.Dtos.GetDto;
-using PRLab.API.Dtos.PostDto;
+﻿using PRLab.API.DTO.Equipment;
+using PRLab.API.DTO.Muscle;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
 
@@ -62,4 +62,7 @@ public static class EquipmentMapper
             currentUser
         );
     }
+
+    public static EquipmentSummaryDTO ToSummaryDTO(Equipment equipment) =>
+        new(equipment.Id, equipment.Name);
 }

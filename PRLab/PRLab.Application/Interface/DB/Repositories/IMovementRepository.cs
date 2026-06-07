@@ -39,5 +39,5 @@ public interface IMovementRepository
 
     Task<bool> ExistsAsync(MovementId id, CancellationToken ct);
 
-    Task<bool> NameExistsAsync(string name, CancellationToken ct);
+    Task<bool> NameExistsAsync(string name, MovementId? excludedMovementId, CancellationToken ct);
 }
