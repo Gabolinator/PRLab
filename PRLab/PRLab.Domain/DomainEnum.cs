@@ -119,5 +119,10 @@ public static class DomainEnum
     Workout,
     Program,
   }
-  
+
+  public enum EquipmentRequirementKind
+  {
+    RequiredGroup,
+    Optional,
+  }
 }

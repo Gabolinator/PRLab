@@ -43,7 +43,7 @@ public sealed record SeedEntityReferenceJsonDto
             NameKey = entity.NameKey,
         };
 
-    public static SeedEntityReferenceJsonDto FromMovementEquipment(MovementEquipment entity)
+    public static SeedEntityReferenceJsonDto FromMovementEquipment(MovementEquipmentRequirement entity)
         =>
             new()
             {

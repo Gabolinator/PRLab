@@ -1,5 +1,6 @@
 ﻿using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
+using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
@@ -14,17 +15,44 @@ public sealed class MovementSeedRelationResolver : IMovementSeedRelationResolver
         Movement movement,
         MovementSeedJsonDto seedDto,
         MovementSeedCatalogs catalogs,
-        User seedUser)
+        User seedUser,
+        bool includeVariant = false)
     {
-        foreach (var equipmentRef in seedDto.Equipment)
+        foreach (var requirement in seedDto.EquipmentRequirements)
         {
-            var equipment = ResolveEquipment(
-                equipmentRef,
-                catalogs.Equipment);
+            if (string.IsNullOrWhiteSpace(requirement.GroupKey))
+            {
+                throw new InvalidOperationException(
+                    $"Movement seed '{seedDto.Name}' has equipment requirement with empty GroupKey.");
+            }
 
-            movement.AddEquipment(
-                equipment.Id,
-                seedUser);
+            if (requirement.Options.Count == 0)
+            {
+                throw new InvalidOperationException(
+                    $"Movement seed '{seedDto.Name}' has equipment requirement group '{requirement.GroupKey}' with no options.");
+            }
+
+            foreach (var equipmentRef in requirement.Options)
+            {
+                var equipment = ResolveEquipment(
+                    equipmentRef,
+                    catalogs.Equipment);
+
+                if (requirement.Kind == DomainEnum.EquipmentRequirementKind.Optional)
+                {
+                    movement.AddOptionalEquipment(
+                        equipment.Id,
+                        requirement.GroupKey,
+                        seedUser);
+                }
+                else
+                {
+                    movement.AddRequiredEquipmentOption(
+                        equipment.Id,
+                        requirement.GroupKey,
+                        seedUser);
+                }
+            }
         }
 
         foreach (var muscleRef in seedDto.Muscles)
@@ -57,7 +85,7 @@ public sealed class MovementSeedRelationResolver : IMovementSeedRelationResolver
             movement.AutoResolvePrimaryPattern(seedUser);
         }
 
-        if (seedDto.VariantOf is not null)
+        if (includeVariant && seedDto.VariantOf is not null)
         {
             if (catalogs.Movement is null)
             {

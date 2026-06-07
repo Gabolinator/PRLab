@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Export;
 using PRLab.Application.Interface.DB.Seeding.Factory;
+using PRLab.Application.Interface.DB.Seeding.Factory.Movement;
+using PRLab.Application.Interface.DB.Seeding.Factory.Muscle;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Seeding.Config;
 using PRLab.Infrastructure.DB.Seeding.Development.Factory;

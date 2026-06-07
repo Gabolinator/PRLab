@@ -41,9 +41,9 @@ public sealed record Movement : IAudited, IDescribed
 
     public IReadOnlyCollection<MovementMuscle> Muscles => muscles;
 
-    private readonly List<MovementEquipment> equipments = [];
+    private readonly List<MovementEquipmentRequirement> equipmentRequirements = [];
     
-    public IReadOnlyCollection<MovementEquipment> Equipments => equipments;
+    public IReadOnlyCollection<MovementEquipmentRequirement> EquipmentRequirements => equipmentRequirements;
 
     public Description Description { get; private set; } = null!;
 
@@ -67,7 +67,7 @@ public sealed record Movement : IAudited, IDescribed
         .Select(movementMuscle => movementMuscle.MuscleId)
         .ToHashSet();
 
-    private HashSet<EquipmentId> EquipmentIDs => Equipments
+    private HashSet<EquipmentId> EquipmentIDs => EquipmentRequirements
         .Select(movementEquipment => movementEquipment.EquipmentId)
         .ToHashSet();
 
@@ -294,39 +294,78 @@ public sealed record Movement : IAudited, IDescribed
         MarkUpdated(changedBy);
     }
 
-    public void AddEquipment(EquipmentId equipmentId, User? changedBy = null)
+    public void AddRequiredEquipmentOption(
+        EquipmentId equipmentId,
+        string groupKey,
+        User? changedBy = null)
     {
-        if (EquipmentIDs.Contains(equipmentId))
+        AddEquipmentRequirement(
+            equipmentId,
+            groupKey,
+            DomainEnum.EquipmentRequirementKind.RequiredGroup,
+            changedBy);
+    }
+
+    public void AddOptionalEquipment(
+        EquipmentId equipmentId,
+        string groupKey,
+        User? changedBy = null)
+    {
+        AddEquipmentRequirement(
+            equipmentId,
+            groupKey,
+            DomainEnum.EquipmentRequirementKind.Optional,
+            changedBy);
+    }
+
+    private void AddEquipmentRequirement(
+        EquipmentId equipmentId,
+        string groupKey,
+        DomainEnum.EquipmentRequirementKind kind,
+        User? changedBy = null)
+    {
+        var normalizedGroupKey = groupKey.Trim().ToLowerInvariant();
+
+        var alreadyExists = equipmentRequirements.Any(requirement =>
+            requirement.EquipmentId == equipmentId
+            && requirement.GroupKey == normalizedGroupKey
+            && requirement.Kind == kind);
+
+        if (alreadyExists)
         {
             return;
         }
 
-        equipments.Add(
-            MovementEquipment.New(
+        equipmentRequirements.Add(
+            MovementEquipmentRequirement.New(
                 Id,
-                equipmentId
-            )
-        );
+                equipmentId,
+                normalizedGroupKey,
+                kind));
 
         MarkUpdated(changedBy);
     }
 
-    public void RemoveEquipment(EquipmentId equipmentId, User? changedBy = null)
+    public void RemoveEquipmentRequirement(
+        EquipmentId equipmentId,
+        string groupKey,
+        DomainEnum.EquipmentRequirementKind kind,
+        User? changedBy = null)
     {
-        if (!EquipmentIDs.Contains(equipmentId))
+        var normalizedGroupKey = FormatingUtilities.NormalizeEquipmentGroupKey(groupKey);
+
+        var requirement = equipmentRequirements
+            .FirstOrDefault(requirement =>
+                requirement.EquipmentId == equipmentId
+                && requirement.GroupKey == normalizedGroupKey
+                && requirement.Kind == kind);
+
+        if (requirement is null)
         {
             return;
         }
 
-        var movementEquipment = equipments
-            .FirstOrDefault(movementEquipment => movementEquipment.EquipmentId == equipmentId);
-
-        if (movementEquipment is null)
-        {
-            return;
-        }
-
-        equipments.Remove(movementEquipment);
+        equipmentRequirements.Remove(requirement);
 
         MarkUpdated(changedBy);
     }
@@ -672,30 +711,50 @@ public sealed record Movement : IAudited, IDescribed
         return true;
     }
 
-    private bool ReplaceEquipments(IReadOnlyCollection<MovementEquipment> updatedEquipments)
+    private bool ReplaceEquipments(
+        IReadOnlyCollection<MovementEquipmentRequirement> updatedEquipments)
     {
-        var updatedEquipmentIDs = updatedEquipments
-            .Select(movementEquipment => movementEquipment.EquipmentId)
+        var currentEquipmentRequirements = equipmentRequirements
+            .Select(CreateEquipmentRequirementKey)
             .ToHashSet();
 
-        if (EquipmentIDs.SetEquals(updatedEquipmentIDs))
+        var updatedEquipmentRequirements = updatedEquipments
+            .Select(CreateEquipmentRequirementKey)
+            .ToHashSet();
+
+        if (currentEquipmentRequirements.SetEquals(updatedEquipmentRequirements))
         {
             return false;
         }
 
-        equipments.Clear();
+        equipmentRequirements.Clear();
 
-        foreach (var equipmentId in updatedEquipmentIDs)
+        foreach (var updatedEquipment in updatedEquipments)
         {
-            equipments.Add(
-                MovementEquipment.New(
+            equipmentRequirements.Add(
+                MovementEquipmentRequirement.New(
                     Id,
-                    equipmentId)
-            );
+                    updatedEquipment.EquipmentId,
+                    updatedEquipment.GroupKey,
+                    updatedEquipment.Kind));
         }
 
         return true;
     }
+
+    private static EquipmentRequirementKey CreateEquipmentRequirementKey(
+        MovementEquipmentRequirement requirement)
+    {
+        return new EquipmentRequirementKey(
+            requirement.EquipmentId,
+            requirement.GroupKey,
+            requirement.Kind);
+    }
+
+    private readonly record struct EquipmentRequirementKey(
+        EquipmentId EquipmentId,
+        string GroupKey,
+        DomainEnum.EquipmentRequirementKind Kind);
 
     private bool ReplaceVariants(
         IReadOnlyCollection<Movement> updatedVariants,

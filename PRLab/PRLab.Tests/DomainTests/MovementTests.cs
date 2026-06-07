@@ -29,7 +29,7 @@ public sealed class MovementTests
         movement.Audit.Should().NotBeNull();
         movement.Audit.IsDeleted.Should().BeFalse();
         movement.Muscles.Should().BeEmpty();
-        movement.Equipments.Should().BeEmpty();
+        movement.EquipmentRequirements.Should().BeEmpty();
         movement.Variants.Should().BeEmpty();
         movement.Patterns.Should().BeEmpty();
         movement.PrimaryPattern.Should().BeNull();
@@ -283,73 +283,149 @@ public sealed class MovementTests
     }
 
     [Fact]
-    public void AddEquipment_ShouldAddEquipment_WhenNotAlreadyAdded()
-    {
-        var equipmentId = EquipmentId.New();
+public void AddRequiredEquipmentOption_ShouldAddRequiredEquipmentOption_WhenNotAlreadyAdded()
+{
+    var equipmentId = EquipmentId.New();
+    var groupKey = "load";
 
-        var movement = Movement.New(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+    var movement = Movement.New(
+        "Back Squat",
+        MovementCategoryId.New(),
+        null
+    );
 
-        movement.AddEquipment(equipmentId);
+    movement.AddRequiredEquipmentOption(
+        equipmentId,
+        groupKey);
 
-        movement.Equipments.Should().ContainSingle();
-        movement.Equipments.First().MovementId.Should().Be(movement.Id);
-        movement.Equipments.First().EquipmentId.Should().Be(equipmentId);
-    }
+    movement.EquipmentRequirements.Should().ContainSingle();
+    movement.EquipmentRequirements.First().MovementId.Should().Be(movement.Id);
+    movement.EquipmentRequirements.First().EquipmentId.Should().Be(equipmentId);
+    movement.EquipmentRequirements.First().GroupKey.Should().Be(groupKey);
+    movement.EquipmentRequirements.First().Kind.Should().Be(DomainEnum.EquipmentRequirementKind.RequiredGroup);
+}
 
-    [Fact]
-    public void AddEquipment_ShouldNotAddDuplicate_WhenEquipmentAlreadyExists()
-    {
-        var equipmentId = EquipmentId.New();
+[Fact]
+public void AddRequiredEquipmentOption_ShouldNotAddDuplicate_WhenSameEquipmentRequirementAlreadyExists()
+{
+    var equipmentId = EquipmentId.New();
+    var groupKey = "load";
 
-        var movement = Movement.New(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+    var movement = Movement.New(
+        "Back Squat",
+        MovementCategoryId.New(),
+        null
+    );
 
-        movement.AddEquipment(equipmentId);
-        movement.AddEquipment(equipmentId);
+    movement.AddRequiredEquipmentOption(
+        equipmentId,
+        groupKey);
 
-        movement.Equipments.Should().ContainSingle();
-    }
+    movement.AddRequiredEquipmentOption(
+        equipmentId,
+        groupKey);
 
-    [Fact]
-    public void RemoveEquipment_ShouldRemoveEquipment_WhenEquipmentExists()
-    {
-        var equipmentId = EquipmentId.New();
+    movement.EquipmentRequirements.Should().ContainSingle();
+}
 
-        var movement = Movement.New(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+[Fact]
+public void AddRequiredEquipmentOption_ShouldAddSameEquipment_WhenGroupKeyIsDifferent()
+{
+    var equipmentId = EquipmentId.New();
+    var firstGroupKey = "load";
+    var secondGroupKey = "support";
 
-        movement.AddEquipment(equipmentId);
+    var movement = Movement.New(
+        "Back Squat",
+        MovementCategoryId.New(),
+        null
+    );
 
-        movement.RemoveEquipment(equipmentId);
+    movement.AddRequiredEquipmentOption(
+        equipmentId,
+        firstGroupKey);
 
-        movement.Equipments.Should().BeEmpty();
-    }
+    movement.AddRequiredEquipmentOption(
+        equipmentId,
+        secondGroupKey);
 
-    [Fact]
-    public void RemoveEquipment_ShouldDoNothing_WhenEquipmentDoesNotExist()
-    {
-        var equipmentId = EquipmentId.New();
+    movement.EquipmentRequirements.Should().HaveCount(2);
+    movement.EquipmentRequirements.Should().Contain(requirement =>
+        requirement.EquipmentId == equipmentId
+        && requirement.GroupKey == firstGroupKey
+        && requirement.Kind == DomainEnum.EquipmentRequirementKind.RequiredGroup);
+    movement.EquipmentRequirements.Should().Contain(requirement =>
+        requirement.EquipmentId == equipmentId
+        && requirement.GroupKey == secondGroupKey
+        && requirement.Kind == DomainEnum.EquipmentRequirementKind.RequiredGroup);
+}
 
-        var movement = Movement.New(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+[Fact]
+public void AddOptionalEquipment_ShouldAddOptionalEquipment_WhenNotAlreadyAdded()
+{
+    var equipmentId = EquipmentId.New();
+    var groupKey = "assistance";
 
-        movement.RemoveEquipment(equipmentId);
+    var movement = Movement.New(
+        "Pull Up",
+        MovementCategoryId.New(),
+        null
+    );
 
-        movement.Equipments.Should().BeEmpty();
-    }
+    movement.AddOptionalEquipment(
+        equipmentId,
+        groupKey);
+
+    movement.EquipmentRequirements.Should().ContainSingle();
+    movement.EquipmentRequirements.First().MovementId.Should().Be(movement.Id);
+    movement.EquipmentRequirements.First().EquipmentId.Should().Be(equipmentId);
+    movement.EquipmentRequirements.First().GroupKey.Should().Be(groupKey);
+    movement.EquipmentRequirements.First().Kind.Should().Be(DomainEnum.EquipmentRequirementKind.Optional);
+}
+
+[Fact]
+public void RemoveEquipmentRequirement_ShouldRemoveEquipmentRequirement_WhenRequirementExists()
+{
+    var equipmentId = EquipmentId.New();
+    var groupKey = "load";
+
+    var movement = Movement.New(
+        "Back Squat",
+        MovementCategoryId.New(),
+        null
+    );
+
+    movement.AddRequiredEquipmentOption(
+        equipmentId,
+        groupKey);
+
+    movement.RemoveEquipmentRequirement(
+        equipmentId,
+        groupKey,
+        DomainEnum.EquipmentRequirementKind.RequiredGroup);
+
+    movement.EquipmentRequirements.Should().BeEmpty();
+}
+
+[Fact]
+public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExist()
+{
+    var equipmentId = EquipmentId.New();
+    var groupKey = "load";
+
+    var movement = Movement.New(
+        "Back Squat",
+        MovementCategoryId.New(),
+        null
+    );
+
+    movement.RemoveEquipmentRequirement(
+        equipmentId,
+        groupKey,
+        DomainEnum.EquipmentRequirementKind.RequiredGroup);
+
+    movement.EquipmentRequirements.Should().BeEmpty();
+}
 
     [Fact]
     public void MakeVariantOf_ShouldSetVariantParent()

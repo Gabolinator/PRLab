@@ -15,7 +15,7 @@ public sealed record MovementSeedJsonDto
 
     public DescriptionSeedJsonDto? Description { get; init; }
 
-    public IReadOnlyList<SeedEntityReferenceJsonDto> Equipment { get; init; } = [];
+    public IReadOnlyList<MovementEquipmentRequirementSeedJsonDto> EquipmentRequirements { get; init; } = [];
 
     public IReadOnlyList<MovementMuscleSeedJsonDto> Muscles { get; init; } = [];
 
@@ -40,9 +40,24 @@ public sealed record MovementSeedJsonDto
             Description = movement.Description is null
                 ? null
                 : DescriptionSeedJsonDto.FromDescription(movement.Description),
-            Equipment = movement.Equipments
-                .Select(SeedEntityReferenceJsonDto.FromMovementEquipment)
-                .OrderBy(equipment => equipment.NameKey)
+            EquipmentRequirements = movement.EquipmentRequirements
+                .GroupBy(equipmentRequirement => new
+                {
+                    equipmentRequirement.GroupKey,
+                    equipmentRequirement.Kind
+                })
+                .OrderBy(group => group.Key.Kind)
+                .ThenBy(group => group.Key.GroupKey)
+                .Select(group => new MovementEquipmentRequirementSeedJsonDto
+                {
+                    GroupKey = group.Key.GroupKey,
+                    Kind = group.Key.Kind,
+                    Options = group
+                        .Select(equipmentRequirement =>
+                            SeedEntityReferenceJsonDto.FromEquipment(equipmentRequirement.Equipment))
+                        .OrderBy(equipment => equipment.NameKey)
+                        .ToList()
+                })
                 .ToList(),
             Muscles = movement.Muscles
                 .Select(MovementMuscleSeedJsonDto.FromMovementMuscle)

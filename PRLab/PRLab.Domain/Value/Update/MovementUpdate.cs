@@ -18,7 +18,7 @@ public class MovementUpdate
     public Movement? VariantOf { get; private set; }
     
     public IReadOnlyCollection<Movement>? Variants  { get; private set; }
-    public IReadOnlyCollection<MovementEquipment>? Equipments { get; private set; }
+    public IReadOnlyCollection<MovementEquipmentRequirement>? Equipments { get; private set; }
     public bool WasVariantOfProvided { get; private set; }
     
     public static MovementUpdate FromMovement(
@@ -36,7 +36,7 @@ public class MovementUpdate
             PrimaryPattern = movement.PrimaryPattern,
             Patterns = movement.Patterns,
             Muscles = movement.Muscles,
-            Equipments = movement.Equipments,
+            Equipments = movement.EquipmentRequirements,
             MovementCategory = movement.MovementCategory,
             Variants = movement.Variants,
             VariantOf = movement.VariantOf,

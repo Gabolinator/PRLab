@@ -22,7 +22,7 @@ public class MovementJsonDataExporter(
             .Include(movement => movement.MovementCategory)
             .Include(movement => movement.Description)
                 .ThenInclude(description => description.Translations)
-            .Include(movement => movement.Equipments)
+            .Include(movement => movement.EquipmentRequirements)
                 .ThenInclude(movementEquipment => movementEquipment.Equipment)
             .Include(movement => movement.Muscles)
                 .ThenInclude(movementMuscle => movementMuscle.Muscle)

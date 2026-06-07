@@ -1,6 +1,6 @@
 [
   {
-    "Id": "5409b6e5-9090-4de7-be5f-db188278d4a5",
+    "Id": "51385348-fa0b-4e89-80ba-b9af982ca12b",
     "Name": "Bodyweight Squat",
     "NameKey": "bodyweightsquat",
     "Category": {
@@ -11,7 +11,7 @@
     "Description": {
       "Content": "Basic lower-body squat movement performed without external load."
     },
-    "Equipment": [],
+    "EquipmentRequirements": [],
     "Muscles": [
       {
         "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
@@ -40,7 +40,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "e49f8f44-57e6-498f-b5ed-113654d3fafb",
+    "Id": "181345ef-4a29-4ed6-aff4-d1298ed7220a",
     "Name": "Burpee",
     "NameKey": "burpee",
     "Category": {
@@ -51,7 +51,7 @@
     "Description": {
       "Content": "Full-body bodyweight conditioning movement combining a squat, plank or push-up position, and jump."
     },
-    "Equipment": [],
+    "EquipmentRequirements": [],
     "Muscles": [
       {
         "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
@@ -100,7 +100,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "be316a0a-fcd2-4283-90fe-7061f764fc0d",
+    "Id": "ae12cb4c-cf1a-449d-bade-f4aa98365593",
     "Name": "Double Under",
     "NameKey": "doubleunder",
     "Category": {
@@ -111,11 +111,17 @@
     "Description": {
       "Content": "Jump rope movement where the rope passes under the feet twice per jump."
     },
-    "Equipment": [
+    "EquipmentRequirements": [
       {
-        "Id": "ffe3052c-8a09-49d7-a42c-0c6f17d956a8",
-        "Name": "Jump Rope",
-        "NameKey": "jumprope"
+        "GroupKey": "rope",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "ffe3052c-8a09-49d7-a42c-0c6f17d956a8",
+            "Name": "Jump Rope",
+            "NameKey": "jumprope"
+          }
+        ]
       }
     ],
     "Muscles": [
@@ -146,7 +152,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "a0e83e09-f392-494f-92dc-d2f7611a0773",
+    "Id": "489ff266-ebc8-4270-89e0-3b514e7af83d",
     "Name": "Goblet Squat",
     "NameKey": "gobletsquat",
     "Category": {
@@ -157,16 +163,22 @@
     "Description": {
       "Content": "Squat variation performed while holding a kettlebell or dumbbell in front of the chest."
     },
-    "Equipment": [
+    "EquipmentRequirements": [
       {
-        "Id": "a7c9fcad-ae65-4c77-bed6-86645a689a85",
-        "Name": "Dumbbell",
-        "NameKey": "dumbbell"
-      },
-      {
-        "Id": "cb6cef99-d25b-40f2-be85-0c80c70308c6",
-        "Name": "Kettlebell",
-        "NameKey": "kettlebell"
+        "GroupKey": "load",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "a7c9fcad-ae65-4c77-bed6-86645a689a85",
+            "Name": "Dumbbell",
+            "NameKey": "dumbbell"
+          },
+          {
+            "Id": "cb6cef99-d25b-40f2-be85-0c80c70308c6",
+            "Name": "Kettlebell",
+            "NameKey": "kettlebell"
+          }
+        ]
       }
     ],
     "Muscles": [
@@ -200,14 +212,14 @@
       "Squat"
     ],
     "VariantOf": {
-      "Id": "5409b6e5-9090-4de7-be5f-db188278d4a5",
+      "Id": "51385348-fa0b-4e89-80ba-b9af982ca12b",
       "Name": "Bodyweight Squat",
       "NameKey": "bodyweightsquat"
     },
     "Action": "Ignore"
   },
   {
-    "Id": "acf631a0-9706-478c-907c-283a188b7b7e",
+    "Id": "be5ce8f1-76cd-45a6-9043-63919057060a",
     "Name": "Pull Up",
     "NameKey": "pullup",
     "Category": {
@@ -218,11 +230,17 @@
     "Description": {
       "Content": "Bodyweight upper-body pulling movement performed from a bar."
     },
-    "Equipment": [
+    "EquipmentRequirements": [
       {
-        "Id": "b6fab579-8d60-4664-a4bf-f36dc44605ef",
-        "Name": "Pull-up Bar",
-        "NameKey": "pullupbar"
+        "GroupKey": "bar",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "b6fab579-8d60-4664-a4bf-f36dc44605ef",
+            "Name": "Pull-up Bar",
+            "NameKey": "pullupbar"
+          }
+        ]
       }
     ],
     "Muscles": [
@@ -253,7 +271,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "198eb827-7adb-4cab-b452-7ed25da11f23",
+    "Id": "9705ffd5-6432-4f32-b127-d124082861a4",
     "Name": "Push Up",
     "NameKey": "pushup",
     "Category": {
@@ -264,7 +282,7 @@
     "Description": {
       "Content": "Bodyweight upper-body pushing movement performed from the floor."
     },
-    "Equipment": [],
+    "EquipmentRequirements": [],
     "Muscles": [
       {
         "Id": "774d5928-1d6f-46c1-b6c6-16a1e332de21",

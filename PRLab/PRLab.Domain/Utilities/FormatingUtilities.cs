@@ -84,4 +84,19 @@ public static class FormatingUtilities
         
         return content.Trim();
     }
+
+    public static string NormalizeEquipmentGroupKey(string groupKey)
+    {
+        if (string.IsNullOrWhiteSpace(groupKey))
+        {
+            throw new ArgumentException("Group Key is required.", nameof(groupKey));
+        }
+
+        var normalizedName = NormalizeNonNullString(groupKey);
+
+        return Regex.Replace(
+            normalizedName,
+            @"[\s\-_]+",
+            string.Empty);
+    }
 }

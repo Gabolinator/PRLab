@@ -2,6 +2,7 @@
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
+using PRLab.Application.Interface.DB.Seeding.Factory.Movement;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
@@ -66,7 +67,7 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
         pullUp.AddPrimaryMuscle(lats.Id, SeedUser);
         pullUp.AddSecondaryMuscle(biceps.Id, SeedUser);
         pullUp.AddSecondaryMuscle(abs.Id, SeedUser);
-        pullUp.AddEquipment(pullUpBar.Id, SeedUser);
+        pullUp.AddRequiredEquipmentOption(pullUpBar.Id, "bar" ,SeedUser);
         pullUp.AddPattern(DomainEnum.MovementPattern.Pull);
         
         var doubleUnder = CreateMovement(
@@ -77,7 +78,7 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
         doubleUnder.AddPrimaryMuscle(calves.Id, SeedUser);
         doubleUnder.AddSecondaryMuscle(quads.Id, SeedUser);
         doubleUnder.AddSecondaryMuscle(abs.Id, SeedUser);
-        doubleUnder.AddEquipment(jumpRope.Id, SeedUser);
+        doubleUnder.AddRequiredEquipmentOption(jumpRope.Id, "rope" ,SeedUser);
         doubleUnder.AddPattern(DomainEnum.MovementPattern.Jump);
         
        

@@ -97,7 +97,7 @@ public static class MovementModelBuilder
             movement.Navigation(movement => movement.Muscles)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            movement.Navigation(movement => movement.Equipments)
+            movement.Navigation(movement => movement.EquipmentRequirements)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             movement.Navigation(movement => movement.Variants)
@@ -176,38 +176,49 @@ public static class MovementModelBuilder
         });
     }
 
-    public static void CreateMovementEquipmentTableModel(this ModelBuilder modelBuilder)
+    public static void CreateMovementEquipmentRequirementTableModel(this ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<MovementEquipment>(movementEquipment =>
+        modelBuilder.Entity<MovementEquipmentRequirement>(requirement =>
         {
-            movementEquipment.ToTable("MovementEquipment");
+            requirement.ToTable("MovementEquipmentRequirement");
 
-            movementEquipment.HasKey(movementEquipment => new
+            requirement.HasKey(requirement => new
             {
-                movementEquipment.MovementId,
-                movementEquipment.EquipmentId
+                requirement.MovementId,
+                requirement.EquipmentId,
+                requirement.GroupKey,
+                requirement.Kind
             });
 
-            movementEquipment.Property(movementEquipment => movementEquipment.MovementId)
+            requirement.Property(requirement => requirement.MovementId)
                 .HasConversion(
                     movementId => movementId.Value,
                     value => MovementId.FromGuid(value))
                 .IsRequired();
 
-            movementEquipment.Property(movementEquipment => movementEquipment.EquipmentId)
+            requirement.Property(requirement => requirement.EquipmentId)
                 .HasConversion(
                     equipmentId => equipmentId.Value,
                     value => EquipmentId.FromGuid(value))
                 .IsRequired();
 
-            movementEquipment.HasOne(movementEquipment => movementEquipment.Movement)
-                .WithMany(movement => movement.Equipments)
-                .HasForeignKey(movementEquipment => movementEquipment.MovementId)
+            requirement.Property(requirement => requirement.GroupKey)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            requirement.Property(requirement => requirement.Kind)
+                .HasConversion<string>()
+                .HasMaxLength(80)
+                .IsRequired();
+
+            requirement.HasOne<Movement>()
+                .WithMany(movement => movement.EquipmentRequirements)
+                .HasForeignKey(requirement => requirement.MovementId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            movementEquipment.HasOne(movementEquipment => movementEquipment.Equipment)
+            requirement.HasOne(requirement => requirement.Equipment)
                 .WithMany()
-                .HasForeignKey(movementEquipment => movementEquipment.EquipmentId)
+                .HasForeignKey(requirement => requirement.EquipmentId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }
@@ -244,7 +255,7 @@ public static class MovementModelBuilder
             movementMuscle.HasIndex(movementMuscle => movementMuscle.Role);
         });
 
-        modelBuilder.Entity<MovementEquipment>(movementEquipment =>
+        modelBuilder.Entity<MovementEquipmentRequirement>(movementEquipment =>
         {
             movementEquipment.HasIndex(movementEquipment => movementEquipment.EquipmentId);
         });

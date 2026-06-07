@@ -1,6 +1,7 @@
 ﻿using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
+using PRLab.Application.Interface.DB.Seeding.Factory.Movement;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
@@ -18,7 +19,7 @@ public sealed class JsonMovementSeedFactory(
     ISeedingConfig config,
     IMovementSeedRelationResolver relationResolver)
     : BaseJsonSeedFactory<Movement, MovementSeedJsonDto>(userService, config),
-        IMovementSeedFactory
+        IMovementSeedFactory, IMovementVariantSeedFactory
 {
     protected override DomainEnum.EntityType Entity => DomainEnum.EntityType.Movement;
 
@@ -80,14 +81,15 @@ public sealed class JsonMovementSeedFactory(
             movement,
             seedDto,
             catalogs,
-            SeedUser);
+            SeedUser,
+            includeVariant: false);
 
         return new SeedItem<Movement>(
             SeedKeyGenerator.GenerateMovementKey(movement),
             movement,
             seedDto.Action);
     }
-
+    
     private static MovementCategory ResolveMovementCategory(
         SeedEntityReferenceJsonDto reference,
         MovementCategorySeedCatalog movementCategoryCatalog,
@@ -111,5 +113,79 @@ public sealed class JsonMovementSeedFactory(
 
         throw new InvalidOperationException(
             $"Movement seed '{movementName}' must provide a category Id, NameKey, or Name.");
+    }
+
+    public IReadOnlyList<SeedRelationItem<MovementId>> CreateVariantInitialData(
+        MovementSeedCatalog movementCatalog)
+    {
+        var seedDtos = LoadSeedDtos();
+
+        var relations = new List<SeedRelationItem<MovementId>>();
+
+        foreach (var seedDto in seedDtos)
+        {
+            if (seedDto.VariantOf is null)
+            {
+                continue;
+            }
+
+            var sourceMovement = ResolveMovementFromSeedDto(
+                seedDto,
+                movementCatalog);
+
+            var parentMovement = ResolveMovementReference(
+                seedDto.VariantOf,
+                movementCatalog);
+
+            relations.Add(
+                new SeedRelationItem<MovementId>(
+                    sourceMovement.Id,
+                    parentMovement.Id,
+                    SeedAction.CreateIfMissing));
+        }
+
+        return relations;
+    }
+
+    private static Movement ResolveMovementFromSeedDto(
+        MovementSeedJsonDto seedDto,
+        MovementSeedCatalog movementCatalog)
+    {
+        if (seedDto.Id.HasValue)
+        {
+            return movementCatalog.GetRequiredById(
+                MovementId.FromGuid(seedDto.Id.Value));
+        }
+
+        if (!string.IsNullOrWhiteSpace(seedDto.NameKey))
+        {
+            return movementCatalog.GetRequiredByNameKey(seedDto.NameKey);
+        }
+
+        return movementCatalog.GetRequiredByName(seedDto.Name);
+    }
+
+    private static Movement ResolveMovementReference(
+        SeedEntityReferenceJsonDto reference,
+        MovementSeedCatalog movementCatalog)
+    {
+        if (reference.Id.HasValue)
+        {
+            return movementCatalog.GetRequiredById(
+                MovementId.FromGuid(reference.Id.Value));
+        }
+
+        if (!string.IsNullOrWhiteSpace(reference.NameKey))
+        {
+            return movementCatalog.GetRequiredByNameKey(reference.NameKey);
+        }
+
+        if (!string.IsNullOrWhiteSpace(reference.Name))
+        {
+            return movementCatalog.GetRequiredByName(reference.Name);
+        }
+
+        throw new InvalidOperationException(
+            "Movement variant reference must provide Id, NameKey, or Name.");
     }
 }

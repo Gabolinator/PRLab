@@ -69,7 +69,7 @@ public class PRLabPgDBContext(DbContextOptions< PRLabPgDBContext> options) : DbC
         modelBuilder.CreateMovementTableModel();
         modelBuilder.CreateMovementPatternTagTableModel();
         modelBuilder.CreateMovementMuscleTableModel();
-        modelBuilder.CreateMovementEquipmentTableModel();
+        modelBuilder.CreateMovementEquipmentRequirementTableModel();
         
         AddIndexes(modelBuilder);
     }
