@@ -2,11 +2,13 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.Modularity;
 using PRLab.Infrastructure.Utilities;
 using PRLab.Tools;
+using PRLab.Tools.Config;
 using PRLab.Tools.Model;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -20,6 +22,9 @@ builder.Configuration
         optional: false)
     .AddEnvironmentVariables()
     .AddCommandLine(args);
+
+builder.Services.Configure<PRToolOptions>(
+    builder.Configuration.GetSection("PRTool"));
 
 builder.Services.AddUtilities(clock, logger);
 
@@ -35,7 +40,12 @@ using var host = builder.Build();
 using var scope = host.Services.CreateScope();
 
 var commandHandler = scope.ServiceProvider.GetRequiredService<ToolCommandHandler>();
-var config = PRToolConfig.Default();
+var toolOptions = scope.ServiceProvider
+    .GetRequiredService<IOptions<PRToolOptions>>()
+    .Value;
+
+var config = PRToolConfig.FromOptions(toolOptions);
+
 var inputData = PRToolCommandInputData.FromInput(args, config);
 
 await commandHandler.HandleAsync(inputData, config);

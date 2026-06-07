@@ -8,14 +8,20 @@ public abstract class BaseSeedCatalog<TId, TEntity>(EntityCatalog<TId, TEntity> 
 {
     protected EntityCatalog<TId, TEntity> Catalog { get; } = catalog;
     
-    public virtual TEntity GetRequiredByName(string name, ILogger logger)
+    public virtual TEntity GetRequiredByName(string name, ILogger? logger = null)
     {
         var namekey = FormatingUtilities.NormalizeNameKey(name);
-        logger.LogInformation($"Getting entity {name}- with name key {namekey}");
+        logger?.LogInformation($"Getting entity {name}- with name key {namekey}");
         
         return Catalog.GetRequiredByNameKey(namekey);
     }
 
+    public virtual TEntity GetRequiredByNameKey(string namekey, ILogger? logger = null)
+    {
+        logger?.LogInformation($"Getting entity name key {namekey}");
+        return Catalog.GetRequiredByNameKey(namekey);
+    }
+    
     public virtual bool TryGetByName(string name, out TEntity? entity)
     {
         return Catalog.TryGetByNameKey(

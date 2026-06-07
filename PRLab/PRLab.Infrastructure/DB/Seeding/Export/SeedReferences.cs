@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain;
+using PRLab.Domain.Utilities.Interface;
 
 namespace PRLab.Infrastructure.DB.Seeding.Export;
 
@@ -42,5 +43,25 @@ public static class SeedReferences
         }
 
         return aliases;
+    }
+
+    public static IReadOnlyList<DomainEnum.EntityType> ExpandSeedDependencies(
+        IReadOnlyCollection<DomainEnum.EntityType> entities, IAppLogger? logger)
+    {
+        var expanded = entities.ToHashSet();
+
+        if (expanded.Contains(DomainEnum.EntityType.Muscle))
+        {
+            expanded.Add(DomainEnum.EntityType.MuscleAntagonist);
+        }
+        
+        if (expanded.Contains(DomainEnum.EntityType.Movement))
+        {
+            logger?.LogWarning("No dependencies yet for Movement");
+        }
+
+        //todo add other dependencies
+        
+        return expanded.ToList();
     }
 }

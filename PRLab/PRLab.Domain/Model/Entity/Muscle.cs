@@ -88,6 +88,31 @@ public sealed record Muscle : IAudited, IDescribed
         );
     }
 
+    public static Muscle NewWithId(
+        MuscleId id,
+        string name,
+        string? latinName,
+        DomainEnum.BodySection bodySection,
+        Description description,
+        User? createdBy = null)
+    {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Muscle id cannot be empty.", nameof(id));
+        }
+
+        ArgumentNullException.ThrowIfNull(description);
+
+        return new Muscle(
+            id,
+            name,
+            latinName,
+            bodySection,
+            description,
+            AuditInfo.New(createdBy)
+        );
+    }
+    
     public bool Update(MuscleUpdate update)
     {
         ArgumentNullException.ThrowIfNull(update);

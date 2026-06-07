@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain.Utilities.Interface;
+using PRLab.Tools.Config;
 using PRLab.Tools.Model;
 
 namespace PRLab.Tools;

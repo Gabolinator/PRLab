@@ -18,7 +18,7 @@ public sealed class MuscleSeeder(
 {
     public override string Name => "DevelopmentMuscleSeed";
 
-    public override string Version => "1.0.0";
+    public override string Version => "1.0.2";
 
     public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.Muscle;
 

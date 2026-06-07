@@ -4,6 +4,7 @@ using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Seeding.Export;
+using PRLab.Tools.Config;
 using PRLab.Tools.Model;
 
 namespace PRLab.Tools;
@@ -19,7 +20,7 @@ public sealed class SeedToolCommandHandler(
         PRToolConfig config)
     {
         var dataSeeder = services.GetRequiredService<IDataSeeder>();
-        var supportedTargets = dataSeeder.EntitySeederTypes;
+        var supportedTargets = dataSeeder.BaseEntitySeederTypes;
 
         if (!data.IsValidForSeed())
         {
@@ -49,9 +50,11 @@ public sealed class SeedToolCommandHandler(
         }
         else
         {
+            
             seedEntities = [entity];
         }
-
+        
+        seedEntities = SeedReferences.ExpandSeedDependencies(seedEntities, logger).ToList();
         var seedEntityNames = string.Join(", ", seedEntities);
 
         logger.Log(

@@ -19,7 +19,7 @@ public sealed class MuscleAntagonistSeeder(
 {
     public override string Name => "DevelopmentMuscleAntagonistSeed";
 
-    public override string Version => "1.0.0";
+    public override string Version => "1.0.2";
 
     public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.MuscleAntagonist;
 

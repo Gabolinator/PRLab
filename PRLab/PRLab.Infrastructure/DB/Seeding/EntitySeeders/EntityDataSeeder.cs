@@ -16,6 +16,11 @@ public sealed class EntityDataSeeder(
             .Select(seeder => seeder.EntityType)
             .ToHashSet();
     
+    public IReadOnlySet<DomainEnum.EntityType> BaseEntitySeederTypes =>
+        entitySeeders
+            .Select(seeder => seeder.EntityType)
+            .Where(type => type.IsBaseType())
+            .ToHashSet();
 
     public async Task<IReadOnlyList<SeedResult>> SeedAsync(
         IReadOnlyCollection<DomainEnum.EntityType>? entities = null,

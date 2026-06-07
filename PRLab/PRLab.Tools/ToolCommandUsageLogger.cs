@@ -25,7 +25,7 @@ public sealed class ToolCommandUsageLogger(
 
         if (dataSeeder is not null)
         {
-            PrintSeedUsage(dataSeeder.EntitySeederTypes.Select(SeedReferences.GetEntityAlias).ToList());
+            PrintSeedUsage(dataSeeder.BaseEntitySeederTypes.Select(SeedReferences.GetEntityAlias).ToList());
         }
     }
 

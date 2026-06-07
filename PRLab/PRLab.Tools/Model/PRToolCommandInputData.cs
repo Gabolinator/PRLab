@@ -1,4 +1,6 @@
-﻿namespace PRLab.Tools.Model;
+﻿using PRLab.Tools.Config;
+
+namespace PRLab.Tools.Model;
 
 public sealed class PRToolCommandInputData
 {

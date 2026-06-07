@@ -4,6 +4,7 @@ using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Export;
 using PRLab.Domain;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Tools.Config;
 using PRLab.Tools.Model;
 
 namespace PRLab.Tools;
@@ -84,15 +85,30 @@ public sealed class ExportSeedToolCommandHandler(
 
         foreach (var result in changedResults)
         {
+            if(!result.EntityType.IsBaseType())
+            {
+                logger.Log($"Dependant entity: {result.EntityType} wont be exported");
+                return;
+            }
+
+            
             if (!SeedTargets.TryGetTargetAlias(
                     result.EntityType,
                     config,
                     out var exportTarget)
                 || !supportedExportTargets.Contains(exportTarget))
             {
-                logger.LogWarning(
-                    $"No seed export target is available for changed entity: {result.EntityType}");
-
+                if (result.EntityType.IsBaseType())
+                {
+                    logger.LogWarning(
+                        $"No seed export target is available for changed entity: {result.EntityType}");
+                }
+                
+                else
+                {
+                    logger.Log($"Dependant entity: {result.EntityType} wont be exported");
+                }
+                
                 continue;
             }
 

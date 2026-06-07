@@ -41,7 +41,9 @@ public static class SeedingModularityExtensions
         {
             logger.Log("Seeding From Json files");
             return services.AddScoped<IEquipmentSeedFactory, JsonEquipmentSeedFactory>()
-                .AddScoped<IMovementCategorySeedFactory, JsonMovementCategorySeedFactory>();
+                .AddScoped<IMovementCategorySeedFactory, JsonMovementCategorySeedFactory>()
+                .AddScoped<IMuscleSeedFactory, JsonMuscleSeedFactory>()
+                .AddScoped<IMuscleAntagonistSeedFactory, JsonMuscleSeedFactory>();
         }
 
         
@@ -61,7 +63,7 @@ public static class SeedingModularityExtensions
         services.AddSeederIfFactoryExists<IMuscleAntagonistSeedFactory, MuscleAntagonistSeeder>();
         services.AddSeederIfFactoryExists<IMovementCategorySeedFactory, MovementCategorySeeder>();
         services.AddSeederIfFactoryExists<IMovementSeedFactory, MovementSeeder>();
-
+        
         services.AddScoped<IDataSeeder, EntityDataSeeder>();
 
         return services;
@@ -101,7 +103,9 @@ public static class SeedingModularityExtensions
     {
         services.AddScoped<ISeedDataExporter, EquipmentJsonDataExporter>();
         services.AddScoped<ISeedDataExporter, MovementCategoryJsonDataExporter>();
+        services.AddScoped<ISeedDataExporter, MuscleJsonDataExporter>();
         services.AddScoped<ISeedDataExportOrchestrator, SeedDataExportOrchestrator>();
+       
 
         return services;
     }

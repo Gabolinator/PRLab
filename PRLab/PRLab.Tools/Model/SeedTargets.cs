@@ -1,5 +1,6 @@
 ﻿using PRLab.Domain;
 
+
 namespace PRLab.Tools.Model;
 
 public static class SeedTargets

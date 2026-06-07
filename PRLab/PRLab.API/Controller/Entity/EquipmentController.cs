@@ -8,8 +8,7 @@ using PRLab.Application.Interface.DB.Repositories;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Domain.Value.Identifier;
 
-
-namespace PRLab.API.Controller;
+namespace PRLab.API.Controller.Entity;
 
 [ApiController]
 [Route("equipments")]
