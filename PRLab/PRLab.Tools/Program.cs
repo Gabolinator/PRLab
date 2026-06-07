@@ -1,10 +1,8 @@
 ﻿using System.Drawing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using PRLab.Domain.Utilities;
-using PRLab.Infrastructure.Modularity;
 using PRLab.Infrastructure.Utilities;
 using PRLab.Tools;
 using PRLab.Tools.Config;
@@ -16,19 +14,9 @@ var builder = Host.CreateApplicationBuilder(args);
 var logger = new PRLabLogger("PRTools", Color.Cyan);
 var clock = new Clock();
 
-builder.Configuration
-    .AddJsonFile(
-        Path.Combine(AppContext.BaseDirectory, "appsettings.Development.json"),
-        optional: false)
-    .AddEnvironmentVariables()
-    .AddCommandLine(args);
+builder.PRLabToolConfiguration(args);
 
-builder.Services.Configure<PRToolOptions>(
-    builder.Configuration.GetSection("PRTool"));
-
-builder.Services.AddUtilities(clock, logger)
-    .AddInfrastructure(builder.Configuration, logger, addSeeding: true)
-    .AddPRToolHandlers();;
+builder.Services.AddPRLabToolServices(builder.Configuration, clock, logger);
 
 using var host = builder.Build();
 
