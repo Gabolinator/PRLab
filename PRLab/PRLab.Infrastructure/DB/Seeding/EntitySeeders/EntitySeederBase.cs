@@ -20,11 +20,7 @@ public abstract class EntitySeederBase(PRLabPgDBContext db, IAppLogger logger) :
     {
         logger.Log(nameof(EntitySeederBase), $"Trying to Seed {EntityType} - {Name} {Version}");
 
-        var alreadySeeded = await db.SeedHistory
-            .AnyAsync(
-                seedHistory => seedHistory.Name == Name
-                               && seedHistory.Version == Version,
-                ct);
+       var alreadySeeded =  await AlreadySeededAsync(ct);
 
         if (alreadySeeded)
         {
@@ -52,6 +48,15 @@ public abstract class EntitySeederBase(PRLabPgDBContext db, IAppLogger logger) :
             logger.LogError(nameof(EntitySeederBase), $"Seeding {Name} {Version} failed : {e.GetBaseException().Message}");
             throw;
         }
+    }
+
+    public async Task<bool> AlreadySeededAsync(CancellationToken ct = default)
+    {
+        return await db.SeedHistory
+            .AnyAsync(
+                seedHistory => seedHistory.Name == Name
+                               && seedHistory.Version == Version,
+                ct);
     }
 
     protected abstract Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct);

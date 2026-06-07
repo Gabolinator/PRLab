@@ -1,6 +1,6 @@
 ﻿using PRLab.Domain.Model.Entity;
 
-namespace PRLab.Infrastructure.DB.Seeding.FromJson.JsonDtos;
+namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 
 public sealed record DescriptionSeedJsonDto
 {

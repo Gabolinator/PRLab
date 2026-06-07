@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
+using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Models.DB.Seeding;
+using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities.Interface;
@@ -19,7 +21,7 @@ public class MovementSeeder(
 {
     public override string Name => "DevelopmentMovementSeed";
 
-    public override string Version => "1.0.1";
+    public override string Version => "1.0.2";
 
     public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.Movement;
 
@@ -30,11 +32,14 @@ public class MovementSeeder(
         var equipmentCatalog = await SeedCatalogBuilder.CreateEquipmentCatalog(db, ct);
         var muscleCatalog = await SeedCatalogBuilder.CreateMuscleCatalog(db, ct);
         var movementCategoryCatalog = await SeedCatalogBuilder.CreateMovementCategoryCatalog(db, ct);
-
+        var movementCatalog = await SeedCatalogBuilder.CreateMovementCatalog(db, ct);
+        
         var movementSeedItems = seedFactory.CreateInitialData(
-            equipmentCatalog,
-            muscleCatalog,
-            movementCategoryCatalog);
+           new MovementSeedCatalogs(
+               equipmentCatalog,
+               muscleCatalog,
+               movementCategoryCatalog,
+               movementCatalog));
 
         var changes = new List<SeedChange>();
 

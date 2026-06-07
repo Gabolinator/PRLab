@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
+using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
+using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 
@@ -13,10 +15,12 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
     private User SeedUser => userService.GetAdminUser("Seed");
 
     public IReadOnlyList<SeedItem<Domain.Model.Entity.Movement>> CreateInitialData(
-        EquipmentSeedCatalog equipmentCatalog,
-        MuscleSeedCatalog muscleCatalog,
-        MovementCategorySeedCatalog movementCategoryCatalog)
+        MovementSeedCatalogs catalogs)
     {
+        var movementCategoryCatalog = catalogs.MovementCategory;
+        var equipmentCatalog = catalogs.Equipment;
+        var muscleCatalog = catalogs.Muscle;
+        
         var bodyweightCategory = movementCategoryCatalog.GetRequiredByName("Bodyweight", logger);
         
         var pullUpBar = equipmentCatalog.GetRequiredByName("Pull-up Bar", logger);

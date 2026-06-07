@@ -1,5 +1,6 @@
 ﻿using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
+using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Domain;
@@ -19,7 +20,7 @@ public sealed class MuscleAntagonistSeeder(
 {
     public override string Name => "DevelopmentMuscleAntagonistSeed";
 
-    public override string Version => "1.0.2";
+    public override string Version => "1.0.3";
 
     public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.MuscleAntagonist;
 

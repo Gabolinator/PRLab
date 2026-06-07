@@ -135,6 +135,30 @@ public sealed record Movement : IAudited, IDescribed
         );
     }
     
+    public static Movement NewWithId(
+        MovementId id,
+        string name,
+        MovementCategory movementCategory,
+        Description description,
+        User? createdBy = null)
+    {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Movement id cannot be empty.", nameof(id));
+        }
+
+        ArgumentNullException.ThrowIfNull(movementCategory);
+        ArgumentNullException.ThrowIfNull(description);
+
+        return new Movement(
+            id,
+            name,
+            movementCategory,
+            description,
+            AuditInfo.New(createdBy)
+        );
+    }
+    
     private void SetName(string name)
     {
         Name = FormatingUtilities.NormalizeName(name);
@@ -392,6 +416,8 @@ public sealed record Movement : IAudited, IDescribed
             MovementPatternTag.New(Id, pattern)
         );
 
+        AutoResolvePrimaryPatternWithoutAudit();
+
         MarkUpdated(changedBy);
     }
 
@@ -414,10 +440,7 @@ public sealed record Movement : IAudited, IDescribed
 
         patterns.Remove(patternTag);
 
-        if (PrimaryPattern == pattern)
-        {
-            PrimaryPattern = ResolvePrimaryPatternOrNull();
-        }
+        AutoResolvePrimaryPatternWithoutAudit();
 
         MarkUpdated(changedBy);
     }
@@ -451,7 +474,14 @@ public sealed record Movement : IAudited, IDescribed
 
     public void AutoResolvePrimaryPattern(User? changedBy = null)
     {
-        PrimaryPattern = ResolvePrimaryPatternOrNull();
+        var resolvedPrimaryPattern = ResolvePrimaryPatternOrNull();
+
+        if (PrimaryPattern == resolvedPrimaryPattern)
+        {
+            return;
+        }
+
+        PrimaryPattern = resolvedPrimaryPattern;
         MarkUpdated(changedBy);
     }
 
@@ -558,6 +588,11 @@ public sealed record Movement : IAudited, IDescribed
             1 => patterns[0].Pattern,
             _ => DomainEnum.MovementPattern.Complex,
         };
+    }
+    
+    private void AutoResolvePrimaryPatternWithoutAudit()
+    {
+        PrimaryPattern = ResolvePrimaryPatternOrNull();
     }
     
     private void SetPrimaryPatternWithoutAudit(DomainEnum.MovementPattern pattern)

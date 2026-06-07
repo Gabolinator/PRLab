@@ -1,7 +1,7 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Join;
 
-namespace PRLab.Infrastructure.DB.Seeding.FromJson.JsonDtos;
+namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 
 public sealed record DescriptionTranslationSeedJsonDto
 {

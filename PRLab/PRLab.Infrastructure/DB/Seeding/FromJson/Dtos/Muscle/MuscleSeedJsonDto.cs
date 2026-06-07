@@ -1,7 +1,7 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 
-namespace PRLab.Infrastructure.DB.Seeding.FromJson.JsonDtos.Muscle;
+namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Muscle;
 
 public sealed record MuscleSeedJsonDto
 {
@@ -17,7 +17,7 @@ public sealed record MuscleSeedJsonDto
 
     public DescriptionSeedJsonDto? Description { get; init; }
 
-    public IReadOnlyList<MuscleSeedReferenceJsonDto> Antagonists { get; init; } = [];
+    public IReadOnlyList<SeedEntityReferenceJsonDto> Antagonists { get; init; } = [];
 
     public SeedAction Action { get; init; } = SeedAction.Ignore;
 
@@ -36,7 +36,7 @@ public sealed record MuscleSeedJsonDto
                 ? null
                 : DescriptionSeedJsonDto.FromDescription(muscle.Description),
             Antagonists = muscle.Antagonists
-                .Select(antagonist => new MuscleSeedReferenceJsonDto
+                .Select(antagonist => new SeedEntityReferenceJsonDto
                 {
                     Id = antagonist.AntagonistMuscleId.Value,
                     Name = antagonist.AntagonistMuscle.Name,

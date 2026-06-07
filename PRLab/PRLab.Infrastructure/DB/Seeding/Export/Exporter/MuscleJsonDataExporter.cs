@@ -2,7 +2,7 @@
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Infrastructure.DB.Context;
-using PRLab.Infrastructure.DB.Seeding.FromJson.JsonDtos.Muscle;
+using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Muscle;
 
 namespace PRLab.Infrastructure.DB.Seeding.Export.Exporter;
 

@@ -1,10 +1,11 @@
 ﻿using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
+using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Identifier;
-using PRLab.Infrastructure.DB.Seeding.FromJson.JsonDtos;
+using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 

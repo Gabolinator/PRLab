@@ -12,7 +12,7 @@ public static class SeedReferences
             [DomainEnum.EntityType.Equipment] = "equipment",
             [DomainEnum.EntityType.Muscle] = "muscle",
             [DomainEnum.EntityType.MovementCategory] = "movement-category",
-            [DomainEnum.EntityType.Movement] = "movements",
+            [DomainEnum.EntityType.Movement] = "movement",
         };
     
     public static string GetEntityAlias(
@@ -57,7 +57,7 @@ public static class SeedReferences
         
         if (expanded.Contains(DomainEnum.EntityType.Movement))
         {
-            logger?.LogWarning("No dependencies yet for Movement");
+          //  logger?.LogWarning("No dependencies yet for Movement");
         }
 
         //todo add other dependencies

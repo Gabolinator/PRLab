@@ -12,4 +12,6 @@ public interface IEntitySeeder
     DomainEnum.EntityType EntityType { get;}
 
     Task<SeedResult> SeedAsync(CancellationToken ct = default);
+    
+    Task<bool> AlreadySeededAsync(CancellationToken ct = default);
 }

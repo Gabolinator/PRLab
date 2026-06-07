@@ -108,6 +108,42 @@
     "Action": "Ignore"
   },
   {
+    "Id": "39d83aea-52ce-487d-bb5f-ce5e35f0c73c",
+    "Name": "Forearms Extensors",
+    "NameKey": "forearmsextensors",
+    "LatinName": "Musculi extensores antebrachii",
+    "BodySection": "UpperBody",
+    "Description": {
+      "Content": "Forearm muscle group involved in wrist extension, finger extension, grip stabilization, pressing support, and load control."
+    },
+    "Antagonists": [
+      {
+        "Id": "9bdaa797-42df-4429-9e68-74d3cfea3ed5",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors"
+      }
+    ],
+    "Action": "Ignore"
+  },
+  {
+    "Id": "9bdaa797-42df-4429-9e68-74d3cfea3ed5",
+    "Name": "Forearms Flexors",
+    "NameKey": "forearmsflexors",
+    "LatinName": "Musculi flexores antebrachii",
+    "BodySection": "UpperBody",
+    "Description": {
+      "Content": "Forearm muscle group involved in wrist flexion, finger flexion, gripping, pulling movements, and load control."
+    },
+    "Antagonists": [
+      {
+        "Id": "39d83aea-52ce-487d-bb5f-ce5e35f0c73c",
+        "Name": "Forearms Extensors",
+        "NameKey": "forearmsextensors"
+      }
+    ],
+    "Action": "Ignore"
+  },
+  {
     "Id": "be44309a-edda-4a27-8a38-67bb0023eca6",
     "Name": "Front Delts",
     "NameKey": "frontdelts",
@@ -198,6 +234,24 @@
     "Action": "Ignore"
   },
   {
+    "Id": "6f221385-60bc-4f0a-819a-8682dd6791e3",
+    "Name": "Neck Flexors",
+    "NameKey": "neckflexors",
+    "LatinName": "Musculi flexores colli",
+    "BodySection": "UpperBody",
+    "Description": {
+      "Content": "Front neck muscle group involved in neck flexion, head control, posture, and counterbalancing neck extension."
+    },
+    "Antagonists": [
+      {
+        "Id": "82b3fec8-4744-439d-9430-3b461aa9d50a",
+        "Name": "Traps",
+        "NameKey": "traps"
+      }
+    ],
+    "Action": "Ignore"
+  },
+  {
     "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
     "Name": "Quads",
     "NameKey": "quads",
@@ -265,6 +319,24 @@
         "Id": "b3abfd13-56d4-4ea8-8d72-fab1ec21dcae",
         "Name": "Abs",
         "NameKey": "abs"
+      }
+    ],
+    "Action": "Ignore"
+  },
+  {
+    "Id": "82b3fec8-4744-439d-9430-3b461aa9d50a",
+    "Name": "Traps",
+    "NameKey": "traps",
+    "LatinName": "Musculus trapezius",
+    "BodySection": "UpperBody",
+    "Description": {
+      "Content": "Upper back and neck muscle involved in scapular elevation, retraction, upward rotation, posture, and pulling movements."
+    },
+    "Antagonists": [
+      {
+        "Id": "6f221385-60bc-4f0a-819a-8682dd6791e3",
+        "Name": "Neck Flexors",
+        "NameKey": "neckflexors"
       }
     ],
     "Action": "Ignore"

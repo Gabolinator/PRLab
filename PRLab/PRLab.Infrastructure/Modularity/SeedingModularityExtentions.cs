@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Export;
+using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Seeding.Config;
 using PRLab.Infrastructure.DB.Seeding.Development.Factory;
@@ -11,6 +12,8 @@ using PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 using PRLab.Infrastructure.DB.Seeding.Export;
 using PRLab.Infrastructure.DB.Seeding.Export.Exporter;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
+using PRLab.Infrastructure.DB.Seeding.FromJson.Relations;
+using PRLab.Infrastructure.DB.Seeding.FromJson.Relations.Interface;
 
 namespace PRLab.Infrastructure.Modularity;
 
@@ -32,6 +35,16 @@ public static class SeedingModularityExtensions
             .AddSeedExporters();
     }
 
+    private static IServiceCollection AddSeedRelationResolver(
+        this IServiceCollection services,
+        IAppLogger logger)
+    {
+        return services
+            .AddScoped<IMuscleAntagonistSeedRelationResolver, MuscleAntagonistSeedRelationResolver>()
+            .AddScoped<IMovementSeedRelationResolver, MovementSeedRelationResolver>();
+
+    }
+
     private static IServiceCollection AddSeedDataFactories(
         this IServiceCollection services,
         SeedingOptions options,
@@ -40,10 +53,12 @@ public static class SeedingModularityExtensions
         if (options.SeedFromJsonFile)
         {
             logger.Log("Seeding From Json files");
-            return services.AddScoped<IEquipmentSeedFactory, JsonEquipmentSeedFactory>()
+            return services.AddSeedRelationResolver(logger)
+                .AddScoped<IEquipmentSeedFactory, JsonEquipmentSeedFactory>()
                 .AddScoped<IMovementCategorySeedFactory, JsonMovementCategorySeedFactory>()
                 .AddScoped<IMuscleSeedFactory, JsonMuscleSeedFactory>()
-                .AddScoped<IMuscleAntagonistSeedFactory, JsonMuscleSeedFactory>();
+                .AddScoped<IMuscleAntagonistSeedFactory, JsonMuscleSeedFactory>()
+                .AddScoped<IMovementSeedFactory, JsonMovementSeedFactory>();
         }
 
         
@@ -101,11 +116,11 @@ public static class SeedingModularityExtensions
 
     private static IServiceCollection AddSeedExporters(this IServiceCollection services)
     {
-        services.AddScoped<ISeedDataExporter, EquipmentJsonDataExporter>();
-        services.AddScoped<ISeedDataExporter, MovementCategoryJsonDataExporter>();
-        services.AddScoped<ISeedDataExporter, MuscleJsonDataExporter>();
-        services.AddScoped<ISeedDataExportOrchestrator, SeedDataExportOrchestrator>();
-       
+        services.AddScoped<ISeedDataExporter, EquipmentJsonDataExporter>()
+            .AddScoped<ISeedDataExporter, MovementCategoryJsonDataExporter>()
+            .AddScoped<ISeedDataExporter, MuscleJsonDataExporter>()
+            .AddScoped<ISeedDataExporter, MovementJsonDataExporter>()
+            .AddScoped<ISeedDataExportOrchestrator, SeedDataExportOrchestrator>();
 
         return services;
     }

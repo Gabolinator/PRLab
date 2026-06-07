@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PRLab.Application.Models.DB.Seeding.Catalog;
+using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain.Model.Catalog;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Identifier;
@@ -72,13 +73,18 @@ public static class SeedCatalogBuilder
         CancellationToken ct)
     {
         var movements = await db.Movements
-            .Include(movement => movement.Description)
-                .ThenInclude(description => description.Translations)
+            .AsNoTracking()
+            .AsSplitQuery()
             .Include(movement => movement.MovementCategory)
-            .Include(movement => movement.Muscles)
+            .Include(movement => movement.Description)
+            .ThenInclude(description => description.Translations)
             .Include(movement => movement.Equipments)
-            .Include(movement => movement.Variants)
+            .ThenInclude(movementEquipment => movementEquipment.Equipment)
+            .Include(movement => movement.Muscles)
+            .ThenInclude(movementMuscle => movementMuscle.Muscle)
             .Include(movement => movement.VariantOf)
+            .Include(movement => movement.Patterns)
+            .OrderBy(movement => movement.Name)
             .ToListAsync(ct);
 
         return new MovementSeedCatalog(

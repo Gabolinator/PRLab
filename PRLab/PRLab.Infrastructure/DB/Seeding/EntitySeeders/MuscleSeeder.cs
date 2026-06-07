@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
+using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
@@ -18,12 +19,12 @@ public sealed class MuscleSeeder(
 {
     public override string Name => "DevelopmentMuscleSeed";
 
-    public override string Version => "1.0.2";
+    public override string Version => "1.0.4";
 
     public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.Muscle;
 
     public override User SeedUser => userService.GetAdminUser("Seed");
-
+    
     protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
     {
         var muscleSeedItems = seedFactory.CreateInitialData();
