@@ -9,6 +9,7 @@ using PRLab.Infrastructure.Utilities;
 using PRLab.Tools;
 using PRLab.Tools.Config;
 using PRLab.Tools.Model;
+using PRLab.Tools.Modularity;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -25,14 +26,9 @@ builder.Configuration
 builder.Services.Configure<PRToolOptions>(
     builder.Configuration.GetSection("PRTool"));
 
-builder.Services.AddUtilities(clock, logger);
-
-builder.Services.AddInfrastructure(builder.Configuration, logger, addSeeding: true);
-
-builder.Services.AddScoped<ToolCommandHandler>()
-    .AddScoped<ToolCommandUsageLogger>()
-    .AddScoped<SeedToolCommandHandler>()
-    .AddScoped<ExportSeedToolCommandHandler>();
+builder.Services.AddUtilities(clock, logger)
+    .AddInfrastructure(builder.Configuration, logger, addSeeding: true)
+    .AddPRToolHandlers();;
 
 using var host = builder.Build();
 
