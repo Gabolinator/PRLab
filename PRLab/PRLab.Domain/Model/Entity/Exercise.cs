@@ -2,6 +2,7 @@
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
 using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Value.Update;
 
 namespace PRLab.Domain.Model.Entity;
 
@@ -49,6 +50,19 @@ public sealed record Exercise : IAudited, IDescribed
             ExerciseId.New(),
             name,
             Description.New(description),
+            AuditInfo.New(createdBy)
+        );
+    }
+    
+    public static Exercise New(
+        string name,
+        Description description,
+        User? createdBy = null)
+    {
+        return new Exercise(
+            ExerciseId.New(),
+            name,
+            description,
             AuditInfo.New(createdBy)
         );
     }
@@ -100,6 +114,63 @@ public sealed record Exercise : IAudited, IDescribed
         MarkUpdated(changedBy);
     }
 
+    public void Update(ExerciseUpdate update)
+    {
+        ArgumentNullException.ThrowIfNull(update);
+
+        var hasChanged = false;
+
+        if (!string.IsNullOrWhiteSpace(update.Name))
+        {
+            SetName(update.Name);
+            hasChanged = true;
+        }
+
+        if (update.Description is not null)
+        {
+            Description = Description.ChangeContent(
+                update.Description.Content,
+                update.Description.Language
+            );
+
+            hasChanged = true;
+        }
+
+        if (update.Blocks is not null)
+        {
+            ReplaceBlocks(update.Blocks);
+            hasChanged = true;
+        }
+
+        if (hasChanged)
+        {
+            MarkUpdated(update.UpdatedBy);
+        }
+    }
+
+    private void ReplaceBlocks(IReadOnlyCollection<ExerciseBlockUpdate> updatedBlocks)
+    {
+        blocks.Clear();
+
+        foreach (var updatedBlock in updatedBlocks.OrderBy(block => block.Sequence))
+        {
+            blocks.Add(
+                ExerciseBlock.New(
+                    exerciseId: Id,
+                    movementId: updatedBlock.MovementId,
+                    sequence: updatedBlock.Sequence,
+                    target: updatedBlock.Target,
+                    loadTarget: updatedBlock.LoadTarget,
+                    restBetweenReps: updatedBlock.RestBetweenReps,
+                    transitionAfterBlock: updatedBlock.TransitionAfterBlock,
+                    executionDetails: updatedBlock.ExecutionDetails
+                )
+            );
+        }
+
+        ResequenceBlocks();
+    }
+    
     public void AddBlock(
         MovementId movementId,
         decimal value,

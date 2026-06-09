@@ -70,6 +70,7 @@ public sealed class ExerciseTests
 
         var exercise = Exercise.New(
             initialName,
+            Description.None(),
             null
         );
 
@@ -87,6 +88,7 @@ public sealed class ExerciseTests
 
         var exercise = Exercise.New(
             initialName,
+            Description.None(),
             null
         );
 
@@ -213,6 +215,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -245,6 +248,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Weighted Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -293,6 +297,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -312,6 +317,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -333,6 +339,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -354,6 +361,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -369,6 +377,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -404,6 +413,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -448,6 +458,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -472,6 +483,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -555,6 +567,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -568,6 +581,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -600,6 +614,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -638,6 +653,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
@@ -789,6 +805,7 @@ public sealed class ExerciseTests
     {
         var exercise = Exercise.New(
             "Pull-up Exercise",
+            Description.None(),
             null
         );
 
