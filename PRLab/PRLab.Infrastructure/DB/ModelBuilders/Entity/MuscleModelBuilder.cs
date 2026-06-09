@@ -3,10 +3,16 @@ using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Value.Identifier;
 
-namespace PRLab.Infrastructure.DB.ModelBuilders;
+namespace PRLab.Infrastructure.DB.ModelBuilders.Entity;
 
 public static class MuscleModelBuilder
 {
+    public static void AddMuscleTableModels(this ModelBuilder modelBuilder)
+    {
+        modelBuilder.CreateMuscleTableModel();
+        modelBuilder.CreateMuscleAntagonistTableModel();
+    }
+
     public static void CreateMuscleTableModel(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Muscle>(muscle =>

@@ -20,8 +20,6 @@ public static class DbContextModularityExtensions
 
         else logger.Log($"Conn (pre): '{connectionString}'");
         
-       
-        
         services.AddDbContext<PRLabPgDBContext>(options =>
             options.UseNpgsql(
                 connectionString, 

@@ -4,6 +4,7 @@ using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Repositories;
+using PRLab.Infrastructure.DB.Repositories.Entity;
 
 namespace PRLab.Tests.InfrastructureTests.Repository;
 

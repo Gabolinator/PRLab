@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PRLab.Application.Interface.DB.Repositories;
+using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Context;
 
-namespace PRLab.Infrastructure.DB.Repositories;
+namespace PRLab.Infrastructure.DB.Repositories.Entity;
 
 public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipmentRepository
 {

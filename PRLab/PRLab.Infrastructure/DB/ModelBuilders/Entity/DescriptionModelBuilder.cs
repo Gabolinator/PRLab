@@ -3,11 +3,17 @@ using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Value.Identifier;
 
-namespace PRLab.Infrastructure.DB.ModelBuilders;
+namespace PRLab.Infrastructure.DB.ModelBuilders.Entity;
 
 
 public static class DescriptionModelBuilder
 {
+    public static void AddDescriptionTableModels(this ModelBuilder modelBuilder)
+    {
+        modelBuilder.CreateDescriptionTableModel();
+        modelBuilder.CreateDescriptionTranslationTableModel();
+    }
+
     public static void AddDescriptionIndexes(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Description>(description =>

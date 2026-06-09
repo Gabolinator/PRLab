@@ -6,7 +6,7 @@ namespace PRLab.Infrastructure.DB.ModelBuilders;
 
 public static class UserModelBuilder
 {
-    public static void CreateUserTableModel(this ModelBuilder modelBuilder)
+    public static void AddUserTableModel(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(user =>
         {

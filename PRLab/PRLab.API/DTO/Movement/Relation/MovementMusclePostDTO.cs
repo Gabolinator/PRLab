@@ -1,7 +1,7 @@
 ﻿using PRLab.Domain;
 using PRLab.Domain.Value.Identifier;
 
-namespace PRLab.API.DTO.Muscle;
+namespace PRLab.API.DTO.Movement.Relation;
 
 public sealed record MovementMusclePostDTO
 {

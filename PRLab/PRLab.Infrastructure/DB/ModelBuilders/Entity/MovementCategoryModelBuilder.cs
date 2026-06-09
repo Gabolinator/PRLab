@@ -2,11 +2,11 @@
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Identifier;
 
-namespace PRLab.Infrastructure.DB.ModelBuilders;
+namespace PRLab.Infrastructure.DB.ModelBuilders.Entity;
 
 public static class MovementCategoryModelBuilder
 {
-    public static void CreateMovementCategoryTableModel(this ModelBuilder modelBuilder)
+    public static void AddMovementCategoryTableModel(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<MovementCategory>(movementCategory =>
         {

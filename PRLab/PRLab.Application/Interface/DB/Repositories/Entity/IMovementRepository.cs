@@ -2,7 +2,7 @@
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Identifier;
 
-namespace PRLab.Application.Interface.DB.Repositories;
+namespace PRLab.Application.Interface.DB.Repositories.Entity;
 
 public interface IMovementRepository
 {

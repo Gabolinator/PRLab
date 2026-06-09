@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Repositories;
+using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Infrastructure.DB;
 using PRLab.Infrastructure.DB.Repositories;
+using PRLab.Infrastructure.DB.Repositories.Entity;
 using PRLab.Infrastructure.DB.Seeding;
 
 namespace PRLab.Infrastructure.Modularity;
@@ -26,7 +28,8 @@ public static class RepositoryModularityExtensions
             .AddScoped<IEquipmentRepository, EquipmentRepository>()
             .AddScoped<IMuscleRepository, MuscleRepository>()
             .AddScoped<IMovementCategoryRepository, MovementCategoryRepository>()
-            .AddScoped<IMovementRepository, MovementRepository>();
+            .AddScoped<IMovementRepository, MovementRepository>()
+            .AddScoped<IExerciseRepository, ExerciseRepository>();
        
        return services; 
     }

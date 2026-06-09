@@ -1,4 +1,5 @@
 ﻿using PRLab.API.DTO.Description;
+using PRLab.API.DTO.Movement.Relation;
 using PRLab.API.DTO.Muscle;
 using PRLab.Domain;
 using PRLab.Domain.Value.Identifier;

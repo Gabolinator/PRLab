@@ -3,10 +3,18 @@ using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Value.Identifier;
 
-namespace PRLab.Infrastructure.DB.ModelBuilders;
+namespace PRLab.Infrastructure.DB.ModelBuilders.Entity;
 
 public static class MovementModelBuilder
 {
+    public static void AddMovementTableModels(this ModelBuilder modelBuilder)
+    {
+        modelBuilder.CreateMovementTableModel();
+        modelBuilder.CreateMovementPatternTagTableModel();
+        modelBuilder.CreateMovementMuscleTableModel();
+        modelBuilder.CreateMovementEquipmentRequirementTableModel();
+    }
+    
     public static void CreateMovementTableModel(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Movement>(movement =>

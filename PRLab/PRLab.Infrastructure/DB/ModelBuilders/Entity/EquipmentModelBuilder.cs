@@ -2,11 +2,11 @@
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Identifier;
 
-namespace PRLab.Infrastructure.DB.ModelBuilders;
+namespace PRLab.Infrastructure.DB.ModelBuilders.Entity;
 
 public static class EquipmentModelBuilder
 {
-    public static void CreateEquipmentTableModel(this ModelBuilder modelBuilder)
+    public static void AddEquipmentTableModel(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Equipment>(equipment =>
         {

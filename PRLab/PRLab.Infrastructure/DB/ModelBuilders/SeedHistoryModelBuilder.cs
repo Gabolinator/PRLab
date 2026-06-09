@@ -6,7 +6,7 @@ namespace PRLab.Infrastructure.DB.ModelBuilders;
 
 public static class SeedHistoryModelBuilder
 {
-    public static void CreateSeedHistoryTableModel(this ModelBuilder modelBuilder)
+    public static void AddSeedHistoryTableModel(this ModelBuilder modelBuilder)
     {
         var seedHistory = modelBuilder.Entity<SeedHistory>();
 
