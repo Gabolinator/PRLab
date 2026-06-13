@@ -56,6 +56,21 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         Ownership = ownership;
     }
 
+    public static Exercise NewBuiltInWithId(
+        ExerciseId id,
+        string name,
+        Description description,
+        User? createdBy = null)
+    {
+        return new Exercise(
+            id,
+            name,
+            description,
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn()
+        );
+    }
+    
     public static Exercise NewBuiltIn(
         string name,
         string? description,
@@ -161,6 +176,25 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
 
         return exercise;
     }
+
+    public static Exercise FromMovementBuiltIn(Movement movement)
+    {
+        ArgumentNullException.ThrowIfNull(movement);
+
+        var exercise = NewBuiltIn(
+            movement.Name,
+            movement.Description.Copy());
+
+        var targetType = movement.DefaultWorkTargetType;
+
+        exercise.AddBlock(
+            movementId: movement.Id,
+            target: WorkTarget.FromDefaultWorkType(targetType),
+            loadTarget: LoadTarget.FromMovement(movement));
+
+        return exercise;
+    }
+    
     
     public static Exercise FromMovementBuiltIn(
         Movement movement,

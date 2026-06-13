@@ -1,14 +1,82 @@
 [
   {
+    "Id": "258fda7b-25f9-471e-8539-4197d483889d",
+    "Name": "Bodyweight Squat",
+    "NameKey": "bodyweightsquat",
+    "Description": {
+      "Content": "Basic lower-body squat movement performed without external load."
+    },
+    "Blocks": [
+      {
+        "Id": "6c0225cd-04f8-46df-a8c4-e1504b7cc94e",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "51385348-fa0b-4e89-80ba-b9af982ca12b",
+          "Name": "Bodyweight Squat",
+          "NameKey": "bodyweightsquat"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": {
+          "Value": null,
+          "Type": "BodyWeight",
+          "Unit": null
+        },
+        "RestBetweenReps": null,
+        "TransitionAfterBlock": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "739ac2c8-a0d5-46dc-945c-b0723476e0a5",
+    "Name": "Burpee",
+    "NameKey": "burpee",
+    "Description": {
+      "Content": "Full-body bodyweight conditioning movement combining a squat, plank or push-up position, and jump."
+    },
+    "Blocks": [
+      {
+        "Id": "6436ed36-c6a0-4382-ab4b-3dacbd62fe46",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "181345ef-4a29-4ed6-aff4-d1298ed7220a",
+          "Name": "Burpee",
+          "NameKey": "burpee"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": {
+          "Value": null,
+          "Type": "BodyWeight",
+          "Unit": null
+        },
+        "RestBetweenReps": null,
+        "TransitionAfterBlock": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
     "Id": "64eb94c3-dc74-47f4-9a96-12a3bc9d7b54",
     "Name": "Burpee Pull-Up",
     "NameKey": "burpeepullup",
     "Description": {
-      "Content": "Burpee directly to Pull-Up"
+      "Content": "Burpee performed directly into a pull-up."
     },
     "Blocks": [
       {
-        "Id": "b1736614-d158-476f-99ad-c447bf7bdb5c",
+        "Id": "ebe3315b-ff1a-4174-9a39-39713716cb2f",
         "Sequence": 1,
         "Movement": {
           "Id": "181345ef-4a29-4ed6-aff4-d1298ed7220a",
@@ -29,12 +97,144 @@
         "ExecutionDetails": null
       },
       {
-        "Id": "e7ddebc7-27c8-4f0f-b21d-a25e1c2873a7",
+        "Id": "782077e1-3b0f-4b89-9b82-b5b3ae40193e",
         "Sequence": 2,
         "Movement": {
           "Id": "be5ce8f1-76cd-45a6-9043-63919057060a",
           "Name": "Pull Up",
           "NameKey": "pullup"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": {
+          "Value": null,
+          "Type": "BodyWeight",
+          "Unit": null
+        },
+        "RestBetweenReps": null,
+        "TransitionAfterBlock": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ec6698f8-3242-4bf9-9317-31829ed1b0bb",
+    "Name": "Double Under",
+    "NameKey": "doubleunder",
+    "Description": {
+      "Content": "Jump rope movement where the rope passes under the feet twice per jump."
+    },
+    "Blocks": [
+      {
+        "Id": "ef16ac25-a1ec-47d3-9528-f09eada94a38",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "ae12cb4c-cf1a-449d-bade-f4aa98365593",
+          "Name": "Double Under",
+          "NameKey": "doubleunder"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": {
+          "Value": null,
+          "Type": "BodyWeight",
+          "Unit": null
+        },
+        "RestBetweenReps": null,
+        "TransitionAfterBlock": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "454ddb64-1da0-45d9-a297-53a4d8e280f1",
+    "Name": "Goblet Squat",
+    "NameKey": "gobletsquat",
+    "Description": {
+      "Content": "Squat variation performed while holding a kettlebell or dumbbell in front of the chest."
+    },
+    "Blocks": [
+      {
+        "Id": "45e58506-66fb-442e-b83d-ea150f969c61",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "489ff266-ebc8-4270-89e0-3b514e7af83d",
+          "Name": "Goblet Squat",
+          "NameKey": "gobletsquat"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterBlock": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "cf4754ca-5ef1-42af-b43b-f25834cb7290",
+    "Name": "Pull Up",
+    "NameKey": "pullup",
+    "Description": {
+      "Content": "Bodyweight upper-body pulling movement performed from a bar."
+    },
+    "Blocks": [
+      {
+        "Id": "03f1ea20-562b-4e39-9533-a0672a72944f",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "be5ce8f1-76cd-45a6-9043-63919057060a",
+          "Name": "Pull Up",
+          "NameKey": "pullup"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": {
+          "Value": null,
+          "Type": "BodyWeight",
+          "Unit": null
+        },
+        "RestBetweenReps": null,
+        "TransitionAfterBlock": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "32065585-6806-48b3-8dda-cd6d389d1b4c",
+    "Name": "Push Up",
+    "NameKey": "pushup",
+    "Description": {
+      "Content": "Bodyweight upper-body pushing movement performed from the floor."
+    },
+    "Blocks": [
+      {
+        "Id": "1df38ab7-4db9-4800-b8cf-d2b24ed70b8b",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "9705ffd5-6432-4f32-b127-d124082861a4",
+          "Name": "Push Up",
+          "NameKey": "pushup"
         },
         "Target": {
           "Value": 1.00,

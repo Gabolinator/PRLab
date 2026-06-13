@@ -1,4 +1,6 @@
-﻿using PRLab.Domain.Value.Enum.Prescription;
+﻿using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Value.Enum.Prescription;
 
 namespace PRLab.Domain.Value;
 
@@ -74,6 +76,18 @@ public sealed record LoadTarget
             LoadTargetType.None,
             null
         );
+    }
+    
+    public static LoadTarget FromMovement(Movement movement)
+    {
+        ArgumentNullException.ThrowIfNull(movement);
+
+        return movement.MovementCategory.BaseMovementCategory switch
+        {
+            BaseMovementCategory.BodyWeight => BodyWeight(),
+
+            _ => None()
+        };
     }
 
     private static decimal? ValidateValue(decimal? value)

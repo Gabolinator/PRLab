@@ -47,14 +47,18 @@ public sealed class DevelopmentExerciseSeedFactory(
             {
                 burpeePullUp
             };
-
-            return exercises
+            
+            var seedItems = exercises
                 .Select(exercise =>
                     new SeedItem<Exercise>(
                         SeedKeyGenerator.GenerateExerciseKey(exercise),
                         exercise,
                         SeedAction.CreateIfMissing))
                 .ToList();
+            
+            seedItems.AddRange(CreateExerciseFromExistingMovements(catalog));
+
+            return seedItems;
         }
         catch (Exception exception)
         {
@@ -66,10 +70,16 @@ public sealed class DevelopmentExerciseSeedFactory(
         }
     }
 
-    private IReadOnlyList<SeedItem<Exercise>> CreateExerciseFromMovements(MovementSeedCatalog catalog)
+    private IReadOnlyList<SeedItem<Exercise>> CreateExerciseFromExistingMovements(MovementSeedCatalog catalog)
     {
-        // Get all movements and make a basic exercise from each.
-        // Wait a bit before doing this to avoid noisy default exercises.
-        return [];
+        var movements = catalog.GetAll();
+        var exercises = movements.Select(Exercise.FromMovementBuiltIn);
+
+        return exercises.Select(exercise =>
+                new SeedItem<Exercise>(
+                    SeedKeyGenerator.GenerateExerciseKey(exercise),
+                    exercise,
+                    SeedAction.CreateIfMissing))
+            .ToList();
     }
 }

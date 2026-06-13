@@ -69,6 +69,22 @@ public sealed record WorkTarget
             seconds,
             WorkTargetType.TimeUnderTensionSeconds);
     }
+    
+    public static WorkTarget FromDefaultWorkType(WorkTargetType targetType)
+    {
+        return targetType switch
+        {
+            WorkTargetType.Repetitions => ForReps(1),
+            WorkTargetType.DurationSeconds => ForDuration(30),
+            WorkTargetType.DistanceMeters => ForDistance(100),
+            WorkTargetType.Calories => ForCalories(10),
+            WorkTargetType.TimeUnderTensionSeconds => ForTimeUnderTension(30),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(targetType),
+                targetType,
+                "Unsupported default work target type.")
+        };
+    }
 
     private static decimal ValidateValue(decimal value)
     {

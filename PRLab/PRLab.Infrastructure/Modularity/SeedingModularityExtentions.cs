@@ -46,7 +46,8 @@ public static class SeedingModularityExtensions
     {
         return services
             .AddScoped<IMuscleAntagonistSeedRelationResolver, MuscleAntagonistSeedRelationResolver>()
-            .AddScoped<IMovementSeedRelationResolver, MovementSeedRelationResolver>();
+            .AddScoped<IMovementSeedRelationResolver, MovementSeedRelationResolver>()
+            .AddScoped<IExerciseSeedRelationResolver, ExerciseSeedRelationResolver>();
 
     }
 
@@ -55,7 +56,6 @@ public static class SeedingModularityExtensions
         SeedingOptions options,
         IAppLogger logger)
     {
-
         logger.Log($"Seeding from {options.Source}");
         return options.Source switch
         {
@@ -64,7 +64,8 @@ public static class SeedingModularityExtensions
                 .AddScoped<IMovementCategorySeedFactory, JsonMovementCategorySeedFactory>()
                 .AddScoped<IMuscleSeedFactory, JsonMuscleSeedFactory>()
                 .AddScoped<IMuscleAntagonistSeedFactory, JsonMuscleSeedFactory>()
-                .AddScoped<IMovementSeedFactory, JsonMovementSeedFactory>(),
+                .AddScoped<IMovementSeedFactory, JsonMovementSeedFactory>()
+                .AddScoped<IExerciseSeedFactory, JsonExerciseSeedFactory>(),
 
             SeedingSource.Factory => services
                 .AddScoped<IEquipmentSeedFactory, DevelopmentEquipmentSeedFactory>()

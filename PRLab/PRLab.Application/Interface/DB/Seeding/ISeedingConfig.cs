@@ -3,7 +3,8 @@
 public enum SeedingSource
 {
     JsonFiles,
-    Factory
+    Factory,
+    None,
 }
 
 public interface ISeedingConfig
