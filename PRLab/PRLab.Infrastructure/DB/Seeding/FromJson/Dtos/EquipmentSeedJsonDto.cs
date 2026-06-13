@@ -1,6 +1,7 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 
@@ -14,7 +15,7 @@ public sealed record EquipmentSeedJsonDto
 
     public DescriptionSeedJsonDto? Description { get; init; }
 
-    public DomainEnum.DataOrigin Origin { get; init; } = DomainEnum.DataOrigin.BuiltIn;
+    public DataOrigin Origin { get; init; } = DataOrigin.BuiltIn;
 
     public Guid? OwnerUserId { get; init; }
 

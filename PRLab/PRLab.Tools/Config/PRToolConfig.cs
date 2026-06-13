@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Infrastructure.DB.Seeding.Export;
 using PRLab.Tools.Config;
 
@@ -8,7 +9,7 @@ public sealed class PRToolConfig
 {
     public required IReadOnlyDictionary<string, ToolCommands> CommandAliases { get; init; }
 
-    public required IReadOnlyDictionary<string, DomainEnum.EntityType> TargetAliases { get; init; }
+    public required IReadOnlyDictionary<string, EntityType> TargetAliases { get; init; }
 
     public required int CommandIndex { get; init; }
 
@@ -25,7 +26,7 @@ public sealed class PRToolConfig
             : options.Commands;
 
         var targets = options.Targets.Length == 0
-            ? [DomainEnum.EntityType.Equipment, DomainEnum.EntityType.MovementCategory, DomainEnum.EntityType.Muscle]
+            ? [EntityType.Equipment, EntityType.MovementCategory, EntityType.Muscle]
             : options.Targets;
 
         return new PRToolConfig

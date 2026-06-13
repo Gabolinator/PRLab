@@ -1,6 +1,7 @@
 ﻿using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
+using PRLab.Domain.Value.Enum.Movement;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Domain.Value.Ownership;
 using PRLab.Domain.Value.Update;
@@ -15,7 +16,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
 
     public string NameKey { get; private set; } = string.Empty;
 
-    public DomainEnum.BaseMovementCategory BaseMovementCategory { get; private set; }
+    public BaseMovementCategory BaseMovementCategory { get; private set; }
 
     public Description Description { get; private set; } = null!;
 
@@ -31,7 +32,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
     private MovementCategory(
         MovementCategoryId id,
         string name,
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         Description description,
         AuditInfo audit,
         OwnershipInfo ownership)
@@ -56,7 +57,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
     public static MovementCategory NewBuiltIn(
         string name,
         string? description,
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         User? createdBy = null)
     {
         return new MovementCategory(
@@ -71,7 +72,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
 
     public static MovementCategory NewBuiltIn(
         string name,
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         Description description,
         User? createdBy = null)
     {
@@ -88,7 +89,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
     public static MovementCategory NewBuiltInWithId(
         MovementCategoryId id,
         string name,
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         Description description,
         User? createdBy = null)
     {
@@ -105,7 +106,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
     public static MovementCategory NewUserCreated(
         string name,
         string? description,
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         User owner)
     {
         ArgumentNullException.ThrowIfNull(owner);
@@ -122,7 +123,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
 
     public static MovementCategory NewUserCreated(
         string name,
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         Description description,
         User owner)
     {
@@ -140,7 +141,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
 
     public static MovementCategory NewCoachCreated(
         string name,
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         Description description,
         User coach)
     {
@@ -158,7 +159,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
 
     public static MovementCategory NewImported(
         string name,
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         Description description,
         User owner)
     {
@@ -221,7 +222,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
     }
 
     public void ChangeBaseMovementCategory(
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         User? changedBy = null)
     {
         if (BaseMovementCategory == baseMovementCategory)

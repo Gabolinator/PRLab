@@ -4,6 +4,7 @@ using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 
@@ -15,8 +16,8 @@ public sealed class JsonEquipmentSeedFactory(
     : BaseJsonSeedFactory<Equipment, EquipmentSeedJsonDto>(userService, config),
         IEquipmentSeedFactory
 {
-    protected override DomainEnum.EntityType Entity =>
-        DomainEnum.EntityType.Equipment;
+    protected override EntityType Entity =>
+        EntityType.Equipment;
 
     public IReadOnlyList<SeedItem<Equipment>> CreateInitialData()
     {
@@ -58,22 +59,22 @@ public sealed class JsonEquipmentSeedFactory(
     {
         return seedDto.Origin switch
         {
-            DomainEnum.DataOrigin.BuiltIn => Equipment.NewBuiltIn(
+            DataOrigin.BuiltIn => Equipment.NewBuiltIn(
                 seedDto.Name,
                 description,
                 SeedUser),
 
-            DomainEnum.DataOrigin.UserCreated => Equipment.NewUserCreated(
+            DataOrigin.UserCreated => Equipment.NewUserCreated(
                 seedDto.Name,
                 description,
                 GetRequiredOwner(seedDto)),
 
-            DomainEnum.DataOrigin.Imported => Equipment.NewImported(
+            DataOrigin.Imported => Equipment.NewImported(
                 seedDto.Name,
                 description,
                 GetRequiredOwner(seedDto)),
 
-            DomainEnum.DataOrigin.CoachCreated => Equipment.NewCoachCreated(
+            DataOrigin.CoachCreated => Equipment.NewCoachCreated(
                 seedDto.Name,
                 description,
                 GetRequiredOwner(seedDto)),
@@ -93,7 +94,7 @@ public sealed class JsonEquipmentSeedFactory(
 
         return seedDto.Origin switch
         {
-            DomainEnum.DataOrigin.BuiltIn => Equipment.NewBuiltInWithId(
+            DataOrigin.BuiltIn => Equipment.NewBuiltInWithId(
                 id,
                 seedDto.Name,
                 description,
@@ -122,19 +123,19 @@ public sealed class JsonEquipmentSeedFactory(
         return User.Existing(
             UserId.FromGuid(seedDto.OwnerUserId.Value),
             $"Seed Owner {seedDto.OwnerUserId.Value}",
-            DomainEnum.UserRole.User);
+            UserRole.User);
     }
 
     private void ValidateOwnership(EquipmentSeedJsonDto seedDto)
     {
-        if (seedDto.Origin == DomainEnum.DataOrigin.BuiltIn &&
+        if (seedDto.Origin == DataOrigin.BuiltIn &&
             seedDto.OwnerUserId.HasValue)
         {
             throw new InvalidOperationException(
                 $"{Entity} seed '{seedDto.Name}' is BuiltIn and should not have OwnerUserId.");
         }
 
-        if (seedDto.Origin != DomainEnum.DataOrigin.BuiltIn &&
+        if (seedDto.Origin != DataOrigin.BuiltIn &&
             !seedDto.OwnerUserId.HasValue)
         {
             throw new InvalidOperationException(

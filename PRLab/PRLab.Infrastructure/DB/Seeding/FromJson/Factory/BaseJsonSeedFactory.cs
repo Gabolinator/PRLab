@@ -5,6 +5,7 @@ using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 
@@ -29,7 +30,7 @@ public abstract class BaseJsonSeedFactory<TEntity, TJsonDto>(
         }
     };
     
-    protected abstract Domain.DomainEnum.EntityType Entity { get; }
+    protected abstract EntityType Entity { get; }
 
     private string SeedFilePath => SeedFilePathBuilder.Build(
         config.SeedFileDirectory,

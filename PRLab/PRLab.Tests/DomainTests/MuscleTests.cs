@@ -2,6 +2,7 @@
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.Anatomy;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Domain.Value.Update;
 
@@ -14,7 +15,7 @@ public sealed class MuscleTests
     {
         var name = "  Pectoralis Major  ";
         var latinName = "  Pectoralis major  ";
-        var bodySection = DomainEnum.BodySection.UpperBody;
+        var bodySection = BodySection.UpperBody;
         var descriptionText = "Chest muscle.";
         var description = Description.New(descriptionText);
 
@@ -40,7 +41,7 @@ public sealed class MuscleTests
     {
         var name = "Biceps";
         var latinName = "   ";
-        var bodySection = DomainEnum.BodySection.UpperBody;
+        var bodySection = BodySection.UpperBody;
         var description = Description.New(null);
 
         var muscle = Muscle.New(
@@ -58,7 +59,7 @@ public sealed class MuscleTests
     {
         var name = "Biceps";
         var latinName = "Biceps brachii";
-        var bodySection = DomainEnum.BodySection.UpperBody;
+        var bodySection = BodySection.UpperBody;
         Description description = null!;
 
         var act = () => Muscle.New(
@@ -79,7 +80,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             initialName,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(null)
         );
 
@@ -97,7 +98,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             initialName,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(null)
         );
 
@@ -116,7 +117,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             name,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(null)
         );
 
@@ -134,7 +135,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             name,
             initialLatinName,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(null)
         );
 
@@ -147,11 +148,11 @@ public sealed class MuscleTests
     public void ChangeBodySection_ShouldUpdateBodySection()
     {
         var name = "Rectus abdominis";
-        var newBodySection = DomainEnum.BodySection.MidSection;
+        var newBodySection = BodySection.MidSection;
         var muscle = Muscle.New(
             name,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(null)
         );
 
@@ -168,7 +169,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             name,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(null)
         );
 
@@ -187,7 +188,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             name,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(null)
         );
 
@@ -204,7 +205,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             name,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(null)
         );
 
@@ -221,7 +222,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             name,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(null)
         );
 
@@ -240,7 +241,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             name,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(null)
         );
 
@@ -260,7 +261,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             name,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(initialDescriptionText, language)
         );
 
@@ -282,7 +283,7 @@ public sealed class MuscleTests
         var muscle = Muscle.New(
             name,
             null,
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(descriptionText, language)
         );
 
@@ -297,13 +298,13 @@ public sealed class MuscleTests
         var initialName = "Biceps";
         var newName = "  Biceps Brachii  ";
         var newLatinName = "  Biceps brachii  ";
-        var newBodySection = DomainEnum.BodySection.UpperBody;
+        var newBodySection = BodySection.UpperBody;
         var newDescriptionText = "Updated description.";
 
         var muscle = Muscle.New(
             initialName,
             null,
-            DomainEnum.BodySection.LowerBody,
+            BodySection.LowerBody,
             Description.New(null)
         );
 

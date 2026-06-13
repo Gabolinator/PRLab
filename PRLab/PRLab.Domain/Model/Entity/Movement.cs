@@ -2,6 +2,8 @@
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
+using PRLab.Domain.Value.Enum.Anatomy;
+using PRLab.Domain.Value.Enum.Movement;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Domain.Value.Ownership;
 using PRLab.Domain.Value.Update;
@@ -28,13 +30,13 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
 
     public IReadOnlyCollection<Movement> Variants => variants;
     
-    public DomainEnum.MovementPattern? PrimaryPattern { get; private set; }
+    public MovementPattern? PrimaryPattern { get; private set; }
 
     private readonly List<MovementPatternTag> patterns = [];
 
     public IReadOnlyCollection<MovementPatternTag> Patterns => patterns;
 
-    private HashSet<DomainEnum.MovementPattern> PatternValues => Patterns
+    private HashSet<MovementPattern> PatternValues => Patterns
         .Select(patternTag => patternTag.Pattern)
         .ToHashSet();
 
@@ -61,12 +63,12 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         .ToHashSet();
 
     private HashSet<MuscleId> PrimaryMuscleIDs => Muscles
-        .Where(movementMuscle => movementMuscle.Role == DomainEnum.MuscleRole.Primary)
+        .Where(movementMuscle => movementMuscle.Role == MuscleRole.Primary)
         .Select(movementMuscle => movementMuscle.MuscleId)
         .ToHashSet();
 
     private HashSet<MuscleId> SecondaryMuscleIDs => Muscles
-        .Where(movementMuscle => movementMuscle.Role == DomainEnum.MuscleRole.Secondary)
+        .Where(movementMuscle => movementMuscle.Role == MuscleRole.Secondary)
         .Select(movementMuscle => movementMuscle.MuscleId)
         .ToHashSet();
 
@@ -324,7 +326,7 @@ public static Movement NewImported(
     {
         AddMuscle(
             muscleId,
-            DomainEnum.MuscleRole.Primary,
+            MuscleRole.Primary,
             changedBy
         );
     }
@@ -333,14 +335,14 @@ public static Movement NewImported(
     {
         AddMuscle(
             muscleId,
-            DomainEnum.MuscleRole.Secondary,
+            MuscleRole.Secondary,
             changedBy
         );
     }
 
     public void AddMuscle(
         MuscleId muscleId,
-        DomainEnum.MuscleRole role,
+        MuscleRole role,
         User? changedBy = null)
     {
         if (MuscleIDs.Contains(muscleId))
@@ -361,7 +363,7 @@ public static Movement NewImported(
 
     public void ChangeMuscleRole(
         MuscleId muscleId,
-        DomainEnum.MuscleRole role,
+        MuscleRole role,
         User? changedBy = null)
     {
         if (!MuscleIDs.Contains(muscleId))
@@ -418,7 +420,7 @@ public static Movement NewImported(
         AddEquipmentRequirement(
             equipmentId,
             groupKey,
-            DomainEnum.EquipmentRequirementKind.RequiredGroup,
+            EquipmentRequirementKind.RequiredGroup,
             changedBy);
     }
 
@@ -430,14 +432,14 @@ public static Movement NewImported(
         AddEquipmentRequirement(
             equipmentId,
             groupKey,
-            DomainEnum.EquipmentRequirementKind.Optional,
+            EquipmentRequirementKind.Optional,
             changedBy);
     }
 
     private void AddEquipmentRequirement(
         EquipmentId equipmentId,
         string groupKey,
-        DomainEnum.EquipmentRequirementKind kind,
+        EquipmentRequirementKind kind,
         User? changedBy = null)
     {
         var normalizedGroupKey = groupKey.Trim().ToLowerInvariant();
@@ -465,7 +467,7 @@ public static Movement NewImported(
     public void RemoveEquipmentRequirement(
         EquipmentId equipmentId,
         string groupKey,
-        DomainEnum.EquipmentRequirementKind kind,
+        EquipmentRequirementKind kind,
         User? changedBy = null)
     {
         var normalizedGroupKey = FormatingUtilities.NormalizeEquipmentGroupKey(groupKey);
@@ -552,10 +554,10 @@ public static Movement NewImported(
     }
     
     public void AddPattern(
-        DomainEnum.MovementPattern pattern,
+        MovementPattern pattern,
         User? changedBy = null)
     {
-        if (pattern == DomainEnum.MovementPattern.Complex)
+        if (pattern == MovementPattern.Complex)
         {
             throw new ArgumentException(
                 "Complex should be used as a primary pattern summary, not as a specific pattern tag.",
@@ -577,7 +579,7 @@ public static Movement NewImported(
     }
 
     public void RemovePattern(
-        DomainEnum.MovementPattern pattern,
+        MovementPattern pattern,
         User? changedBy = null)
     {
         if (!PatternValues.Contains(pattern))
@@ -601,10 +603,10 @@ public static Movement NewImported(
     }
 
     public void SetPrimaryPattern(
-        DomainEnum.MovementPattern pattern,
+        MovementPattern pattern,
         User? changedBy = null)
     {
-        if (pattern != DomainEnum.MovementPattern.Complex
+        if (pattern != MovementPattern.Complex
             && !PatternValues.Contains(pattern))
         {
             patterns.Add(
@@ -712,13 +714,13 @@ public static Movement NewImported(
         return hasChanged;
     }
 
-    private DomainEnum.MovementPattern? ResolvePrimaryPatternOrNull()
+    private MovementPattern? ResolvePrimaryPatternOrNull()
     {
         return patterns.Count switch
         {
             0 => null,
             1 => patterns[0].Pattern,
-            _ => DomainEnum.MovementPattern.Complex,
+            _ => MovementPattern.Complex,
         };
     }
     
@@ -727,9 +729,9 @@ public static Movement NewImported(
         PrimaryPattern = ResolvePrimaryPatternOrNull();
     }
     
-    private void SetPrimaryPatternWithoutAudit(DomainEnum.MovementPattern pattern)
+    private void SetPrimaryPatternWithoutAudit(MovementPattern pattern)
     {
-        if (pattern != DomainEnum.MovementPattern.Complex
+        if (pattern != MovementPattern.Complex
             && !PatternValues.Contains(pattern))
         {
             patterns.Add(
@@ -746,7 +748,7 @@ public static Movement NewImported(
             .Select(patternTag => patternTag.Pattern)
             .ToHashSet();
 
-        if (updatedPatternValues.Contains(DomainEnum.MovementPattern.Complex))
+        if (updatedPatternValues.Contains(MovementPattern.Complex))
         {
             throw new ArgumentException(
                 "Complex should be used as a primary pattern summary, not as a specific pattern tag.",
@@ -768,7 +770,7 @@ public static Movement NewImported(
         }
 
         if (PrimaryPattern.HasValue
-            && PrimaryPattern.Value != DomainEnum.MovementPattern.Complex
+            && PrimaryPattern.Value != MovementPattern.Complex
             && !updatedPatternValues.Contains(PrimaryPattern.Value))
         {
             PrimaryPattern = ResolvePrimaryPatternOrNull();
@@ -865,7 +867,7 @@ public static Movement NewImported(
     private readonly record struct EquipmentRequirementKey(
         EquipmentId EquipmentId,
         string GroupKey,
-        DomainEnum.EquipmentRequirementKind Kind);
+        EquipmentRequirementKind Kind);
 
     private bool ReplaceVariants(
         IReadOnlyCollection<Movement> updatedVariants,

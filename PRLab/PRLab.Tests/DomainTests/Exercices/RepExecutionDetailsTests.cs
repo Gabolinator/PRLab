@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using PRLab.Domain;
 using PRLab.Domain.Value;
+using PRLab.Domain.Value.Enum.Prescription;
 
 namespace PRLab.Tests.DomainTests.Exercices;
 
@@ -33,10 +34,10 @@ public sealed class RepExecutionDetailsTests
         var concentricSeconds = 2;
         var topPauseSeconds = 1;
 
-        var eccentricIntent = DomainEnum.RepPhaseExecutionIntent.Controlled;
-        var bottomIntent = DomainEnum.RepPhaseExecutionIntent.Paused;
-        var concentricIntent = DomainEnum.RepPhaseExecutionIntent.Explosive;
-        var topIntent = DomainEnum.RepPhaseExecutionIntent.Strict;
+        var eccentricIntent = RepPhaseExecutionIntent.Controlled;
+        var bottomIntent = RepPhaseExecutionIntent.Paused;
+        var concentricIntent = RepPhaseExecutionIntent.Explosive;
+        var topIntent = RepPhaseExecutionIntent.Strict;
 
         var intent = "  Keep perfect form.  ";
 

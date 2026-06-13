@@ -1,11 +1,12 @@
 ﻿using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Domain.Value.Ownership;
 
 public sealed record OwnershipInfo
 {
-    public DomainEnum.DataOrigin Origin { get; private init; }
+    public DataOrigin Origin { get; private init; }
 
     public UserId? OwnerUserId { get; private init; }
 
@@ -15,7 +16,7 @@ public sealed record OwnershipInfo
     }
 
     private OwnershipInfo(
-        DomainEnum.DataOrigin origin,
+        DataOrigin origin,
         UserId? ownerUserId)
     {
         Origin = origin;
@@ -25,7 +26,7 @@ public sealed record OwnershipInfo
     public static OwnershipInfo BuiltIn()
     {
         return new OwnershipInfo(
-            DomainEnum.DataOrigin.BuiltIn,
+            DataOrigin.BuiltIn,
             null
         );
     }
@@ -35,7 +36,7 @@ public sealed record OwnershipInfo
         ArgumentNullException.ThrowIfNull(user);
 
         return new OwnershipInfo(
-            DomainEnum.DataOrigin.UserCreated,
+            DataOrigin.UserCreated,
             user.Id
         );
     }
@@ -44,14 +45,14 @@ public sealed record OwnershipInfo
     {
         ArgumentNullException.ThrowIfNull(coach);
 
-        if (coach.Role != DomainEnum.UserRole.Coach &&
-            coach.Role != DomainEnum.UserRole.Admin)
+        if (coach.Role != UserRole.Coach &&
+            coach.Role != UserRole.Admin)
         {
             throw new InvalidOperationException("Only coaches or admins can create coach-owned data.");
         }
 
         return new OwnershipInfo(
-            DomainEnum.DataOrigin.CoachCreated,
+            DataOrigin.CoachCreated,
             coach.Id
         );
     }
@@ -61,12 +62,12 @@ public sealed record OwnershipInfo
         ArgumentNullException.ThrowIfNull(user);
 
         return new OwnershipInfo(
-            DomainEnum.DataOrigin.Imported,
+            DataOrigin.Imported,
             user.Id
         );
     }
 
-    public bool IsBuiltIn => Origin == DomainEnum.DataOrigin.BuiltIn;
+    public bool IsBuiltIn => Origin == DataOrigin.BuiltIn;
 
     public bool IsOwnedBy(User user)
     {

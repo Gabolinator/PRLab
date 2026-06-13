@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain;
+using PRLab.Domain.Value.Enum.System;
 
 
 namespace PRLab.Tools.Model;
@@ -8,7 +9,7 @@ public static class SeedTargets
     public const string All = "all";
     
     public static bool TryGetTargetAlias(
-        DomainEnum.EntityType entityType,
+        EntityType entityType,
         PRToolConfig config,
         out string targetAlias)
     {
@@ -30,7 +31,7 @@ public static class SeedTargets
         string? target,
         PRToolConfig config,
         out string normalizedTarget,
-        out DomainEnum.EntityType entityType)
+        out EntityType entityType)
     {
         normalizedTarget = string.Empty;
         entityType = default;

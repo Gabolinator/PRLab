@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using PRLab.API.DTO.Description;
 using PRLab.Domain;
+using PRLab.Domain.Value.Enum.Anatomy;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.API.DTO.Muscle;
@@ -18,8 +19,8 @@ public record MusclePostDTO
     public string? LatinName { get; init; }
 
     [Required]
-    [EnumDataType(typeof(DomainEnum.BodySection))]
-    public DomainEnum.BodySection BodySection { get; init; } = default;
+    [EnumDataType(typeof(BodySection))]
+    public BodySection BodySection { get; init; } = default;
 
     public DescriptionPostDTO? Descriptor { get; init; }
 

@@ -3,6 +3,7 @@ using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.Movement;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Context;
 
@@ -51,7 +52,7 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
     }
 
     public async Task<IReadOnlyCollection<MovementCategory>> ListByBaseCategoryAsync(
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         CancellationToken ct)
     {
         return await BaseMovementCategoryQuery()

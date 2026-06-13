@@ -1,6 +1,7 @@
 ﻿using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Domain.Model.Entity;
@@ -11,7 +12,7 @@ public sealed record User : IAudited
 
     public string Name { get; private set; } = string.Empty;
 
-    public DomainEnum.UserRole Role { get; private set; }
+    public UserRole Role { get; private set; }
 
     public AuditInfo Audit { get; private set; } = null!;
 
@@ -23,7 +24,7 @@ public sealed record User : IAudited
     private User(
         UserId id,
         string name,
-        DomainEnum.UserRole role,
+        UserRole role,
         AuditInfo audit)
     {
         Id = id;
@@ -34,7 +35,7 @@ public sealed record User : IAudited
 
     public static User New(
         string name,
-        DomainEnum.UserRole role = DomainEnum.UserRole.User,
+        UserRole role = UserRole.User,
         User? createdBy = null)
     {
         return new User(
@@ -51,7 +52,7 @@ public sealed record User : IAudited
     {
         return New(
             name,
-            DomainEnum.UserRole.Coach,
+            UserRole.Coach,
             createdBy
         );
     }
@@ -62,7 +63,7 @@ public sealed record User : IAudited
     {
         return New(
             name,
-            DomainEnum.UserRole.Admin,
+            UserRole.Admin,
             createdBy
         );
     }
@@ -72,7 +73,7 @@ public sealed record User : IAudited
         return new User(
             SystemUser.Id,
             !string.IsNullOrWhiteSpace(name) ? name : SystemUser.Name,
-            DomainEnum.UserRole.Admin,
+            UserRole.Admin,
             AuditInfo.New(null)
         );
     }
@@ -80,7 +81,7 @@ public sealed record User : IAudited
     public static User Existing(
         UserId id,
         string name,
-        DomainEnum.UserRole role)
+        UserRole role)
     {
         if (id.Value == Guid.Empty)
         {
@@ -122,7 +123,7 @@ public sealed record User : IAudited
             return Existing(
                 Id,
                 Name,
-                DomainEnum.UserRole.User
+                UserRole.User
             );
         }
     }
@@ -134,7 +135,7 @@ public sealed record User : IAudited
     }
 
     public void ChangeRole(
-        DomainEnum.UserRole role,
+        UserRole role,
         User? changedBy = null)
     {
         if (Role == role)

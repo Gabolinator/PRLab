@@ -4,6 +4,7 @@ using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Export;
 using PRLab.Domain;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Tools.Config;
 using PRLab.Tools.Model;
 
@@ -198,7 +199,7 @@ public sealed class ExportSeedToolCommandHandler(
     }
 
     private bool ConfirmExportChangedSeedFile(
-        DomainEnum.EntityType entityType,
+        EntityType entityType,
         string exportTarget)
     {
         logger.Log(

@@ -1,6 +1,7 @@
 ﻿using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
+using PRLab.Domain.Value.Enum.Prescription;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Domain.Value.Ownership;
 using PRLab.Domain.Value.Update;
@@ -134,7 +135,7 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
     public static Exercise FromMovementUserCreated(
         Movement movement,
         decimal value,
-        DomainEnum.WorkTargetType targetType,
+        WorkTargetType targetType,
         User owner,
         LoadTarget? loadTarget = null,
         RestTarget? restBetweenReps = null,
@@ -171,7 +172,7 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
     public static Exercise FromMovementBuiltIn(
         Movement movement,
         decimal value,
-        DomainEnum.WorkTargetType targetType,
+        WorkTargetType targetType,
         User? createdBy = null,
         LoadTarget? loadTarget = null,
         RestTarget? restBetweenReps = null,
@@ -293,7 +294,7 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
     public void AddBlock(
         MovementId movementId,
         decimal value,
-        DomainEnum.WorkTargetType targetType,
+        WorkTargetType targetType,
         LoadTarget? loadTarget = null,
         RestTarget? restBetweenReps = null,
         RestTarget? transitionAfterBlock = null,
@@ -408,7 +409,7 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
     public void ChangeBlockTarget(
         ExerciseBlockId exerciseBlockId,
         decimal value,
-        DomainEnum.WorkTargetType targetType,
+        WorkTargetType targetType,
         User? changedBy = null)
     {
         var block = GetBlockOrDefault(exerciseBlockId);

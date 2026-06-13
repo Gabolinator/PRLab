@@ -1,12 +1,14 @@
-﻿namespace PRLab.Domain.Value;
+﻿using PRLab.Domain.Value.Enum.Prescription;
+
+namespace PRLab.Domain.Value;
 
 public sealed record LoadTarget
 {
     public decimal? Value { get; private set; }
 
-    public DomainEnum.LoadTargetType Type { get; private set; }
+    public LoadTargetType Type { get; private set; }
 
-    public DomainEnum.LoadUnit? Unit { get; private set; }
+    public LoadUnit? Unit { get; private set; }
 
     private LoadTarget()
     {
@@ -15,8 +17,8 @@ public sealed record LoadTarget
 
     private LoadTarget(
         decimal? value,
-        DomainEnum.LoadTargetType type,
-        DomainEnum.LoadUnit? unit)
+        LoadTargetType type,
+        LoadUnit? unit)
     {
         Value = ValidateValue(value);
         Type = type;
@@ -27,40 +29,40 @@ public sealed record LoadTarget
     {
         return new LoadTarget(
             null,
-            DomainEnum.LoadTargetType.BodyWeight,
+            LoadTargetType.BodyWeight,
             null
         );
     }
 
     public static LoadTarget ExternalLoad(
         decimal value,
-        DomainEnum.LoadUnit unit)
+        LoadUnit unit)
     {
         return new LoadTarget(
             value,
-            DomainEnum.LoadTargetType.ExternalLoad,
+            LoadTargetType.ExternalLoad,
             unit
         );
     }
 
     public static LoadTarget AddedBodyWeightLoad(
         decimal value,
-        DomainEnum.LoadUnit unit)
+        LoadUnit unit)
     {
         return new LoadTarget(
             value,
-            DomainEnum.LoadTargetType.AddedBodyWeightLoad,
+            LoadTargetType.AddedBodyWeightLoad,
             unit
         );
     }
 
     public static LoadTarget AssistedBodyWeight(
         decimal value,
-        DomainEnum.LoadUnit unit)
+        LoadUnit unit)
     {
         return new LoadTarget(
             value,
-            DomainEnum.LoadTargetType.AssistedBodyWeight,
+            LoadTargetType.AssistedBodyWeight,
             unit
         );
     }
@@ -69,7 +71,7 @@ public sealed record LoadTarget
     {
         return new LoadTarget(
             null,
-            DomainEnum.LoadTargetType.None,
+            LoadTargetType.None,
             null
         );
     }

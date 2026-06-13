@@ -1,5 +1,6 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
+using PRLab.Domain.Value.Enum.Anatomy;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Muscle;
 
@@ -13,7 +14,7 @@ public sealed record MuscleSeedJsonDto
 
     public string? LatinName { get; init; }
 
-    public DomainEnum.BodySection BodySection { get; init; }
+    public BodySection BodySection { get; init; }
 
     public DescriptionSeedJsonDto? Description { get; init; }
 

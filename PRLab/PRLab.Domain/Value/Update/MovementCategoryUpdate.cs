@@ -1,5 +1,6 @@
 ﻿using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.Movement;
 
 namespace PRLab.Domain.Value.Update;
 
@@ -7,7 +8,7 @@ public class MovementCategoryUpdate
 {
     public string? Name { get; set; }
 
-    public DomainEnum.BaseMovementCategory? BaseMovementCategory { get; init; }
+    public BaseMovementCategory? BaseMovementCategory { get; init; }
     
     public DescriptionUpdate? Description { get; init; }
     

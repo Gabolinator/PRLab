@@ -8,6 +8,7 @@ using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.Movement;
 
 namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.Movement;
 
@@ -46,7 +47,7 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
         bodyweightSquat.AddPrimaryMuscle(quads.Id, SeedUser);
         bodyweightSquat.AddSecondaryMuscle(glutes.Id, SeedUser);
         bodyweightSquat.AddSecondaryMuscle(hamstrings.Id, SeedUser);
-        bodyweightSquat.AddPattern(Domain.DomainEnum.MovementPattern.Squat);
+        bodyweightSquat.AddPattern(MovementPattern.Squat);
         
         var pushUp = CreateMovement(
             "Push Up",
@@ -57,7 +58,7 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
         pushUp.AddSecondaryMuscle(triceps.Id, SeedUser);
         pushUp.AddSecondaryMuscle(frontDelts.Id, SeedUser);
         pushUp.AddSecondaryMuscle(abs.Id, SeedUser);
-        pushUp.AddPattern(DomainEnum.MovementPattern.Push);
+        pushUp.AddPattern(MovementPattern.Push);
 
         var pullUp = CreateMovement(
             "Pull Up",
@@ -68,7 +69,7 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
         pullUp.AddSecondaryMuscle(biceps.Id, SeedUser);
         pullUp.AddSecondaryMuscle(abs.Id, SeedUser);
         pullUp.AddRequiredEquipmentOption(pullUpBar.Id, "bar" ,SeedUser);
-        pullUp.AddPattern(DomainEnum.MovementPattern.Pull);
+        pullUp.AddPattern(MovementPattern.Pull);
         
         var doubleUnder = CreateMovement(
             "Double Under",
@@ -79,7 +80,7 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
         doubleUnder.AddSecondaryMuscle(quads.Id, SeedUser);
         doubleUnder.AddSecondaryMuscle(abs.Id, SeedUser);
         doubleUnder.AddRequiredEquipmentOption(jumpRope.Id, "rope" ,SeedUser);
-        doubleUnder.AddPattern(DomainEnum.MovementPattern.Jump);
+        doubleUnder.AddPattern(MovementPattern.Jump);
         
        
         var movements = new List<Domain.Model.Entity.Movement>

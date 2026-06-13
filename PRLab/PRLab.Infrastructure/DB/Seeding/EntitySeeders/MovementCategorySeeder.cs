@@ -6,6 +6,7 @@ using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Update;
 using PRLab.Infrastructure.DB.Context;
 
@@ -21,7 +22,7 @@ public sealed class MovementCategorySeeder(
 
     public override string Version => "1.0.0";
 
-    public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.MovementCategory;
+    public override EntityType EntityType => EntityType.MovementCategory;
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
 

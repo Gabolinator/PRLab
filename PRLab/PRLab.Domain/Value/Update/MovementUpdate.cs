@@ -1,6 +1,7 @@
 ﻿using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.Movement;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Domain.Value.Update;
@@ -17,7 +18,7 @@ public sealed class MovementUpdate
 
     public IReadOnlyCollection<MovementMuscle>? Muscles { get; init; }
 
-    public DomainEnum.MovementPattern? PrimaryPattern { get; init; }
+    public MovementPattern? PrimaryPattern { get; init; }
 
     public IReadOnlyCollection<MovementPatternTag>? Patterns { get; init; }
 

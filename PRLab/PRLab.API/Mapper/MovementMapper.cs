@@ -5,6 +5,8 @@ using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.Anatomy;
+using PRLab.Domain.Value.Enum.Movement;
 
 namespace PRLab.API.Mapper;
 
@@ -33,14 +35,14 @@ public static class MovementMapper
             ToEquipmentRequirementGetDTOs(movement.EquipmentRequirements),
             movement.Muscles
                 .Where(movementMuscle =>
-                    movementMuscle.Role == DomainEnum.MuscleRole.Primary
+                    movementMuscle.Role == MuscleRole.Primary
                     && movementMuscle.Muscle is not null)
                 .Select(movementMuscle =>
                     MuscleMapper.ToSummaryDTO(movementMuscle.Muscle))
                 .ToList(),
             movement.Muscles
                 .Where(movementMuscle =>
-                    movementMuscle.Role == DomainEnum.MuscleRole.Secondary
+                    movementMuscle.Role == MuscleRole.Secondary
                     && movementMuscle.Muscle is not null)
                 .Select(movementMuscle =>
                     MuscleMapper.ToSummaryDTO(movementMuscle.Muscle))
@@ -160,7 +162,7 @@ public static class MovementMapper
         {
             foreach (var equipmentId in requirement.EquipmentIds.Distinct())
             {
-                if (requirement.Kind == DomainEnum.EquipmentRequirementKind.Optional)
+                if (requirement.Kind == EquipmentRequirementKind.Optional)
                 {
                     movement.AddOptionalEquipment(
                         equipmentId,
@@ -199,8 +201,8 @@ public static class MovementMapper
 
     private static void ApplyPatterns(
         Movement movement,
-        IReadOnlyCollection<DomainEnum.MovementPattern>? patterns,
-        DomainEnum.MovementPattern? primaryPattern,
+        IReadOnlyCollection<MovementPattern>? patterns,
+        MovementPattern? primaryPattern,
         User? currentUser)
     {
         if (patterns is not null)

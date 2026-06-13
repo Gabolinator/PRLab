@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using PRLab.API.DTO.Description;
 using PRLab.Domain;
+using PRLab.Domain.Value.Enum.Movement;
 
 namespace PRLab.API.DTO.MovementCategory;
 
@@ -12,7 +13,7 @@ public record MovementCategoryPostDTO
     public string Name { get; init; } = string.Empty;
     
     [Required]
-    public DomainEnum.BaseMovementCategory BaseCategory { get; init; }
+    public BaseMovementCategory BaseCategory { get; init; }
     
     public DescriptionPostDTO? Description { get; init; }
 }

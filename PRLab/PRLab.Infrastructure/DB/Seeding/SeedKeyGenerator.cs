@@ -1,6 +1,7 @@
 ﻿using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Infrastructure.DB.Seeding;
 
@@ -11,7 +12,7 @@ public static class SeedKeyGenerator
         ArgumentNullException.ThrowIfNull(movement);
 
         return GenerateKey(
-            DomainEnum.EntityType.Movement,
+            EntityType.Movement,
             movement.NameKey);
     }
     
@@ -20,7 +21,7 @@ public static class SeedKeyGenerator
         ArgumentNullException.ThrowIfNull(equipment);
 
         return GenerateKey(
-            DomainEnum.EntityType.Equipment,
+            EntityType.Equipment,
             equipment.NameKey);
     }
 
@@ -29,7 +30,7 @@ public static class SeedKeyGenerator
         ArgumentNullException.ThrowIfNull(muscle);
 
         return GenerateKey(
-            DomainEnum.EntityType.Muscle,
+            EntityType.Muscle,
             muscle.NameKey);
     }
 
@@ -38,33 +39,33 @@ public static class SeedKeyGenerator
         ArgumentNullException.ThrowIfNull(movementCategory);
 
         return GenerateKey(
-            DomainEnum.EntityType.MovementCategory,
+            EntityType.MovementCategory,
             movementCategory.NameKey);
     }
 
     public static string GenerateMuscleKeyFromName(string name)
     {
         return GenerateKey(
-            DomainEnum.EntityType.Muscle,
+            EntityType.Muscle,
             FormatingUtilities.NormalizeNameKey(name));
     }
 
     public static string GenerateEquipmentKeyFromName(string name)
     {
         return GenerateKey(
-            DomainEnum.EntityType.Equipment,
+            EntityType.Equipment,
             FormatingUtilities.NormalizeNameKey(name));
     }
 
     public static string GenerateMovementCategoryKeyFromName(string name)
     {
         return GenerateKey(
-            DomainEnum.EntityType.MovementCategory,
+            EntityType.MovementCategory,
             FormatingUtilities.NormalizeNameKey(name));
     }
 
     public static string GenerateKey(
-        DomainEnum.EntityType entityType,
+        EntityType entityType,
         string nameKey)
     {
         if (string.IsNullOrWhiteSpace(nameKey))
@@ -75,14 +76,14 @@ public static class SeedKeyGenerator
         return $"{GetPrefix(entityType)}.{nameKey}";
     }
 
-    private static string GetPrefix(DomainEnum.EntityType entityType)
+    private static string GetPrefix(EntityType entityType)
     {
         return entityType switch
         {
-            DomainEnum.EntityType.Equipment => "equipment",
-            DomainEnum.EntityType.Muscle => "muscle",
-            DomainEnum.EntityType.MovementCategory => "movement-category",
-            DomainEnum.EntityType.Movement => "movement",
+            EntityType.Equipment => "equipment",
+            EntityType.Muscle => "muscle",
+            EntityType.MovementCategory => "movement-category",
+            EntityType.Movement => "movement",
             _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null)
         };
     }

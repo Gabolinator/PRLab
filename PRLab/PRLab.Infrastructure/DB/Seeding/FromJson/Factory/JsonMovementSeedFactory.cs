@@ -6,6 +6,7 @@ using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Movement; 
@@ -20,7 +21,7 @@ public sealed class JsonMovementSeedFactory(
     : BaseJsonSeedFactory<Movement, MovementSeedJsonDto>(userService, config),
         IMovementSeedFactory, IMovementVariantSeedFactory
 {
-    protected override DomainEnum.EntityType Entity => DomainEnum.EntityType.Movement;
+    protected override EntityType Entity => EntityType.Movement;
 
     public override SeedItem<Movement> ToSeedItem(MovementSeedJsonDto seedDto)
     {

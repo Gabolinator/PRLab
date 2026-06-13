@@ -1,5 +1,6 @@
 ﻿using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.Anatomy;
 
 namespace PRLab.Domain.Value.Update;
 
@@ -13,7 +14,7 @@ public class MuscleUpdate
     
     public DescriptionUpdate? DescriptionUpdate { get; init; }
     
-    public DomainEnum.BodySection? BodySection { get; init; }
+    public BodySection? BodySection { get; init; }
     
     public User? UpdatedBy { get; init; }
 

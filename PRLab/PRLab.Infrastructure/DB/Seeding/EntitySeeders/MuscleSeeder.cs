@@ -7,6 +7,7 @@ using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Update;
 using PRLab.Infrastructure.DB.Context;
 
@@ -22,7 +23,7 @@ public sealed class MuscleSeeder(
 
     public override string Version => "1.0.0";
 
-    public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.Muscle;
+    public override EntityType EntityType => EntityType.Muscle;
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
     

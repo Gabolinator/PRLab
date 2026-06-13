@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain;
+using PRLab.Domain.Value.Enum.Prescription;
 
 namespace PRLab.API.DTO.Exercise.Relation;
 
@@ -7,10 +8,10 @@ public sealed record RepExecutionDetailsGetDTO(
     int? BottomPauseSeconds,
     int? ConcentricSeconds,
     int? TopPauseSeconds,
-    DomainEnum.RepPhaseExecutionIntent? EccentricIntent,
-    DomainEnum.RepPhaseExecutionIntent? BottomIntent,
-    DomainEnum.RepPhaseExecutionIntent? ConcentricIntent,
-    DomainEnum.RepPhaseExecutionIntent? TopIntent,
+    RepPhaseExecutionIntent? EccentricIntent,
+    RepPhaseExecutionIntent? BottomIntent,
+    RepPhaseExecutionIntent? ConcentricIntent,
+    RepPhaseExecutionIntent? TopIntent,
     string? Intent);
 
 public sealed record RepExecutionDetailsPostDTO
@@ -23,13 +24,13 @@ public sealed record RepExecutionDetailsPostDTO
 
     public int? TopPauseSeconds { get; init; }
 
-    public DomainEnum.RepPhaseExecutionIntent? EccentricIntent { get; init; }
+    public RepPhaseExecutionIntent? EccentricIntent { get; init; }
 
-    public DomainEnum.RepPhaseExecutionIntent? BottomIntent { get; init; }
+    public RepPhaseExecutionIntent? BottomIntent { get; init; }
 
-    public DomainEnum.RepPhaseExecutionIntent? ConcentricIntent { get; init; }
+    public RepPhaseExecutionIntent? ConcentricIntent { get; init; }
 
-    public DomainEnum.RepPhaseExecutionIntent? TopIntent { get; init; }
+    public RepPhaseExecutionIntent? TopIntent { get; init; }
 
     public string? Intent { get; init; }
 }
@@ -44,13 +45,13 @@ public sealed record RepExecutionDetailsPutDTO
 
     public int? TopPauseSeconds { get; init; }
 
-    public DomainEnum.RepPhaseExecutionIntent? EccentricIntent { get; init; }
+    public RepPhaseExecutionIntent? EccentricIntent { get; init; }
 
-    public DomainEnum.RepPhaseExecutionIntent? BottomIntent { get; init; }
+    public RepPhaseExecutionIntent? BottomIntent { get; init; }
 
-    public DomainEnum.RepPhaseExecutionIntent? ConcentricIntent { get; init; }
+    public RepPhaseExecutionIntent? ConcentricIntent { get; init; }
 
-    public DomainEnum.RepPhaseExecutionIntent? TopIntent { get; init; }
+    public RepPhaseExecutionIntent? TopIntent { get; init; }
 
     public string? Intent { get; init; }
 }

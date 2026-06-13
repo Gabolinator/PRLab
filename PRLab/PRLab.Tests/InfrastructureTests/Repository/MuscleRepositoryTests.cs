@@ -2,6 +2,7 @@
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.Anatomy;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Repositories;
 using PRLab.Infrastructure.DB.Repositories.Entity;
@@ -20,7 +21,7 @@ public sealed class MuscleRepositoryTests
         var muscle = Muscle.New(
             "Biceps",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Elbow flexor.")
         );
 
@@ -68,7 +69,7 @@ public sealed class MuscleRepositoryTests
         var muscle = Muscle.New(
             "Biceps",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New(descriptionText)
         );
 
@@ -114,14 +115,14 @@ public sealed class MuscleRepositoryTests
         var visibleMuscle = Muscle.New(
             "Biceps",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Visible muscle.")
         );
 
         var deletedMuscle = Muscle.New(
             "Triceps",
             "Triceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Deleted muscle.")
         );
         
@@ -153,7 +154,7 @@ public sealed class MuscleRepositoryTests
         var muscle = Muscle.New(
             "Biceps",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Elbow flexor.")
         );
 
@@ -182,14 +183,14 @@ public sealed class MuscleRepositoryTests
         var firstMuscle = Muscle.New(
             "Biceps",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("First muscle.")
         );
 
         var secondMuscle = Muscle.New(
             "Triceps",
             "Triceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Second muscle.")
         );
 
@@ -224,7 +225,7 @@ public sealed class MuscleRepositoryTests
         var muscle = Muscle.New(
             "Biceps",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("First muscle.")
         );
 
@@ -269,7 +270,7 @@ public sealed class MuscleRepositoryTests
         var muscle = Muscle.New(
             "Biceps Brachii",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Elbow flexor.")
         );
 
@@ -297,7 +298,7 @@ public sealed class MuscleRepositoryTests
         var muscle = Muscle.New(
             "Biceps Brachii",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Elbow flexor.")
         );
 
@@ -325,14 +326,14 @@ public sealed class MuscleRepositoryTests
         var muscle = Muscle.New(
             "Biceps",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Main muscle.")
         );
 
         var antagonist = Muscle.New(
             "Triceps",
             "Triceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Antagonist muscle.")
         );
 
@@ -366,14 +367,14 @@ public sealed class MuscleRepositoryTests
         var muscle = Muscle.New(
             "Biceps",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Main muscle.")
         );
 
         var antagonist = Muscle.New(
             "Triceps",
             "Triceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Antagonist muscle.")
         );
 
@@ -412,7 +413,7 @@ public sealed class MuscleRepositoryTests
         var muscle = Muscle.New(
             "Biceps",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Main muscle.")
         );
 
@@ -440,7 +441,7 @@ public sealed class MuscleRepositoryTests
         var muscle = Muscle.New(
             "Biceps",
             "Biceps brachii",
-            DomainEnum.BodySection.UpperBody,
+            BodySection.UpperBody,
             Description.New("Main muscle.")
         );
 

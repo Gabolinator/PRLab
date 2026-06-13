@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using PRLab.Domain;
 using PRLab.Domain.Value;
+using PRLab.Domain.Value.Enum.Prescription;
 
 namespace PRLab.Tests.DomainTests.Exercices;
 
@@ -12,7 +13,7 @@ public sealed class LoadTargetTests
         var loadTarget = LoadTarget.None();
 
         loadTarget.Value.Should().BeNull();
-        loadTarget.Type.Should().Be(DomainEnum.LoadTargetType.None);
+        loadTarget.Type.Should().Be(LoadTargetType.None);
         loadTarget.Unit.Should().BeNull();
     }
 
@@ -22,7 +23,7 @@ public sealed class LoadTargetTests
         var loadTarget = LoadTarget.BodyWeight();
 
         loadTarget.Value.Should().BeNull();
-        loadTarget.Type.Should().Be(DomainEnum.LoadTargetType.BodyWeight);
+        loadTarget.Type.Should().Be(LoadTargetType.BodyWeight);
         loadTarget.Unit.Should().BeNull();
     }
 
@@ -30,7 +31,7 @@ public sealed class LoadTargetTests
     public void ExternalLoad_ShouldCreateExternalLoadTarget()
     {
         var value = 100m;
-        var unit = DomainEnum.LoadUnit.Kilogram;
+        var unit = LoadUnit.Kilogram;
 
         var loadTarget = LoadTarget.ExternalLoad(
             value,
@@ -38,7 +39,7 @@ public sealed class LoadTargetTests
         );
 
         loadTarget.Value.Should().Be(value);
-        loadTarget.Type.Should().Be(DomainEnum.LoadTargetType.ExternalLoad);
+        loadTarget.Type.Should().Be(LoadTargetType.ExternalLoad);
         loadTarget.Unit.Should().Be(unit);
     }
 
@@ -46,7 +47,7 @@ public sealed class LoadTargetTests
     public void AddedBodyWeightLoad_ShouldCreateAddedBodyWeightLoadTarget()
     {
         var value = 20m;
-        var unit = DomainEnum.LoadUnit.Kilogram;
+        var unit = LoadUnit.Kilogram;
 
         var loadTarget = LoadTarget.AddedBodyWeightLoad(
             value,
@@ -54,7 +55,7 @@ public sealed class LoadTargetTests
         );
 
         loadTarget.Value.Should().Be(value);
-        loadTarget.Type.Should().Be(DomainEnum.LoadTargetType.AddedBodyWeightLoad);
+        loadTarget.Type.Should().Be(LoadTargetType.AddedBodyWeightLoad);
         loadTarget.Unit.Should().Be(unit);
     }
 
@@ -62,7 +63,7 @@ public sealed class LoadTargetTests
     public void AssistedBodyWeight_ShouldCreateAssistedBodyWeightLoadTarget()
     {
         var value = 15m;
-        var unit = DomainEnum.LoadUnit.Kilogram;
+        var unit = LoadUnit.Kilogram;
 
         var loadTarget = LoadTarget.AssistedBodyWeight(
             value,
@@ -70,7 +71,7 @@ public sealed class LoadTargetTests
         );
 
         loadTarget.Value.Should().Be(value);
-        loadTarget.Type.Should().Be(DomainEnum.LoadTargetType.AssistedBodyWeight);
+        loadTarget.Type.Should().Be(LoadTargetType.AssistedBodyWeight);
         loadTarget.Unit.Should().Be(unit);
     }
 
@@ -79,7 +80,7 @@ public sealed class LoadTargetTests
     [InlineData(-1)]
     public void ExternalLoad_ShouldThrow_WhenValueIsNotGreaterThanZero(decimal value)
     {
-        var unit = DomainEnum.LoadUnit.Kilogram;
+        var unit = LoadUnit.Kilogram;
 
         var act = () => LoadTarget.ExternalLoad(
             value,
@@ -94,7 +95,7 @@ public sealed class LoadTargetTests
     [InlineData(-1)]
     public void AddedBodyWeightLoad_ShouldThrow_WhenValueIsNotGreaterThanZero(decimal value)
     {
-        var unit = DomainEnum.LoadUnit.Kilogram;
+        var unit = LoadUnit.Kilogram;
 
         var act = () => LoadTarget.AddedBodyWeightLoad(
             value,
@@ -109,7 +110,7 @@ public sealed class LoadTargetTests
     [InlineData(-1)]
     public void AssistedBodyWeight_ShouldThrow_WhenValueIsNotGreaterThanZero(decimal value)
     {
-        var unit = DomainEnum.LoadUnit.Kilogram;
+        var unit = LoadUnit.Kilogram;
 
         var act = () => LoadTarget.AssistedBodyWeight(
             value,

@@ -3,6 +3,7 @@ using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.Anatomy;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Context;
 
@@ -122,7 +123,7 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
 
     public async Task<IReadOnlyCollection<Movement>> ListByMuscleRoleAsync(
         MuscleId muscleId,
-        DomainEnum.MuscleRole role,
+        MuscleRole role,
         CancellationToken ct)
     {
         if (muscleId.Value == Guid.Empty)

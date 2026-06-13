@@ -4,6 +4,8 @@ using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
+using PRLab.Domain.Value.Enum.Prescription;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Tests.DomainTests.Exercices;
@@ -28,7 +30,7 @@ public sealed class ExerciseTests
         exercise.Audit.Should().NotBeNull();
         exercise.Audit.IsDeleted.Should().BeFalse();
         exercise.Ownership.Should().NotBeNull();
-        exercise.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        exercise.Ownership.Origin.Should().Be(DataOrigin.BuiltIn);
         exercise.Ownership.OwnerUserId.Should().BeNull();
         exercise.Blocks.Should().BeEmpty();
     }
@@ -49,7 +51,7 @@ public sealed class ExerciseTests
         exercise.Description.Should().NotBeNull();
         exercise.Description.GetContent().Should().BeNull();
         exercise.Ownership.Should().NotBeNull();
-        exercise.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        exercise.Ownership.Origin.Should().Be(DataOrigin.BuiltIn);
         exercise.Ownership.OwnerUserId.Should().BeNull();
         exercise.Blocks.Should().BeEmpty();
     }
@@ -87,7 +89,7 @@ public sealed class ExerciseTests
         exercise.Audit.Should().NotBeNull();
         exercise.Audit.CreatedBy.Should().Be(owner.Id);
         exercise.Ownership.Should().NotBeNull();
-        exercise.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.UserCreated);
+        exercise.Ownership.Origin.Should().Be(DataOrigin.UserCreated);
         exercise.Ownership.OwnerUserId.Should().Be(owner.Id);
         exercise.Blocks.Should().BeEmpty();
     }
@@ -136,7 +138,7 @@ public sealed class ExerciseTests
         var movementDescriptionText = "Vertical pulling movement.";
         var movementCategoryId = MovementCategoryId.New();
         var value = 5m;
-        var targetType = DomainEnum.WorkTargetType.Repetitions;
+        var targetType = WorkTargetType.Repetitions;
 
         var movement = Movement.NewBuiltIn(
             movementName,
@@ -155,7 +157,7 @@ public sealed class ExerciseTests
         exercise.Description.Id.Should().NotBe(movement.Description.Id);
         exercise.Description.GetContent().Should().Be(movementDescriptionText);
         exercise.Ownership.Should().NotBeNull();
-        exercise.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        exercise.Ownership.Origin.Should().Be(DataOrigin.BuiltIn);
         exercise.Ownership.OwnerUserId.Should().BeNull();
         exercise.Blocks.Should().ContainSingle();
 
@@ -166,7 +168,7 @@ public sealed class ExerciseTests
         block.Sequence.Should().Be(1);
         block.Target.Value.Should().Be(value);
         block.Target.TargetType.Should().Be(targetType);
-        block.LoadTarget.Type.Should().Be(DomainEnum.LoadTargetType.None);
+        block.LoadTarget.Type.Should().Be(LoadTargetType.None);
         block.RestBetweenReps.IsEmpty().Should().BeTrue();
         block.TransitionAfterBlock.IsEmpty().Should().BeTrue();
         block.ExecutionDetails.IsEmpty().Should().BeTrue();
@@ -180,7 +182,7 @@ public sealed class ExerciseTests
         var movementDescriptionText = "Vertical pulling movement.";
         var movementCategoryId = MovementCategoryId.New();
         var value = 5m;
-        var targetType = DomainEnum.WorkTargetType.Repetitions;
+        var targetType = WorkTargetType.Repetitions;
 
         var movement = Movement.NewBuiltIn(
             movementName,
@@ -198,7 +200,7 @@ public sealed class ExerciseTests
         exercise.Name.Should().Be(movement.Name);
         exercise.NameKey.Should().Be(movement.NameKey);
         exercise.Ownership.Should().NotBeNull();
-        exercise.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.UserCreated);
+        exercise.Ownership.Origin.Should().Be(DataOrigin.UserCreated);
         exercise.Ownership.OwnerUserId.Should().Be(owner.Id);
         exercise.Audit.CreatedBy.Should().Be(owner.Id);
         exercise.Blocks.Should().ContainSingle();
@@ -212,11 +214,11 @@ public sealed class ExerciseTests
         var movementDescriptionText = "Vertical pulling movement with external load.";
         var movementCategoryId = MovementCategoryId.New();
         var value = 5m;
-        var targetType = DomainEnum.WorkTargetType.Repetitions;
+        var targetType = WorkTargetType.Repetitions;
 
         var loadTarget = LoadTarget.AddedBodyWeightLoad(
             20m,
-            DomainEnum.LoadUnit.Kilogram
+            LoadUnit.Kilogram
         );
 
         var restBetweenReps = RestTarget.SecondsDuration(5);
@@ -227,10 +229,10 @@ public sealed class ExerciseTests
             bottomPauseSeconds: 1,
             concentricSeconds: 1,
             topPauseSeconds: 0,
-            eccentricIntent: DomainEnum.RepPhaseExecutionIntent.Controlled,
-            bottomIntent: DomainEnum.RepPhaseExecutionIntent.Paused,
-            concentricIntent: DomainEnum.RepPhaseExecutionIntent.Explosive,
-            topIntent: DomainEnum.RepPhaseExecutionIntent.Strict,
+            eccentricIntent: RepPhaseExecutionIntent.Controlled,
+            bottomIntent: RepPhaseExecutionIntent.Paused,
+            concentricIntent: RepPhaseExecutionIntent.Explosive,
+            topIntent: RepPhaseExecutionIntent.Strict,
             intent: "Keep the reps clean."
         );
 
@@ -266,7 +268,7 @@ public sealed class ExerciseTests
     {
         Movement movement = null!;
         var value = 5m;
-        var targetType = DomainEnum.WorkTargetType.Repetitions;
+        var targetType = WorkTargetType.Repetitions;
 
         var act = () => Exercise.FromMovementBuiltIn(
             movement,
@@ -292,13 +294,13 @@ public sealed class ExerciseTests
         exercise.AddBlock(
             firstMovementId,
             5m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         exercise.AddBlock(
             secondMovementId,
             10m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         exercise.Blocks.Should().HaveCount(2);
@@ -321,11 +323,11 @@ public sealed class ExerciseTests
 
         var movementId = MovementId.New();
         var value = 5m;
-        var targetType = DomainEnum.WorkTargetType.Repetitions;
+        var targetType = WorkTargetType.Repetitions;
 
         var loadTarget = LoadTarget.AddedBodyWeightLoad(
             20m,
-            DomainEnum.LoadUnit.Kilogram
+            LoadUnit.Kilogram
         );
 
         var restBetweenReps = RestTarget.SecondsDuration(5);
@@ -373,7 +375,7 @@ public sealed class ExerciseTests
         exercise.AddBlock(
             MovementId.New(),
             5m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         exercise.Audit.UpdatedAt.Should().NotBe(previousUpdatedAt);
@@ -390,7 +392,7 @@ public sealed class ExerciseTests
 
         var movementId = MovementId.New();
         var value = 0m;
-        var targetType = DomainEnum.WorkTargetType.Repetitions;
+        var targetType = WorkTargetType.Repetitions;
 
         var act = () => exercise.AddBlock(
             movementId,
@@ -413,7 +415,7 @@ public sealed class ExerciseTests
         exercise.AddBlock(
             MovementId.New(),
             5m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         var blockId = exercise.Blocks.First().Id;
@@ -451,19 +453,19 @@ public sealed class ExerciseTests
         exercise.AddBlock(
             MovementId.New(),
             5m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         exercise.AddBlock(
             MovementId.New(),
             10m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         exercise.AddBlock(
             MovementId.New(),
             15m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         var secondBlockId = exercise.Blocks.ElementAt(1).Id;
@@ -491,19 +493,19 @@ public sealed class ExerciseTests
         exercise.AddBlock(
             firstMovementId,
             5m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         exercise.AddBlock(
             secondMovementId,
             10m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         exercise.AddBlock(
             thirdMovementId,
             15m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         var thirdBlockId = exercise.Blocks.ElementAt(2).Id;
@@ -532,7 +534,7 @@ public sealed class ExerciseTests
         exercise.AddBlock(
             MovementId.New(),
             5m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         var blockId = exercise.Blocks.First().Id;
@@ -557,7 +559,7 @@ public sealed class ExerciseTests
         exercise.AddBlock(
             MovementId.New(),
             5m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         var missingBlockId = ExerciseBlockId.New();
@@ -664,7 +666,7 @@ public sealed class ExerciseTests
 
         var blockId = exercise.Blocks.First().Id;
         var newValue = 30m;
-        var newTargetType = DomainEnum.WorkTargetType.DurationSeconds;
+        var newTargetType = WorkTargetType.DurationSeconds;
 
         exercise.ChangeBlockTarget(
             blockId,
@@ -690,7 +692,7 @@ public sealed class ExerciseTests
         exercise.ChangeBlockTarget(
             missingBlockId,
             30m,
-            DomainEnum.WorkTargetType.DurationSeconds
+            WorkTargetType.DurationSeconds
         );
 
         exercise.Blocks.Should().BeEmpty();
@@ -704,7 +706,7 @@ public sealed class ExerciseTests
 
         var loadTarget = LoadTarget.ExternalLoad(
             80m,
-            DomainEnum.LoadUnit.Kilogram
+            LoadUnit.Kilogram
         );
 
         exercise.ChangeBlockLoadTarget(
@@ -728,7 +730,7 @@ public sealed class ExerciseTests
 
         var loadTarget = LoadTarget.ExternalLoad(
             80m,
-            DomainEnum.LoadUnit.Kilogram
+            LoadUnit.Kilogram
         );
 
         exercise.ChangeBlockLoadTarget(
@@ -747,7 +749,7 @@ public sealed class ExerciseTests
 
         var loadTarget = LoadTarget.ExternalLoad(
             80m,
-            DomainEnum.LoadUnit.Kilogram
+            LoadUnit.Kilogram
         );
 
         exercise.ChangeBlockLoadTarget(
@@ -757,7 +759,7 @@ public sealed class ExerciseTests
 
         exercise.RemoveBlockLoadTarget(blockId);
 
-        exercise.Blocks.First().LoadTarget.Type.Should().Be(DomainEnum.LoadTargetType.None);
+        exercise.Blocks.First().LoadTarget.Type.Should().Be(LoadTargetType.None);
         exercise.Blocks.First().LoadTarget.Value.Should().BeNull();
         exercise.Blocks.First().LoadTarget.Unit.Should().BeNull();
     }
@@ -879,7 +881,7 @@ public sealed class ExerciseTests
         exercise.AddBlock(
             MovementId.New(),
             5m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         return exercise;

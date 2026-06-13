@@ -6,6 +6,7 @@ using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
+using PRLab.Domain.Value.Enum.Prescription;
 
 namespace PRLab.API.Mapper;
 
@@ -281,26 +282,26 @@ public static class ExerciseMapper
 
     private static LoadTarget ToLoadTarget(
         decimal? value,
-        DomainEnum.LoadTargetType type,
-        DomainEnum.LoadUnit? unit)
+        LoadTargetType type,
+        LoadUnit? unit)
     {
         return type switch
         {
-            DomainEnum.LoadTargetType.None => LoadTarget.None(),
+            LoadTargetType.None => LoadTarget.None(),
 
-            DomainEnum.LoadTargetType.BodyWeight => LoadTarget.BodyWeight(),
+            LoadTargetType.BodyWeight => LoadTarget.BodyWeight(),
 
-            DomainEnum.LoadTargetType.ExternalLoad => LoadTarget.ExternalLoad(
+            LoadTargetType.ExternalLoad => LoadTarget.ExternalLoad(
                 RequireLoadValue(value, type),
                 RequireLoadUnit(unit, type)
             ),
 
-            DomainEnum.LoadTargetType.AddedBodyWeightLoad => LoadTarget.AddedBodyWeightLoad(
+            LoadTargetType.AddedBodyWeightLoad => LoadTarget.AddedBodyWeightLoad(
                 RequireLoadValue(value, type),
                 RequireLoadUnit(unit, type)
             ),
 
-            DomainEnum.LoadTargetType.AssistedBodyWeight => LoadTarget.AssistedBodyWeight(
+            LoadTargetType.AssistedBodyWeight => LoadTarget.AssistedBodyWeight(
                 RequireLoadValue(value, type),
                 RequireLoadUnit(unit, type)
             ),
@@ -324,7 +325,7 @@ public static class ExerciseMapper
 
     private static decimal RequireLoadValue(
         decimal? value,
-        DomainEnum.LoadTargetType type)
+        LoadTargetType type)
     {
         if (!value.HasValue)
         {
@@ -334,9 +335,9 @@ public static class ExerciseMapper
         return value.Value;
     }
 
-    private static DomainEnum.LoadUnit RequireLoadUnit(
-        DomainEnum.LoadUnit? unit,
-        DomainEnum.LoadTargetType type)
+    private static LoadUnit RequireLoadUnit(
+        LoadUnit? unit,
+        LoadTargetType type)
     {
         if (!unit.HasValue)
         {

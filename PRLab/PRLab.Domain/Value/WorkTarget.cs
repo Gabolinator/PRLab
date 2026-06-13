@@ -1,10 +1,12 @@
-﻿namespace PRLab.Domain.Value;
+﻿using PRLab.Domain.Value.Enum.Prescription;
+
+namespace PRLab.Domain.Value;
 
 public sealed record WorkTarget
 {
     public decimal Value { get; private set; }
 
-    public DomainEnum.WorkTargetType TargetType { get; private set; }
+    public WorkTargetType TargetType { get; private set; }
 
     private WorkTarget()
     {
@@ -13,7 +15,7 @@ public sealed record WorkTarget
 
     private WorkTarget(
         decimal value,
-        DomainEnum.WorkTargetType targetType)
+        WorkTargetType targetType)
     {
         Value = ValidateValue(value);
         TargetType = targetType;
@@ -21,7 +23,7 @@ public sealed record WorkTarget
 
     public static WorkTarget New(
         decimal value,
-        DomainEnum.WorkTargetType repType)
+        WorkTargetType repType)
     {
         return new WorkTarget(
             value,

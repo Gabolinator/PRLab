@@ -6,6 +6,7 @@ using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Update;
 using PRLab.Infrastructure.DB.Context;
 
@@ -17,7 +18,7 @@ public sealed class EquipmentSeeder(
     IEquipmentSeedFactory seedFactory,
     IAppLogger logger) : EntitySeederBase(db, logger)
 {
-    public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.Equipment;
+    public override EntityType EntityType => EntityType.Equipment;
     public override string Name => "DevelopmentEquipmentSeed";
 
     public override string Version => "1.0.0";

@@ -2,6 +2,7 @@
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
+using PRLab.Domain.Value.Enum.Anatomy;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Domain.Value.Update;
 
@@ -17,7 +18,7 @@ public sealed record Muscle : IAudited, IDescribed
 
     public string? LatinName { get; private set; }
 
-    public DomainEnum.BodySection BodySection { get; private set; }
+    public BodySection BodySection { get; private set; }
 
     public Description Description { get; private set; } = null!;
 
@@ -40,7 +41,7 @@ public sealed record Muscle : IAudited, IDescribed
         MuscleId id,
         string name,
         string? latinName,
-        DomainEnum.BodySection bodySection,
+        BodySection bodySection,
         Description description,
         AuditInfo audit)
     {
@@ -55,7 +56,7 @@ public sealed record Muscle : IAudited, IDescribed
     public static Muscle New(
         string name,
         string? latinName,
-        DomainEnum.BodySection bodySection,
+        BodySection bodySection,
         Description description,
         User? createdBy = null)
     {
@@ -74,7 +75,7 @@ public sealed record Muscle : IAudited, IDescribed
     public static Muscle New(
         string name,
         string? latinName,
-        DomainEnum.BodySection bodySection,
+        BodySection bodySection,
         string? description,
         User? createdBy = null)
     {
@@ -92,7 +93,7 @@ public sealed record Muscle : IAudited, IDescribed
         MuscleId id,
         string name,
         string? latinName,
-        DomainEnum.BodySection bodySection,
+        BodySection bodySection,
         Description description,
         User? createdBy = null)
     {
@@ -162,7 +163,7 @@ public sealed record Muscle : IAudited, IDescribed
     }
 
     public void ChangeBodySection(
-        DomainEnum.BodySection bodySection,
+        BodySection bodySection,
         User? changedBy = null)
     {
         BodySection = bodySection;

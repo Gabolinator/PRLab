@@ -2,6 +2,7 @@
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.Movement;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Movement;
@@ -38,7 +39,7 @@ public sealed class MovementSeedRelationResolver : IMovementSeedRelationResolver
                     equipmentRef,
                     catalogs.Equipment);
 
-                if (requirement.Kind == DomainEnum.EquipmentRequirementKind.Optional)
+                if (requirement.Kind == EquipmentRequirementKind.Optional)
                 {
                     movement.AddOptionalEquipment(
                         equipment.Id,

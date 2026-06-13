@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Application.Results.APIResults;
 
@@ -48,7 +49,7 @@ public class APIResult<T> : Result<T>
     public static APIResult<T> Deleted(T value)
         => SuccessResult(ApiResultStatus.Deleted, value);
     
-    public static APIResult<T> NotDeleted(Guid id, DomainEnum.EntityType type, string? message = null)
+    public static APIResult<T> NotDeleted(Guid id, EntityType type, string? message = null)
         => Failure(ApiResultStatus.NotDeleted, $"Could Not Delete {type} with id {id} : {message}");
 
     public static APIResult<T> NotFound(string notFoundMessage)

@@ -1,5 +1,6 @@
 ﻿using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.Movement;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Application.Interface.DB.Repositories.Entity;
@@ -15,7 +16,7 @@ public interface IMovementCategoryRepository
     Task<IReadOnlyCollection<MovementCategory>> ListAsync(CancellationToken ct);
 
     Task<IReadOnlyCollection<MovementCategory>> ListByBaseCategoryAsync(
-        DomainEnum.BaseMovementCategory baseMovementCategory,
+        BaseMovementCategory baseMovementCategory,
         CancellationToken ct);
 
     Task<MovementCategory> CreateAsync(

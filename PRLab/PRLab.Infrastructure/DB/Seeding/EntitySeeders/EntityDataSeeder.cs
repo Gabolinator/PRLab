@@ -1,6 +1,7 @@
 ﻿using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 
@@ -11,19 +12,19 @@ public sealed class EntityDataSeeder(
 {
     private readonly IReadOnlyList<IEntitySeeder> entitySeeders = entitySeeders.ToList();
 
-    public IReadOnlySet<DomainEnum.EntityType> EntitySeederTypes =>
+    public IReadOnlySet<EntityType> EntitySeederTypes =>
         entitySeeders
             .Select(seeder => seeder.EntityType)
             .ToHashSet();
     
-    public IReadOnlySet<DomainEnum.EntityType> BaseEntitySeederTypes =>
+    public IReadOnlySet<EntityType> BaseEntitySeederTypes =>
         entitySeeders
             .Select(seeder => seeder.EntityType)
             .Where(type => type.IsBaseType())
             .ToHashSet();
 
     public async Task<IReadOnlyList<SeedResult>> SeedAsync(
-        IReadOnlyCollection<DomainEnum.EntityType>? entities = null,
+        IReadOnlyCollection<EntityType>? entities = null,
         CancellationToken ct = default)
     {
         var entitiesToSeed = entities is null || entities.Count == 0
@@ -46,7 +47,7 @@ public sealed class EntityDataSeeder(
     }
 
     private void ValidateRequestedEntities(
-        IReadOnlySet<DomainEnum.EntityType> requestedEntities)
+        IReadOnlySet<EntityType> requestedEntities)
     {
         var unsupportedEntities = requestedEntities
             .Where(entityType => !EntitySeederTypes.Contains(entityType))

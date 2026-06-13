@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using PRLab.Domain;
 using PRLab.Domain.Value;
+using PRLab.Domain.Value.Enum.Prescription;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Tests.DomainTests.Exercices;
@@ -16,12 +17,12 @@ public sealed class ExerciseBlockTests
 
         var target = WorkTarget.New(
             10m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         var loadTarget = LoadTarget.ExternalLoad(
             100m,
-            DomainEnum.LoadUnit.Kilogram
+            LoadUnit.Kilogram
         );
 
         var restBetweenReps = RestTarget.SecondsDuration(5);
@@ -32,10 +33,10 @@ public sealed class ExerciseBlockTests
             bottomPauseSeconds: 1,
             concentricSeconds: 2,
             topPauseSeconds: 1,
-            eccentricIntent: DomainEnum.RepPhaseExecutionIntent.Controlled,
-            bottomIntent: DomainEnum.RepPhaseExecutionIntent.Paused,
-            concentricIntent: DomainEnum.RepPhaseExecutionIntent.Explosive,
-            topIntent: DomainEnum.RepPhaseExecutionIntent.Strict,
+            eccentricIntent: RepPhaseExecutionIntent.Controlled,
+            bottomIntent: RepPhaseExecutionIntent.Paused,
+            concentricIntent: RepPhaseExecutionIntent.Explosive,
+            topIntent: RepPhaseExecutionIntent.Strict,
             intent: "Keep form strict."
         );
 
@@ -69,7 +70,7 @@ public sealed class ExerciseBlockTests
 
         var target = WorkTarget.New(
             10m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         var block = ExerciseBlock.New(
@@ -84,7 +85,7 @@ public sealed class ExerciseBlockTests
         block.Sequence.Should().Be(sequence);
         block.Target.Should().Be(target);
 
-        block.LoadTarget.Type.Should().Be(DomainEnum.LoadTargetType.None);
+        block.LoadTarget.Type.Should().Be(LoadTargetType.None);
         block.LoadTarget.Value.Should().BeNull();
         block.LoadTarget.Unit.Should().BeNull();
 
@@ -121,7 +122,7 @@ public sealed class ExerciseBlockTests
 
         var target = WorkTarget.New(
             10m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         var act = () => ExerciseBlock.New(
@@ -141,7 +142,7 @@ public sealed class ExerciseBlockTests
 
         var target = WorkTarget.New(
             30m,
-            DomainEnum.WorkTargetType.DurationSeconds
+            WorkTargetType.DurationSeconds
         );
 
         block.ChangeTarget(target);
@@ -167,7 +168,7 @@ public sealed class ExerciseBlockTests
 
         var loadTarget = LoadTarget.ExternalLoad(
             80m,
-            DomainEnum.LoadUnit.Kilogram
+            LoadUnit.Kilogram
         );
 
         block.ChangeLoadTarget(loadTarget);
@@ -193,14 +194,14 @@ public sealed class ExerciseBlockTests
 
         var loadTarget = LoadTarget.ExternalLoad(
             80m,
-            DomainEnum.LoadUnit.Kilogram
+            LoadUnit.Kilogram
         );
 
         block.ChangeLoadTarget(loadTarget);
 
         block.RemoveLoadTarget();
 
-        block.LoadTarget.Type.Should().Be(DomainEnum.LoadTargetType.None);
+        block.LoadTarget.Type.Should().Be(LoadTargetType.None);
         block.LoadTarget.Value.Should().BeNull();
         block.LoadTarget.Unit.Should().BeNull();
     }
@@ -355,7 +356,7 @@ public sealed class ExerciseBlockTests
 
         var target = WorkTarget.New(
             10m,
-            DomainEnum.WorkTargetType.Repetitions
+            WorkTargetType.Repetitions
         );
 
         return ExerciseBlock.New(

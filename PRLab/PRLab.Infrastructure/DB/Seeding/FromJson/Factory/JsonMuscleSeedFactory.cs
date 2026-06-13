@@ -6,6 +6,7 @@ using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Muscle;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Relations.Interface;
@@ -20,7 +21,7 @@ public sealed class JsonMuscleSeedFactory(
         IMuscleSeedFactory,
         IMuscleAntagonistSeedFactory
 {
-    protected override DomainEnum.EntityType Entity => DomainEnum.EntityType.Muscle;
+    protected override EntityType Entity => EntityType.Muscle;
 
     public IReadOnlyList<SeedItem<Muscle>> CreateInitialData()
     {

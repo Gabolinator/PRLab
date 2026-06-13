@@ -1,28 +1,30 @@
-﻿namespace PRLab.Domain;
+﻿using PRLab.Domain.Value.Enum.System;
+
+namespace PRLab.Domain;
 
 public static class DomainExtensions
 {
-    public static bool IsBaseType(this DomainEnum.EntityType type) =>
+    public static bool IsBaseType(this EntityType type) =>
         type switch
         {
-            DomainEnum.EntityType.User
-                or DomainEnum.EntityType.Description 
-                or DomainEnum.EntityType.Equipment 
-                or DomainEnum.EntityType.MovementCategory 
-                or  DomainEnum.EntityType.Muscle
-                or  DomainEnum.EntityType.Movement
-                or DomainEnum.EntityType.WorkloadProfile
-                or  DomainEnum.EntityType.Exercise
-                or DomainEnum.EntityType.Workout 
-                or DomainEnum.EntityType.Program => true,
+            EntityType.User
+                or EntityType.Description 
+                or EntityType.Equipment 
+                or EntityType.MovementCategory 
+                or  EntityType.Muscle
+                or  EntityType.Movement
+                or EntityType.WorkloadProfile
+                or  EntityType.Exercise
+                or EntityType.Workout 
+                or EntityType.Program => true,
             _ => false,
         };
 
 
-    public static IReadOnlyList<DomainEnum.EntityType> GetDependenciesType(this DomainEnum.EntityType type) =>
+    public static IReadOnlyList<EntityType> GetDependenciesType(this EntityType type) =>
         type switch
         {
-               DomainEnum.EntityType.Muscle => [DomainEnum.EntityType. MuscleAntagonist],
+               EntityType.Muscle => [EntityType. MuscleAntagonist],
             _ => [],
         };
     

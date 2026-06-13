@@ -2,6 +2,7 @@
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Tests.DomainTests;
 
@@ -25,7 +26,7 @@ public sealed class EquipmentTests
         equipment.Audit.Should().NotBeNull();
         equipment.Audit.IsDeleted.Should().BeFalse();
         equipment.Ownership.Should().NotBeNull();
-        equipment.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        equipment.Ownership.Origin.Should().Be(DataOrigin.BuiltIn);
         equipment.Ownership.OwnerUserId.Should().BeNull();
     }
 
@@ -61,7 +62,7 @@ public sealed class EquipmentTests
         equipment.Audit.Should().NotBeNull();
         equipment.Audit.CreatedBy.Should().Be(owner.Id);
         equipment.Ownership.Should().NotBeNull();
-        equipment.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.UserCreated);
+        equipment.Ownership.Origin.Should().Be(DataOrigin.UserCreated);
         equipment.Ownership.OwnerUserId.Should().Be(owner.Id);
     }
 

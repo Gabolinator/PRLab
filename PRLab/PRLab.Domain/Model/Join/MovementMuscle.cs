@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.Anatomy;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Domain.Model.Join;
@@ -13,7 +14,7 @@ public sealed class MovementMuscle
 
     public Muscle Muscle { get; private init; } = null!;
 
-    public DomainEnum.MuscleRole Role { get; private init; }
+    public MuscleRole Role { get; private init; }
 
     private MovementMuscle()
     {
@@ -23,7 +24,7 @@ public sealed class MovementMuscle
     private MovementMuscle(
         MovementId movementId,
         MuscleId muscleId,
-        DomainEnum.MuscleRole role)
+        MuscleRole role)
     {
         MovementId = movementId;
         MuscleId = muscleId;
@@ -33,7 +34,7 @@ public sealed class MovementMuscle
     public static MovementMuscle New(
         MovementId movementId,
         MuscleId muscleId,
-        DomainEnum.MuscleRole role)
+        MuscleRole role)
     {
         return new MovementMuscle(
             movementId,

@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Tools.Model;
 
 namespace PRLab.Tools.Config;
@@ -7,7 +8,7 @@ public sealed class PRToolOptions
 {
     public ToolCommands[] Commands { get; init; } = [];
 
-    public DomainEnum.EntityType[] Targets { get; init; } = [];
+    public EntityType[] Targets { get; init; } = [];
 
     public int CommandIndex { get; init; } = 0;
 

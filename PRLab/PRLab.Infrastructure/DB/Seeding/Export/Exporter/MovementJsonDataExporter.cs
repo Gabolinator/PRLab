@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Infrastructure.DB.Context;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Movement;
 
@@ -11,7 +12,7 @@ public class MovementJsonDataExporter(
     ISeedingConfig config)
     : BaseJsonSeedDataExporter<MovementSeedJsonDto>(config)
 {
-    public override DomainEnum.EntityType Entity => DomainEnum.EntityType.Movement;
+    public override EntityType Entity => EntityType.Movement;
 
     protected override async Task<IReadOnlyList<MovementSeedJsonDto>> CreateSeedDtosAsync(
         CancellationToken ct)

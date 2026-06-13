@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Infrastructure.DB.Seeding.Export;
 using PRLab.Tools.Config;
 using PRLab.Tools.Model;
@@ -31,7 +32,7 @@ public sealed class SeedToolCommandHandler(
             return;
         }
 
-        var seedEntities = new List<DomainEnum.EntityType>();
+        var seedEntities = new List<EntityType>();
 
         if (data.TargetIsAll)
         {

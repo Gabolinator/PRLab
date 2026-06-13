@@ -1,12 +1,13 @@
 ﻿using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.Movement;
 using PRLab.Domain.Value.Identifier;
 
 public sealed record MovementPatternTag
 {
     public MovementId MovementId { get; init; }
     
-    public DomainEnum.MovementPattern Pattern { get; init; }
+    public MovementPattern Pattern { get; init; }
 
     private MovementPatternTag()
     {
@@ -15,7 +16,7 @@ public sealed record MovementPatternTag
 
     private MovementPatternTag(
         MovementId movementId,
-        DomainEnum.MovementPattern pattern)
+        MovementPattern pattern)
     {
         MovementId = movementId;
         Pattern = pattern;
@@ -23,7 +24,7 @@ public sealed record MovementPatternTag
 
     public static MovementPatternTag New(
         MovementId movementId,
-        DomainEnum.MovementPattern pattern)
+        MovementPattern pattern)
     {
         return new MovementPatternTag(
             movementId,

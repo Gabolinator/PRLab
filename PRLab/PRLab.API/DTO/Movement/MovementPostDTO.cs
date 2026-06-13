@@ -2,6 +2,7 @@
 using PRLab.API.DTO.Movement.Relation;
 using PRLab.API.DTO.Muscle;
 using PRLab.Domain;
+using PRLab.Domain.Value.Enum.Movement;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.API.DTO.Movement;
@@ -18,9 +19,9 @@ public sealed record MovementPostDTO
 
     public IReadOnlyList<MovementMusclePostDTO> Muscles { get; init; } = [];
 
-    public DomainEnum.MovementPattern? PrimaryPattern { get; init; }
+    public MovementPattern? PrimaryPattern { get; init; }
 
-    public IReadOnlyList<DomainEnum.MovementPattern> Patterns { get; init; } = [];
+    public IReadOnlyList<MovementPattern> Patterns { get; init; } = [];
 
     public MovementId? VariantOfMovementId { get; init; }
 }

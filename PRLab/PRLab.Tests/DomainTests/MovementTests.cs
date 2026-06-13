@@ -3,6 +3,9 @@ using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.Anatomy;
+using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Tests.DomainTests;
@@ -29,7 +32,7 @@ public sealed class MovementTests
         movement.Audit.Should().NotBeNull();
         movement.Audit.IsDeleted.Should().BeFalse();
         movement.Ownership.Should().NotBeNull();
-        movement.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        movement.Ownership.Origin.Should().Be(DataOrigin.BuiltIn);
         movement.Ownership.OwnerUserId.Should().BeNull();
         movement.Muscles.Should().BeEmpty();
         movement.EquipmentRequirements.Should().BeEmpty();
@@ -60,7 +63,7 @@ public sealed class MovementTests
         movement.Audit.Should().NotBeNull();
         movement.Audit.CreatedBy.Should().Be(owner.Id);
         movement.Ownership.Should().NotBeNull();
-        movement.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.UserCreated);
+        movement.Ownership.Origin.Should().Be(DataOrigin.UserCreated);
         movement.Ownership.OwnerUserId.Should().Be(owner.Id);
     }
 
@@ -186,7 +189,7 @@ public sealed class MovementTests
         movement.Muscles.Should().ContainSingle();
         movement.Muscles.First().MovementId.Should().Be(movement.Id);
         movement.Muscles.First().MuscleId.Should().Be(muscleId);
-        movement.Muscles.First().Role.Should().Be(DomainEnum.MuscleRole.Primary);
+        movement.Muscles.First().Role.Should().Be(MuscleRole.Primary);
     }
 
     [Fact]
@@ -205,7 +208,7 @@ public sealed class MovementTests
         movement.Muscles.Should().ContainSingle();
         movement.Muscles.First().MovementId.Should().Be(movement.Id);
         movement.Muscles.First().MuscleId.Should().Be(muscleId);
-        movement.Muscles.First().Role.Should().Be(DomainEnum.MuscleRole.Secondary);
+        movement.Muscles.First().Role.Should().Be(MuscleRole.Secondary);
     }
 
     [Fact]
@@ -221,16 +224,16 @@ public sealed class MovementTests
 
         movement.AddMuscle(
             muscleId,
-            DomainEnum.MuscleRole.Primary
+            MuscleRole.Primary
         );
 
         movement.AddMuscle(
             muscleId,
-            DomainEnum.MuscleRole.Secondary
+            MuscleRole.Secondary
         );
 
         movement.Muscles.Should().ContainSingle();
-        movement.Muscles.First().Role.Should().Be(DomainEnum.MuscleRole.Primary);
+        movement.Muscles.First().Role.Should().Be(MuscleRole.Primary);
     }
 
     [Fact]
@@ -246,16 +249,16 @@ public sealed class MovementTests
 
         movement.AddMuscle(
             muscleId,
-            DomainEnum.MuscleRole.Secondary
+            MuscleRole.Secondary
         );
 
         movement.ChangeMuscleRole(
             muscleId,
-            DomainEnum.MuscleRole.Primary
+            MuscleRole.Primary
         );
 
         movement.Muscles.Should().ContainSingle();
-        movement.Muscles.First().Role.Should().Be(DomainEnum.MuscleRole.Primary);
+        movement.Muscles.First().Role.Should().Be(MuscleRole.Primary);
     }
 
     [Fact]
@@ -271,7 +274,7 @@ public sealed class MovementTests
 
         movement.ChangeMuscleRole(
             muscleId,
-            DomainEnum.MuscleRole.Primary
+            MuscleRole.Primary
         );
 
         movement.Muscles.Should().BeEmpty();
@@ -331,7 +334,7 @@ public void AddRequiredEquipmentOption_ShouldAddRequiredEquipmentOption_WhenNotA
     movement.EquipmentRequirements.First().MovementId.Should().Be(movement.Id);
     movement.EquipmentRequirements.First().EquipmentId.Should().Be(equipmentId);
     movement.EquipmentRequirements.First().GroupKey.Should().Be(groupKey);
-    movement.EquipmentRequirements.First().Kind.Should().Be(DomainEnum.EquipmentRequirementKind.RequiredGroup);
+    movement.EquipmentRequirements.First().Kind.Should().Be(EquipmentRequirementKind.RequiredGroup);
 }
 
 [Fact]
@@ -382,11 +385,11 @@ public void AddRequiredEquipmentOption_ShouldAddSameEquipment_WhenGroupKeyIsDiff
     movement.EquipmentRequirements.Should().Contain(requirement =>
         requirement.EquipmentId == equipmentId
         && requirement.GroupKey == firstGroupKey
-        && requirement.Kind == DomainEnum.EquipmentRequirementKind.RequiredGroup);
+        && requirement.Kind == EquipmentRequirementKind.RequiredGroup);
     movement.EquipmentRequirements.Should().Contain(requirement =>
         requirement.EquipmentId == equipmentId
         && requirement.GroupKey == secondGroupKey
-        && requirement.Kind == DomainEnum.EquipmentRequirementKind.RequiredGroup);
+        && requirement.Kind == EquipmentRequirementKind.RequiredGroup);
 }
 
 [Fact]
@@ -409,7 +412,7 @@ public void AddOptionalEquipment_ShouldAddOptionalEquipment_WhenNotAlreadyAdded(
     movement.EquipmentRequirements.First().MovementId.Should().Be(movement.Id);
     movement.EquipmentRequirements.First().EquipmentId.Should().Be(equipmentId);
     movement.EquipmentRequirements.First().GroupKey.Should().Be(groupKey);
-    movement.EquipmentRequirements.First().Kind.Should().Be(DomainEnum.EquipmentRequirementKind.Optional);
+    movement.EquipmentRequirements.First().Kind.Should().Be(EquipmentRequirementKind.Optional);
 }
 
 [Fact]
@@ -431,7 +434,7 @@ public void RemoveEquipmentRequirement_ShouldRemoveEquipmentRequirement_WhenRequ
     movement.RemoveEquipmentRequirement(
         equipmentId,
         groupKey,
-        DomainEnum.EquipmentRequirementKind.RequiredGroup);
+        EquipmentRequirementKind.RequiredGroup);
 
     movement.EquipmentRequirements.Should().BeEmpty();
 }
@@ -451,7 +454,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     movement.RemoveEquipmentRequirement(
         equipmentId,
         groupKey,
-        DomainEnum.EquipmentRequirementKind.RequiredGroup);
+        EquipmentRequirementKind.RequiredGroup);
 
     movement.EquipmentRequirements.Should().BeEmpty();
 }
@@ -620,7 +623,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void AddPattern_ShouldAddPattern_WhenPatternDoesNotExist()
     {
-        var pattern = DomainEnum.MovementPattern.Squat;
+        var pattern = MovementPattern.Squat;
 
         var movement = Movement.NewBuiltIn(
             "Back Squat",
@@ -638,7 +641,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void AddPattern_ShouldNotAddDuplicate_WhenPatternAlreadyExists()
     {
-        var pattern = DomainEnum.MovementPattern.Squat;
+        var pattern = MovementPattern.Squat;
 
         var movement = Movement.NewBuiltIn(
             "Back Squat",
@@ -655,7 +658,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void AddPattern_ShouldThrow_WhenPatternIsComplex()
     {
-        var pattern = DomainEnum.MovementPattern.Complex;
+        var pattern = MovementPattern.Complex;
 
         var movement = Movement.NewBuiltIn(
             "Clean And Jerk",
@@ -671,7 +674,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void RemovePattern_ShouldRemovePattern_WhenPatternExists()
     {
-        var pattern = DomainEnum.MovementPattern.Squat;
+        var pattern = MovementPattern.Squat;
 
         var movement = Movement.NewBuiltIn(
             "Back Squat",
@@ -689,7 +692,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void RemovePattern_ShouldDoNothing_WhenPatternDoesNotExist()
     {
-        var pattern = DomainEnum.MovementPattern.Squat;
+        var pattern = MovementPattern.Squat;
 
         var movement = Movement.NewBuiltIn(
             "Back Squat",
@@ -705,7 +708,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void SetPrimaryPattern_ShouldSetPrimaryPattern_AndAddPatternTag_WhenPatternIsNotComplex()
     {
-        var pattern = DomainEnum.MovementPattern.Squat;
+        var pattern = MovementPattern.Squat;
 
         var movement = Movement.NewBuiltIn(
             "Back Squat",
@@ -723,7 +726,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void SetPrimaryPattern_ShouldSetPrimaryPattern_WithoutAddingPatternTag_WhenPatternIsComplex()
     {
-        var pattern = DomainEnum.MovementPattern.Complex;
+        var pattern = MovementPattern.Complex;
 
         var movement = Movement.NewBuiltIn(
             "Clean And Jerk",
@@ -740,7 +743,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void ClearPrimaryPattern_ShouldClearPrimaryPattern_WhenPrimaryPatternExists()
     {
-        var pattern = DomainEnum.MovementPattern.Squat;
+        var pattern = MovementPattern.Squat;
 
         var movement = Movement.NewBuiltIn(
             "Back Squat",
@@ -786,7 +789,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void AutoResolvePrimaryPattern_ShouldSetPrimaryPatternToOnlyPattern_WhenOnePatternExists()
     {
-        var pattern = DomainEnum.MovementPattern.Squat;
+        var pattern = MovementPattern.Squat;
 
         var movement = Movement.NewBuiltIn(
             "Back Squat",
@@ -804,8 +807,8 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void AutoResolvePrimaryPattern_ShouldSetPrimaryPatternToComplex_WhenMultiplePatternsExist()
     {
-        var firstPattern = DomainEnum.MovementPattern.Squat;
-        var secondPattern = DomainEnum.MovementPattern.Hinge;
+        var firstPattern = MovementPattern.Squat;
+        var secondPattern = MovementPattern.Hinge;
 
         var movement = Movement.NewBuiltIn(
             "Thruster",
@@ -818,14 +821,14 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
 
         movement.AutoResolvePrimaryPattern();
 
-        movement.PrimaryPattern.Should().Be(DomainEnum.MovementPattern.Complex);
+        movement.PrimaryPattern.Should().Be(MovementPattern.Complex);
     }
 
     [Fact]
     public void RemovePattern_ShouldResolvePrimaryPattern_WhenRemovedPatternWasPrimaryPattern()
     {
-        var firstPattern = DomainEnum.MovementPattern.Squat;
-        var secondPattern = DomainEnum.MovementPattern.Hinge;
+        var firstPattern = MovementPattern.Squat;
+        var secondPattern = MovementPattern.Hinge;
 
         var movement = Movement.NewBuiltIn(
             "Thruster",

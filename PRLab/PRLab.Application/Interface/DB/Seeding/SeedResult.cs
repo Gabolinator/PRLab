@@ -1,10 +1,11 @@
 ﻿using PRLab.Domain;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Application.Interface.DB.Seeding;
 
 
 public sealed record SeedResult(
-    DomainEnum.EntityType EntityType,
+    EntityType EntityType,
     string Name,
     string Version,
     bool Ran,
@@ -15,7 +16,7 @@ public sealed record SeedResult(
     public int ChangeCount => Changes.Count;
 
     public static SeedResult Skipped(
-        DomainEnum.EntityType entityType,
+        EntityType entityType,
         string name,
         string version)
     {
@@ -28,7 +29,7 @@ public sealed record SeedResult(
     }
 
     public static SeedResult FromChanges(
-        DomainEnum.EntityType entityType,
+        EntityType entityType,
         string name,
         string version,
         IReadOnlyList<SeedChange> changes)

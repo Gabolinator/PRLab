@@ -4,6 +4,7 @@ using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.Movement;
 
 namespace PRLab.Infrastructure.DB.Seeding.Development.Factory;
 
@@ -17,14 +18,14 @@ public sealed class DevelopmentMovementCategorySeedFactory(IUserService userServ
 
         var bodyweightCategory = MovementCategory.NewBuiltIn(
             "Bodyweight",
-            DomainEnum.BaseMovementCategory.BodyWeight,
+            BaseMovementCategory.BodyWeight,
             Description.New("Movements performed mainly with body weight."),
             SeedUser
         );
 
         var weightliftingCategory = MovementCategory.NewBuiltIn(
             "Weightlifting",
-            DomainEnum.BaseMovementCategory.Resistance,
+            BaseMovementCategory.Resistance,
             Description.New("Movements performed with external loads."),
             SeedUser
         );

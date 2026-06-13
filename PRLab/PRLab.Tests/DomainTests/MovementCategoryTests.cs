@@ -3,6 +3,8 @@ using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Tests.DomainTests;
 
@@ -12,7 +14,7 @@ public sealed class MovementCategoryTests
     public void NewBuiltIn_ShouldCreateMovementCategory_WithNormalizedNameAndNameKey()
     {
         var descriptionText = "Movements performed with bodyweight.";
-        var baseMovementCategory = DomainEnum.BaseMovementCategory.BodyWeight;
+        var baseMovementCategory = BaseMovementCategory.BodyWeight;
 
         var name = $" {baseMovementCategory.ToString()} ";
 
@@ -30,7 +32,7 @@ public sealed class MovementCategoryTests
         movementCategory.Audit.Should().NotBeNull();
         movementCategory.Audit.IsDeleted.Should().BeFalse();
         movementCategory.Ownership.Should().NotBeNull();
-        movementCategory.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        movementCategory.Ownership.Origin.Should().Be(DataOrigin.BuiltIn);
         movementCategory.Ownership.OwnerUserId.Should().BeNull();
     }
 
@@ -38,7 +40,7 @@ public sealed class MovementCategoryTests
     public void NewBuiltIn_ShouldCreateMovementCategory_WithEmptyDescription_WhenDescriptionIsNull()
     {
         string? descriptionText = null;
-        var baseMovementCategory = DomainEnum.BaseMovementCategory.Resistance;
+        var baseMovementCategory = BaseMovementCategory.Resistance;
         var name = baseMovementCategory.ToString();
 
         var movementCategory = MovementCategory.NewBuiltIn(
@@ -51,7 +53,7 @@ public sealed class MovementCategoryTests
         movementCategory.NameKey.Should().Be(FormatingUtilities.NormalizeNameKey(name));
         movementCategory.Description.Should().NotBeNull();
         movementCategory.Description.GetContent().Should().BeNull();
-        movementCategory.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        movementCategory.Ownership.Origin.Should().Be(DataOrigin.BuiltIn);
         movementCategory.Ownership.OwnerUserId.Should().BeNull();
     }
 
@@ -60,7 +62,7 @@ public sealed class MovementCategoryTests
     {
         var name = "   ";
         var descriptionText = "Invalid category.";
-        var baseMovementCategory = DomainEnum.BaseMovementCategory.BodyWeight;
+        var baseMovementCategory = BaseMovementCategory.BodyWeight;
 
         var act = () => MovementCategory.NewBuiltIn(
             name,
@@ -77,7 +79,7 @@ public sealed class MovementCategoryTests
         var owner = User.New("Test User");
         var name = "  Custom Category  ";
         var descriptionText = "User-created movement category.";
-        var baseMovementCategory = DomainEnum.BaseMovementCategory.Hybrid;
+        var baseMovementCategory = BaseMovementCategory.Hybrid;
 
         var movementCategory = MovementCategory.NewUserCreated(
             name,
@@ -93,14 +95,14 @@ public sealed class MovementCategoryTests
         movementCategory.Audit.Should().NotBeNull();
         movementCategory.Audit.CreatedBy.Should().Be(owner.Id);
         movementCategory.Ownership.Should().NotBeNull();
-        movementCategory.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.UserCreated);
+        movementCategory.Ownership.Origin.Should().Be(DataOrigin.UserCreated);
         movementCategory.Ownership.OwnerUserId.Should().Be(owner.Id);
     }
 
     [Fact]
     public void ChangeDescription_ShouldChangeDescriptionContent()
     {
-        var category = DomainEnum.BaseMovementCategory.Cardio;
+        var category = BaseMovementCategory.Cardio;
         var name = category.ToString();
         var initialDescriptionText = "Initial description.";
         var newDescriptionText = "Updated description.";
@@ -123,7 +125,7 @@ public sealed class MovementCategoryTests
     [Fact]
     public void ChangeDescription_ShouldMarkMovementCategoryAsUpdated()
     {
-        var category = DomainEnum.BaseMovementCategory.Cardio;
+        var category = BaseMovementCategory.Cardio;
         var name = category.ToString();
         var initialDescriptionText = "Initial description.";
         var newDescriptionText = "Updated description.";
@@ -148,7 +150,7 @@ public sealed class MovementCategoryTests
     [Fact]
     public void RemoveDescription_ShouldRemoveDescriptionContent()
     {
-        var category = DomainEnum.BaseMovementCategory.Mobility;
+        var category = BaseMovementCategory.Mobility;
         var name = category.ToString();
         var descriptionText = "Mobility and stretching movements.";
         var language = LocalizationHelper.Language.EN;
@@ -167,7 +169,7 @@ public sealed class MovementCategoryTests
     [Fact]
     public void RemoveDescription_ShouldMarkMovementCategoryAsUpdated()
     {
-        var category = DomainEnum.BaseMovementCategory.Mobility;
+        var category = BaseMovementCategory.Mobility;
         var name = category.ToString();
         var descriptionText = "Mobility and stretching movements.";
         var language = LocalizationHelper.Language.EN;
@@ -188,7 +190,7 @@ public sealed class MovementCategoryTests
     [Fact]
     public void MarkDeleted_ShouldMarkMovementCategoryAsDeleted_WhenCalledThroughAuditedInterface()
     {
-        var category = DomainEnum.BaseMovementCategory.Hybrid;
+        var category = BaseMovementCategory.Hybrid;
         var name = category.ToString();
         var descriptionText = "Mixed movement category.";
 
@@ -204,13 +206,13 @@ public sealed class MovementCategoryTests
     }
 
     [Theory]
-    [InlineData("  Weightlifting  ", DomainEnum.BaseMovementCategory.Resistance)]
-    [InlineData("  Cable Machine  ", DomainEnum.BaseMovementCategory.Resistance)]
-    [InlineData("  Erg Machine  ", DomainEnum.BaseMovementCategory.Cardio)]
-    [InlineData("  Flexibility  ", DomainEnum.BaseMovementCategory.Mobility)]
+    [InlineData("  Weightlifting  ", BaseMovementCategory.Resistance)]
+    [InlineData("  Cable Machine  ", BaseMovementCategory.Resistance)]
+    [InlineData("  Erg Machine  ", BaseMovementCategory.Cardio)]
+    [InlineData("  Flexibility  ", BaseMovementCategory.Mobility)]
     public void NewBuiltIn_ShouldCreateCustomMovementCategory_WithExpectedBaseCategory(
         string categoryName,
-        DomainEnum.BaseMovementCategory baseMovementCategory)
+        BaseMovementCategory baseMovementCategory)
     {
         var descriptionText = $"Custom category for {categoryName.Trim()} movements.";
 
@@ -226,6 +228,6 @@ public sealed class MovementCategoryTests
         movementCategory.Description.GetContent().Should().Be(descriptionText);
         movementCategory.Audit.Should().NotBeNull();
         movementCategory.Audit.IsDeleted.Should().BeFalse();
-        movementCategory.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        movementCategory.Ownership.Origin.Should().Be(DataOrigin.BuiltIn);
     }
 }

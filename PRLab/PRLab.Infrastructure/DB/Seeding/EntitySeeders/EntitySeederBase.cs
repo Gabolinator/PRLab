@@ -4,13 +4,14 @@ using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Enum.System;
 using PRLab.Infrastructure.DB.Context;
 
 namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 
 public abstract class EntitySeederBase(PRLabPgDBContext db, IAppLogger logger) : IEntitySeeder
 {
-    public abstract DomainEnum.EntityType EntityType { get; }
+    public abstract EntityType EntityType { get; }
     public int Order => SeedPolicy.GetSeedOrder(EntityType);
     public abstract string Name { get; }
     public abstract string Version { get; }

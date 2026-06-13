@@ -1,5 +1,7 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
+using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Movement;
 
@@ -19,13 +21,13 @@ public sealed record MovementSeedJsonDto
 
     public IReadOnlyList<MovementMuscleSeedJsonDto> Muscles { get; init; } = [];
 
-    public DomainEnum.MovementPattern? PrimaryPattern { get; init; }
+    public MovementPattern? PrimaryPattern { get; init; }
 
-    public IReadOnlyList<DomainEnum.MovementPattern> Patterns { get; init; } = [];
+    public IReadOnlyList<MovementPattern> Patterns { get; init; } = [];
 
     public SeedEntityReferenceJsonDto? VariantOf { get; init; }
 
-    public DomainEnum.DataOrigin Origin { get; init; } = DomainEnum.DataOrigin.BuiltIn;
+    public DataOrigin Origin { get; init; } = DataOrigin.BuiltIn;
 
     public Guid? OwnerUserId { get; init; }
 

@@ -1,4 +1,6 @@
-﻿namespace PRLab.Domain.Value;
+﻿using PRLab.Domain.Value.Enum.Prescription;
+
+namespace PRLab.Domain.Value;
 
 public sealed record RepExecutionDetails
 {
@@ -10,13 +12,13 @@ public sealed record RepExecutionDetails
 
     public int? TopPauseSeconds { get; private set; }
 
-    public DomainEnum.RepPhaseExecutionIntent? EccentricIntent { get; private set; }
+    public RepPhaseExecutionIntent? EccentricIntent { get; private set; }
 
-    public DomainEnum.RepPhaseExecutionIntent? BottomIntent { get; private set; }
+    public RepPhaseExecutionIntent? BottomIntent { get; private set; }
 
-    public DomainEnum.RepPhaseExecutionIntent? ConcentricIntent { get; private set; }
+    public RepPhaseExecutionIntent? ConcentricIntent { get; private set; }
 
-    public DomainEnum.RepPhaseExecutionIntent? TopIntent { get; private set; }
+    public RepPhaseExecutionIntent? TopIntent { get; private set; }
 
     public string? Intent { get; private set; }
 
@@ -30,10 +32,10 @@ public sealed record RepExecutionDetails
         int? bottomPauseSeconds,
         int? concentricSeconds,
         int? topPauseSeconds,
-        DomainEnum.RepPhaseExecutionIntent? eccentricIntent,
-        DomainEnum.RepPhaseExecutionIntent? bottomIntent,
-        DomainEnum.RepPhaseExecutionIntent? concentricIntent,
-        DomainEnum.RepPhaseExecutionIntent? topIntent,
+        RepPhaseExecutionIntent? eccentricIntent,
+        RepPhaseExecutionIntent? bottomIntent,
+        RepPhaseExecutionIntent? concentricIntent,
+        RepPhaseExecutionIntent? topIntent,
         string? intent)
     {
         EccentricSeconds = ValidateOptionalSeconds(eccentricSeconds);
@@ -67,10 +69,10 @@ public sealed record RepExecutionDetails
         int? bottomPauseSeconds = null,
         int? concentricSeconds = null,
         int? topPauseSeconds = null,
-        DomainEnum.RepPhaseExecutionIntent? eccentricIntent = null,
-        DomainEnum.RepPhaseExecutionIntent? bottomIntent = null,
-        DomainEnum.RepPhaseExecutionIntent? concentricIntent = null,
-        DomainEnum.RepPhaseExecutionIntent? topIntent = null,
+        RepPhaseExecutionIntent? eccentricIntent = null,
+        RepPhaseExecutionIntent? bottomIntent = null,
+        RepPhaseExecutionIntent? concentricIntent = null,
+        RepPhaseExecutionIntent? topIntent = null,
         string? intent = null)
     {
         return new RepExecutionDetails(

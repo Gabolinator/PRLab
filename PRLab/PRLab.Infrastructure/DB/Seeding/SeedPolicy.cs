@@ -1,31 +1,32 @@
 ﻿using PRLab.Domain;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Infrastructure.DB.Seeding;
 
 public static class SeedPolicy
 {
-    public static int GetSeedOrder(DomainEnum.EntityType type)
+    public static int GetSeedOrder(EntityType type)
     {
         return type switch
         {
-            DomainEnum.EntityType.User => 1,
-            DomainEnum.EntityType.Description => 2,
+            EntityType.User => 1,
+            EntityType.Description => 2,
 
-            DomainEnum.EntityType.Equipment => 10,
+            EntityType.Equipment => 10,
             
-            DomainEnum.EntityType.Muscle => 21,
-            DomainEnum.EntityType.MuscleAntagonist => 22,
+            EntityType.Muscle => 21,
+            EntityType.MuscleAntagonist => 22,
             
-            DomainEnum.EntityType.MovementCategory => 30,
-            DomainEnum.EntityType.Movement => 31,
+            EntityType.MovementCategory => 30,
+            EntityType.Movement => 31,
 
-            DomainEnum.EntityType.WorkloadProfile => 40,
+            EntityType.WorkloadProfile => 40,
 
-            DomainEnum.EntityType.Exercise => 50,
+            EntityType.Exercise => 50,
             
-            DomainEnum.EntityType.Workout => 61,
+            EntityType.Workout => 61,
 
-            DomainEnum.EntityType.Program => 70,
+            EntityType.Program => 70,
             
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };

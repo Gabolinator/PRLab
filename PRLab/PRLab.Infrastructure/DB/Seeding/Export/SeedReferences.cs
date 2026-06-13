@@ -1,22 +1,23 @@
 ﻿using PRLab.Domain;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Infrastructure.DB.Seeding.Export;
 
 
 public static class SeedReferences
 {
-    public static readonly IReadOnlyDictionary<DomainEnum.EntityType, string> TargetAliases =
-        new Dictionary<DomainEnum.EntityType, string>
+    public static readonly IReadOnlyDictionary<EntityType, string> TargetAliases =
+        new Dictionary<EntityType, string>
         {
-            [DomainEnum.EntityType.Equipment] = "equipment",
-            [DomainEnum.EntityType.Muscle] = "muscle",
-            [DomainEnum.EntityType.MovementCategory] = "movement-category",
-            [DomainEnum.EntityType.Movement] = "movement",
+            [EntityType.Equipment] = "equipment",
+            [EntityType.Muscle] = "muscle",
+            [EntityType.MovementCategory] = "movement-category",
+            [EntityType.Movement] = "movement",
         };
     
     public static string GetEntityAlias(
-        DomainEnum.EntityType entity)
+        EntityType entity)
     {
          if(!TargetAliases.TryGetValue(entity, out var targetAlias))
          {
@@ -27,10 +28,10 @@ public static class SeedReferences
         
     }
     
-    public static IReadOnlyDictionary<string, DomainEnum.EntityType> GetTargetAliases(
-        IReadOnlyCollection<DomainEnum.EntityType> availableTargets)
+    public static IReadOnlyDictionary<string, EntityType> GetTargetAliases(
+        IReadOnlyCollection<EntityType> availableTargets)
     {
-        var aliases = new Dictionary<string, DomainEnum.EntityType>(StringComparer.OrdinalIgnoreCase);
+        var aliases = new Dictionary<string, EntityType>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var target in availableTargets)
         {
@@ -45,17 +46,17 @@ public static class SeedReferences
         return aliases;
     }
 
-    public static IReadOnlyList<DomainEnum.EntityType> ExpandSeedDependencies(
-        IReadOnlyCollection<DomainEnum.EntityType> entities, IAppLogger? logger)
+    public static IReadOnlyList<EntityType> ExpandSeedDependencies(
+        IReadOnlyCollection<EntityType> entities, IAppLogger? logger)
     {
         var expanded = entities.ToHashSet();
 
-        if (expanded.Contains(DomainEnum.EntityType.Muscle))
+        if (expanded.Contains(EntityType.Muscle))
         {
-            expanded.Add(DomainEnum.EntityType.MuscleAntagonist);
+            expanded.Add(EntityType.MuscleAntagonist);
         }
         
-        if (expanded.Contains(DomainEnum.EntityType.Movement))
+        if (expanded.Contains(EntityType.Movement))
         {
           //  logger?.LogWarning("No dependencies yet for Movement");
         }

@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Application.Interface.DB.Seeding;
 
@@ -9,7 +10,7 @@ public interface IEntitySeeder
     string Name { get; }
 
     string Version { get; }
-    DomainEnum.EntityType EntityType { get;}
+    EntityType EntityType { get;}
 
     Task<SeedResult> SeedAsync(CancellationToken ct = default);
     

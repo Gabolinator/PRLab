@@ -1,5 +1,6 @@
 ﻿using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.Anatomy;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Application.Interface.DB.Repositories.Entity;
@@ -34,7 +35,7 @@ public interface IMovementRepository
 
     Task<IReadOnlyCollection<Movement>> ListByMuscleRoleAsync(
         MuscleId muscleId,
-        DomainEnum.MuscleRole role,
+        MuscleRole role,
         CancellationToken ct);
 
     Task<IReadOnlyCollection<Movement>> ListVariantsAsync(

@@ -8,6 +8,7 @@ using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Domain;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Domain.Value.Enum.Movement;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.API.Controller.Entity;
@@ -69,7 +70,7 @@ public sealed class MovementCategoryController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllMovementCategories(
         [FromQuery] LocalizationHelper.Language? language = null,
-        [FromQuery] DomainEnum.BaseMovementCategory? baseCategory = null,
+        [FromQuery] BaseMovementCategory? baseCategory = null,
         CancellationToken ct = default)
     {
         try

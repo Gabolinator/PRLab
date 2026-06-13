@@ -3,6 +3,7 @@ using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Utilities;
+using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Tests.DomainTests;
 
@@ -16,7 +17,7 @@ public sealed class UserTests
         var user = User.New(name);
 
         user.Name.Should().Be(FormatingUtilities.NormalizeName(name));
-        user.Role.Should().Be(DomainEnum.UserRole.User);
+        user.Role.Should().Be(UserRole.User);
         user.Audit.Should().NotBeNull();
         user.Audit.IsDeleted.Should().BeFalse();
     }
@@ -29,7 +30,7 @@ public sealed class UserTests
         var user = User.NewCoach(name);
 
         user.Name.Should().Be(FormatingUtilities.NormalizeName(name));
-        user.Role.Should().Be(DomainEnum.UserRole.Coach);
+        user.Role.Should().Be(UserRole.Coach);
         user.Audit.Should().NotBeNull();
         user.Audit.IsDeleted.Should().BeFalse();
     }
@@ -42,7 +43,7 @@ public sealed class UserTests
         var user = User.NewAdmin(name);
 
         user.Name.Should().Be(FormatingUtilities.NormalizeName(name));
-        user.Role.Should().Be(DomainEnum.UserRole.Admin);
+        user.Role.Should().Be(UserRole.Admin);
         user.Audit.Should().NotBeNull();
         user.Audit.IsDeleted.Should().BeFalse();
     }
@@ -54,7 +55,7 @@ public sealed class UserTests
 
         user.Id.Should().Be(User.SystemUser.Id);
         user.Name.Should().Be(FormatingUtilities.NormalizeName(User.SystemUser.Name));
-        user.Role.Should().Be(DomainEnum.UserRole.Admin);
+        user.Role.Should().Be(UserRole.Admin);
         user.Audit.Should().NotBeNull();
         user.Audit.IsDeleted.Should().BeFalse();
     }
@@ -90,9 +91,9 @@ public sealed class UserTests
         var name = "Regular user";
         var user = User.New(name);
 
-        user.ChangeRole(DomainEnum.UserRole.Coach);
+        user.ChangeRole(UserRole.Coach);
 
-        user.Role.Should().Be(DomainEnum.UserRole.Coach);
+        user.Role.Should().Be(UserRole.Coach);
     }
 
     [Fact]
@@ -102,9 +103,9 @@ public sealed class UserTests
         var user = User.New(name);
         var previousUpdatedAt = user.Audit.UpdatedAt;
 
-        user.ChangeRole(DomainEnum.UserRole.User);
+        user.ChangeRole(UserRole.User);
 
-        user.Role.Should().Be(DomainEnum.UserRole.User);
+        user.Role.Should().Be(UserRole.User);
         user.Audit.UpdatedAt.Should().Be(previousUpdatedAt);
     }
 
