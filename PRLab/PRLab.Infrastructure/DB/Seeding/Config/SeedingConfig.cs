@@ -20,11 +20,11 @@ public sealed class SeedingConfig(IOptions<SeedingOptions> options) : ISeedingCo
         }
     }
     
-    public bool SeedFromFile
+    public SeedingSource Source
     {
         get
         {
-            var seedFromFile = options.Value.SeedFromJsonFile;
+            var seedFromFile = options.Value.Source;
             return seedFromFile;
         }
     }

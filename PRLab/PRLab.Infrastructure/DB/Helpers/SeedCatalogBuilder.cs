@@ -85,4 +85,25 @@ public static class SeedCatalogBuilder
                 movement => movement.Id,
                 movement => movement.NameKey));
     }
+
+    public static async Task<ExerciseSeedCatalog> CreateExerciseCatalog(
+        PRLabPgDBContext db,
+        CancellationToken ct)
+    {
+        var exercises = await db.Exercises
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(exercise => exercise.Description)
+            .ThenInclude(description => description.Translations)
+            .Include(exercise => exercise.Blocks)
+            .ThenInclude(exerciseBlock => exerciseBlock.Movement)
+            .OrderBy(exercise => exercise.Name)
+            .ToListAsync(ct);
+
+        return new ExerciseSeedCatalog(
+            new EntityCatalog<ExerciseId, Exercise>(
+                exercises,
+                exercise => exercise.Id,
+                exercise => exercise.NameKey));
+    }
 }

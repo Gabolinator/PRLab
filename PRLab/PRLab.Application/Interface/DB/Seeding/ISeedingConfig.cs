@@ -1,8 +1,14 @@
 ﻿namespace PRLab.Application.Interface.DB.Seeding;
 
+public enum SeedingSource
+{
+    JsonFiles,
+    Factory
+}
+
 public interface ISeedingConfig
 {
     string SeedFileDirectory { get; }
     
-    bool SeedFromFile { get; }
+    SeedingSource Source { get; }
 }

@@ -12,6 +12,8 @@ public static class SeedFileNames
             [EntityType.Muscle] = "muscles.seed.json",
             [EntityType.MovementCategory] = "movement-categories.seed.json",
             [EntityType.Movement] = "movements.seed.json",
+            [EntityType.Exercise] = "exercises.seed.json",
+            
         };
 
     public static string GetSeedFileNameForEntity(EntityType entity)

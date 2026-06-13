@@ -4,11 +4,13 @@ using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Export;
 using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
+using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Exercise;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Muscle;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Seeding.Config;
 using PRLab.Infrastructure.DB.Seeding.Development.Factory;
+using PRLab.Infrastructure.DB.Seeding.Development.Factory.ExerciseFactory;
 using PRLab.Infrastructure.DB.Seeding.Development.Factory.MovementFactory;
 using PRLab.Infrastructure.DB.Seeding.Development.Factory.MuscleFactory;
 using PRLab.Infrastructure.DB.Seeding.EntitySeeders;
@@ -53,25 +55,26 @@ public static class SeedingModularityExtensions
         SeedingOptions options,
         IAppLogger logger)
     {
-        if (options.SeedFromJsonFile)
+
+        logger.Log($"Seeding from {options.Source}");
+        return options.Source switch
         {
-            logger.Log("Seeding From Json files");
-            return services.AddSeedRelationResolver(logger)
+            SeedingSource.JsonFiles => services.AddSeedRelationResolver(logger)
                 .AddScoped<IEquipmentSeedFactory, JsonEquipmentSeedFactory>()
                 .AddScoped<IMovementCategorySeedFactory, JsonMovementCategorySeedFactory>()
                 .AddScoped<IMuscleSeedFactory, JsonMuscleSeedFactory>()
                 .AddScoped<IMuscleAntagonistSeedFactory, JsonMuscleSeedFactory>()
-                .AddScoped<IMovementSeedFactory, JsonMovementSeedFactory>();
-        }
+                .AddScoped<IMovementSeedFactory, JsonMovementSeedFactory>(),
 
-        
-        logger.Log("Seeding from Factories ");
-        return services
-            .AddScoped<IEquipmentSeedFactory, DevelopmentEquipmentSeedFactory>()
-            .AddScoped<IMuscleSeedFactory, DevelopmentMuscleSeedFactory>()
-            .AddScoped<IMovementCategorySeedFactory, DevelopmentMovementCategorySeedFactory>()
-            .AddScoped<IMuscleAntagonistSeedFactory, DevelopmentMuscleAntagonistSeedFactory>()
-            .AddScoped<IMovementSeedFactory, DevelopmentMovementSeedFactory>();
+            SeedingSource.Factory => services
+                .AddScoped<IEquipmentSeedFactory, DevelopmentEquipmentSeedFactory>()
+                .AddScoped<IMuscleSeedFactory, DevelopmentMuscleSeedFactory>()
+                .AddScoped<IMovementCategorySeedFactory, DevelopmentMovementCategorySeedFactory>()
+                .AddScoped<IMuscleAntagonistSeedFactory, DevelopmentMuscleAntagonistSeedFactory>()
+                .AddScoped<IMovementSeedFactory, DevelopmentMovementSeedFactory>()
+                .AddScoped<IExerciseSeedFactory, DevelopmentExerciseSeedFactory>(),
+            _ => services
+        };
     }
 
     private static IServiceCollection AddDataSeeders(this IServiceCollection services)
@@ -81,6 +84,7 @@ public static class SeedingModularityExtensions
         services.AddSeederIfFactoryExists<IMuscleAntagonistSeedFactory, MuscleAntagonistSeeder>();
         services.AddSeederIfFactoryExists<IMovementCategorySeedFactory, MovementCategorySeeder>();
         services.AddSeederIfFactoryExists<IMovementSeedFactory, MovementSeeder>();
+        services.AddSeederIfFactoryExists<IExerciseSeedFactory, ExerciseSeeder>();
         
         services.AddScoped<IDataSeeder, EntityDataSeeder>();
 
@@ -123,7 +127,9 @@ public static class SeedingModularityExtensions
             .AddScoped<ISeedDataExporter, MovementCategoryJsonDataExporter>()
             .AddScoped<ISeedDataExporter, MuscleJsonDataExporter>()
             .AddScoped<ISeedDataExporter, MovementJsonDataExporter>()
-            .AddScoped<ISeedDataExportOrchestrator, SeedDataExportOrchestrator>();
+            .AddScoped<ISeedDataExporter, ExerciseJsonDataExporter>();
+            
+        services.AddScoped<ISeedDataExportOrchestrator, SeedDataExportOrchestrator>();
 
         return services;
     }

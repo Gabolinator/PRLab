@@ -221,7 +221,7 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         return true;
     }
 
-    public void Update(ExerciseUpdate update)
+    public bool Update(ExerciseUpdate update)
     {
         ArgumentNullException.ThrowIfNull(update);
 
@@ -252,6 +252,8 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         {
             MarkUpdated(update.UpdatedBy);
         }
+
+        return hasChanged;
     }
 
     private void ReplaceBlocks(IReadOnlyCollection<ExerciseBlockUpdate> updatedBlocks)

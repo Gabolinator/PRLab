@@ -93,6 +93,7 @@ public static class SeedKeyGenerator
             EntityType.Muscle => "muscle",
             EntityType.MovementCategory => "movement-category",
             EntityType.Movement => "movement",
+            EntityType.Exercise => "exercise",
             _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null)
         };
     }

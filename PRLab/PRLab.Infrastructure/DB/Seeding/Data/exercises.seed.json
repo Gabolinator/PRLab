@@ -1,0 +1,57 @@
+[
+  {
+    "Id": "64eb94c3-dc74-47f4-9a96-12a3bc9d7b54",
+    "Name": "Burpee Pull-Up",
+    "NameKey": "burpeepullup",
+    "Description": {
+      "Content": "Burpee directly to Pull-Up"
+    },
+    "Blocks": [
+      {
+        "Id": "b1736614-d158-476f-99ad-c447bf7bdb5c",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "181345ef-4a29-4ed6-aff4-d1298ed7220a",
+          "Name": "Burpee",
+          "NameKey": "burpee"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": {
+          "Value": null,
+          "Type": "BodyWeight",
+          "Unit": null
+        },
+        "RestBetweenReps": null,
+        "TransitionAfterBlock": null,
+        "ExecutionDetails": null
+      },
+      {
+        "Id": "e7ddebc7-27c8-4f0f-b21d-a25e1c2873a7",
+        "Sequence": 2,
+        "Movement": {
+          "Id": "be5ce8f1-76cd-45a6-9043-63919057060a",
+          "Name": "Pull Up",
+          "NameKey": "pullup"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": {
+          "Value": null,
+          "Type": "BodyWeight",
+          "Unit": null
+        },
+        "RestBetweenReps": null,
+        "TransitionAfterBlock": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  }
+]

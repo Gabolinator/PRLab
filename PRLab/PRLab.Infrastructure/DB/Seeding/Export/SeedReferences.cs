@@ -14,6 +14,8 @@ public static class SeedReferences
             [EntityType.Muscle] = "muscle",
             [EntityType.MovementCategory] = "movement-category",
             [EntityType.Movement] = "movement",
+            [EntityType.Exercise] = "exercise",
+            
         };
     
     public static string GetEntityAlias(
