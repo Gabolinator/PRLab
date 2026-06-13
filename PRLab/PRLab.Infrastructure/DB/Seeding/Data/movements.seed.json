@@ -11,6 +11,11 @@
     "Description": {
       "Content": "Basic lower-body squat movement performed without external load."
     },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "TimeUnderTensionSeconds"
+    ],
     "EquipmentRequirements": [],
     "Muscles": [
       {
@@ -53,6 +58,12 @@
     "Description": {
       "Content": "Full-body bodyweight conditioning movement combining a squat, plank or push-up position, and jump."
     },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds",
+      "Calories"
+    ],
     "EquipmentRequirements": [],
     "Muscles": [
       {
@@ -96,7 +107,8 @@
     "Patterns": [
       "Squat",
       "Push",
-      "Jump"
+      "Jump",
+      "GetUp"
     ],
     "VariantOf": null,
     "Origin": "BuiltIn",
@@ -115,6 +127,12 @@
     "Description": {
       "Content": "Jump rope movement where the rope passes under the feet twice per jump."
     },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds",
+      "Calories"
+    ],
     "EquipmentRequirements": [
       {
         "GroupKey": "rope",
@@ -169,6 +187,11 @@
     "Description": {
       "Content": "Squat variation performed while holding a kettlebell or dumbbell in front of the chest."
     },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "TimeUnderTensionSeconds"
+    ],
     "EquipmentRequirements": [
       {
         "GroupKey": "load",
@@ -238,6 +261,11 @@
     "Description": {
       "Content": "Bodyweight upper-body pulling movement performed from a bar."
     },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "TimeUnderTensionSeconds"
+    ],
     "EquipmentRequirements": [
       {
         "GroupKey": "bar",
@@ -292,6 +320,11 @@
     "Description": {
       "Content": "Bodyweight upper-body pushing movement performed from the floor."
     },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "TimeUnderTensionSeconds"
+    ],
     "EquipmentRequirements": [],
     "Muscles": [
       {

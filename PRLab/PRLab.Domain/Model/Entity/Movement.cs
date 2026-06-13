@@ -4,6 +4,7 @@ using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
 using PRLab.Domain.Value.Enum.Anatomy;
 using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Value.Enum.Prescription;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Domain.Value.Ownership;
 using PRLab.Domain.Value.Update;
@@ -48,6 +49,16 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
     
     public IReadOnlyCollection<MovementEquipmentRequirement> EquipmentRequirements => equipmentRequirements;
 
+    public WorkTargetType DefaultWorkTargetType { get; private set; }
+
+    private readonly List<MovementAllowedWorkTarget> allowedWorkTargets = [];
+
+    public IReadOnlyCollection<MovementAllowedWorkTarget> AllowedWorkTargets => allowedWorkTargets;
+
+    private HashSet<WorkTargetType> AllowedWorkTargetTypes => AllowedWorkTargets
+        .Select(allowedWorkTarget => allowedWorkTarget.TargetType)
+        .ToHashSet();
+    
     public Description Description { get; private set; } = null!;
     
     public OwnershipInfo Ownership { get; private set; } = null!;
@@ -87,7 +98,9 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         MovementCategory movementCategory,
         Description description,
         AuditInfo audit,
-        OwnershipInfo ownership)
+        OwnershipInfo ownership,
+        WorkTargetType defaultWorkTargetType,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
         if (id.Value == Guid.Empty)
         {
@@ -106,6 +119,10 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         Description = description;
         Audit = audit;
         Ownership = ownership;
+
+        SetWorkTargetTypesDuringCreation(
+            defaultWorkTargetType,
+            allowedWorkTargetTypes);
     }
 
     private Movement(
@@ -114,7 +131,9 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         MovementCategoryId movementCategoryId,
         Description description,
         AuditInfo audit,
-        OwnershipInfo ownership)
+        OwnershipInfo ownership,
+        WorkTargetType defaultWorkTargetType,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
         if (id.Value == Guid.Empty)
         {
@@ -136,128 +155,160 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         Description = description;
         Audit = audit;
         Ownership = ownership;
+
+        SetWorkTargetTypesDuringCreation(
+            defaultWorkTargetType,
+            allowedWorkTargetTypes);
     }
 
     public static Movement NewBuiltIn(
-    string name,
-    MovementCategoryId movementCategoryId,
-    string? description,
-    User? createdBy = null)
-{
-    return new Movement(
-        MovementId.New(),
-        name,
-        movementCategoryId,
-        Description.New(description),
-        AuditInfo.New(createdBy),
-        OwnershipInfo.BuiltIn()
-    );
-}
+        string name,
+        MovementCategoryId movementCategoryId,
+        string? description,
+        WorkTargetType defaultWorkTargetType,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
+        User? createdBy = null)
+    {
+        return new Movement(
+            MovementId.New(),
+            name,
+            movementCategoryId,
+            Description.New(description),
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn(),
+            defaultWorkTargetType,
+            allowedWorkTargetTypes
+        );
+    }
 
-public static Movement NewBuiltIn(
-    string name,
-    MovementCategory movementCategory,
-    Description description,
-    User? createdBy = null)
-{
-    return new Movement(
-        MovementId.New(),
-        name,
-        movementCategory,
-        description,
-        AuditInfo.New(createdBy),
-        OwnershipInfo.BuiltIn()
-    );
-}
+    public static Movement NewBuiltIn(
+        string name,
+        MovementCategory movementCategory,
+        Description description,
+        WorkTargetType defaultWorkTargetType,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
+        User? createdBy = null)
+    {
+        return new Movement(
+            MovementId.New(),
+            name,
+            movementCategory,
+            description,
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn(),
+            defaultWorkTargetType,
+            allowedWorkTargetTypes
+        );
+    }
 
-public static Movement NewBuiltInWithId(
-    MovementId id,
-    string name,
-    MovementCategory movementCategory,
-    Description description,
-    User? createdBy = null)
-{
-    return new Movement(
-        id,
-        name,
-        movementCategory,
-        description,
-        AuditInfo.New(createdBy),
-        OwnershipInfo.BuiltIn()
-    );
-}
+    public static Movement NewBuiltInWithId(
+        MovementId id,
+        string name,
+        MovementCategory movementCategory,
+        Description description,
+        WorkTargetType defaultWorkTargetType,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
+        User? createdBy = null)
+    {
+        return new Movement(
+            id,
+            name,
+            movementCategory,
+            description,
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn(),
+            defaultWorkTargetType,
+            allowedWorkTargetTypes
+        );
+    }
 
-public static Movement NewUserCreated(
-    string name,
-    MovementCategoryId movementCategoryId,
-    string? description,
-    User owner)
-{
-    ArgumentNullException.ThrowIfNull(owner);
+    public static Movement NewUserCreated(
+        string name,
+        MovementCategoryId movementCategoryId,
+        string? description,
+        User owner,
+        WorkTargetType defaultWorkTargetType,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
 
-    return new Movement(
-        MovementId.New(),
-        name,
-        movementCategoryId,
-        Description.New(description),
-        AuditInfo.New(owner),
-        OwnershipInfo.UserCreated(owner)
-    );
-}
+        return new Movement(
+            MovementId.New(),
+            name,
+            movementCategoryId,
+            Description.New(description),
+            AuditInfo.New(owner),
+            OwnershipInfo.UserCreated(owner),
+            defaultWorkTargetType,
+            allowedWorkTargetTypes
+        );
+    }
 
-public static Movement NewUserCreated(
-    string name,
-    MovementCategory movementCategory,
-    Description description,
-    User owner)
-{
-    ArgumentNullException.ThrowIfNull(owner);
+    public static Movement NewUserCreated(
+        string name,
+        MovementCategory movementCategory,
+        Description description,
+        User owner,
+        WorkTargetType defaultWorkTargetType,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
 
-    return new Movement(
-        MovementId.New(),
-        name,
-        movementCategory,
-        description,
-        AuditInfo.New(owner),
-        OwnershipInfo.UserCreated(owner)
-    );
-}
+        return new Movement(
+            MovementId.New(),
+            name,
+            movementCategory,
+            description,
+            AuditInfo.New(owner),
+            OwnershipInfo.UserCreated(owner),
+            defaultWorkTargetType,
+            allowedWorkTargetTypes
+        );
+    }
 
-public static Movement NewCoachCreated(
-    string name,
-    MovementCategory movementCategory,
-    Description description,
-    User coach)
-{
-    ArgumentNullException.ThrowIfNull(coach);
+    public static Movement NewCoachCreated(
+        string name,
+        MovementCategory movementCategory,
+        Description description,
+        User coach,
+        WorkTargetType defaultWorkTargetType,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
+    {
+        ArgumentNullException.ThrowIfNull(coach);
 
-    return new Movement(
-        MovementId.New(),
-        name,
-        movementCategory,
-        description,
-        AuditInfo.New(coach),
-        OwnershipInfo.CoachCreated(coach)
-    );
-}
+        return new Movement(
+            MovementId.New(),
+            name,
+            movementCategory,
+            description,
+            AuditInfo.New(coach),
+            OwnershipInfo.CoachCreated(coach),
+            defaultWorkTargetType,
+            allowedWorkTargetTypes
+        );
+    }
 
-public static Movement NewImported(
-    string name,
-    MovementCategory movementCategory,
-    Description description,
-    User owner)
-{
-    ArgumentNullException.ThrowIfNull(owner);
+    public static Movement NewImported(
+        string name,
+        MovementCategory movementCategory,
+        Description description,
+        User owner,
+        WorkTargetType defaultWorkTargetType,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
 
-    return new Movement(
-        MovementId.New(),
-        name,
-        movementCategory,
-        description,
-        AuditInfo.New(owner),
-        OwnershipInfo.Imported(owner)
-    );
-}
+        return new Movement(
+            MovementId.New(),
+            name,
+            movementCategory,
+            description,
+            AuditInfo.New(owner),
+            OwnershipInfo.Imported(owner),
+            defaultWorkTargetType,
+            allowedWorkTargetTypes
+        );
+    }
     
     private void SetName(string name)
     {
@@ -310,6 +361,92 @@ public static Movement NewImported(
     {
         Description = Description.RemoveContent(languageCode);
         MarkUpdated(changedBy);
+    }
+    
+    public void SetDefaultWorkTargetType(
+        WorkTargetType targetType,
+        User? changedBy = null)
+    {
+        if (!AllowedWorkTargetTypes.Contains(targetType))
+        {
+            AddAllowedWorkTargetTypeWithoutAudit(targetType);
+        }
+
+        if (DefaultWorkTargetType == targetType)
+        {
+            return;
+        }
+
+        DefaultWorkTargetType = targetType;
+        MarkUpdated(changedBy);
+    }
+
+    public void AddAllowedWorkTargetType(
+        WorkTargetType targetType,
+        User? changedBy = null)
+    {
+        if (AllowedWorkTargetTypes.Contains(targetType))
+        {
+            return;
+        }
+
+        AddAllowedWorkTargetTypeWithoutAudit(targetType);
+
+        MarkUpdated(changedBy);
+    }
+
+    public void RemoveAllowedWorkTargetType(
+        WorkTargetType targetType,
+        User? changedBy = null)
+    {
+        if (DefaultWorkTargetType == targetType)
+        {
+            throw new InvalidOperationException(
+                "Cannot remove the default work target type from allowed work target types.");
+        }
+
+        var allowedWorkTarget = allowedWorkTargets
+            .FirstOrDefault(allowedWorkTarget => allowedWorkTarget.TargetType == targetType);
+
+        if (allowedWorkTarget is null)
+        {
+            return;
+        }
+
+        allowedWorkTargets.Remove(allowedWorkTarget);
+
+        MarkUpdated(changedBy);
+    }
+    
+    private void SetWorkTargetTypesDuringCreation(
+        WorkTargetType defaultWorkTargetType,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes)
+    {
+        DefaultWorkTargetType = defaultWorkTargetType;
+
+        var targetTypes = allowedWorkTargetTypes is null || allowedWorkTargetTypes.Count == 0
+            ? [defaultWorkTargetType]
+            : allowedWorkTargetTypes.ToHashSet();
+
+        targetTypes.Add(defaultWorkTargetType);
+
+        foreach (var targetType in targetTypes)
+        {
+            AddAllowedWorkTargetTypeWithoutAudit(targetType);
+        }
+    }
+
+    private void AddAllowedWorkTargetTypeWithoutAudit(WorkTargetType targetType)
+    {
+        if (AllowedWorkTargetTypes.Contains(targetType))
+        {
+            return;
+        }
+
+        allowedWorkTargets.Add(
+            MovementAllowedWorkTarget.New(
+                Id,
+                targetType));
     }
     
     void IAudited.MarkUpdated(User? changedBy)
@@ -669,6 +806,23 @@ public static Movement NewImported(
             hasChanged = true;
         }
 
+        if (update.DefaultWorkTargetType.HasValue)
+        {
+            if (DefaultWorkTargetType != update.DefaultWorkTargetType.Value)
+            {
+                SetDefaultWorkTargetType(
+                    update.DefaultWorkTargetType.Value,
+                    update.UpdatedBy);
+
+                hasChanged = true;
+            }
+        }
+
+        if (update.AllowedWorkTargetTypes is not null)
+        {
+            hasChanged |= ReplaceAllowedWorkTargetTypes(update.AllowedWorkTargetTypes);
+        }
+        
         if (update.EquipmentRequirements is not null)
         {
             hasChanged |= ReplaceEquipments(update.EquipmentRequirements);
@@ -712,6 +866,28 @@ public static Movement NewImported(
         }
 
         return hasChanged;
+    }
+    
+    private bool ReplaceAllowedWorkTargetTypes(
+        IReadOnlyCollection<WorkTargetType> updatedTargetTypes)
+    {
+        var normalizedTargetTypes = updatedTargetTypes.ToHashSet();
+
+        normalizedTargetTypes.Add(DefaultWorkTargetType);
+
+        if (AllowedWorkTargetTypes.SetEquals(normalizedTargetTypes))
+        {
+            return false;
+        }
+
+        allowedWorkTargets.Clear();
+
+        foreach (var targetType in normalizedTargetTypes)
+        {
+            AddAllowedWorkTargetTypeWithoutAudit(targetType);
+        }
+
+        return true;
     }
 
     private MovementPattern? ResolvePrimaryPatternOrNull()

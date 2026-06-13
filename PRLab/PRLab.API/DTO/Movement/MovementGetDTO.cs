@@ -2,8 +2,8 @@
 using PRLab.API.DTO.Movement.Relation;
 using PRLab.API.DTO.MovementCategory;
 using PRLab.API.DTO.Muscle;
-using PRLab.Domain;
 using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Value.Enum.Prescription;
 using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.API.DTO.Movement;
@@ -13,6 +13,8 @@ public sealed record MovementGetDTO(
     string Name,
     DescriptionGetDTO? Description,
     MovementCategorySummaryDTO? Category,
+    WorkTargetType DefaultWorkTargetType,
+    IReadOnlyList<WorkTargetType> AllowedWorkTargetTypes,
     IReadOnlyList<MovementEquipmentRequirementGetDTO> EquipmentRequirements,
     IReadOnlyList<MuscleSummaryDTO> PrimaryMuscles,
     IReadOnlyList<MuscleSummaryDTO> SecondaryMuscles,

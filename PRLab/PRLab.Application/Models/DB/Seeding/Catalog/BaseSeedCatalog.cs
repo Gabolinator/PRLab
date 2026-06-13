@@ -33,4 +33,9 @@ public abstract class BaseSeedCatalog<TId, TEntity>(EntityCatalog<TId, TEntity> 
     {
         return Catalog.GetRequiredById(id);
     }
+
+    public IReadOnlyCollection<TEntity> GetAll()
+    {
+        return Catalog.GetAll();
+    }
 }

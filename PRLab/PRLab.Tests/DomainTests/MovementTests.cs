@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
-using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value.Enum.Anatomy;
 using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Value.Enum.Prescription;
 using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Identifier;
 
@@ -12,6 +12,21 @@ namespace PRLab.Tests.DomainTests;
 
 public sealed class MovementTests
 {
+    private static Movement CreateBuiltInMovement(
+        string name = "Back Squat",
+        MovementCategoryId? movementCategoryId = null,
+        string? description = null,
+        WorkTargetType defaultWorkTargetType = WorkTargetType.Repetitions,
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
+    {
+        return Movement.NewBuiltIn(
+            name,
+            movementCategoryId ?? MovementCategoryId.New(),
+            description,
+            defaultWorkTargetType,
+            allowedWorkTargetTypes);
+    }
+
     [Fact]
     public void NewBuiltIn_ShouldCreateMovement_WithNormalizedNameAndNameKey()
     {
@@ -22,13 +37,16 @@ public sealed class MovementTests
         var movement = Movement.NewBuiltIn(
             name,
             movementCategoryId,
-            descriptionText
-        );
+            descriptionText,
+            WorkTargetType.Repetitions);
 
         movement.Name.Should().Be(FormatingUtilities.NormalizeName(name));
         movement.NameKey.Should().Be(FormatingUtilities.NormalizeNameKey(name));
         movement.MovementCategoryId.Should().Be(movementCategoryId);
         movement.Description.GetContent().Should().Be(descriptionText);
+        movement.DefaultWorkTargetType.Should().Be(WorkTargetType.Repetitions);
+        movement.AllowedWorkTargets.Should().ContainSingle();
+        movement.AllowedWorkTargets.First().TargetType.Should().Be(WorkTargetType.Repetitions);
         movement.Audit.Should().NotBeNull();
         movement.Audit.IsDeleted.Should().BeFalse();
         movement.Ownership.Should().NotBeNull();
@@ -53,13 +71,16 @@ public sealed class MovementTests
             name,
             movementCategoryId,
             descriptionText,
-            owner
-        );
+            owner,
+            WorkTargetType.Repetitions);
 
         movement.Name.Should().Be(FormatingUtilities.NormalizeName(name));
         movement.NameKey.Should().Be(FormatingUtilities.NormalizeNameKey(name));
         movement.MovementCategoryId.Should().Be(movementCategoryId);
         movement.Description.GetContent().Should().Be(descriptionText);
+        movement.DefaultWorkTargetType.Should().Be(WorkTargetType.Repetitions);
+        movement.AllowedWorkTargets.Should().ContainSingle();
+        movement.AllowedWorkTargets.First().TargetType.Should().Be(WorkTargetType.Repetitions);
         movement.Audit.Should().NotBeNull();
         movement.Audit.CreatedBy.Should().Be(owner.Id);
         movement.Ownership.Should().NotBeNull();
@@ -77,10 +98,132 @@ public sealed class MovementTests
         var act = () => Movement.NewBuiltIn(
             name,
             movementCategoryId,
-            descriptionText
-        );
+            descriptionText,
+            WorkTargetType.Repetitions);
 
         act.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void NewBuiltIn_ShouldCreateAllowedWorkTarget_WithDefaultTarget_WhenAllowedTargetsAreEmpty()
+    {
+        var movement = Movement.NewBuiltIn(
+            "Push Up",
+            MovementCategoryId.New(),
+            null,
+            WorkTargetType.Repetitions);
+
+        movement.DefaultWorkTargetType.Should().Be(WorkTargetType.Repetitions);
+        movement.AllowedWorkTargets.Should().ContainSingle();
+        movement.AllowedWorkTargets.First().TargetType.Should().Be(WorkTargetType.Repetitions);
+    }
+
+    [Fact]
+    public void NewBuiltIn_ShouldIncludeDefaultWorkTarget_InAllowedTargets_WhenMissingFromAllowedTargets()
+    {
+        var movement = Movement.NewBuiltIn(
+            "Running",
+            MovementCategoryId.New(),
+            null,
+            WorkTargetType.DistanceMeters,
+            [
+                WorkTargetType.DurationSeconds,
+                WorkTargetType.Calories
+            ]);
+
+        movement.DefaultWorkTargetType.Should().Be(WorkTargetType.DistanceMeters);
+        movement.AllowedWorkTargets
+            .Select(allowedWorkTarget => allowedWorkTarget.TargetType)
+            .Should()
+            .BeEquivalentTo(
+            [
+                WorkTargetType.DistanceMeters,
+                WorkTargetType.DurationSeconds,
+                WorkTargetType.Calories
+            ]);
+    }
+
+    [Fact]
+    public void SetDefaultWorkTargetType_ShouldSetDefaultAndAddAllowedTarget_WhenTargetIsNotAlreadyAllowed()
+    {
+        var movement = CreateBuiltInMovement(
+            name: "Running",
+            defaultWorkTargetType: WorkTargetType.DurationSeconds);
+
+        movement.SetDefaultWorkTargetType(WorkTargetType.DistanceMeters);
+
+        movement.DefaultWorkTargetType.Should().Be(WorkTargetType.DistanceMeters);
+        movement.AllowedWorkTargets
+            .Select(allowedWorkTarget => allowedWorkTarget.TargetType)
+            .Should()
+            .Contain(WorkTargetType.DistanceMeters);
+    }
+
+    [Fact]
+    public void AddAllowedWorkTargetType_ShouldAddTarget_WhenNotAlreadyAllowed()
+    {
+        var movement = CreateBuiltInMovement("Push Up");
+
+        movement.AddAllowedWorkTargetType(WorkTargetType.TimeUnderTensionSeconds);
+
+        movement.AllowedWorkTargets
+            .Select(allowedWorkTarget => allowedWorkTarget.TargetType)
+            .Should()
+            .BeEquivalentTo(
+            [
+                WorkTargetType.Repetitions,
+                WorkTargetType.TimeUnderTensionSeconds
+            ]);
+    }
+
+    [Fact]
+    public void AddAllowedWorkTargetType_ShouldNotAddDuplicate_WhenTargetAlreadyAllowed()
+    {
+        var movement = CreateBuiltInMovement("Push Up");
+
+        movement.AddAllowedWorkTargetType(WorkTargetType.Repetitions);
+
+        movement.AllowedWorkTargets.Should().ContainSingle();
+    }
+
+    [Fact]
+    public void RemoveAllowedWorkTargetType_ShouldRemoveTarget_WhenTargetIsNotDefault()
+    {
+        var movement = CreateBuiltInMovement(
+            name: "Running",
+            defaultWorkTargetType: WorkTargetType.DistanceMeters,
+            allowedWorkTargetTypes:
+            [
+                WorkTargetType.DistanceMeters,
+                WorkTargetType.DurationSeconds
+            ]);
+
+        movement.RemoveAllowedWorkTargetType(WorkTargetType.DurationSeconds);
+
+        movement.AllowedWorkTargets
+            .Select(allowedWorkTarget => allowedWorkTarget.TargetType)
+            .Should()
+            .ContainSingle()
+            .Which
+            .Should()
+            .Be(WorkTargetType.DistanceMeters);
+    }
+
+    [Fact]
+    public void RemoveAllowedWorkTargetType_ShouldThrow_WhenTargetIsDefault()
+    {
+        var movement = CreateBuiltInMovement(
+            name: "Running",
+            defaultWorkTargetType: WorkTargetType.DistanceMeters,
+            allowedWorkTargetTypes:
+            [
+                WorkTargetType.DistanceMeters,
+                WorkTargetType.DurationSeconds
+            ]);
+
+        var act = () => movement.RemoveAllowedWorkTargetType(WorkTargetType.DistanceMeters);
+
+        act.Should().Throw<InvalidOperationException>();
     }
 
     [Fact]
@@ -88,11 +231,7 @@ public sealed class MovementTests
     {
         var initialName = "Squat";
         var newName = "  Back Squat  ";
-        var movement = Movement.NewBuiltIn(
-            initialName,
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement(initialName);
 
         movement.Rename(newName);
 
@@ -105,11 +244,7 @@ public sealed class MovementTests
     {
         var initialName = "Squat";
         var newName = "Back Squat";
-        var movement = Movement.NewBuiltIn(
-            initialName,
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement(initialName);
 
         var previousUpdatedAt = movement.Audit.UpdatedAt;
 
@@ -124,11 +259,9 @@ public sealed class MovementTests
         var initialMovementCategoryId = MovementCategoryId.New();
         var newMovementCategoryId = MovementCategoryId.New();
 
-        var movement = Movement.NewBuiltIn(
-            "Squat",
-            initialMovementCategoryId,
-            null
-        );
+        var movement = CreateBuiltInMovement(
+            name: "Squat",
+            movementCategoryId: initialMovementCategoryId);
 
         movement.ChangeCategory(newMovementCategoryId);
 
@@ -142,16 +275,13 @@ public sealed class MovementTests
         var newDescriptionText = "Updated description.";
         var language = LocalizationHelper.Language.EN;
 
-        var movement = Movement.NewBuiltIn(
-            "Squat",
-            MovementCategoryId.New(),
-            initialDescriptionText
-        );
+        var movement = CreateBuiltInMovement(
+            name: "Squat",
+            description: initialDescriptionText);
 
         movement.ChangeDescription(
             newDescriptionText,
-            language
-        );
+            language);
 
         movement.Description.GetContent(language).Should().Be(newDescriptionText);
     }
@@ -162,11 +292,9 @@ public sealed class MovementTests
         var descriptionText = "Initial description.";
         var language = LocalizationHelper.Language.EN;
 
-        var movement = Movement.NewBuiltIn(
-            "Squat",
-            MovementCategoryId.New(),
-            descriptionText
-        );
+        var movement = CreateBuiltInMovement(
+            name: "Squat",
+            description: descriptionText);
 
         movement.RemoveDescription(language);
 
@@ -178,11 +306,7 @@ public sealed class MovementTests
     {
         var muscleId = MuscleId.New();
 
-        var movement = Movement.NewBuiltIn(
-            "Bench Press",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Bench Press");
 
         movement.AddPrimaryMuscle(muscleId);
 
@@ -197,11 +321,7 @@ public sealed class MovementTests
     {
         var muscleId = MuscleId.New();
 
-        var movement = Movement.NewBuiltIn(
-            "Bench Press",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Bench Press");
 
         movement.AddSecondaryMuscle(muscleId);
 
@@ -216,21 +336,15 @@ public sealed class MovementTests
     {
         var muscleId = MuscleId.New();
 
-        var movement = Movement.NewBuiltIn(
-            "Bench Press",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Bench Press");
 
         movement.AddMuscle(
             muscleId,
-            MuscleRole.Primary
-        );
+            MuscleRole.Primary);
 
         movement.AddMuscle(
             muscleId,
-            MuscleRole.Secondary
-        );
+            MuscleRole.Secondary);
 
         movement.Muscles.Should().ContainSingle();
         movement.Muscles.First().Role.Should().Be(MuscleRole.Primary);
@@ -241,21 +355,15 @@ public sealed class MovementTests
     {
         var muscleId = MuscleId.New();
 
-        var movement = Movement.NewBuiltIn(
-            "Bench Press",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Bench Press");
 
         movement.AddMuscle(
             muscleId,
-            MuscleRole.Secondary
-        );
+            MuscleRole.Secondary);
 
         movement.ChangeMuscleRole(
             muscleId,
-            MuscleRole.Primary
-        );
+            MuscleRole.Primary);
 
         movement.Muscles.Should().ContainSingle();
         movement.Muscles.First().Role.Should().Be(MuscleRole.Primary);
@@ -266,16 +374,11 @@ public sealed class MovementTests
     {
         var muscleId = MuscleId.New();
 
-        var movement = Movement.NewBuiltIn(
-            "Bench Press",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Bench Press");
 
         movement.ChangeMuscleRole(
             muscleId,
-            MuscleRole.Primary
-        );
+            MuscleRole.Primary);
 
         movement.Muscles.Should().BeEmpty();
     }
@@ -285,11 +388,7 @@ public sealed class MovementTests
     {
         var muscleId = MuscleId.New();
 
-        var movement = Movement.NewBuiltIn(
-            "Bench Press",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Bench Press");
 
         movement.AddPrimaryMuscle(muscleId);
 
@@ -303,11 +402,7 @@ public sealed class MovementTests
     {
         var muscleId = MuscleId.New();
 
-        var movement = Movement.NewBuiltIn(
-            "Bench Press",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Bench Press");
 
         movement.RemoveMuscle(muscleId);
 
@@ -315,160 +410,132 @@ public sealed class MovementTests
     }
 
     [Fact]
-public void AddRequiredEquipmentOption_ShouldAddRequiredEquipmentOption_WhenNotAlreadyAdded()
-{
-    var equipmentId = EquipmentId.New();
-    var groupKey = "load";
+    public void AddRequiredEquipmentOption_ShouldAddRequiredEquipmentOption_WhenNotAlreadyAdded()
+    {
+        var equipmentId = EquipmentId.New();
+        var groupKey = "load";
 
-    var movement = Movement.NewBuiltIn(
-        "Back Squat",
-        MovementCategoryId.New(),
-        null
-    );
+        var movement = CreateBuiltInMovement("Back Squat");
 
-    movement.AddRequiredEquipmentOption(
-        equipmentId,
-        groupKey);
+        movement.AddRequiredEquipmentOption(
+            equipmentId,
+            groupKey);
 
-    movement.EquipmentRequirements.Should().ContainSingle();
-    movement.EquipmentRequirements.First().MovementId.Should().Be(movement.Id);
-    movement.EquipmentRequirements.First().EquipmentId.Should().Be(equipmentId);
-    movement.EquipmentRequirements.First().GroupKey.Should().Be(groupKey);
-    movement.EquipmentRequirements.First().Kind.Should().Be(EquipmentRequirementKind.RequiredGroup);
-}
+        movement.EquipmentRequirements.Should().ContainSingle();
+        movement.EquipmentRequirements.First().MovementId.Should().Be(movement.Id);
+        movement.EquipmentRequirements.First().EquipmentId.Should().Be(equipmentId);
+        movement.EquipmentRequirements.First().GroupKey.Should().Be(groupKey);
+        movement.EquipmentRequirements.First().Kind.Should().Be(EquipmentRequirementKind.RequiredGroup);
+    }
 
-[Fact]
-public void AddRequiredEquipmentOption_ShouldNotAddDuplicate_WhenSameEquipmentRequirementAlreadyExists()
-{
-    var equipmentId = EquipmentId.New();
-    var groupKey = "load";
+    [Fact]
+    public void AddRequiredEquipmentOption_ShouldNotAddDuplicate_WhenSameEquipmentRequirementAlreadyExists()
+    {
+        var equipmentId = EquipmentId.New();
+        var groupKey = "load";
 
-    var movement = Movement.NewBuiltIn(
-        "Back Squat",
-        MovementCategoryId.New(),
-        null
-    );
+        var movement = CreateBuiltInMovement("Back Squat");
 
-    movement.AddRequiredEquipmentOption(
-        equipmentId,
-        groupKey);
+        movement.AddRequiredEquipmentOption(
+            equipmentId,
+            groupKey);
 
-    movement.AddRequiredEquipmentOption(
-        equipmentId,
-        groupKey);
+        movement.AddRequiredEquipmentOption(
+            equipmentId,
+            groupKey);
 
-    movement.EquipmentRequirements.Should().ContainSingle();
-}
+        movement.EquipmentRequirements.Should().ContainSingle();
+    }
 
-[Fact]
-public void AddRequiredEquipmentOption_ShouldAddSameEquipment_WhenGroupKeyIsDifferent()
-{
-    var equipmentId = EquipmentId.New();
-    var firstGroupKey = "load";
-    var secondGroupKey = "support";
+    [Fact]
+    public void AddRequiredEquipmentOption_ShouldAddSameEquipment_WhenGroupKeyIsDifferent()
+    {
+        var equipmentId = EquipmentId.New();
+        var firstGroupKey = "load";
+        var secondGroupKey = "support";
 
-    var movement = Movement.NewBuiltIn(
-        "Back Squat",
-        MovementCategoryId.New(),
-        null
-    );
+        var movement = CreateBuiltInMovement("Back Squat");
 
-    movement.AddRequiredEquipmentOption(
-        equipmentId,
-        firstGroupKey);
+        movement.AddRequiredEquipmentOption(
+            equipmentId,
+            firstGroupKey);
 
-    movement.AddRequiredEquipmentOption(
-        equipmentId,
-        secondGroupKey);
+        movement.AddRequiredEquipmentOption(
+            equipmentId,
+            secondGroupKey);
 
-    movement.EquipmentRequirements.Should().HaveCount(2);
-    movement.EquipmentRequirements.Should().Contain(requirement =>
-        requirement.EquipmentId == equipmentId
-        && requirement.GroupKey == firstGroupKey
-        && requirement.Kind == EquipmentRequirementKind.RequiredGroup);
-    movement.EquipmentRequirements.Should().Contain(requirement =>
-        requirement.EquipmentId == equipmentId
-        && requirement.GroupKey == secondGroupKey
-        && requirement.Kind == EquipmentRequirementKind.RequiredGroup);
-}
+        movement.EquipmentRequirements.Should().HaveCount(2);
+        movement.EquipmentRequirements.Should().Contain(requirement =>
+            requirement.EquipmentId == equipmentId
+            && requirement.GroupKey == firstGroupKey
+            && requirement.Kind == EquipmentRequirementKind.RequiredGroup);
+        movement.EquipmentRequirements.Should().Contain(requirement =>
+            requirement.EquipmentId == equipmentId
+            && requirement.GroupKey == secondGroupKey
+            && requirement.Kind == EquipmentRequirementKind.RequiredGroup);
+    }
 
-[Fact]
-public void AddOptionalEquipment_ShouldAddOptionalEquipment_WhenNotAlreadyAdded()
-{
-    var equipmentId = EquipmentId.New();
-    var groupKey = "assistance";
+    [Fact]
+    public void AddOptionalEquipment_ShouldAddOptionalEquipment_WhenNotAlreadyAdded()
+    {
+        var equipmentId = EquipmentId.New();
+        var groupKey = "assistance";
 
-    var movement = Movement.NewBuiltIn(
-        "Pull Up",
-        MovementCategoryId.New(),
-        null
-    );
+        var movement = CreateBuiltInMovement("Pull Up");
 
-    movement.AddOptionalEquipment(
-        equipmentId,
-        groupKey);
+        movement.AddOptionalEquipment(
+            equipmentId,
+            groupKey);
 
-    movement.EquipmentRequirements.Should().ContainSingle();
-    movement.EquipmentRequirements.First().MovementId.Should().Be(movement.Id);
-    movement.EquipmentRequirements.First().EquipmentId.Should().Be(equipmentId);
-    movement.EquipmentRequirements.First().GroupKey.Should().Be(groupKey);
-    movement.EquipmentRequirements.First().Kind.Should().Be(EquipmentRequirementKind.Optional);
-}
+        movement.EquipmentRequirements.Should().ContainSingle();
+        movement.EquipmentRequirements.First().MovementId.Should().Be(movement.Id);
+        movement.EquipmentRequirements.First().EquipmentId.Should().Be(equipmentId);
+        movement.EquipmentRequirements.First().GroupKey.Should().Be(groupKey);
+        movement.EquipmentRequirements.First().Kind.Should().Be(EquipmentRequirementKind.Optional);
+    }
 
-[Fact]
-public void RemoveEquipmentRequirement_ShouldRemoveEquipmentRequirement_WhenRequirementExists()
-{
-    var equipmentId = EquipmentId.New();
-    var groupKey = "load";
+    [Fact]
+    public void RemoveEquipmentRequirement_ShouldRemoveEquipmentRequirement_WhenRequirementExists()
+    {
+        var equipmentId = EquipmentId.New();
+        var groupKey = "load";
 
-    var movement = Movement.NewBuiltIn(
-        "Back Squat",
-        MovementCategoryId.New(),
-        null
-    );
+        var movement = CreateBuiltInMovement("Back Squat");
 
-    movement.AddRequiredEquipmentOption(
-        equipmentId,
-        groupKey);
+        movement.AddRequiredEquipmentOption(
+            equipmentId,
+            groupKey);
 
-    movement.RemoveEquipmentRequirement(
-        equipmentId,
-        groupKey,
-        EquipmentRequirementKind.RequiredGroup);
+        movement.RemoveEquipmentRequirement(
+            equipmentId,
+            groupKey,
+            EquipmentRequirementKind.RequiredGroup);
 
-    movement.EquipmentRequirements.Should().BeEmpty();
-}
+        movement.EquipmentRequirements.Should().BeEmpty();
+    }
 
-[Fact]
-public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExist()
-{
-    var equipmentId = EquipmentId.New();
-    var groupKey = "load";
+    [Fact]
+    public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExist()
+    {
+        var equipmentId = EquipmentId.New();
+        var groupKey = "load";
 
-    var movement = Movement.NewBuiltIn(
-        "Back Squat",
-        MovementCategoryId.New(),
-        null
-    );
+        var movement = CreateBuiltInMovement("Back Squat");
 
-    movement.RemoveEquipmentRequirement(
-        equipmentId,
-        groupKey,
-        EquipmentRequirementKind.RequiredGroup);
+        movement.RemoveEquipmentRequirement(
+            equipmentId,
+            groupKey,
+            EquipmentRequirementKind.RequiredGroup);
 
-    movement.EquipmentRequirements.Should().BeEmpty();
-}
+        movement.EquipmentRequirements.Should().BeEmpty();
+    }
 
     [Fact]
     public void MakeVariantOf_ShouldSetVariantParent()
     {
         var parentMovementId = MovementId.New();
 
-        var movement = Movement.NewBuiltIn(
-            "Front Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Front Squat");
 
         movement.MakeVariantOf(parentMovementId);
 
@@ -478,11 +545,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void MakeVariantOf_ShouldThrow_WhenMovementIsOwnVariantParent()
     {
-        var movement = Movement.NewBuiltIn(
-            "Front Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Front Squat");
 
         var act = () => movement.MakeVariantOf(movement.Id);
 
@@ -494,11 +557,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     {
         var parentMovementId = MovementId.New();
 
-        var movement = Movement.NewBuiltIn(
-            "Front Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Front Squat");
 
         movement.MakeVariantOf(parentMovementId);
 
@@ -511,11 +570,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void RemoveVariantParent_ShouldDoNothing_WhenParentDoesNotExist()
     {
-        var movement = Movement.NewBuiltIn(
-            "Front Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Front Squat");
 
         movement.RemoveVariantParent();
 
@@ -526,17 +581,9 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void AddVariant_ShouldAddVariantAndSetVariantParent()
     {
-        var movement = Movement.NewBuiltIn(
-            "Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Squat");
 
-        var variant = Movement.NewBuiltIn(
-            "Front Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var variant = CreateBuiltInMovement("Front Squat");
 
         movement.AddVariant(variant);
 
@@ -548,17 +595,9 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void AddVariant_ShouldNotAddDuplicate_WhenVariantAlreadyExists()
     {
-        var movement = Movement.NewBuiltIn(
-            "Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Squat");
 
-        var variant = Movement.NewBuiltIn(
-            "Front Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var variant = CreateBuiltInMovement("Front Squat");
 
         movement.AddVariant(variant);
         movement.AddVariant(variant);
@@ -569,11 +608,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void AddVariant_ShouldThrow_WhenMovementIsOwnVariant()
     {
-        var movement = Movement.NewBuiltIn(
-            "Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Squat");
 
         var act = () => movement.AddVariant(movement);
 
@@ -583,17 +618,9 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void RemoveVariant_ShouldRemoveVariantAndClearVariantParent()
     {
-        var movement = Movement.NewBuiltIn(
-            "Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Squat");
 
-        var variant = Movement.NewBuiltIn(
-            "Front Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var variant = CreateBuiltInMovement("Front Squat");
 
         movement.AddVariant(variant);
 
@@ -607,11 +634,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void RemoveVariant_ShouldDoNothing_WhenVariantDoesNotExist()
     {
-        var movement = Movement.NewBuiltIn(
-            "Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Squat");
 
         var variantId = MovementId.New();
 
@@ -625,11 +648,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     {
         var pattern = MovementPattern.Squat;
 
-        var movement = Movement.NewBuiltIn(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Back Squat");
 
         movement.AddPattern(pattern);
 
@@ -643,11 +662,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     {
         var pattern = MovementPattern.Squat;
 
-        var movement = Movement.NewBuiltIn(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Back Squat");
 
         movement.AddPattern(pattern);
         movement.AddPattern(pattern);
@@ -660,11 +675,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     {
         var pattern = MovementPattern.Complex;
 
-        var movement = Movement.NewBuiltIn(
-            "Clean And Jerk",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Clean And Jerk");
 
         var act = () => movement.AddPattern(pattern);
 
@@ -676,11 +687,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     {
         var pattern = MovementPattern.Squat;
 
-        var movement = Movement.NewBuiltIn(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Back Squat");
 
         movement.AddPattern(pattern);
 
@@ -694,11 +701,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     {
         var pattern = MovementPattern.Squat;
 
-        var movement = Movement.NewBuiltIn(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Back Squat");
 
         movement.RemovePattern(pattern);
 
@@ -710,11 +713,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     {
         var pattern = MovementPattern.Squat;
 
-        var movement = Movement.NewBuiltIn(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Back Squat");
 
         movement.SetPrimaryPattern(pattern);
 
@@ -728,11 +727,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     {
         var pattern = MovementPattern.Complex;
 
-        var movement = Movement.NewBuiltIn(
-            "Clean And Jerk",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Clean And Jerk");
 
         movement.SetPrimaryPattern(pattern);
 
@@ -745,11 +740,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     {
         var pattern = MovementPattern.Squat;
 
-        var movement = Movement.NewBuiltIn(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Back Squat");
 
         movement.SetPrimaryPattern(pattern);
 
@@ -761,11 +752,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void ClearPrimaryPattern_ShouldDoNothing_WhenPrimaryPatternDoesNotExist()
     {
-        var movement = Movement.NewBuiltIn(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Back Squat");
 
         movement.ClearPrimaryPattern();
 
@@ -775,11 +762,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void AutoResolvePrimaryPattern_ShouldSetPrimaryPatternToNull_WhenNoPatternExists()
     {
-        var movement = Movement.NewBuiltIn(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Back Squat");
 
         movement.AutoResolvePrimaryPattern();
 
@@ -791,11 +774,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     {
         var pattern = MovementPattern.Squat;
 
-        var movement = Movement.NewBuiltIn(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Back Squat");
 
         movement.AddPattern(pattern);
 
@@ -810,11 +789,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
         var firstPattern = MovementPattern.Squat;
         var secondPattern = MovementPattern.Hinge;
 
-        var movement = Movement.NewBuiltIn(
-            "Thruster",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Thruster");
 
         movement.AddPattern(firstPattern);
         movement.AddPattern(secondPattern);
@@ -830,11 +805,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
         var firstPattern = MovementPattern.Squat;
         var secondPattern = MovementPattern.Hinge;
 
-        var movement = Movement.NewBuiltIn(
-            "Thruster",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Thruster");
 
         movement.AddPattern(firstPattern);
         movement.AddPattern(secondPattern);
@@ -848,11 +819,7 @@ public void RemoveEquipmentRequirement_ShouldDoNothing_WhenRequirementDoesNotExi
     [Fact]
     public void MarkDeleted_ShouldMarkMovementAsDeleted_WhenCalledThroughAuditedInterface()
     {
-        var movement = Movement.NewBuiltIn(
-            "Back Squat",
-            MovementCategoryId.New(),
-            null
-        );
+        var movement = CreateBuiltInMovement("Back Squat");
 
         ((IAudited)movement).MarkDeleted();
 

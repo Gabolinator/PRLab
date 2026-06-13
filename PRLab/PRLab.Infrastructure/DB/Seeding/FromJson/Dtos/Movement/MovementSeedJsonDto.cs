@@ -1,6 +1,7 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Value.Enum.Prescription;
 using PRLab.Domain.Value.Enum.System;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Movement;
@@ -16,6 +17,10 @@ public sealed record MovementSeedJsonDto
     public SeedEntityReferenceJsonDto Category { get; init; } = new();
 
     public DescriptionSeedJsonDto? Description { get; init; }
+
+    public WorkTargetType DefaultWorkTargetType { get; init; }
+
+    public IReadOnlyList<WorkTargetType> AllowedWorkTargetTypes { get; init; } = [];
 
     public IReadOnlyList<MovementEquipmentRequirementSeedJsonDto> EquipmentRequirements { get; init; } = [];
 
@@ -46,6 +51,11 @@ public sealed record MovementSeedJsonDto
             Description = movement.Description is null
                 ? null
                 : DescriptionSeedJsonDto.FromDescription(movement.Description),
+            DefaultWorkTargetType = movement.DefaultWorkTargetType,
+            AllowedWorkTargetTypes = movement.AllowedWorkTargets
+                .Select(allowedWorkTarget => allowedWorkTarget.TargetType)
+                .OrderBy(targetType => targetType)
+                .ToList(),
             EquipmentRequirements = movement.EquipmentRequirements
                 .GroupBy(equipmentRequirement => new
                 {

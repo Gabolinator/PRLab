@@ -13,6 +13,7 @@ public static class MovementModelBuilder
         modelBuilder.CreateMovementPatternTagTableModel();
         modelBuilder.CreateMovementMuscleTableModel();
         modelBuilder.CreateMovementEquipmentRequirementTableModel();
+        modelBuilder.CreateMovementAllowedWorkTargetTableModel();
     }
     
     public static void CreateMovementTableModel(this ModelBuilder modelBuilder)
@@ -52,6 +53,11 @@ public static class MovementModelBuilder
                 .HasConversion<string>()
                 .HasMaxLength(80);
 
+            movement.Property(movement => movement.DefaultWorkTargetType)
+                .HasConversion<string>()
+                .HasMaxLength(80)
+                .IsRequired();
+            
             movement.HasOne(movement => movement.Description)
                 .WithMany()
                 .IsRequired()
@@ -131,9 +137,42 @@ public static class MovementModelBuilder
 
             movement.Navigation(movement => movement.Variants)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
+            
+            movement.Navigation(movement => movement.AllowedWorkTargets)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
         });
     }
 
+    public static void CreateMovementAllowedWorkTargetTableModel(this ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<MovementAllowedWorkTarget>(allowedWorkTarget =>
+        {
+            allowedWorkTarget.ToTable("MovementAllowedWorkTarget");
+
+            allowedWorkTarget.HasKey(allowedWorkTarget => new
+            {
+                allowedWorkTarget.MovementId,
+                allowedWorkTarget.TargetType
+            });
+
+            allowedWorkTarget.Property(allowedWorkTarget => allowedWorkTarget.MovementId)
+                .HasConversion(
+                    movementId => movementId.Value,
+                    value => MovementId.FromGuid(value))
+                .IsRequired();
+
+            allowedWorkTarget.Property(allowedWorkTarget => allowedWorkTarget.TargetType)
+                .HasConversion<string>()
+                .HasMaxLength(80)
+                .IsRequired();
+
+            allowedWorkTarget.HasOne<Movement>()
+                .WithMany(movement => movement.AllowedWorkTargets)
+                .HasForeignKey(allowedWorkTarget => allowedWorkTarget.MovementId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+    
     public static void CreateMovementPatternTagTableModel(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<MovementPatternTag>(movementPatternTag =>
@@ -271,6 +310,8 @@ public static class MovementModelBuilder
             movement.HasIndex(movement => movement.PrimaryPattern);
 
             movement.HasIndex("DescriptionId");
+            
+            movement.HasIndex(movement => movement.DefaultWorkTargetType);
         });
 
         modelBuilder.Entity<MovementPatternTag>(movementPatternTag =>
@@ -287,6 +328,12 @@ public static class MovementModelBuilder
         modelBuilder.Entity<MovementEquipmentRequirement>(movementEquipment =>
         {
             movementEquipment.HasIndex(movementEquipment => movementEquipment.EquipmentId);
+        });
+        
+        
+        modelBuilder.Entity<MovementAllowedWorkTarget>(allowedWorkTarget =>
+        {
+            allowedWorkTarget.HasIndex(allowedWorkTarget => allowedWorkTarget.TargetType);
         });
     }
 }

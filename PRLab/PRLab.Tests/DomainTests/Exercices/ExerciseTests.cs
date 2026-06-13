@@ -143,7 +143,8 @@ public sealed class ExerciseTests
         var movement = Movement.NewBuiltIn(
             movementName,
             movementCategoryId,
-            movementDescriptionText
+            movementDescriptionText,
+            defaultWorkTargetType: WorkTargetType.Repetitions
         );
 
         var exercise = Exercise.FromMovementBuiltIn(
@@ -187,7 +188,8 @@ public sealed class ExerciseTests
         var movement = Movement.NewBuiltIn(
             movementName,
             movementCategoryId,
-            movementDescriptionText
+            movementDescriptionText,
+            defaultWorkTargetType: WorkTargetType.Repetitions
         );
 
         var exercise = Exercise.FromMovementUserCreated(
@@ -239,7 +241,8 @@ public sealed class ExerciseTests
         var movement = Movement.NewBuiltIn(
             movementName,
             movementCategoryId,
-            movementDescriptionText
+            movementDescriptionText,
+            defaultWorkTargetType: WorkTargetType.Repetitions
         );
 
         var exercise = Exercise.FromMovementBuiltIn(

@@ -2,6 +2,7 @@
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
+using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;

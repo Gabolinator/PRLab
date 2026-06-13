@@ -2,7 +2,7 @@
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
-using PRLab.Application.Interface.DB.Seeding.Factory.Movement;
+using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain;
@@ -24,7 +24,7 @@ public class MovementSeeder(
 {
     public override string Name => "DevelopmentMovementSeed";
 
-    public override string Version => "1.0.0";
+    public override string Version => "1.0.3";
 
     public override EntityType EntityType => EntityType.Movement;
 

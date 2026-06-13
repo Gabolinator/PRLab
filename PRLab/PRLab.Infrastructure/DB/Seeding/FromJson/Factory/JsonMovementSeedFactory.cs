@@ -1,11 +1,12 @@
 ﻿using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
-using PRLab.Application.Interface.DB.Seeding.Factory.Movement;
+using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Value.Enum.Prescription;
 using PRLab.Domain.Value.Enum.System;
 using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
@@ -33,7 +34,6 @@ public sealed class JsonMovementSeedFactory(
         MovementSeedCatalogs catalogs)
     {
         var seedDtos = LoadSeedDtos();
-        
 
         return seedDtos
             .Select(seedDto => ToSeedItem(seedDto, catalogs))
@@ -55,6 +55,8 @@ public sealed class JsonMovementSeedFactory(
                 $"{Entity} seed '{seedDto.Name}' has an empty id. Omit the Id property or provide a valid id.");
         }
 
+        ValidateWorkTargetTypes(seedDto);
+
         var movementCategory = ResolveMovementCategory(
             seedDto.Category,
             catalogs.MovementCategory,
@@ -66,16 +68,20 @@ public sealed class JsonMovementSeedFactory(
 
         var movement = seedDto.Id.HasValue
             ? Movement.NewBuiltInWithId(
-                MovementId.FromGuid(seedDto.Id.Value),
-                seedDto.Name,
-                movementCategory,
-                description,
-                SeedUser)
+                id: MovementId.FromGuid(seedDto.Id.Value),
+                name: seedDto.Name,
+                movementCategory: movementCategory,
+                description: description,
+                defaultWorkTargetType: seedDto.DefaultWorkTargetType,
+                allowedWorkTargetTypes: seedDto.AllowedWorkTargetTypes,
+                createdBy: SeedUser)
             : Movement.NewBuiltIn(
-                seedDto.Name,
-                movementCategory,
-                description,
-                SeedUser);
+                name: seedDto.Name,
+                movementCategory: movementCategory,
+                description: description,
+                defaultWorkTargetType: seedDto.DefaultWorkTargetType,
+                allowedWorkTargetTypes: seedDto.AllowedWorkTargetTypes,
+                createdBy: SeedUser);
 
         relationResolver.ApplyRelations(
             movement,
@@ -89,7 +95,22 @@ public sealed class JsonMovementSeedFactory(
             movement,
             seedDto.Action);
     }
-    
+
+    private static void ValidateWorkTargetTypes(MovementSeedJsonDto seedDto)
+    {
+        if (seedDto.DefaultWorkTargetType == WorkTargetType.Unspecified)
+        {
+            throw new InvalidOperationException(
+                $"Movement seed '{seedDto.Name}' must provide a DefaultWorkTargetType.");
+        }
+
+        if (seedDto.AllowedWorkTargetTypes.Any(targetType => targetType == WorkTargetType.Unspecified))
+        {
+            throw new InvalidOperationException(
+                $"Movement seed '{seedDto.Name}' has an invalid AllowedWorkTargetTypes value.");
+        }
+    }
+
     private static MovementCategory ResolveMovementCategory(
         SeedEntityReferenceJsonDto reference,
         MovementCategorySeedCatalog movementCategoryCatalog,

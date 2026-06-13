@@ -1,13 +1,10 @@
 ﻿using PRLab.Application.Interface.DB;
-using PRLab.Application.Interface.DB.Seeding;
-using PRLab.Application.Interface.DB.Seeding.Factory;
-using PRLab.Application.Interface.DB.Seeding.Factory.Muscle;
+using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Muscle;
 using PRLab.Application.Models.DB.Seeding;
-using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Enum.Anatomy;
 
-namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.Muscle;
+namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.MuscleFactory;
 
 public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMuscleSeedFactory
 {

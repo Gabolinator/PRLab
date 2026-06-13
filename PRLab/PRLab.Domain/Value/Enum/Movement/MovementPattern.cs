@@ -16,5 +16,6 @@ public enum MovementPattern
     Balance,
     Mobility,
     Isolation,
+    GetUp,
     Complex,
 }

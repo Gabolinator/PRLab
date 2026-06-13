@@ -42,6 +42,15 @@ public static class SeedKeyGenerator
             EntityType.MovementCategory,
             movementCategory.NameKey);
     }
+    
+    public static string GenerateExerciseKey(Exercise exercise)
+    {
+        ArgumentNullException.ThrowIfNull(exercise);
+
+        return GenerateKey(
+            EntityType.Exercise,
+            exercise.NameKey);
+    }
 
     public static string GenerateMuscleKeyFromName(string name)
     {

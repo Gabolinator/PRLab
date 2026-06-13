@@ -56,15 +56,7 @@ public static class SeedCatalogBuilder
             new EntityCatalog<MovementCategoryId, MovementCategory>(
                 movementCategories,
                 movementCategory => movementCategory.Id,
-                AddNameKey(movementCategories)));
-    }
-
-    private static Func<MovementCategory, string> AddNameKey(List<MovementCategory> movementCategories)
-    {
-       return movementCategory =>
-       {
-           return movementCategory.NameKey;
-       };
+                movementCategory => movementCategory.NameKey));
     }
 
     public static async Task<MovementSeedCatalog> CreateMovementCatalog(
@@ -77,6 +69,7 @@ public static class SeedCatalogBuilder
             .Include(movement => movement.MovementCategory)
             .Include(movement => movement.Description)
                 .ThenInclude(description => description.Translations)
+            .Include(movement => movement.AllowedWorkTargets)
             .Include(movement => movement.EquipmentRequirements)
                 .ThenInclude(movementEquipment => movementEquipment.Equipment)
             .Include(movement => movement.Muscles)

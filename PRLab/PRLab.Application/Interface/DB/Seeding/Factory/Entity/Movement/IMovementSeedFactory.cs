@@ -1,7 +1,7 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 
-namespace PRLab.Application.Interface.DB.Seeding.Factory.Movement;
+namespace PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 
 public interface IMovementSeedFactory
 {

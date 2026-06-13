@@ -2,6 +2,7 @@
 
 public enum WorkTargetType
 {
+    Unspecified =0,
     Repetitions = 1,
     DurationSeconds = 2,
     DistanceMeters = 3,

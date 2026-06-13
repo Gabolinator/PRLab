@@ -10,7 +10,7 @@ public static class MovementUpdateMapper
     public static MovementUpdate ToUpdate(
         Movement movement,
         MovementPutDTO payload,
-        User? currentUser)
+        User? updatedBy = null)
     {
         ArgumentNullException.ThrowIfNull(movement);
         ArgumentNullException.ThrowIfNull(payload);
@@ -19,37 +19,41 @@ public static class MovementUpdateMapper
         {
             Name = payload.Name,
             MovementCategoryId = payload.MovementCategoryId,
-            Description = DescriptionUpdateMapper.ToUpdate(payload.Description),
+            Description = payload.Description is null
+                ? null
+                : DescriptionUpdateMapper.ToUpdate(payload.Description),
+            DefaultWorkTargetType = payload.DefaultWorkTargetType,
+            AllowedWorkTargetTypes = payload.AllowedWorkTargetTypes,
             EquipmentRequirements = payload.EquipmentRequirements
                 .SelectMany(requirement =>
                     requirement.EquipmentIds
                         .Distinct()
                         .Select(equipmentId =>
                             MovementEquipmentRequirement.New(
-                                movement.Id,
-                                equipmentId,
-                                requirement.GroupKey,
-                                requirement.Kind)))
+                                movementId: movement.Id,
+                                equipmentId: equipmentId,
+                                groupKey: requirement.GroupKey,
+                                kind: requirement.Kind)))
                 .ToList(),
             Muscles = payload.Muscles
                 .DistinctBy(muscle => muscle.MuscleId)
                 .Select(muscle =>
                     MovementMuscle.New(
-                        movement.Id,
-                        muscle.MuscleId,
-                        muscle.Role))
+                        movementId: movement.Id,
+                        muscleId: muscle.MuscleId,
+                        role: muscle.Role))
                 .ToList(),
             PrimaryPattern = payload.PrimaryPattern,
             Patterns = payload.Patterns
                 .Distinct()
                 .Select(pattern =>
                     MovementPatternTag.New(
-                        movement.Id,
-                        pattern))
+                        movementId: movement.Id,
+                        pattern: pattern))
                 .ToList(),
             VariantOfId = payload.VariantOfMovementId,
             WasVariantOfProvided = true,
-            UpdatedBy = currentUser,
+            UpdatedBy = updatedBy
         };
     }
 }

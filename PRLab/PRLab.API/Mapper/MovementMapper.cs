@@ -1,7 +1,6 @@
 ﻿using PRLab.API.DTO.Movement;
 using PRLab.API.DTO.Movement.Relation;
 using PRLab.API.DTO.Muscle;
-using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
@@ -32,6 +31,11 @@ public static class MovementMapper
             movement.MovementCategory is null
                 ? null
                 : MovementCategoryMapper.ToSummaryDTO(movement.MovementCategory),
+            movement.DefaultWorkTargetType,
+            movement.AllowedWorkTargets
+                .Select(allowedWorkTarget => allowedWorkTarget.TargetType)
+                .OrderBy(targetType => targetType)
+                .ToList(),
             ToEquipmentRequirementGetDTOs(movement.EquipmentRequirements),
             movement.Muscles
                 .Where(movementMuscle =>
@@ -93,10 +97,12 @@ public static class MovementMapper
         ArgumentNullException.ThrowIfNull(currentUser);
 
         var movement = Movement.NewUserCreated(
-            payload.Name,
-            payload.MovementCategoryId,
-            payload.Descriptor?.Content,
-            currentUser);
+            name: payload.Name,
+            movementCategoryId: payload.MovementCategoryId,
+            description: payload.Descriptor?.Content,
+            owner: currentUser,
+            defaultWorkTargetType: payload.DefaultWorkTargetType,
+            allowedWorkTargetTypes: payload.AllowedWorkTargetTypes);
 
         ApplyEquipmentRequirements(
             movement,

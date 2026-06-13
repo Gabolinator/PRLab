@@ -1,11 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using PRLab.Application.Interface.DB.Seeding;
-using PRLab.Application.Interface.DB.Seeding.Factory;
+using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Domain.Value.Identifier;
 
-namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.Muscle;
+namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.MuscleFactory;
 
 public sealed class DevelopmentMuscleAntagonistSeedFactory(ILogger<DevelopmentMuscleAntagonistSeedFactory> logger) : IMuscleAntagonistSeedFactory
 {

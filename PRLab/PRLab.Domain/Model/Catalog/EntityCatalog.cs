@@ -2,6 +2,7 @@
 
 public sealed class EntityCatalog<TId, TEntity>
 {
+    private readonly IReadOnlyCollection<TEntity> entities;
     private readonly IReadOnlyDictionary<TId, TEntity> entitiesById;
     private readonly IReadOnlyDictionary<string, TEntity> entitiesByNameKey;
 
@@ -16,11 +17,18 @@ public sealed class EntityCatalog<TId, TEntity>
 
         var entityList = entities.ToList();
 
+        this.entities = entityList;
+
         entitiesById = entityList.ToDictionary(idSelector);
 
         entitiesByNameKey = entityList.ToDictionary(
             nameKeySelector,
             entity => entity);
+    }
+
+    public IReadOnlyCollection<TEntity> GetAll()
+    {
+        return entities;
     }
 
     public bool TryGetById(TId id, out TEntity? entity)

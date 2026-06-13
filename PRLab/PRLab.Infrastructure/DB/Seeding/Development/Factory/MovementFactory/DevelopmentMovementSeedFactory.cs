@@ -1,18 +1,17 @@
 ﻿using Microsoft.Extensions.Logging;
 using PRLab.Application.Interface.DB;
-using PRLab.Application.Interface.DB.Seeding;
-using PRLab.Application.Interface.DB.Seeding.Factory;
-using PRLab.Application.Interface.DB.Seeding.Factory.Movement;
+using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 using PRLab.Application.Models.DB.Seeding;
-using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
-using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Value.Enum.Prescription;
 
-namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.Movement;
+namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.MovementFactory;
 
-public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILogger<DevelopmentMovementSeedFactory> logger) : IMovementSeedFactory
+public sealed class DevelopmentMovementSeedFactory(
+    IUserService userService,
+    ILogger<DevelopmentMovementSeedFactory> logger) : IMovementSeedFactory
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");
 
@@ -22,9 +21,9 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
         var movementCategoryCatalog = catalogs.MovementCategory;
         var equipmentCatalog = catalogs.Equipment;
         var muscleCatalog = catalogs.Muscle;
-        
+
         var bodyweightCategory = movementCategoryCatalog.GetRequiredByName("Bodyweight", logger);
-        
+
         var pullUpBar = equipmentCatalog.GetRequiredByName("Pull-up Bar", logger);
         var jumpRope = equipmentCatalog.GetRequiredByName("Jump Rope", logger);
 
@@ -40,19 +39,31 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
         var calves = muscleCatalog.GetRequiredByName("Calves", logger);
 
         var bodyweightSquat = CreateMovement(
-            "Bodyweight Squat",
-            bodyweightCategory,
-            "Basic lower-body squat movement performed without external load.");
+            name: "Bodyweight Squat",
+            movementCategory: bodyweightCategory,
+            defaultTargetType: WorkTargetType.Repetitions,
+            allowedTargetTypes:
+            [
+                WorkTargetType.Repetitions,
+                WorkTargetType.TimeUnderTensionSeconds
+            ],
+            description: "Basic lower-body squat movement performed without external load.");
 
         bodyweightSquat.AddPrimaryMuscle(quads.Id, SeedUser);
         bodyweightSquat.AddSecondaryMuscle(glutes.Id, SeedUser);
         bodyweightSquat.AddSecondaryMuscle(hamstrings.Id, SeedUser);
         bodyweightSquat.AddPattern(MovementPattern.Squat);
-        
+
         var pushUp = CreateMovement(
-            "Push Up",
-            bodyweightCategory,
-            "Bodyweight upper-body pushing movement performed from the floor.");
+            name: "Push Up",
+            movementCategory: bodyweightCategory,
+            defaultTargetType: WorkTargetType.Repetitions,
+            allowedTargetTypes:
+            [
+                WorkTargetType.Repetitions,
+                WorkTargetType.TimeUnderTensionSeconds
+            ],
+            description: "Bodyweight upper-body pushing movement performed from the floor.");
 
         pushUp.AddPrimaryMuscle(chest.Id, SeedUser);
         pushUp.AddSecondaryMuscle(triceps.Id, SeedUser);
@@ -61,28 +72,40 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
         pushUp.AddPattern(MovementPattern.Push);
 
         var pullUp = CreateMovement(
-            "Pull Up",
-            bodyweightCategory,
-            "Bodyweight upper-body pulling movement performed from a bar.");
+            name: "Pull Up",
+            movementCategory: bodyweightCategory,
+            defaultTargetType: WorkTargetType.Repetitions,
+            allowedTargetTypes:
+            [
+                WorkTargetType.Repetitions,
+                WorkTargetType.TimeUnderTensionSeconds
+            ],
+            description: "Bodyweight upper-body pulling movement performed from a bar.");
 
         pullUp.AddPrimaryMuscle(lats.Id, SeedUser);
         pullUp.AddSecondaryMuscle(biceps.Id, SeedUser);
         pullUp.AddSecondaryMuscle(abs.Id, SeedUser);
-        pullUp.AddRequiredEquipmentOption(pullUpBar.Id, "bar" ,SeedUser);
+        pullUp.AddRequiredEquipmentOption(pullUpBar.Id, "bar", SeedUser);
         pullUp.AddPattern(MovementPattern.Pull);
-        
+
         var doubleUnder = CreateMovement(
-            "Double Under",
-            bodyweightCategory,
-            "Jump rope movement where the rope passes under the feet twice per jump.");
+            name: "Double Under",
+            movementCategory: bodyweightCategory,
+            defaultTargetType: WorkTargetType.Repetitions,
+            allowedTargetTypes:
+            [
+                WorkTargetType.Repetitions,
+                WorkTargetType.DurationSeconds,
+                WorkTargetType.Calories
+            ],
+            description: "Jump rope movement where the rope passes under the feet twice per jump.");
 
         doubleUnder.AddPrimaryMuscle(calves.Id, SeedUser);
         doubleUnder.AddSecondaryMuscle(quads.Id, SeedUser);
         doubleUnder.AddSecondaryMuscle(abs.Id, SeedUser);
-        doubleUnder.AddRequiredEquipmentOption(jumpRope.Id, "rope" ,SeedUser);
+        doubleUnder.AddRequiredEquipmentOption(jumpRope.Id, "rope", SeedUser);
         doubleUnder.AddPattern(MovementPattern.Jump);
-        
-       
+
         var movements = new List<Domain.Model.Entity.Movement>
         {
             bodyweightSquat,
@@ -103,12 +126,16 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
     private Domain.Model.Entity.Movement CreateMovement(
         string name,
         MovementCategory movementCategory,
+        WorkTargetType defaultTargetType,
+        IReadOnlyCollection<WorkTargetType> allowedTargetTypes,
         string description)
     {
         return Domain.Model.Entity.Movement.NewBuiltIn(
-            name,
-            movementCategory,
-            Description.New(description),
-            SeedUser);
+            name: name,
+            movementCategory: movementCategory,
+            description: Description.New(description),
+            defaultWorkTargetType: defaultTargetType,
+            allowedWorkTargetTypes: allowedTargetTypes,
+            createdBy: SeedUser);
     }
 }

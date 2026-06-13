@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using PRLab.Domain;
 using PRLab.Domain.Value;
 using PRLab.Domain.Value.Enum.Prescription;
 using PRLab.Domain.Value.Identifier;

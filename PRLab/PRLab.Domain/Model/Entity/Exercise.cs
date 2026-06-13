@@ -145,26 +145,19 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         ArgumentNullException.ThrowIfNull(movement);
         ArgumentNullException.ThrowIfNull(owner);
 
-        var exercise = new Exercise(
-            ExerciseId.New(),
-            movement.Name,
-            movement.Description.Copy(),
-            AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner)
-        );
+        var exercise = NewUserCreated(
+            name: movement.Name,
+            description: movement.Description.Copy(),
+            owner: owner);
 
-        exercise.blocks.Add(
-            ExerciseBlock.New(
-                exerciseId: exercise.Id,
-                movementId: movement.Id,
-                sequence: 1,
-                target: WorkTarget.New(value, targetType),
-                loadTarget: loadTarget,
-                restBetweenReps: restBetweenReps,
-                transitionAfterBlock: transitionAfterBlock,
-                executionDetails: executionDetails
-            )
-        );
+        exercise.AddBlock(
+            movementId: movement.Id,
+            target: WorkTarget.New(value, targetType),
+            loadTarget: loadTarget,
+            restBetweenReps: restBetweenReps,
+            transitionAfterBlock: transitionAfterBlock,
+            executionDetails: executionDetails,
+            changedBy: owner);
 
         return exercise;
     }
@@ -181,26 +174,19 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
     {
         ArgumentNullException.ThrowIfNull(movement);
 
-        var exercise = new Exercise(
-            ExerciseId.New(),
-            movement.Name,
-            movement.Description.Copy(),
-            AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn()
-        );
+        var exercise = NewBuiltIn(
+            name: movement.Name,
+            description: movement.Description.Copy(),
+            createdBy: createdBy);
 
-        exercise.blocks.Add(
-            ExerciseBlock.New(
-                exerciseId: exercise.Id,
-                movementId: movement.Id,
-                sequence: 1,
-                target: WorkTarget.New(value, targetType),
-                loadTarget: loadTarget,
-                restBetweenReps: restBetweenReps,
-                transitionAfterBlock: transitionAfterBlock,
-                executionDetails: executionDetails
-            )
-        );
+        exercise.AddBlock(
+            movementId: movement.Id,
+            target: WorkTarget.New(value, targetType),
+            loadTarget: loadTarget,
+            restBetweenReps: restBetweenReps,
+            transitionAfterBlock: transitionAfterBlock,
+            executionDetails: executionDetails,
+            changedBy: createdBy);
 
         return exercise;
     }
@@ -290,7 +276,54 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
 
         ResequenceBlocks();
     }
-    
+
+    public void AddBlock(
+        ExerciseBlock block,
+        User? changedBy = null,
+        int? atSequence = null)
+    {
+        ArgumentNullException.ThrowIfNull(block);
+
+        var targetSequence = NormalizeInsertSequence(atSequence ?? block.Sequence);
+
+        ShiftBlocksFromSequence(targetSequence);
+
+        block.ChangeSequence(targetSequence);
+
+        blocks.Add(block);
+
+        MarkUpdated(changedBy);
+    }
+
+    public void AddBlock(
+        MovementId movementId,
+        WorkTarget target,
+        LoadTarget? loadTarget = null,
+        RestTarget? restBetweenReps = null,
+        RestTarget? transitionAfterBlock = null,
+        RepExecutionDetails? executionDetails = null,
+        User? changedBy = null,
+        int? atSequence = null)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+
+        var block = ExerciseBlock.New(
+            exerciseId: Id,
+            movementId: movementId,
+            sequence: GetNextSequence(),
+            target: target,
+            loadTarget: loadTarget,
+            restBetweenReps: restBetweenReps,
+            transitionAfterBlock: transitionAfterBlock,
+            executionDetails: executionDetails
+        );
+
+        AddBlock(
+            block,
+            changedBy,
+            atSequence);
+    }
+
     public void AddBlock(
         MovementId movementId,
         decimal value,
@@ -299,30 +332,24 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         RestTarget? restBetweenReps = null,
         RestTarget? transitionAfterBlock = null,
         RepExecutionDetails? executionDetails = null,
-        User? changedBy = null)
+        User? changedBy = null,
+        int? atSequence = null)
     {
-        var sequence = GetNextSequence();
-
-        blocks.Add(
-            ExerciseBlock.New(
-                exerciseId: Id,
-                movementId: movementId,
-                sequence: sequence,
-                target: WorkTarget.New(value, targetType),
-                loadTarget: loadTarget,
-                restBetweenReps: restBetweenReps,
-                transitionAfterBlock: transitionAfterBlock,
-                executionDetails: executionDetails
-            )
-        );
-
-        MarkUpdated(changedBy);
+        AddBlock(
+            movementId: movementId,
+            target: WorkTarget.New(value, targetType),
+            loadTarget: loadTarget,
+            restBetweenReps: restBetweenReps,
+            transitionAfterBlock: transitionAfterBlock,
+            executionDetails: executionDetails,
+            changedBy: changedBy,
+            atSequence: atSequence);
     }
-
+    
     public void RemoveBlock(ExerciseBlockId exerciseBlockId, User? changedBy = null)
     {
         var block = blocks
-            .FirstOrDefault(block => block.Id == exerciseBlockId);
+            .FirstOrDefault(existingBlock => existingBlock.Id == exerciseBlockId);
 
         if (block is null)
         {
@@ -571,12 +598,50 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
 
         return blocks.Max(block => block.Sequence) + 1;
     }
+    
+    private int NormalizeInsertSequence(int? atSequence)
+    {
+        var nextSequence = GetNextSequence();
+
+        if (atSequence is null)
+        {
+            return nextSequence;
+        }
+
+        if (atSequence <= 0)
+        {
+            throw new ArgumentException(
+                "Block sequence must be greater than zero.",
+                nameof(atSequence));
+        }
+
+        if (atSequence > blocks.Count)
+        {
+            return nextSequence;
+        }
+
+        return atSequence.Value;
+    }
+
+    private void ShiftBlocksFromSequence(int sequence)
+    {
+        foreach (var block in blocks
+                     .Where(existingBlock => existingBlock.Sequence >= sequence)
+                     .OrderByDescending(existingBlock => existingBlock.Sequence))
+        {
+            block.ChangeSequence(block.Sequence + 1);
+        }
+    }
 
     private void ResequenceBlocks()
     {
-        for (var index = 0; index < blocks.Count; index++)
+        var orderedBlocks = blocks
+            .OrderBy(block => block.Sequence)
+            .ToList();
+
+        for (var index = 0; index < orderedBlocks.Count; index++)
         {
-            blocks[index].ChangeSequence(index + 1);
+            orderedBlocks[index].ChangeSequence(index + 1);
         }
     }
 }

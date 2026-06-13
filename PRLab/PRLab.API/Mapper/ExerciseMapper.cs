@@ -1,8 +1,6 @@
 ﻿using PRLab.API.DTO.Exercise;
 using PRLab.API.DTO.Exercise.Relation;
 using PRLab.API.DTO.Movement;
-using PRLab.API.Mapper;
-using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
