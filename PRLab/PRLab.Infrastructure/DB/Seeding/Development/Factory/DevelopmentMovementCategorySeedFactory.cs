@@ -9,20 +9,20 @@ namespace PRLab.Infrastructure.DB.Seeding.Development.Factory;
 
 public sealed class DevelopmentMovementCategorySeedFactory(IUserService userService) : IMovementCategorySeedFactory
 {
-    private User SeedUser => userService.GetAdminUser("Seed");
-    
+    private User SeedUser => userService.GetSystemAdminUser("Seed");
+
     public IReadOnlyList<SeedItem<MovementCategory>> CreateInitialData()
     {
         var movementCategories = new List<MovementCategory>();
 
-        var bodyweightCategory = MovementCategory.New(
+        var bodyweightCategory = MovementCategory.NewBuiltIn(
             "Bodyweight",
             DomainEnum.BaseMovementCategory.BodyWeight,
             Description.New("Movements performed mainly with body weight."),
             SeedUser
         );
 
-        var weightliftingCategory = MovementCategory.New(
+        var weightliftingCategory = MovementCategory.NewBuiltIn(
             "Weightlifting",
             DomainEnum.BaseMovementCategory.Resistance,
             Description.New("Movements performed with external loads."),

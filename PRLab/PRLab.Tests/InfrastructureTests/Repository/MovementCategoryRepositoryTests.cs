@@ -19,7 +19,7 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -68,7 +68,7 @@ public sealed class MovementCategoryRepositoryTests
         var englishDescriptionText = "Cable-based resistance movements.";
         var frenchDescriptionText = "Mouvements de résistance avec câble.";
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             name,
             englishDescriptionText,
             DomainEnum.BaseMovementCategory.Resistance
@@ -96,6 +96,9 @@ public sealed class MovementCategoryRepositoryTests
         foundMovementCategory.BaseMovementCategory.Should().Be(DomainEnum.BaseMovementCategory.Resistance);
         foundMovementCategory.Description.GetContent(LocalizationHelper.Language.EN).Should().Be(englishDescriptionText);
         foundMovementCategory.Description.GetContent(LocalizationHelper.Language.FR).Should().Be(frenchDescriptionText);
+        foundMovementCategory.Ownership.Should().NotBeNull();
+        foundMovementCategory.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        foundMovementCategory.Ownership.OwnerUserId.Should().BeNull();
     }
 
     [Fact]
@@ -105,7 +108,7 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -153,7 +156,7 @@ public sealed class MovementCategoryRepositoryTests
         var name = "Cable Machine";
         var searchName = "  cable-machine  ";
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             name,
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -183,7 +186,7 @@ public sealed class MovementCategoryRepositoryTests
 
         var name = "Cable Machine";
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             name,
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -228,13 +231,13 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var visibleMovementCategory = MovementCategory.New(
+        var visibleMovementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
         );
 
-        var deletedMovementCategory = MovementCategory.New(
+        var deletedMovementCategory = MovementCategory.NewBuiltIn(
             "Old Category",
             "Deleted category.",
             DomainEnum.BaseMovementCategory.Hybrid
@@ -265,19 +268,19 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var cableMachineCategory = MovementCategory.New(
+        var cableMachineCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
         );
 
-        var weightliftingCategory = MovementCategory.New(
+        var weightliftingCategory = MovementCategory.NewBuiltIn(
             "Weightlifting",
             "Loaded resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
         );
 
-        var ergMachineCategory = MovementCategory.New(
+        var ergMachineCategory = MovementCategory.NewBuiltIn(
             "Erg Machine",
             "Machine-based cardio movements.",
             DomainEnum.BaseMovementCategory.Cardio
@@ -323,13 +326,13 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var visibleMovementCategory = MovementCategory.New(
+        var visibleMovementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
         );
 
-        var deletedMovementCategory = MovementCategory.New(
+        var deletedMovementCategory = MovementCategory.NewBuiltIn(
             "Weightlifting",
             "Deleted resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -363,7 +366,7 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -421,7 +424,7 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -449,7 +452,7 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -475,7 +478,7 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -520,7 +523,7 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -548,7 +551,7 @@ public sealed class MovementCategoryRepositoryTests
 
         var name = "Cable Machine";
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             name,
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -593,7 +596,7 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var movementCategory = MovementCategory.New(
+        var movementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
@@ -620,13 +623,13 @@ public sealed class MovementCategoryRepositoryTests
 
         var repo = new MovementCategoryRepository(database.Db);
 
-        var excludedMovementCategory = MovementCategory.New(
+        var excludedMovementCategory = MovementCategory.NewBuiltIn(
             "Weightlifting",
             "Loaded resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance
         );
 
-        var existingMovementCategory = MovementCategory.New(
+        var existingMovementCategory = MovementCategory.NewBuiltIn(
             "Cable Machine",
             "Cable-based resistance movements.",
             DomainEnum.BaseMovementCategory.Resistance

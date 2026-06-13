@@ -6,6 +6,10 @@ namespace PRLab.Application.Interface.DB.Repositories.Entity;
 public interface IExerciseRepository
 {
     Task<Exercise?> GetByIdAsync(ExerciseId id, CancellationToken ct);
+    
+    Task<Exercise?> GetTrackedByIdAsync(
+        ExerciseId id,
+        CancellationToken ct);
 
     Task<Exercise?> GetByNameAsync(string name, CancellationToken ct);
 

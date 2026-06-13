@@ -15,7 +15,14 @@ public class JsonMovementCategorySeedFactory(
     : BaseJsonSeedFactory<MovementCategory, MovementCategorySeedJsonDto>(userService, config),
         IMovementCategorySeedFactory
 {
-    protected override DomainEnum.EntityType Entity =>  DomainEnum.EntityType.MovementCategory;
+    protected override DomainEnum.EntityType Entity =>
+        DomainEnum.EntityType.MovementCategory;
+
+    public IReadOnlyList<SeedItem<MovementCategory>> CreateInitialData()
+    {
+        return CreateSeedItems();
+    }
+
     public override SeedItem<MovementCategory> ToSeedItem(MovementCategorySeedJsonDto seedDto)
     {
         if (string.IsNullOrWhiteSpace(seedDto.Name))
@@ -34,13 +41,13 @@ public class JsonMovementCategorySeedFactory(
             : seedDto.Description.ToDescription();
 
         var movementCategory = seedDto.Id.HasValue
-            ? MovementCategory.NewWithId(
+            ? MovementCategory.NewBuiltInWithId(
                 MovementCategoryId.FromGuid(seedDto.Id.Value),
                 seedDto.Name,
                 seedDto.BaseMovementCategory,
                 description,
                 SeedUser)
-            : MovementCategory.New(
+            : MovementCategory.NewBuiltIn(
                 seedDto.Name,
                 seedDto.BaseMovementCategory,
                 description,
@@ -51,7 +58,4 @@ public class JsonMovementCategorySeedFactory(
             movementCategory,
             seedDto.Action);
     }
-
-    public IReadOnlyList<SeedItem<MovementCategory>> CreateInitialData()
-        => CreateSeedItems();
 }

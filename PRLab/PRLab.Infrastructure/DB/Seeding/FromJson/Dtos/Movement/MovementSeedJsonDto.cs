@@ -25,6 +25,10 @@ public sealed record MovementSeedJsonDto
 
     public SeedEntityReferenceJsonDto? VariantOf { get; init; }
 
+    public DomainEnum.DataOrigin Origin { get; init; } = DomainEnum.DataOrigin.BuiltIn;
+
+    public Guid? OwnerUserId { get; init; }
+
     public SeedAction Action { get; init; } = SeedAction.Ignore;
 
     public static MovementSeedJsonDto FromMovement(Domain.Model.Entity.Movement movement)
@@ -72,6 +76,8 @@ public sealed record MovementSeedJsonDto
             VariantOf = movement.VariantOf is not null
                 ? SeedEntityReferenceJsonDto.FromMovement(movement.VariantOf)
                 : null,
+            Origin = movement.Ownership.Origin,
+            OwnerUserId = movement.Ownership.OwnerUserId?.Value,
             Action = SeedAction.Ignore,
         };
     }

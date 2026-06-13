@@ -4,7 +4,7 @@ namespace PRLab.Application.Interface.DB;
 
 public interface IUserService
 {
-    User GetAdminUser(string? name = null);
-    
+    User GetSystemAdminUser(string? name = null);
+
     Task<User?> GetActiveUserAsync(CancellationToken ct);
 }

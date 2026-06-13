@@ -16,9 +16,22 @@ public sealed class ExerciseRepository(PRLabPgDBContext db) : IExerciseRepositor
             throw new ArgumentException("Exercise id cannot be empty.", nameof(id));
         }
 
-        return await CreateExerciseQuery()
+        return await BaseExerciseReadQuery()
             .FirstOrDefaultAsync(
-                exercise => exercise.Id == id && !exercise.Audit.IsDeleted,
+                exercise => exercise.Id == id,
+                ct);
+    }
+
+    public async Task<Exercise?> GetTrackedByIdAsync(ExerciseId id, CancellationToken ct)
+    {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Exercise id cannot be empty.", nameof(id));
+        }
+
+        return await BaseExerciseWriteQuery()
+            .FirstOrDefaultAsync(
+                exercise => exercise.Id == id,
                 ct);
     }
 
@@ -31,17 +44,16 @@ public sealed class ExerciseRepository(PRLabPgDBContext db) : IExerciseRepositor
 
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
 
-        return await CreateExerciseQuery()
+        return await BaseExerciseReadQuery()
             .FirstOrDefaultAsync(
-                exercise => exercise.NameKey == nameKey && !exercise.Audit.IsDeleted,
+                exercise => exercise.NameKey == nameKey,
                 ct);
     }
 
     public async Task<IReadOnlyCollection<Exercise>> ListAsync(CancellationToken ct)
     {
-        return await CreateExerciseQuery()
-            .AsNoTracking()
-            .Where(exercise => !exercise.Audit.IsDeleted)
+        return await BaseExerciseReadQuery()
+            .OrderBy(exercise => exercise.Name)
             .ToListAsync(ct);
     }
 
@@ -54,11 +66,9 @@ public sealed class ExerciseRepository(PRLabPgDBContext db) : IExerciseRepositor
             throw new ArgumentException("Movement id cannot be empty.", nameof(movementId));
         }
 
-        return await CreateExerciseQuery()
-            .AsNoTracking()
-            .Where(exercise =>
-                exercise.Blocks.Any(block => block.MovementId == movementId) &&
-                !exercise.Audit.IsDeleted)
+        return await BaseExerciseReadQuery()
+            .Where(exercise => exercise.Blocks.Any(block => block.MovementId == movementId))
+            .OrderBy(exercise => exercise.Name)
             .ToListAsync(ct);
     }
 
@@ -81,7 +91,6 @@ public sealed class ExerciseRepository(PRLabPgDBContext db) : IExerciseRepositor
             throw new ArgumentException("Exercise id cannot be empty.", nameof(exercise));
         }
 
-        db.Exercises.Update(exercise);
         await db.SaveChangesAsync(ct);
 
         return exercise;
@@ -97,7 +106,8 @@ public sealed class ExerciseRepository(PRLabPgDBContext db) : IExerciseRepositor
         return await db.Exercises
             .AsNoTracking()
             .AnyAsync(
-                exercise => exercise.Id == id && !exercise.Audit.IsDeleted,
+                exercise => exercise.Id == id &&
+                            !exercise.Audit.IsDeleted,
                 ct);
     }
 
@@ -123,8 +133,20 @@ public sealed class ExerciseRepository(PRLabPgDBContext db) : IExerciseRepositor
                 ct);
     }
 
-    private IQueryable<Exercise> CreateExerciseQuery() =>
-        db.Exercises
+    private IQueryable<Exercise> BaseExerciseReadQuery()
+    {
+        return BaseExerciseQuery()
+            .AsNoTracking();
+    }
+
+    private IQueryable<Exercise> BaseExerciseWriteQuery()
+    {
+        return BaseExerciseQuery();
+    }
+
+    private IQueryable<Exercise> BaseExerciseQuery()
+    {
+        return db.Exercises
             .AsSplitQuery()
             .Include(exercise => exercise.Description)
                 .ThenInclude(description => description.Translations)
@@ -151,5 +173,7 @@ public sealed class ExerciseRepository(PRLabPgDBContext db) : IExerciseRepositor
                     .ThenInclude(movement => movement.EquipmentRequirements)
                         .ThenInclude(requirement => requirement.Equipment)
                             .ThenInclude(equipment => equipment.Description)
-                                .ThenInclude(description => description.Translations);
+                                .ThenInclude(description => description.Translations)
+            .Where(exercise => !exercise.Audit.IsDeleted);
+    }
 }

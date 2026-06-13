@@ -2,11 +2,12 @@
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
 using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Value.Ownership;
 using PRLab.Domain.Value.Update;
 
 namespace PRLab.Domain.Model.Entity;
 
-public sealed record Exercise : IAudited, IDescribed
+public sealed record Exercise : IAudited, IDescribed, IOwnedData
 {
     public ExerciseId Id { get; init; }
 
@@ -15,6 +16,8 @@ public sealed record Exercise : IAudited, IDescribed
     public string NameKey { get; private set; } = string.Empty;
 
     public Description Description { get; private set; } = null!;
+    
+    public OwnershipInfo Ownership { get; private set; } = null!;
 
     public AuditInfo Audit { get; private set; } = null!;
 
@@ -33,15 +36,26 @@ public sealed record Exercise : IAudited, IDescribed
         ExerciseId id,
         string name,
         Description description,
-        AuditInfo audit)
+        AuditInfo audit,
+        OwnershipInfo ownership)
     {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Exercise id cannot be empty.", nameof(id));
+        }
+
+        ArgumentNullException.ThrowIfNull(description);
+        ArgumentNullException.ThrowIfNull(audit);
+        ArgumentNullException.ThrowIfNull(ownership);
+
         Id = id;
         SetName(name);
         Description = description;
         Audit = audit;
+        Ownership = ownership;
     }
 
-    public static Exercise New(
+    public static Exercise NewBuiltIn(
         string name,
         string? description,
         User? createdBy = null)
@@ -50,11 +64,12 @@ public sealed record Exercise : IAudited, IDescribed
             ExerciseId.New(),
             name,
             Description.New(description),
-            AuditInfo.New(createdBy)
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn()
         );
     }
-    
-    public static Exercise New(
+
+    public static Exercise NewBuiltIn(
         string name,
         Description description,
         User? createdBy = null)
@@ -63,19 +78,105 @@ public sealed record Exercise : IAudited, IDescribed
             ExerciseId.New(),
             name,
             description,
-            AuditInfo.New(createdBy)
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn()
         );
     }
 
-    public static Exercise FromMovement(
+    public static Exercise NewUserCreated(
+        string name,
+        string? description,
+        User owner)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+
+        return new Exercise(
+            ExerciseId.New(),
+            name,
+            Description.New(description),
+            AuditInfo.New(owner),
+            OwnershipInfo.UserCreated(owner)
+        );
+    }
+
+    public static Exercise NewUserCreated(
+        string name,
+        Description description,
+        User owner)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+
+        return new Exercise(
+            ExerciseId.New(),
+            name,
+            description,
+            AuditInfo.New(owner),
+            OwnershipInfo.UserCreated(owner)
+        );
+    }
+
+    public static Exercise NewImported(
+        string name,
+        Description description,
+        User owner)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+
+        return new Exercise(
+            ExerciseId.New(),
+            name,
+            description,
+            AuditInfo.New(owner),
+            OwnershipInfo.Imported(owner)
+        );
+    }
+
+    public static Exercise FromMovementUserCreated(
         Movement movement,
         decimal value,
         DomainEnum.WorkTargetType targetType,
+        User owner,
         LoadTarget? loadTarget = null,
         RestTarget? restBetweenReps = null,
         RestTarget? transitionAfterBlock = null,
-        RepExecutionDetails? executionDetails = null,
-        User? createdBy = null)
+        RepExecutionDetails? executionDetails = null)
+    {
+        ArgumentNullException.ThrowIfNull(movement);
+        ArgumentNullException.ThrowIfNull(owner);
+
+        var exercise = new Exercise(
+            ExerciseId.New(),
+            movement.Name,
+            movement.Description.Copy(),
+            AuditInfo.New(owner),
+            OwnershipInfo.UserCreated(owner)
+        );
+
+        exercise.blocks.Add(
+            ExerciseBlock.New(
+                exerciseId: exercise.Id,
+                movementId: movement.Id,
+                sequence: 1,
+                target: WorkTarget.New(value, targetType),
+                loadTarget: loadTarget,
+                restBetweenReps: restBetweenReps,
+                transitionAfterBlock: transitionAfterBlock,
+                executionDetails: executionDetails
+            )
+        );
+
+        return exercise;
+    }
+    
+    public static Exercise FromMovementBuiltIn(
+        Movement movement,
+        decimal value,
+        DomainEnum.WorkTargetType targetType,
+        User? createdBy = null,
+        LoadTarget? loadTarget = null,
+        RestTarget? restBetweenReps = null,
+        RestTarget? transitionAfterBlock = null,
+        RepExecutionDetails? executionDetails = null)
     {
         ArgumentNullException.ThrowIfNull(movement);
 
@@ -83,7 +184,8 @@ public sealed record Exercise : IAudited, IDescribed
             ExerciseId.New(),
             movement.Name,
             movement.Description.Copy(),
-            AuditInfo.New(createdBy)
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn()
         );
 
         exercise.blocks.Add(
@@ -110,8 +212,26 @@ public sealed record Exercise : IAudited, IDescribed
 
     public void Rename(string name, User? changedBy = null)
     {
-        SetName(name);
-        MarkUpdated(changedBy);
+        if (TrySetName(name))
+        {
+            MarkUpdated(changedBy);
+        }
+    }
+
+    private bool TrySetName(string name)
+    {
+        var normalizedName = FormatingUtilities.NormalizeName(name);
+        var normalizedNameKey = FormatingUtilities.NormalizeNameKey(name);
+
+        if (Name == normalizedName && NameKey == normalizedNameKey)
+        {
+            return false;
+        }
+
+        Name = normalizedName;
+        NameKey = normalizedNameKey;
+
+        return true;
     }
 
     public void Update(ExerciseUpdate update)
@@ -122,8 +242,7 @@ public sealed record Exercise : IAudited, IDescribed
 
         if (!string.IsNullOrWhiteSpace(update.Name))
         {
-            SetName(update.Name);
-            hasChanged = true;
+            hasChanged = TrySetName(update.Name) || hasChanged;
         }
 
         if (update.Description is not null)

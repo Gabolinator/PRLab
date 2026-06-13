@@ -11,12 +11,12 @@ namespace PRLab.Tests.DomainTests.Exercices;
 public sealed class ExerciseTests
 {
     [Fact]
-    public void New_ShouldCreateExercise_WithNormalizedNameAndNameKey()
+    public void NewBuiltIn_ShouldCreateExercise_WithNormalizedNameAndNameKey()
     {
         var name = "  Pull-up Exercise  ";
         var descriptionText = "Strict pull-up exercise.";
 
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             name,
             descriptionText
         );
@@ -27,16 +27,19 @@ public sealed class ExerciseTests
         exercise.Description.GetContent().Should().Be(descriptionText);
         exercise.Audit.Should().NotBeNull();
         exercise.Audit.IsDeleted.Should().BeFalse();
+        exercise.Ownership.Should().NotBeNull();
+        exercise.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        exercise.Ownership.OwnerUserId.Should().BeNull();
         exercise.Blocks.Should().BeEmpty();
     }
 
     [Fact]
-    public void New_ShouldCreateExercise_WithEmptyDescription_WhenDescriptionIsNull()
+    public void NewBuiltIn_ShouldCreateExercise_WithEmptyDescription_WhenDescriptionIsNull()
     {
         var name = "Pull-up Exercise";
         string? descriptionText = null;
 
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             name,
             descriptionText
         );
@@ -45,16 +48,19 @@ public sealed class ExerciseTests
         exercise.NameKey.Should().Be(FormatingUtilities.NormalizeNameKey(name));
         exercise.Description.Should().NotBeNull();
         exercise.Description.GetContent().Should().BeNull();
+        exercise.Ownership.Should().NotBeNull();
+        exercise.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        exercise.Ownership.OwnerUserId.Should().BeNull();
         exercise.Blocks.Should().BeEmpty();
     }
 
     [Fact]
-    public void New_ShouldThrow_WhenNameIsEmpty()
+    public void NewBuiltIn_ShouldThrow_WhenNameIsEmpty()
     {
         var name = "   ";
         var descriptionText = "Invalid exercise.";
 
-        var act = () => Exercise.New(
+        var act = () => Exercise.NewBuiltIn(
             name,
             descriptionText
         );
@@ -63,12 +69,36 @@ public sealed class ExerciseTests
     }
 
     [Fact]
+    public void NewUserCreated_ShouldCreateExercise_WithOwner()
+    {
+        var owner = User.New("Test User");
+        var name = "  Custom Pull-up Exercise  ";
+        var descriptionText = "User-created pull-up exercise.";
+
+        var exercise = Exercise.NewUserCreated(
+            name,
+            descriptionText,
+            owner
+        );
+
+        exercise.Name.Should().Be(FormatingUtilities.NormalizeName(name));
+        exercise.NameKey.Should().Be(FormatingUtilities.NormalizeNameKey(name));
+        exercise.Description.GetContent().Should().Be(descriptionText);
+        exercise.Audit.Should().NotBeNull();
+        exercise.Audit.CreatedBy.Should().Be(owner.Id);
+        exercise.Ownership.Should().NotBeNull();
+        exercise.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.UserCreated);
+        exercise.Ownership.OwnerUserId.Should().Be(owner.Id);
+        exercise.Blocks.Should().BeEmpty();
+    }
+
+    [Fact]
     public void Rename_ShouldUpdateNameAndNameKey()
     {
         var initialName = "Pull-up";
         var newName = "  Strict Pull-up  ";
 
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             initialName,
             Description.None(),
             null
@@ -86,7 +116,7 @@ public sealed class ExerciseTests
         var initialName = "Pull-up";
         var newName = "Strict Pull-up";
 
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             initialName,
             Description.None(),
             null
@@ -100,7 +130,7 @@ public sealed class ExerciseTests
     }
 
     [Fact]
-    public void FromMovement_ShouldCreateExercise_FromMovement()
+    public void FromMovementBuiltIn_ShouldCreateExercise_FromMovement()
     {
         var movementName = "  Pull-up  ";
         var movementDescriptionText = "Vertical pulling movement.";
@@ -108,13 +138,13 @@ public sealed class ExerciseTests
         var value = 5m;
         var targetType = DomainEnum.WorkTargetType.Repetitions;
 
-        var movement = Movement.New(
+        var movement = Movement.NewBuiltIn(
             movementName,
             movementCategoryId,
             movementDescriptionText
         );
 
-        var exercise = Exercise.FromMovement(
+        var exercise = Exercise.FromMovementBuiltIn(
             movement,
             value,
             targetType
@@ -124,6 +154,9 @@ public sealed class ExerciseTests
         exercise.NameKey.Should().Be(movement.NameKey);
         exercise.Description.Id.Should().NotBe(movement.Description.Id);
         exercise.Description.GetContent().Should().Be(movementDescriptionText);
+        exercise.Ownership.Should().NotBeNull();
+        exercise.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.BuiltIn);
+        exercise.Ownership.OwnerUserId.Should().BeNull();
         exercise.Blocks.Should().ContainSingle();
 
         var block = exercise.Blocks.First();
@@ -140,8 +173,41 @@ public sealed class ExerciseTests
     }
 
     [Fact]
-    public void FromMovement_ShouldCreateExercise_WithProvidedOptionalTargets()
+    public void FromMovementUserCreated_ShouldCreateExercise_WithOwner()
     {
+        var owner = User.New("Test User");
+        var movementName = "  Pull-up  ";
+        var movementDescriptionText = "Vertical pulling movement.";
+        var movementCategoryId = MovementCategoryId.New();
+        var value = 5m;
+        var targetType = DomainEnum.WorkTargetType.Repetitions;
+
+        var movement = Movement.NewBuiltIn(
+            movementName,
+            movementCategoryId,
+            movementDescriptionText
+        );
+
+        var exercise = Exercise.FromMovementUserCreated(
+            movement,
+            value,
+            targetType,
+            owner
+        );
+
+        exercise.Name.Should().Be(movement.Name);
+        exercise.NameKey.Should().Be(movement.NameKey);
+        exercise.Ownership.Should().NotBeNull();
+        exercise.Ownership.Origin.Should().Be(DomainEnum.DataOrigin.UserCreated);
+        exercise.Ownership.OwnerUserId.Should().Be(owner.Id);
+        exercise.Audit.CreatedBy.Should().Be(owner.Id);
+        exercise.Blocks.Should().ContainSingle();
+    }
+
+    [Fact]
+    public void FromMovementBuiltIn_ShouldCreateExercise_WithProvidedOptionalTargets()
+    {
+        var owner = User.New("Test User");
         var movementName = "  Weighted Pull-up  ";
         var movementDescriptionText = "Vertical pulling movement with external load.";
         var movementCategoryId = MovementCategoryId.New();
@@ -168,16 +234,17 @@ public sealed class ExerciseTests
             intent: "Keep the reps clean."
         );
 
-        var movement = Movement.New(
+        var movement = Movement.NewBuiltIn(
             movementName,
             movementCategoryId,
             movementDescriptionText
         );
 
-        var exercise = Exercise.FromMovement(
+        var exercise = Exercise.FromMovementBuiltIn(
             movement,
             value,
             targetType,
+            owner,
             loadTarget,
             restBetweenReps,
             transitionAfterBlock,
@@ -195,13 +262,13 @@ public sealed class ExerciseTests
     }
 
     [Fact]
-    public void FromMovement_ShouldThrow_WhenMovementIsNull()
+    public void FromMovementBuiltIn_ShouldThrow_WhenMovementIsNull()
     {
         Movement movement = null!;
         var value = 5m;
         var targetType = DomainEnum.WorkTargetType.Repetitions;
 
-        var act = () => Exercise.FromMovement(
+        var act = () => Exercise.FromMovementBuiltIn(
             movement,
             value,
             targetType
@@ -213,7 +280,7 @@ public sealed class ExerciseTests
     [Fact]
     public void AddBlock_ShouldAddBlock_WithNextSequence()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -246,7 +313,7 @@ public sealed class ExerciseTests
     [Fact]
     public void AddBlock_ShouldAddBlock_WithProvidedOptionalTargets()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Weighted Pull-up Exercise",
             Description.None(),
             null
@@ -295,7 +362,7 @@ public sealed class ExerciseTests
     [Fact]
     public void AddBlock_ShouldMarkExerciseAsUpdated()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -315,7 +382,7 @@ public sealed class ExerciseTests
     [Fact]
     public void AddBlock_ShouldThrow_WhenWorkTargetValueIsNotGreaterThanZero()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -337,7 +404,7 @@ public sealed class ExerciseTests
     [Fact]
     public void RemoveBlock_ShouldRemoveBlock_WhenBlockExists()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -359,7 +426,7 @@ public sealed class ExerciseTests
     [Fact]
     public void RemoveBlock_ShouldDoNothing_WhenBlockDoesNotExist()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -375,7 +442,7 @@ public sealed class ExerciseTests
     [Fact]
     public void RemoveBlock_ShouldResequenceRemainingBlocks()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -411,7 +478,7 @@ public sealed class ExerciseTests
     [Fact]
     public void MoveBlock_ShouldMoveBlockAndResequenceBlocks()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -456,7 +523,7 @@ public sealed class ExerciseTests
     [Fact]
     public void MoveBlock_ShouldThrow_WhenNewSequenceIsLessThanOne()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -481,7 +548,7 @@ public sealed class ExerciseTests
     [Fact]
     public void MoveBlock_ShouldDoNothing_WhenBlockDoesNotExist()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -511,7 +578,7 @@ public sealed class ExerciseTests
         var newDescriptionText = "Updated description.";
         var language = LocalizationHelper.Language.EN;
 
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             initialDescriptionText
         );
@@ -531,7 +598,7 @@ public sealed class ExerciseTests
         var newDescriptionText = "Updated description.";
         var language = LocalizationHelper.Language.EN;
 
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             initialDescriptionText
         );
@@ -552,7 +619,7 @@ public sealed class ExerciseTests
         var descriptionText = "Initial description.";
         var language = LocalizationHelper.Language.EN;
 
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             descriptionText
         );
@@ -565,7 +632,7 @@ public sealed class ExerciseTests
     [Fact]
     public void MarkDeleted_ShouldMarkExerciseAsDeleted()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -579,7 +646,7 @@ public sealed class ExerciseTests
     [Fact]
     public void MarkDeleted_ShouldMarkExerciseAsDeleted_WhenCalledThroughAuditedInterface()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -612,7 +679,7 @@ public sealed class ExerciseTests
     [Fact]
     public void ChangeBlockTarget_ShouldDoNothing_WhenBlockDoesNotExist()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -651,7 +718,7 @@ public sealed class ExerciseTests
     [Fact]
     public void ChangeBlockLoadTarget_ShouldDoNothing_WhenBlockDoesNotExist()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null
@@ -803,7 +870,7 @@ public sealed class ExerciseTests
 
     private static Exercise CreateExerciseWithOneBlock()
     {
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewBuiltIn(
             "Pull-up Exercise",
             Description.None(),
             null

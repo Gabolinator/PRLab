@@ -104,6 +104,12 @@ public sealed class EquipmentController : ControllerBase
 
             var activeUser = await userService.GetActiveUserAsync(ct);
 
+            if (activeUser is null)
+            {
+                return Unauthorized();
+            }
+
+
             var equipment = EquipmentMapper.ToEntity(
                 payload,
                 activeUser);

@@ -104,6 +104,12 @@ public sealed class MovementController : ControllerBase
             }
 
             var activeUser = await userService.GetActiveUserAsync(ct);
+
+            if (activeUser is null)
+            {
+                return Unauthorized();
+            }
+
             var movement = MovementMapper.ToEntity(payload, activeUser);
 
             var createdMovement = await repo.CreateAsync(movement, ct);
@@ -140,7 +146,7 @@ public sealed class MovementController : ControllerBase
         {
             var movementId = MovementId.FromGuid(id);
 
-            var movement = await repo.GetByIdAsync(movementId, ct);
+            var movement = await repo.GetTrackedByIdAsync(movementId, ct);
 
             if (movement is null)
             {

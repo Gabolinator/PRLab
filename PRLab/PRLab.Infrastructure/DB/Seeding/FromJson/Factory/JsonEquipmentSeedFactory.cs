@@ -15,12 +15,13 @@ public sealed class JsonEquipmentSeedFactory(
     : BaseJsonSeedFactory<Equipment, EquipmentSeedJsonDto>(userService, config),
         IEquipmentSeedFactory
 {
-   
     protected override DomainEnum.EntityType Entity =>
         DomainEnum.EntityType.Equipment;
 
     public IReadOnlyList<SeedItem<Equipment>> CreateInitialData()
-        => CreateSeedItems();
+    {
+        return CreateSeedItems();
+    }
 
     public override SeedItem<Equipment> ToSeedItem(EquipmentSeedJsonDto seedDto)
     {
@@ -35,24 +36,109 @@ public sealed class JsonEquipmentSeedFactory(
                 $"{Entity} seed '{seedDto.Name}' has an empty id. Omit the Id property or provide a valid id.");
         }
 
+        ValidateOwnership(seedDto);
+
         var description = seedDto.Description is null
             ? Description.None()
             : seedDto.Description.ToDescription();
 
         var equipment = seedDto.Id.HasValue
-            ? Equipment.NewWithId(
-                EquipmentId.FromGuid(seedDto.Id.Value),
-                seedDto.Name,
-                description,
-                SeedUser)
-            : Equipment.New(
-                seedDto.Name,
-                description,
-                SeedUser);
+            ? CreateEquipmentWithId(seedDto, description)
+            : CreateEquipment(seedDto, description);
 
         return new SeedItem<Equipment>(
             SeedKeyGenerator.GenerateEquipmentKey(equipment),
             equipment,
             seedDto.Action);
+    }
+
+    private Equipment CreateEquipment(
+        EquipmentSeedJsonDto seedDto,
+        Description description)
+    {
+        return seedDto.Origin switch
+        {
+            DomainEnum.DataOrigin.BuiltIn => Equipment.NewBuiltIn(
+                seedDto.Name,
+                description,
+                SeedUser),
+
+            DomainEnum.DataOrigin.UserCreated => Equipment.NewUserCreated(
+                seedDto.Name,
+                description,
+                GetRequiredOwner(seedDto)),
+
+            DomainEnum.DataOrigin.Imported => Equipment.NewImported(
+                seedDto.Name,
+                description,
+                GetRequiredOwner(seedDto)),
+
+            DomainEnum.DataOrigin.CoachCreated => Equipment.NewCoachCreated(
+                seedDto.Name,
+                description,
+                GetRequiredOwner(seedDto)),
+
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(seedDto),
+                seedDto.Origin,
+                $"{Entity} seed '{seedDto.Name}' has unsupported data origin.")
+        };
+    }
+
+    private Equipment CreateEquipmentWithId(
+        EquipmentSeedJsonDto seedDto,
+        Description description)
+    {
+        var id = EquipmentId.FromGuid(seedDto.Id!.Value);
+
+        return seedDto.Origin switch
+        {
+            DomainEnum.DataOrigin.BuiltIn => Equipment.NewBuiltInWithId(
+                id,
+                seedDto.Name,
+                description,
+                SeedUser),
+
+            _ => throw new InvalidOperationException(
+                $"{Entity} seed '{seedDto.Name}' has a fixed Id but is not BuiltIn. " +
+                "Only built-in seed data should use stable seed ids for now.")
+        };
+    }
+
+    private User GetRequiredOwner(EquipmentSeedJsonDto seedDto)
+    {
+        if (!seedDto.OwnerUserId.HasValue || seedDto.OwnerUserId.Value == Guid.Empty)
+        {
+            throw new InvalidOperationException(
+                $"{Entity} seed '{seedDto.Name}' uses origin '{seedDto.Origin}' but has no valid OwnerUserId.");
+        }
+
+        /*
+         * Temporary seed-side owner.
+         *
+         * Long term, this should probably resolve an existing User from a UserSeedCatalog
+         * or IUserRepository instead of creating a lightweight domain instance.
+         */
+        return User.Existing(
+            UserId.FromGuid(seedDto.OwnerUserId.Value),
+            $"Seed Owner {seedDto.OwnerUserId.Value}",
+            DomainEnum.UserRole.User);
+    }
+
+    private void ValidateOwnership(EquipmentSeedJsonDto seedDto)
+    {
+        if (seedDto.Origin == DomainEnum.DataOrigin.BuiltIn &&
+            seedDto.OwnerUserId.HasValue)
+        {
+            throw new InvalidOperationException(
+                $"{Entity} seed '{seedDto.Name}' is BuiltIn and should not have OwnerUserId.");
+        }
+
+        if (seedDto.Origin != DomainEnum.DataOrigin.BuiltIn &&
+            !seedDto.OwnerUserId.HasValue)
+        {
+            throw new InvalidOperationException(
+                $"{Entity} seed '{seedDto.Name}' uses origin '{seedDto.Origin}' and must have OwnerUserId.");
+        }
     }
 }

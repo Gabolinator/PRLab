@@ -19,13 +19,9 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
             throw new ArgumentException("Movement category id cannot be empty.", nameof(id));
         }
 
-        return await db.MovementCategories
-            .Include(movementCategory => movementCategory.Description)
-                .ThenInclude(description => description.Translations)
+        return await BaseMovementCategoryQuery()
             .FirstOrDefaultAsync(
-                movementCategory =>
-                    movementCategory.Id == id &&
-                    !movementCategory.Audit.IsDeleted,
+                movementCategory => movementCategory.Id == id,
                 ct);
     }
 
@@ -40,25 +36,17 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
 
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
 
-        return await db.MovementCategories
-            .AsNoTracking()
-            .Include(movementCategory => movementCategory.Description)
-                .ThenInclude(description => description.Translations)
+        return await BaseMovementCategoryQuery()
             .FirstOrDefaultAsync(
-                movementCategory =>
-                    movementCategory.NameKey == nameKey &&
-                    !movementCategory.Audit.IsDeleted,
+                movementCategory => movementCategory.NameKey == nameKey,
                 ct);
     }
 
     public async Task<IReadOnlyCollection<MovementCategory>> ListAsync(
         CancellationToken ct)
     {
-        return await db.MovementCategories
-            .AsNoTracking()
-            .Include(movementCategory => movementCategory.Description)
-                .ThenInclude(description => description.Translations)
-            .Where(movementCategory => !movementCategory.Audit.IsDeleted)
+        return await BaseMovementCategoryQuery()
+            .OrderBy(movementCategory => movementCategory.Name)
             .ToListAsync(ct);
     }
 
@@ -66,13 +54,9 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
         DomainEnum.BaseMovementCategory baseMovementCategory,
         CancellationToken ct)
     {
-        return await db.MovementCategories
-            .AsNoTracking()
-            .Include(movementCategory => movementCategory.Description)
-                .ThenInclude(description => description.Translations)
-            .Where(movementCategory =>
-                movementCategory.BaseMovementCategory == baseMovementCategory &&
-                !movementCategory.Audit.IsDeleted)
+        return await BaseMovementCategoryQuery()
+            .Where(movementCategory => movementCategory.BaseMovementCategory == baseMovementCategory)
+            .OrderBy(movementCategory => movementCategory.Name)
             .ToListAsync(ct);
     }
 
@@ -129,20 +113,10 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
         string name,
         CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Movement category name cannot be empty.", nameof(name));
-        }
-
-        var nameKey = FormatingUtilities.NormalizeNameKey(name);
-
-        return await db.MovementCategories
-            .AsNoTracking()
-            .AnyAsync(
-                movementCategory =>
-                    movementCategory.NameKey == nameKey &&
-                    !movementCategory.Audit.IsDeleted,
-                ct);
+        return await NameExistsAsync(
+            name,
+            null,
+            ct);
     }
 
     public async Task<bool> NameExistsAsync(
@@ -168,5 +142,14 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
                         movementCategory.Id != excludedMovementCategoryId.Value
                     ),
                 ct);
+    }
+
+    private IQueryable<MovementCategory> BaseMovementCategoryQuery()
+    {
+        return db.MovementCategories
+            .AsNoTracking()
+            .Include(movementCategory => movementCategory.Description)
+                .ThenInclude(description => description.Translations)
+            .Where(movementCategory => !movementCategory.Audit.IsDeleted);
     }
 }

@@ -3,11 +3,12 @@ using PRLab.Domain.Model.Join;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
 using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Value.Ownership;
 using PRLab.Domain.Value.Update;
 
 namespace PRLab.Domain.Model.Entity;
 
-public sealed record Movement : IAudited, IDescribed
+public sealed record Movement : IAudited, IDescribed, IOwnedData
 {
     public MovementId Id { get; init; }
 
@@ -46,6 +47,8 @@ public sealed record Movement : IAudited, IDescribed
     public IReadOnlyCollection<MovementEquipmentRequirement> EquipmentRequirements => equipmentRequirements;
 
     public Description Description { get; private set; } = null!;
+    
+    public OwnershipInfo Ownership { get; private set; } = null!;
 
     public AuditInfo Audit { get; private set; } = null!;
 
@@ -81,66 +84,8 @@ public sealed record Movement : IAudited, IDescribed
         string name,
         MovementCategory movementCategory,
         Description description,
-        AuditInfo audit)
-    {
-        Id = id;
-        SetName(name);
-        MovementCategory = movementCategory;
-        MovementCategoryId = movementCategory.Id;
-        Description = description;
-        Audit = audit;
-    }
-    
-    private Movement(
-        MovementId id,
-        string name,
-        MovementCategoryId movementCategoryId,
-        Description description,
-        AuditInfo audit)
-    {
-        Id = id;
-        SetName(name);
-        MovementCategoryId = movementCategoryId;
-        Description = description;
-        Audit = audit;
-    }
-
-    public static Movement New(
-        string name,
-        MovementCategoryId movementCategoryId,
-        string? description,
-        User? createdBy = null)
-    {
-        return new Movement(
-            MovementId.New(),
-            name,
-            movementCategoryId,
-            Description.New(description),
-            AuditInfo.New(createdBy)
-        );
-    }
-    
-    public static Movement New(
-        string name,
-        MovementCategory movementCategory,
-        Description description,
-        User? createdBy = null)
-    {
-        return new Movement(
-            MovementId.New(),
-            name,
-            movementCategory,
-            description,
-            AuditInfo.New(createdBy)
-        );
-    }
-    
-    public static Movement NewWithId(
-        MovementId id,
-        string name,
-        MovementCategory movementCategory,
-        Description description,
-        User? createdBy = null)
+        AuditInfo audit,
+        OwnershipInfo ownership)
     {
         if (id.Value == Guid.Empty)
         {
@@ -149,15 +94,168 @@ public sealed record Movement : IAudited, IDescribed
 
         ArgumentNullException.ThrowIfNull(movementCategory);
         ArgumentNullException.ThrowIfNull(description);
+        ArgumentNullException.ThrowIfNull(audit);
+        ArgumentNullException.ThrowIfNull(ownership);
 
-        return new Movement(
-            id,
-            name,
-            movementCategory,
-            description,
-            AuditInfo.New(createdBy)
-        );
+        Id = id;
+        SetName(name);
+        MovementCategory = movementCategory;
+        MovementCategoryId = movementCategory.Id;
+        Description = description;
+        Audit = audit;
+        Ownership = ownership;
     }
+
+    private Movement(
+        MovementId id,
+        string name,
+        MovementCategoryId movementCategoryId,
+        Description description,
+        AuditInfo audit,
+        OwnershipInfo ownership)
+    {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Movement id cannot be empty.", nameof(id));
+        }
+
+        if (movementCategoryId.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Movement category id cannot be empty.", nameof(movementCategoryId));
+        }
+
+        ArgumentNullException.ThrowIfNull(description);
+        ArgumentNullException.ThrowIfNull(audit);
+        ArgumentNullException.ThrowIfNull(ownership);
+
+        Id = id;
+        SetName(name);
+        MovementCategoryId = movementCategoryId;
+        Description = description;
+        Audit = audit;
+        Ownership = ownership;
+    }
+
+    public static Movement NewBuiltIn(
+    string name,
+    MovementCategoryId movementCategoryId,
+    string? description,
+    User? createdBy = null)
+{
+    return new Movement(
+        MovementId.New(),
+        name,
+        movementCategoryId,
+        Description.New(description),
+        AuditInfo.New(createdBy),
+        OwnershipInfo.BuiltIn()
+    );
+}
+
+public static Movement NewBuiltIn(
+    string name,
+    MovementCategory movementCategory,
+    Description description,
+    User? createdBy = null)
+{
+    return new Movement(
+        MovementId.New(),
+        name,
+        movementCategory,
+        description,
+        AuditInfo.New(createdBy),
+        OwnershipInfo.BuiltIn()
+    );
+}
+
+public static Movement NewBuiltInWithId(
+    MovementId id,
+    string name,
+    MovementCategory movementCategory,
+    Description description,
+    User? createdBy = null)
+{
+    return new Movement(
+        id,
+        name,
+        movementCategory,
+        description,
+        AuditInfo.New(createdBy),
+        OwnershipInfo.BuiltIn()
+    );
+}
+
+public static Movement NewUserCreated(
+    string name,
+    MovementCategoryId movementCategoryId,
+    string? description,
+    User owner)
+{
+    ArgumentNullException.ThrowIfNull(owner);
+
+    return new Movement(
+        MovementId.New(),
+        name,
+        movementCategoryId,
+        Description.New(description),
+        AuditInfo.New(owner),
+        OwnershipInfo.UserCreated(owner)
+    );
+}
+
+public static Movement NewUserCreated(
+    string name,
+    MovementCategory movementCategory,
+    Description description,
+    User owner)
+{
+    ArgumentNullException.ThrowIfNull(owner);
+
+    return new Movement(
+        MovementId.New(),
+        name,
+        movementCategory,
+        description,
+        AuditInfo.New(owner),
+        OwnershipInfo.UserCreated(owner)
+    );
+}
+
+public static Movement NewCoachCreated(
+    string name,
+    MovementCategory movementCategory,
+    Description description,
+    User coach)
+{
+    ArgumentNullException.ThrowIfNull(coach);
+
+    return new Movement(
+        MovementId.New(),
+        name,
+        movementCategory,
+        description,
+        AuditInfo.New(coach),
+        OwnershipInfo.CoachCreated(coach)
+    );
+}
+
+public static Movement NewImported(
+    string name,
+    MovementCategory movementCategory,
+    Description description,
+    User owner)
+{
+    ArgumentNullException.ThrowIfNull(owner);
+
+    return new Movement(
+        MovementId.New(),
+        name,
+        movementCategory,
+        description,
+        AuditInfo.New(owner),
+        OwnershipInfo.Imported(owner)
+    );
+}
     
     private void SetName(string name)
     {
@@ -167,8 +265,26 @@ public sealed record Movement : IAudited, IDescribed
 
     public void Rename(string name, User? changedBy = null)
     {
-        SetName(name);
-        MarkUpdated(changedBy);
+        if (TrySetName(name))
+        {
+            MarkUpdated(changedBy);
+        }
+    }
+
+    private bool TrySetName(string name)
+    {
+        var normalizedName = FormatingUtilities.NormalizeName(name);
+        var normalizedNameKey = FormatingUtilities.NormalizeNameKey(name);
+
+        if (Name == normalizedName && NameKey == normalizedNameKey)
+        {
+            return false;
+        }
+
+        Name = normalizedName;
+        NameKey = normalizedNameKey;
+
+        return true;
     }
 
     public void ChangeCategory(MovementCategoryId movementCategoryId, User? changedBy = null)
@@ -532,8 +648,7 @@ public sealed record Movement : IAudited, IDescribed
 
         if (!string.IsNullOrWhiteSpace(update.Name))
         {
-            SetName(update.Name);
-            hasChanged = true;
+            hasChanged = TrySetName(update.Name) || hasChanged;
         }
 
         if (update.MovementCategoryId.HasValue

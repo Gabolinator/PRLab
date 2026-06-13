@@ -9,6 +9,14 @@ public interface IMovementRepository
     Task<Movement?> GetByIdAsync(MovementId id, CancellationToken ct);
 
     Task<Movement?> GetByNameAsync(string name, CancellationToken ct);
+    
+    Task<Movement?> GetTrackedByNameAsync(
+        string name,
+        CancellationToken ct);
+    
+    Task<Movement?> GetTrackedByIdAsync(
+        MovementId id,
+        CancellationToken ct);
 
     Task<IReadOnlyCollection<Movement>> ListAsync(CancellationToken ct);
 

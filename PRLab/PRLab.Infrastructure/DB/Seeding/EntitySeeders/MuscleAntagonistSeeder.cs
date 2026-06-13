@@ -20,11 +20,11 @@ public sealed class MuscleAntagonistSeeder(
 {
     public override string Name => "DevelopmentMuscleAntagonistSeed";
 
-    public override string Version => "1.0.3";
+    public override string Version => "1.0.0";
 
     public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.MuscleAntagonist;
 
-    public override User SeedUser => userService.GetAdminUser("Seed");
+    public override User SeedUser => userService.GetSystemAdminUser("Seed");
 
     protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
     {

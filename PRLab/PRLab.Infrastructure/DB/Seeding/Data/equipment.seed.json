@@ -6,6 +6,8 @@
     "Description": {
       "Content": "Long metal bar used for loaded strength training."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -15,6 +17,8 @@
     "Description": {
       "Content": "Short handheld weight used for unilateral exercises, bilateral strength work, presses, rows, curls, and accessory training."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -24,6 +28,8 @@
     "Description": {
       "Content": "Lightweight rope with handles used for conditioning, coordination, footwork, agility, and jumping movements such as single unders and double unders."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -33,6 +39,8 @@
     "Description": {
       "Content": "A kettlebell is a compact cast-iron or steel weight with a handle, used for strength, power, conditioning, and dynamic full-body movements such as swings, cleans, presses, squats, and carries."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -42,6 +50,8 @@
     "Description": {
       "Content": "Fixed or mounted bar used for pull-ups, hangs, and other bodyweight pulling movements."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -51,6 +61,8 @@
     "Description": {
       "Content": "Elastic training band used to add variable resistance, assistance, or mobility work to strength and conditioning movements."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   }
 ]

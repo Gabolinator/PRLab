@@ -16,7 +16,7 @@ public sealed record AuditInfo(
 {
     private static UserId ResolveUserId(User? user)
     {
-        return user?.Id ?? User.DefaultAdmin.Id;
+        return user?.Id ?? User.SystemUser.Id;
     }
 
     public static AuditInfo New(User? createdBy = null)

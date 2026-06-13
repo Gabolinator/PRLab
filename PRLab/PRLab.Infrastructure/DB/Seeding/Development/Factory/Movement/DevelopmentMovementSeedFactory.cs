@@ -13,7 +13,7 @@ namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.Movement;
 
 public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILogger<DevelopmentMovementSeedFactory> logger) : IMovementSeedFactory
 {
-    private User SeedUser => userService.GetAdminUser("Seed");
+    private User SeedUser => userService.GetSystemAdminUser("Seed");
 
     public IReadOnlyList<SeedItem<Domain.Model.Entity.Movement>> CreateInitialData(
         MovementSeedCatalogs catalogs)
@@ -104,7 +104,7 @@ public sealed class DevelopmentMovementSeedFactory(IUserService userService, ILo
         MovementCategory movementCategory,
         string description)
     {
-        return Domain.Model.Entity.Movement.New(
+        return Domain.Model.Entity.Movement.NewBuiltIn(
             name,
             movementCategory,
             Description.New(description),

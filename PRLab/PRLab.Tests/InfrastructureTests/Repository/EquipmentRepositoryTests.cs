@@ -21,7 +21,7 @@ public sealed class EquipmentRepositoryTests
         var descriptionText = "Used for pull-up exercises.";
         var description = Description.New(descriptionText);
 
-        var equipment = Equipment.New(
+        var equipment = Equipment.NewBuiltIn(
             name,
             description
         );
@@ -81,7 +81,7 @@ public sealed class EquipmentRepositoryTests
             PRLab.Domain.Utilities.LocalizationHelper.Language.FR
         );
 
-        var equipment = Equipment.New(
+        var equipment = Equipment.NewBuiltIn(
             name,
             description
         );
@@ -138,7 +138,7 @@ public sealed class EquipmentRepositoryTests
         var name = "Pull-up Bar";
         var searchName = "  pull-UP bar  ";
 
-        var equipment = Equipment.New(
+        var equipment = Equipment.NewBuiltIn(
             name,
             Description.New("Used for pull-up exercises.")
         );
@@ -167,12 +167,12 @@ public sealed class EquipmentRepositoryTests
             null!
         );
 
-        var firstEquipment = Equipment.New(
+        var firstEquipment = Equipment.NewBuiltIn(
             "Pull-up Bar",
             Description.New("Used for pull-ups.")
         );
 
-        var secondEquipment = Equipment.New(
+        var secondEquipment = Equipment.NewBuiltIn(
             "Barbell",
             Description.New("Used for loaded exercises.")
         );
@@ -209,7 +209,7 @@ public sealed class EquipmentRepositoryTests
         );
 
         await repo.CreateAsync(
-            Equipment.New(
+            Equipment.NewBuiltIn(
                 "Pull-up Bar",
                 Description.New("Used for pull-ups.")
             ),
@@ -217,7 +217,7 @@ public sealed class EquipmentRepositoryTests
         );
 
         await repo.CreateAsync(
-            Equipment.New(
+            Equipment.NewBuiltIn(
                 "Barbell",
                 Description.New("Used for loaded exercises.")
             ),
@@ -239,7 +239,7 @@ public sealed class EquipmentRepositoryTests
             null!
         );
 
-        var equipment = Equipment.New(
+        var equipment = Equipment.NewBuiltIn(
             "Pull-up Bar",
             Description.New("Used for pull-ups.")
         );
@@ -268,7 +268,7 @@ public sealed class EquipmentRepositoryTests
             null!
         );
 
-        var equipment = Equipment.New(
+        var equipment = Equipment.NewBuiltIn(
             "Pull-up Bar",
             Description.New("Used for pull-ups.")
         );

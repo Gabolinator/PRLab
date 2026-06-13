@@ -2,18 +2,24 @@
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Value;
 using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Value.Ownership;
 using PRLab.Domain.Value.Update;
 
 namespace PRLab.Domain.Model.Entity;
 
-public sealed record Equipment : IAudited, IDescribed
+public sealed record Equipment : IAudited, IDescribed, IOwnedData
 {
     public EquipmentId Id { get; init; }
+
     public string Name { get; private set; } = string.Empty;
-    
+
     public string NameKey { get; private set; } = string.Empty;
+
     public Description Description { get; private set; } = null!;
+
     public AuditInfo Audit { get; private set; } = null!;
+
+    public OwnershipInfo Ownership { get; private set; } = null!;
 
     private Equipment()
     {
@@ -24,32 +30,8 @@ public sealed record Equipment : IAudited, IDescribed
         EquipmentId id,
         string name,
         Description description,
-        AuditInfo audit)
-    {
-        Id = id;
-        SetName(name);
-        Description = description;
-        Audit = audit;
-    }
-
-    public static Equipment New(
-        string name, 
-        string? description, 
-        User? createdBy = null)
-    {
-        return new Equipment(
-            EquipmentId.New(),
-            name,
-            Description.New(description),
-            AuditInfo.New(createdBy)
-        );
-    }
-    
-    public static Equipment NewWithId(
-        EquipmentId id,
-        string name,
-        Description description,
-        User? createdBy = null)
+        AuditInfo audit,
+        OwnershipInfo ownership)
     {
         if (id.Value == Guid.Empty)
         {
@@ -57,30 +39,123 @@ public sealed record Equipment : IAudited, IDescribed
         }
 
         ArgumentNullException.ThrowIfNull(description);
+        ArgumentNullException.ThrowIfNull(audit);
+        ArgumentNullException.ThrowIfNull(ownership);
 
+        Id = id;
+        SetName(name);
+        Description = description;
+        Audit = audit;
+        Ownership = ownership;
+    }
+
+    public static Equipment NewBuiltIn(
+        string name,
+        string? description,
+        User? createdBy = null)
+    {
         return new Equipment(
-            id,
+            EquipmentId.New(),
             name,
-            description,
-            AuditInfo.New(createdBy)
+            Description.New(description),
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn()
         );
     }
 
-    public static Equipment New(
+    public static Equipment NewBuiltIn(
         string name,
         Description description,
         User? createdBy = null)
     {
-        ArgumentNullException.ThrowIfNull(description);
+        return new Equipment(
+            EquipmentId.New(),
+            name,
+            description,
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn()
+        );
+    }
+
+    public static Equipment NewBuiltInWithId(
+        EquipmentId id,
+        string name,
+        Description description,
+        User? createdBy = null)
+    {
+        return new Equipment(
+            id,
+            name,
+            description,
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn()
+        );
+    }
+
+    public static Equipment NewUserCreated(
+        string name,
+        string? description,
+        User owner)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+
+        return new Equipment(
+            EquipmentId.New(),
+            name,
+            Description.New(description),
+            AuditInfo.New(owner),
+            OwnershipInfo.UserCreated(owner)
+        );
+    }
+
+    public static Equipment NewUserCreated(
+        string name,
+        Description description,
+        User owner)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
 
         return new Equipment(
             EquipmentId.New(),
             name,
             description,
-            AuditInfo.New(createdBy)
+            AuditInfo.New(owner),
+            OwnershipInfo.UserCreated(owner)
         );
     }
-    
+
+    public static Equipment NewCoachCreated(
+        string name,
+        Description description,
+        User coach)
+    {
+        ArgumentNullException.ThrowIfNull(coach);
+
+        return new Equipment(
+            EquipmentId.New(),
+            name,
+            description,
+            AuditInfo.New(coach),
+            OwnershipInfo.CoachCreated(coach)
+        );
+    }
+
+    public static Equipment NewImported(
+        string name,
+        Description description,
+        User owner)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+
+        return new Equipment(
+            EquipmentId.New(),
+            name,
+            description,
+            AuditInfo.New(owner),
+            OwnershipInfo.Imported(owner)
+        );
+    }
+
     public bool Update(EquipmentUpdate update)
     {
         ArgumentNullException.ThrowIfNull(update);
@@ -89,8 +164,7 @@ public sealed record Equipment : IAudited, IDescribed
 
         if (!string.IsNullOrWhiteSpace(update.Name))
         {
-            SetName(update.Name);
-            hasChanged = true;
+            hasChanged = TrySetName(update.Name) || hasChanged;
         }
 
         if (update.DescriptionUpdate is not null)
@@ -107,22 +181,18 @@ public sealed record Equipment : IAudited, IDescribed
         {
             MarkUpdated(update.UpdatedBy);
         }
-        
+
         return hasChanged;
     }
-    
+
     public void Rename(
         string name,
         User? changedBy = null)
     {
-        SetName(name);
-        MarkUpdated(changedBy);
-    }
-
-    private void SetName(string name)
-    {
-        Name = FormatingUtilities.NormalizeName(name);
-        NameKey = FormatingUtilities.NormalizeNameKey(name);
+        if (TrySetName(name))
+        {
+            MarkUpdated(changedBy);
+        }
     }
 
     public void ChangeDescription(
@@ -141,7 +211,29 @@ public sealed record Equipment : IAudited, IDescribed
         Description = Description.RemoveContent(languageCode);
         MarkUpdated(changedBy);
     }
-    
+
+    private void SetName(string name)
+    {
+        Name = FormatingUtilities.NormalizeName(name);
+        NameKey = FormatingUtilities.NormalizeNameKey(name);
+    }
+
+    private bool TrySetName(string name)
+    {
+        var normalizedName = FormatingUtilities.NormalizeName(name);
+        var normalizedNameKey = FormatingUtilities.NormalizeNameKey(name);
+
+        if (Name == normalizedName && NameKey == normalizedNameKey)
+        {
+            return false;
+        }
+
+        Name = normalizedName;
+        NameKey = normalizedNameKey;
+
+        return true;
+    }
+
     void IAudited.MarkUpdated(User? changedBy)
     {
         MarkUpdated(changedBy);
@@ -151,7 +243,7 @@ public sealed record Equipment : IAudited, IDescribed
     {
         MarkDeleted(deletedBy);
     }
-    
+
     private void MarkUpdated(User? changedBy = null)
     {
         Audit = Audit.MarkUpdated(changedBy);

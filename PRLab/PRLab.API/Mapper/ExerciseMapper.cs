@@ -68,15 +68,16 @@ public static class ExerciseMapper
 
     public static Exercise ToEntity(
         ExercisePostDTO payload,
-        User? createdBy = null)
+        User createdBy)
     {
         ArgumentNullException.ThrowIfNull(payload);
+        ArgumentNullException.ThrowIfNull(createdBy);
 
         var description = payload.Descriptor is null
             ? Description.New(null)
             : DescriptionMapper.ToEntity(payload.Descriptor);
 
-        var exercise = Exercise.New(
+        var exercise = Exercise.NewUserCreated(
             payload.Name,
             description,
             createdBy

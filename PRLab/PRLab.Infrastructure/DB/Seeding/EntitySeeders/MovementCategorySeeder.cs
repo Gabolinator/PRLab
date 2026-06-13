@@ -19,11 +19,11 @@ public sealed class MovementCategorySeeder(
 {
     public override string Name => "DevelopmentMovementCategorySeed";
 
-    public override string Version => "1.0.1";
+    public override string Version => "1.0.0";
 
     public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.MovementCategory;
 
-    public override User SeedUser => userService.GetAdminUser("Seed");
+    public override User SeedUser => userService.GetSystemAdminUser("Seed");
 
     protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
     {

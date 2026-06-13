@@ -69,6 +69,27 @@ public static class MovementCategoryModelBuilder
                         userId => userId.HasValue ? userId.Value.Value : null,
                         value => value.HasValue ? UserId.FromGuid(value.Value) : null);
             });
+
+            movementCategory.OwnsOne(movementCategory => movementCategory.Ownership, ownership =>
+            {
+                ownership.Property(ownershipInfo => ownershipInfo.Origin)
+                    .HasColumnName("DataOrigin")
+                    .HasConversion<string>()
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                ownership.Property(ownershipInfo => ownershipInfo.OwnerUserId)
+                    .HasColumnName("OwnerUserId")
+                    .HasConversion<Guid?>(
+                        userId => userId.HasValue ? userId.Value.Value : null,
+                        value => value.HasValue ? UserId.FromGuid(value.Value) : null);
+                
+                ownership.HasIndex(ownershipInfo => ownershipInfo.Origin)
+                    .HasDatabaseName("IX_MovementCategory_DataOrigin");
+
+                ownership.HasIndex(ownershipInfo => ownershipInfo.OwnerUserId)
+                    .HasDatabaseName("IX_MovementCategory_OwnerUserId");
+            });
         });
     }
 

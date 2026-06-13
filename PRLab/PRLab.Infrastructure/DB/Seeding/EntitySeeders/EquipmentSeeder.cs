@@ -20,9 +20,9 @@ public sealed class EquipmentSeeder(
     public override DomainEnum.EntityType EntityType => DomainEnum.EntityType.Equipment;
     public override string Name => "DevelopmentEquipmentSeed";
 
-    public override string Version => "1.0.4";
+    public override string Version => "1.0.0";
 
-    public override User SeedUser => userService.GetAdminUser("Seed");
+    public override User SeedUser => userService.GetSystemAdminUser("Seed");
 
     protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
     {

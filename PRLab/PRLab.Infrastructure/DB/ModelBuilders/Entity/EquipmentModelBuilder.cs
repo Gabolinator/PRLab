@@ -64,6 +64,28 @@ public static class EquipmentModelBuilder
                         userId => userId.HasValue ? userId.Value.Value : null,
                         value => value.HasValue ? UserId.FromGuid(value.Value) : null);
             });
+            
+            equipment.OwnsOne(equipment => equipment.Ownership, ownership =>
+            {
+                ownership.Property(ownershipInfo => ownershipInfo.Origin)
+                    .HasColumnName("DataOrigin")
+                    .HasConversion<string>()
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                ownership.Property(ownershipInfo => ownershipInfo.OwnerUserId)
+                    .HasColumnName("OwnerUserId")
+                    .HasConversion<Guid?>(
+                        userId => userId.HasValue ? userId.Value.Value : null,
+                        value => value.HasValue ? UserId.FromGuid(value.Value) : null);
+                
+                ownership.HasIndex(ownershipInfo => ownershipInfo.Origin)
+                    .HasDatabaseName("IX_Equipment_DataOrigin");
+
+                ownership.HasIndex(ownershipInfo => ownershipInfo.OwnerUserId)
+                    .HasDatabaseName("IX_Equipment_OwnerUserId");
+            });
+            
         });
     }
 
@@ -71,14 +93,14 @@ public static class EquipmentModelBuilder
     {
         modelBuilder.Entity<Equipment>(equipment =>
         {
-          equipment.HasIndex(equipment => equipment.Name)
+            equipment.HasIndex(equipment => equipment.Name)
                 .IsUnique()
                 .HasFilter("\"IsDeleted\" = false");
-            
-          equipment.HasIndex(equipment => equipment.NameKey)
-              .IsUnique()
-              .HasFilter("\"IsDeleted\" = false");
-          
+
+            equipment.HasIndex(equipment => equipment.NameKey)
+                .IsUnique()
+                .HasFilter("\"IsDeleted\" = false");
+
             equipment.HasIndex("DescriptionId");
         });
     }

@@ -125,4 +125,12 @@ public static class DomainEnum
     RequiredGroup,
     Optional,
   }
+  
+  public enum DataOrigin
+  {
+    BuiltIn = 1,
+    UserCreated = 2,
+    CoachCreated = 3,
+    Imported = 4,
+  }
 }

@@ -70,18 +70,61 @@ public sealed record User : IAudited
     public static User Admin(string? name = null)
     {
         return new User(
-            DefaultAdmin.Id,
-            !string.IsNullOrWhiteSpace(name) ? name : DefaultAdmin.Name,
+            SystemUser.Id,
+            !string.IsNullOrWhiteSpace(name) ? name : SystemUser.Name,
             DomainEnum.UserRole.Admin,
             AuditInfo.New(null)
         );
     }
     
-    public static class DefaultAdmin
+    public static User Existing(
+        UserId id,
+        string name,
+        DomainEnum.UserRole role)
     {
-        public static readonly UserId Id = new(CoreUtilities.GuidGenerator.Empty);
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("User id cannot be empty.", nameof(id));
+        }
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("User name cannot be empty.", nameof(name));
+        }
+
+        return new User(
+            id,
+            name,
+            role,
+            AuditInfo.New(null)
+        );
+    }
+    
+    public static class SystemUser
+    {
+        public static readonly UserId Id = UserId.FromGuid(
+            Guid.Parse("00000000-0000-0000-0000-000000000001")
+        );
 
         public const string Name = "Admin";
+    }
+    
+    public static class DevelopmentUser
+    {
+        public static readonly UserId Id = UserId.FromGuid(
+            Guid.Parse("00000000-0000-0000-0000-000000000002")
+        );
+
+        public const string Name = "Development User";
+
+        public static User Create()
+        {
+            return Existing(
+                Id,
+                Name,
+                DomainEnum.UserRole.User
+            );
+        }
     }
 
     public void Rename(string name, User? changedBy = null)

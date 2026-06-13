@@ -17,11 +17,10 @@ public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipment
             throw new ArgumentException("Equipment id cannot be empty.", nameof(id));
         }
 
-        return await db.Equipments
-            .AsNoTracking()
-            .Include(equipment => equipment.Description)
-            .ThenInclude(description => description.Translations)
-            .FirstOrDefaultAsync(equipment => equipment.Id == id && !equipment.Audit.IsDeleted, ct);
+        return await BaseEquipmentQuery()
+            .FirstOrDefaultAsync(
+                equipment => equipment.Id == id,
+                ct);
     }
 
     public async Task<Equipment?> GetByNameAsync(string name, CancellationToken ct)
@@ -30,25 +29,19 @@ public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipment
         {
             throw new ArgumentException("Equipment name cannot be empty.", nameof(name));
         }
-        
+
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
 
-        return await db.Equipments
-            .AsNoTracking()
-            .Include(equipment => equipment.Description)
-            .ThenInclude(description => description.Translations)
+        return await BaseEquipmentQuery()
             .FirstOrDefaultAsync(
-                equipment => equipment.NameKey == nameKey 
-                             && !equipment.Audit.IsDeleted, 
+                equipment => equipment.NameKey == nameKey,
                 ct);
     }
 
     public async Task<IReadOnlyCollection<Equipment>> ListAsync(CancellationToken ct)
     {
-        return await db.Equipments
-            .AsNoTracking()
-            .Include(equipment => equipment.Description)
-            .ThenInclude(description => description.Translations)
+        return await BaseEquipmentQuery()
+            .OrderBy(equipment => equipment.Name)
             .ToListAsync(ct);
     }
 
@@ -56,7 +49,9 @@ public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipment
     {
         return await db.Equipments
             .AsNoTracking()
-            .CountAsync(ct);
+            .CountAsync(
+                equipment => !equipment.Audit.IsDeleted,
+                ct);
     }
 
     public async Task<Equipment> CreateAsync(Equipment equipment, CancellationToken ct)
@@ -73,6 +68,11 @@ public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipment
     {
         ArgumentNullException.ThrowIfNull(equipment);
 
+        if (equipment.Id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Equipment id cannot be empty.", nameof(equipment));
+        }
+
         db.Equipments.Update(equipment);
         await db.SaveChangesAsync(ct);
 
@@ -88,7 +88,10 @@ public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipment
 
         return await db.Equipments
             .AsNoTracking()
-            .AnyAsync(equipment => equipment.Id == id, ct);
+            .AnyAsync(
+                equipment => equipment.Id == id &&
+                             !equipment.Audit.IsDeleted,
+                ct);
     }
 
     public async Task<bool> NameExistsAsync(
@@ -111,5 +114,14 @@ public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipment
                     !equipment.Audit.IsDeleted &&
                     (!excludedEquipmentId.HasValue || equipment.Id != excludedEquipmentId.Value),
                 ct);
+    }
+
+    private IQueryable<Equipment> BaseEquipmentQuery()
+    {
+        return db.Equipments
+            .AsNoTracking()
+            .Include(equipment => equipment.Description)
+            .ThenInclude(description => description.Translations)
+            .Where(equipment => !equipment.Audit.IsDeleted);
     }
 }

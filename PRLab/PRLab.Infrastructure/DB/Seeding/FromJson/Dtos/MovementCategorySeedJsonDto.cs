@@ -15,6 +15,10 @@ public class MovementCategorySeedJsonDto
     public DomainEnum.BaseMovementCategory BaseMovementCategory { get; set; }
 
     public DescriptionSeedJsonDto? Description { get; init; }
+    
+    public DomainEnum.DataOrigin Origin { get; init; } = DomainEnum.DataOrigin.BuiltIn;
+
+    public Guid? OwnerUserId { get; init; }
 
     public SeedAction Action { get; init; } = SeedAction.Ignore;
 

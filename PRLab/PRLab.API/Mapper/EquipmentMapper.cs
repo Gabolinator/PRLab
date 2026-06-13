@@ -48,15 +48,18 @@ public static class EquipmentMapper
             .ToList();
     }
 
-    public static Equipment ToEntity(EquipmentPostDTO payload, User? currentUser)
+    public static Equipment ToEntity(
+        EquipmentPostDTO payload,
+        User currentUser)
     {
         ArgumentNullException.ThrowIfNull(payload);
+        ArgumentNullException.ThrowIfNull(currentUser);
 
         var description = payload.Descriptor is null
             ? Description.New(null)
             : DescriptionMapper.ToEntity(payload.Descriptor);
 
-        return Equipment.New(
+        return Equipment.NewUserCreated(
             payload.Name,
             description,
             currentUser

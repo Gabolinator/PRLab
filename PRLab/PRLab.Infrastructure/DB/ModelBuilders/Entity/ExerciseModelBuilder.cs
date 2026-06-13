@@ -71,6 +71,27 @@ public static class ExerciseModelBuilder
                         userId => userId.HasValue ? userId.Value.Value : null,
                         value => value.HasValue ? UserId.FromGuid(value.Value) : null);
             });
+            
+            exercise.OwnsOne(exercise => exercise.Ownership, ownership =>
+            {
+                ownership.Property(ownershipInfo => ownershipInfo.Origin)
+                    .HasColumnName("DataOrigin")
+                    .HasConversion<string>()
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                ownership.Property(ownershipInfo => ownershipInfo.OwnerUserId)
+                    .HasColumnName("OwnerUserId")
+                    .HasConversion<Guid?>(
+                        userId => userId.HasValue ? userId.Value.Value : null,
+                        value => value.HasValue ? UserId.FromGuid(value.Value) : null);
+                
+                ownership.HasIndex(ownershipInfo => ownershipInfo.Origin)
+                    .HasDatabaseName("IX_Exercise_DataOrigin");
+
+                ownership.HasIndex(ownershipInfo => ownershipInfo.OwnerUserId)
+                    .HasDatabaseName("IX_Exercise_OwnerUserId");
+            });
 
             exercise.Navigation(exercise => exercise.Blocks)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);

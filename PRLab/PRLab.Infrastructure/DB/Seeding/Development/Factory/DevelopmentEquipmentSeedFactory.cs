@@ -8,29 +8,29 @@ namespace PRLab.Infrastructure.DB.Seeding.Development.Factory;
 
 public sealed class DevelopmentEquipmentSeedFactory(IUserService userService) : IEquipmentSeedFactory
 {
-    private User SeedUser => userService.GetAdminUser("Seed");
+    private User SeedUser => userService.GetSystemAdminUser("Seed");
 
     public IReadOnlyList<SeedItem<Equipment>> CreateInitialData()
     {
-        var barbell = Equipment.New(
+        var barbell = Equipment.NewBuiltIn(
             "Barbell",
             Description.New("Long metal bar used for loaded strength training."),
             SeedUser
         );
 
-        var dumbbell = Equipment.New(
+        var dumbbell = Equipment.NewBuiltIn(
             "Dumbbell",
             Description.New("Short handheld weight used for unilateral or bilateral exercises."),
             SeedUser
         );
 
-        var pullUpBar = Equipment.New(
+        var pullUpBar = Equipment.NewBuiltIn(
             "Pull-up Bar",
             Description.New("Fixed or mounted bar used for pull-ups, hangs, and other bodyweight pulling movements."),
             SeedUser
         );
 
-        var jumpRope = Equipment.New(
+        var jumpRope = Equipment.NewBuiltIn(
             "Jump Rope",
             Description.New("Rope used for jumping movements, conditioning, coordination, and footwork drills."),
             SeedUser

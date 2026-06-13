@@ -17,9 +17,37 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
             throw new ArgumentException("Movement id cannot be empty.", nameof(id));
         }
 
-        return await CreateMovementQuery()
+        return await BaseMovementReadQuery()
             .FirstOrDefaultAsync(
-                movement => movement.Id == id && !movement.Audit.IsDeleted,
+                movement => movement.Id == id,
+                ct);
+    }
+
+    public async Task<Movement?> GetTrackedByNameAsync(string name, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Movement name cannot be empty.", nameof(name));
+        }
+
+        var nameKey = FormatingUtilities.NormalizeNameKey(name);
+
+        return await BaseMovementWriteQuery()
+            .FirstOrDefaultAsync(
+                movement => movement.NameKey == nameKey,
+                ct);
+    }
+
+    public async Task<Movement?> GetTrackedByIdAsync(MovementId id, CancellationToken ct)
+    {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Movement id cannot be empty.", nameof(id));
+        }
+
+        return await BaseMovementWriteQuery()
+            .FirstOrDefaultAsync(
+                movement => movement.Id == id,
                 ct);
     }
 
@@ -32,17 +60,16 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
 
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
 
-        return await CreateMovementQuery()
+        return await BaseMovementReadQuery()
             .FirstOrDefaultAsync(
-                movement => movement.NameKey == nameKey && !movement.Audit.IsDeleted,
+                movement => movement.NameKey == nameKey,
                 ct);
     }
 
     public async Task<IReadOnlyCollection<Movement>> ListAsync(CancellationToken ct)
     {
-        return await CreateMovementQuery()
-            .AsNoTracking()
-            .Where(movement => !movement.Audit.IsDeleted)
+        return await BaseMovementReadQuery()
+            .OrderBy(movement => movement.Name)
             .ToListAsync(ct);
     }
 
@@ -55,11 +82,9 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
             throw new ArgumentException("Movement category id cannot be empty.", nameof(movementCategoryId));
         }
 
-        return await CreateMovementQuery()
-            .AsNoTracking()
-            .Where(movement =>
-                movement.MovementCategoryId == movementCategoryId &&
-                !movement.Audit.IsDeleted)
+        return await BaseMovementReadQuery()
+            .Where(movement => movement.MovementCategoryId == movementCategoryId)
+            .OrderBy(movement => movement.Name)
             .ToListAsync(ct);
     }
 
@@ -72,11 +97,10 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
             throw new ArgumentException("Muscle id cannot be empty.", nameof(muscleId));
         }
 
-        return await CreateMovementQuery()
-            .AsNoTracking()
+        return await BaseMovementReadQuery()
             .Where(movement =>
-                movement.Muscles.Any(movementMuscle => movementMuscle.MuscleId == muscleId) &&
-                !movement.Audit.IsDeleted)
+                movement.Muscles.Any(movementMuscle => movementMuscle.MuscleId == muscleId))
+            .OrderBy(movement => movement.Name)
             .ToListAsync(ct);
     }
 
@@ -89,11 +113,10 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
             throw new ArgumentException("Equipment id cannot be empty.", nameof(equipmentId));
         }
 
-        return await CreateMovementQuery()
-            .AsNoTracking()
+        return await BaseMovementReadQuery()
             .Where(movement =>
-                movement.EquipmentRequirements.Any(requirement => requirement.EquipmentId == equipmentId) &&
-                !movement.Audit.IsDeleted)
+                movement.EquipmentRequirements.Any(requirement => requirement.EquipmentId == equipmentId))
+            .OrderBy(movement => movement.Name)
             .ToListAsync(ct);
     }
 
@@ -107,13 +130,12 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
             throw new ArgumentException("Muscle id cannot be empty.", nameof(muscleId));
         }
 
-        return await CreateMovementQuery()
-            .AsNoTracking()
+        return await BaseMovementReadQuery()
             .Where(movement =>
                 movement.Muscles.Any(movementMuscle =>
                     movementMuscle.MuscleId == muscleId &&
-                    movementMuscle.Role == role) &&
-                !movement.Audit.IsDeleted)
+                    movementMuscle.Role == role))
+            .OrderBy(movement => movement.Name)
             .ToListAsync(ct);
     }
 
@@ -126,11 +148,9 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
             throw new ArgumentException("Movement id cannot be empty.", nameof(movementId));
         }
 
-        return await CreateMovementQuery()
-            .AsNoTracking()
-            .Where(movement =>
-                movement.VariantOfId == movementId &&
-                !movement.Audit.IsDeleted)
+        return await BaseMovementReadQuery()
+            .Where(movement => movement.VariantOfId == movementId)
+            .OrderBy(movement => movement.Name)
             .ToListAsync(ct);
     }
 
@@ -153,7 +173,6 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
             throw new ArgumentException("Movement id cannot be empty.", nameof(movement));
         }
 
-        db.Movements.Update(movement);
         await db.SaveChangesAsync(ct);
 
         return movement;
@@ -169,7 +188,8 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
         return await db.Movements
             .AsNoTracking()
             .AnyAsync(
-                movement => movement.Id == id && !movement.Audit.IsDeleted,
+                movement => movement.Id == id &&
+                            !movement.Audit.IsDeleted,
                 ct);
     }
 
@@ -195,8 +215,21 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
                 ct);
     }
 
-    private IQueryable<Movement> CreateMovementQuery() => 
-        db.Movements
+    private IQueryable<Movement> BaseMovementReadQuery()
+    {
+        return BaseMovementQuery()
+            .AsNoTracking();
+    }
+
+    private IQueryable<Movement> BaseMovementWriteQuery()
+    {
+        return BaseMovementQuery();
+    }
+
+    private IQueryable<Movement> BaseMovementQuery()
+    {
+        return db.Movements
+            .AsSplitQuery()
             .Include(movement => movement.Description)
                 .ThenInclude(description => description.Translations)
             .Include(movement => movement.MovementCategory)
@@ -212,6 +245,7 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
             .Include(movement => movement.EquipmentRequirements)
                 .ThenInclude(requirement => requirement.Equipment)
                     .ThenInclude(equipment => equipment.Description)
-                        .ThenInclude(description => description.Translations);
-    
+                        .ThenInclude(description => description.Translations)
+            .Where(movement => !movement.Audit.IsDeleted);
+    }
 }

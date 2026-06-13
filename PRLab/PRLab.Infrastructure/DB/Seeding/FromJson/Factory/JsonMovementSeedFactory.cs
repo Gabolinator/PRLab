@@ -1,6 +1,5 @@
 ﻿using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
-using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Interface.DB.Seeding.Factory.Movement;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
@@ -65,13 +64,13 @@ public sealed class JsonMovementSeedFactory(
             : seedDto.Description.ToDescription();
 
         var movement = seedDto.Id.HasValue
-            ? Movement.NewWithId(
+            ? Movement.NewBuiltInWithId(
                 MovementId.FromGuid(seedDto.Id.Value),
                 seedDto.Name,
                 movementCategory,
                 description,
                 SeedUser)
-            : Movement.New(
+            : Movement.NewBuiltIn(
                 seedDto.Name,
                 movementCategory,
                 description,

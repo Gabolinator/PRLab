@@ -1,4 +1,5 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
+using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
@@ -12,6 +13,10 @@ public sealed record EquipmentSeedJsonDto
     public string NameKey { get; init; } = string.Empty;
 
     public DescriptionSeedJsonDto? Description { get; init; }
+
+    public DomainEnum.DataOrigin Origin { get; init; } = DomainEnum.DataOrigin.BuiltIn;
+
+    public Guid? OwnerUserId { get; init; }
 
     public SeedAction Action { get; init; } = SeedAction.Ignore;
 
@@ -27,6 +32,8 @@ public sealed record EquipmentSeedJsonDto
             Description = equipment.Description is null
                 ? null
                 : DescriptionSeedJsonDto.FromDescription(equipment.Description),
+            Origin = equipment.Ownership.Origin,
+            OwnerUserId = equipment.Ownership.OwnerUserId?.Value,
             Action = SeedAction.Ignore,
         };
     }

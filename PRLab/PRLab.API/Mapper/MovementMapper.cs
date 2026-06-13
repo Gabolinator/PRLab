@@ -85,11 +85,12 @@ public static class MovementMapper
 
     public static Movement ToEntity(
         MovementPostDTO payload,
-        User? currentUser)
+        User currentUser)
     {
         ArgumentNullException.ThrowIfNull(payload);
+        ArgumentNullException.ThrowIfNull(currentUser);
 
-        var movement = Movement.New(
+        var movement = Movement.NewUserCreated(
             payload.Name,
             payload.MovementCategoryId,
             payload.Descriptor?.Content,

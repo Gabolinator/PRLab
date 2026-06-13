@@ -134,6 +134,12 @@ public sealed class ExerciseController : ControllerBase
             }
 
             var activeUser = await userService.GetActiveUserAsync(ct);
+
+            if (activeUser is null)
+            {
+                return Unauthorized();
+            }
+
             var exercise = ExerciseMapper.ToEntity(payload, activeUser);
 
             var createdExercise = await repo.CreateAsync(exercise, ct);
@@ -170,7 +176,7 @@ public sealed class ExerciseController : ControllerBase
         {
             var exerciseId = ExerciseId.FromGuid(id);
 
-            var exercise = await repo.GetByIdAsync(exerciseId, ct);
+            var exercise = await repo.GetTrackedByIdAsync(exerciseId, ct);
 
             if (exercise is null)
             {

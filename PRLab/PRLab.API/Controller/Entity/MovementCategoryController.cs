@@ -144,6 +144,12 @@ public sealed class MovementCategoryController : ControllerBase
             }
 
             var activeUser = await userService.GetActiveUserAsync(ct);
+
+            if (activeUser is null)
+            {
+                return Unauthorized();
+            }
+
             var movementCategory = MovementCategoryMapper.ToEntity(payload, activeUser);
 
             var createdMovementCategory = await repo.CreateAsync(movementCategory, ct);

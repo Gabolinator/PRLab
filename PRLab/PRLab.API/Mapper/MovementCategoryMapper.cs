@@ -48,24 +48,23 @@ public static class MovementCategoryMapper
     }
 
     public static MovementCategory ToEntity(
-        MovementCategoryPostDTO payload)
-    {
-        return ToEntity(payload, null);
-    }
-
-    public static MovementCategory ToEntity(
         MovementCategoryPostDTO payload,
-        User? createdBy)
+        User createdBy)
     {
         ArgumentNullException.ThrowIfNull(payload);
+        ArgumentNullException.ThrowIfNull(createdBy);
 
-        return MovementCategory.New(
+        var description = payload.Description is null
+            ? Description.New(null)
+            : DescriptionMapper.ToEntity(payload.Description);
+
+        return MovementCategory.NewUserCreated(
             payload.Name,
-            payload.Description?.Content,
             payload.BaseCategory,
+            description,
             createdBy);
     }
-
+    
     public static MovementCategorySummaryDTO? ToSummaryDTO(MovementCategory category) =>
         new(category.Id, category.Name);
 }

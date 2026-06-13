@@ -7,6 +7,8 @@
     "Description": {
       "Content": "Movements performed mainly with body weight."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -17,6 +19,8 @@
     "Description": {
       "Content": "Bodyweight movements focused on strength, control, coordination, and skill-based progression."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -27,6 +31,8 @@
     "Description": {
       "Content": "Movements focused on cardiovascular conditioning, endurance, or sustained rhythmic effort."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -37,6 +43,8 @@
     "Description": {
       "Content": "Mixed-modal movements commonly used in functional fitness, combining strength, conditioning, gymnastics, and skill work."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -47,6 +55,8 @@
     "Description": {
       "Content": "Movements that combine strength, endurance, coordination, and conditioning demands in the same training context."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -57,6 +67,8 @@
     "Description": {
       "Content": "Race-style functional fitness movements combining running, loaded carries, sled work, rowing, skiing, lunges, and wall balls."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -67,6 +79,8 @@
     "Description": {
       "Content": "Movements focused on joint range of motion, control, stability, and movement quality."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -77,6 +91,8 @@
     "Description": {
       "Content": "Explosive barbell movements based on the snatch, clean, jerk, and their related variations."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -87,6 +103,8 @@
     "Description": {
       "Content": "Explosive movements using jumps, bounds, hops, or rapid force production to develop power and reactivity."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -97,6 +115,8 @@
     "Description": {
       "Content": "Strength movements centered around squat, bench press, deadlift, and related variations."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -107,6 +127,8 @@
     "Description": {
       "Content": "Locomotion movements based on jogging, running, sprinting, or interval-based run work."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -117,6 +139,8 @@
     "Description": {
       "Content": "Resistance-based movements focused on building force production, muscle strength, and controlled loading."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -127,6 +151,8 @@
     "Description": {
       "Content": "Movements focused on improving or maintaining flexibility through held, active, or dynamic stretches."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -137,6 +163,8 @@
     "Description": {
       "Content": "Movements performed with external loads."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   },
   {
@@ -147,6 +175,8 @@
     "Description": {
       "Content": "Movements and positions focused on mobility, flexibility, balance, breathing, body control, and mindful movement."
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
     "Action": "Ignore"
   }
 ]

@@ -52,8 +52,8 @@ public sealed class UserTests
     {
         var user = User.Admin();
 
-        user.Id.Should().Be(User.DefaultAdmin.Id);
-        user.Name.Should().Be(FormatingUtilities.NormalizeName(User.DefaultAdmin.Name));
+        user.Id.Should().Be(User.SystemUser.Id);
+        user.Name.Should().Be(FormatingUtilities.NormalizeName(User.SystemUser.Name));
         user.Role.Should().Be(DomainEnum.UserRole.Admin);
         user.Audit.Should().NotBeNull();
         user.Audit.IsDeleted.Should().BeFalse();

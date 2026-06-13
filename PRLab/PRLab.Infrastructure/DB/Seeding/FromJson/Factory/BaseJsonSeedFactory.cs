@@ -16,7 +16,7 @@ public abstract class BaseJsonSeedFactory<TEntity, TJsonDto>(
         SeedFileNames.GetSeedFileNameForEntity(Entity);
     
     protected User SeedUser =>
-        userService.GetAdminUser("Seed");
+        userService.GetSystemAdminUser("Seed");
     
    private static readonly JsonSerializerOptions JsonOptions = new()
     {

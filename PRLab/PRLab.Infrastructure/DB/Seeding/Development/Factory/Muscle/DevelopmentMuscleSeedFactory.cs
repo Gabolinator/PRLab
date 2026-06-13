@@ -10,7 +10,7 @@ namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.Muscle;
 
 public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMuscleSeedFactory
 {
-    private User SeedUser => userService.GetAdminUser("Seed");
+    private User SeedUser => userService.GetSystemAdminUser("Seed");
     
   public IReadOnlyList<SeedItem<Domain.Model.Entity.Muscle>> CreateInitialData()
 {
