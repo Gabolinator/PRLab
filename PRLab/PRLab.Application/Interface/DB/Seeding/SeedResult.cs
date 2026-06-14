@@ -1,5 +1,5 @@
 ﻿using PRLab.Domain;
-using PRLab.Domain.Value.Enum.System;
+using PRLab.Domain.Model.Value.Enum.System;
 
 namespace PRLab.Application.Interface.DB.Seeding;
 

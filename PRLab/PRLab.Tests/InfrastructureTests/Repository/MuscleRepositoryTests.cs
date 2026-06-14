@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.Anatomy;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value.Enum.Anatomy;
-using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Repositories;
 using PRLab.Infrastructure.DB.Repositories.Entity;
 

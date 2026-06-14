@@ -1,5 +1,5 @@
 ﻿using PRLab.Domain;
-using PRLab.Domain.Value.Enum.System;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Tools.Model;
 
 namespace PRLab.Tools.Config;

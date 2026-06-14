@@ -5,7 +5,7 @@ using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value.Enum.System;
+using PRLab.Domain.Model.Value.Enum.System;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 

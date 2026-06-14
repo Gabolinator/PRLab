@@ -2,8 +2,8 @@
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value.Enum.Movement;
-using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Model.Value.Enum.Movement;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Movement;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Relations.Interface;

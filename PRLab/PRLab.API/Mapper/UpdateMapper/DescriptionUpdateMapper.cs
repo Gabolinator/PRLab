@@ -1,5 +1,5 @@
 ﻿using PRLab.API.DTO.Description;
-using PRLab.Domain.Value.Update;
+using PRLab.Domain.Model.Value.Update;
 
 namespace PRLab.API.Mapper.UpdateMapper;
 

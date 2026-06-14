@@ -1,8 +1,8 @@
 ﻿using PRLab.API.DTO.Description;
 using PRLab.API.DTO.Movement.Relation;
-using PRLab.Domain.Value.Enum.Movement;
-using PRLab.Domain.Value.Enum.Prescription;
-using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Model.Value.Enum.Movement;
+using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.API.DTO.Movement;
 

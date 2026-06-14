@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Export;
 using PRLab.Domain;
-using PRLab.Domain.Value.Enum.System;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Infrastructure.DB.Seeding.FromJson;
 
 namespace PRLab.Infrastructure.DB.Seeding.Export.Exporter;

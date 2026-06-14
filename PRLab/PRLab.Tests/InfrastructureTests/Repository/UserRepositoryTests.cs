@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Infrastructure.DB.Repositories;
 
 namespace PRLab.Tests.InfrastructureTests.Repository;

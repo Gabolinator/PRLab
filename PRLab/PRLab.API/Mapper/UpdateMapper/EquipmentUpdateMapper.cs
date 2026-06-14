@@ -1,6 +1,6 @@
 ﻿using PRLab.API.DTO.Equipment;
 using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value.Update;
+using PRLab.Domain.Model.Value.Update;
 
 namespace PRLab.API.Mapper.UpdateMapper;
 

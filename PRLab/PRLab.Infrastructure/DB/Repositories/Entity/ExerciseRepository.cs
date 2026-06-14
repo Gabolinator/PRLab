@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value.Identifier;
 using PRLab.Infrastructure.DB.Context;
 
 namespace PRLab.Infrastructure.DB.Repositories.Entity;
@@ -67,7 +67,7 @@ public sealed class ExerciseRepository(PRLabPgDBContext db) : IExerciseRepositor
         }
 
         return await BaseExerciseReadQuery()
-            .Where(exercise => exercise.Blocks.Any(block => block.MovementId == movementId))
+            .Where(exercise => exercise.Steps.Any(block => block.MovementId == movementId))
             .OrderBy(exercise => exercise.Name)
             .ToListAsync(ct);
     }
@@ -150,25 +150,25 @@ public sealed class ExerciseRepository(PRLabPgDBContext db) : IExerciseRepositor
             .AsSplitQuery()
             .Include(exercise => exercise.Description)
                 .ThenInclude(description => description.Translations)
-            .Include(exercise => exercise.Blocks)
+            .Include(exercise => exercise.Steps)
                 .ThenInclude(block => block.Movement)
                     .ThenInclude(movement => movement.Description)
                         .ThenInclude(description => description.Translations)
-            .Include(exercise => exercise.Blocks)
+            .Include(exercise => exercise.Steps)
                 .ThenInclude(block => block.Movement)
                     .ThenInclude(movement => movement.MovementCategory)
                         .ThenInclude(movementCategory => movementCategory.Description)
                             .ThenInclude(description => description.Translations)
-            .Include(exercise => exercise.Blocks)
+            .Include(exercise => exercise.Steps)
                 .ThenInclude(block => block.Movement)
                     .ThenInclude(movement => movement.Patterns)
-            .Include(exercise => exercise.Blocks)
+            .Include(exercise => exercise.Steps)
                 .ThenInclude(block => block.Movement)
                     .ThenInclude(movement => movement.Muscles)
                         .ThenInclude(movementMuscle => movementMuscle.Muscle)
                             .ThenInclude(muscle => muscle.Description)
                                 .ThenInclude(description => description.Translations)
-            .Include(exercise => exercise.Blocks)
+            .Include(exercise => exercise.Steps)
                 .ThenInclude(block => block.Movement)
                     .ThenInclude(movement => movement.EquipmentRequirements)
                         .ThenInclude(requirement => requirement.Equipment)

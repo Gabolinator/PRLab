@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain;
-using PRLab.Domain.Value.Enum.System;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Infrastructure.DB.Context;
 using PRLab.Infrastructure.DB.Helpers;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Movement;

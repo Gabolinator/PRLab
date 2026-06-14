@@ -1,6 +1,6 @@
 ﻿using PRLab.Domain;
 using PRLab.Domain.Model.Join;
-using PRLab.Domain.Value.Enum.Anatomy;
+using PRLab.Domain.Model.Value.Enum.Anatomy;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Movement;
 

@@ -7,10 +7,10 @@ using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.System;
+using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities.Interface;
-using PRLab.Domain.Value.Enum.System;
-using PRLab.Domain.Value.Identifier;
-using PRLab.Domain.Value.Update;
 using PRLab.Infrastructure.DB.Context;
 using PRLab.Infrastructure.DB.Helpers;
 

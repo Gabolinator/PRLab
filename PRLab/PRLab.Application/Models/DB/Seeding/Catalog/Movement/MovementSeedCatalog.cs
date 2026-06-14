@@ -1,5 +1,5 @@
 ﻿using PRLab.Domain.Model.Catalog;
-using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 

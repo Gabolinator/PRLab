@@ -3,8 +3,8 @@ using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Utilities.Interface;
-using PRLab.Domain.Value.Enum.System;
 using PRLab.Infrastructure.DB.Context;
 
 namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;

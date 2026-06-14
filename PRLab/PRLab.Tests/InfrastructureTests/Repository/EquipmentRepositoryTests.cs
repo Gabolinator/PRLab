@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Infrastructure.DB.Repositories;
 using PRLab.Infrastructure.DB.Repositories.Entity;
 
@@ -115,7 +116,7 @@ public sealed class EquipmentRepositoryTests
             null!
         );
 
-        var id = new PRLab.Domain.Value.Identifier.EquipmentId(Guid.Empty);
+        var id = new EquipmentId(Guid.Empty);
 
         var act = async () => await repo.GetByIdAsync(
             id,

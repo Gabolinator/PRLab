@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value;
-using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.Infrastructure.DB.ModelBuilders.Entity;
 
@@ -93,14 +93,14 @@ public static class ExerciseModelBuilder
                     .HasDatabaseName("IX_Exercise_OwnerUserId");
             });
 
-            exercise.Navigation(exercise => exercise.Blocks)
+            exercise.Navigation(exercise => exercise.Steps)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
         });
     }
 
     public static void CreateExerciseBlockTableModel(this ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ExerciseBlock>(exerciseBlock =>
+        modelBuilder.Entity<ExerciseSteps>(exerciseBlock =>
         {
             exerciseBlock.ToTable("ExerciseBlock");
 
@@ -109,7 +109,7 @@ public static class ExerciseModelBuilder
             exerciseBlock.Property(exerciseBlock => exerciseBlock.Id)
                 .HasConversion(
                     exerciseBlockId => exerciseBlockId.Value,
-                    value => ExerciseBlockId.FromGuid(value))
+                    value => ExerciseStepsId.FromGuid(value))
                 .ValueGeneratedNever();
 
             exerciseBlock.Property(exerciseBlock => exerciseBlock.ExerciseId)
@@ -128,7 +128,7 @@ public static class ExerciseModelBuilder
                 .IsRequired();
 
             exerciseBlock.HasOne<Exercise>()
-                .WithMany(exercise => exercise.Blocks)
+                .WithMany(exercise => exercise.Steps)
                 .HasForeignKey(exerciseBlock => exerciseBlock.ExerciseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -169,7 +169,7 @@ public static class ExerciseModelBuilder
                 restTarget.Property(target => target.Seconds);
             });
 
-            exerciseBlock.OwnsOne(exerciseBlock => exerciseBlock.TransitionAfterBlock, restTarget =>
+            exerciseBlock.OwnsOne(exerciseBlock => exerciseBlock.TransitionAfterStep, restTarget =>
             {
                 restTarget.Property(target => target.Seconds);
             });
@@ -221,7 +221,7 @@ public static class ExerciseModelBuilder
             exercise.HasIndex("DescriptionId");
         });
 
-        modelBuilder.Entity<ExerciseBlock>(exerciseBlock =>
+        modelBuilder.Entity<ExerciseSteps>(exerciseBlock =>
         {
             exerciseBlock.HasIndex(exerciseBlock => exerciseBlock.ExerciseId);
 

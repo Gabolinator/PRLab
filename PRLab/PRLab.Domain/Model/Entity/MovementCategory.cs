@@ -1,10 +1,10 @@
 ﻿using PRLab.Domain.Model.Interface;
+using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Enum.Movement;
+using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Domain.Model.Value.Ownership;
+using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value;
-using PRLab.Domain.Value.Enum.Movement;
-using PRLab.Domain.Value.Identifier;
-using PRLab.Domain.Value.Ownership;
-using PRLab.Domain.Value.Update;
 
 namespace PRLab.Domain.Model.Entity;
 

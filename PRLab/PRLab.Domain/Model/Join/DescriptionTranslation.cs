@@ -1,4 +1,4 @@
-﻿using PRLab.Domain.Value.Identifier;
+﻿using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.Domain.Model.Join;
 

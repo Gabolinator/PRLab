@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
-using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.Infrastructure.DB.ModelBuilders.Entity;
 

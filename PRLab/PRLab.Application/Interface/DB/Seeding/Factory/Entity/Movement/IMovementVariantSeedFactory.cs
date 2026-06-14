@@ -1,6 +1,6 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
-using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 

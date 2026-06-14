@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.Anatomy;
+using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value.Enum.Anatomy;
-using PRLab.Domain.Value.Identifier;
-using PRLab.Domain.Value.Update;
 
 namespace PRLab.Tests.DomainTests;
 

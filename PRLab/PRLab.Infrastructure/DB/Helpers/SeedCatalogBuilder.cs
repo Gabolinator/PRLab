@@ -3,7 +3,7 @@ using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain.Model.Catalog;
 using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Infrastructure.DB.Context;
 
 namespace PRLab.Infrastructure.DB.Helpers;
@@ -95,7 +95,7 @@ public static class SeedCatalogBuilder
             .AsSplitQuery()
             .Include(exercise => exercise.Description)
             .ThenInclude(description => description.Translations)
-            .Include(exercise => exercise.Blocks)
+            .Include(exercise => exercise.Steps)
             .ThenInclude(exerciseBlock => exerciseBlock.Movement)
             .OrderBy(exercise => exercise.Name)
             .ToListAsync(ct);

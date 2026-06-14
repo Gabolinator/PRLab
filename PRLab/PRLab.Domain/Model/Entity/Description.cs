@@ -1,6 +1,6 @@
 ﻿using PRLab.Domain.Model.Join;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Domain.Model.Entity;
 

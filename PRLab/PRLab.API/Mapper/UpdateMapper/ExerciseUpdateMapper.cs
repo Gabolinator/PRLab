@@ -1,7 +1,7 @@
 ﻿using PRLab.API.DTO.Exercise;
 using PRLab.API.DTO.Exercise.Relation;
 using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value.Update;
+using PRLab.Domain.Model.Value.Update;
 
 namespace PRLab.API.Mapper.UpdateMapper;
 
@@ -21,7 +21,7 @@ public static class ExerciseUpdateMapper
             Description = payload.Description is null
                 ? null
                 : DescriptionUpdateMapper.ToUpdate(payload.Description),
-            Blocks = payload.Blocks
+            Steps = payload.Blocks
                 .OrderBy(block => block.Sequence)
                 .Select(ToBlockUpdate)
                 .ToList(),
@@ -29,18 +29,18 @@ public static class ExerciseUpdateMapper
         };
     }
 
-    private static ExerciseBlockUpdate ToBlockUpdate(ExerciseBlockPutDTO payload)
+    private static ExerciseStepUpdate ToBlockUpdate(ExerciseStepPutDTO payload)
     {
         ArgumentNullException.ThrowIfNull(payload);
 
-        return new ExerciseBlockUpdate
+        return new ExerciseStepUpdate
         {
             MovementId = payload.MovementId,
             Sequence = payload.Sequence,
             Target = ExerciseMapper.ToWorkTarget(payload.Target),
             LoadTarget = ExerciseMapper.ToLoadTarget(payload.LoadTarget),
             RestBetweenReps = ExerciseMapper.ToRestTarget(payload.RestBetweenReps),
-            TransitionAfterBlock = ExerciseMapper.ToRestTarget(payload.TransitionAfterBlock),
+            TransitionAfterStep = ExerciseMapper.ToRestTarget(payload.TransitionAfterStep),
             ExecutionDetails = ExerciseMapper.ToRepExecutionDetails(payload.ExecutionDetails)
         };
     }

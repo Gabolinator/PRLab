@@ -1,5 +1,5 @@
-﻿using PRLab.Domain.Utilities;
-using PRLab.Domain.Value.Identifier;
+﻿using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Domain.Utilities;
 
 namespace PRLab.API.DTO.Description;
 

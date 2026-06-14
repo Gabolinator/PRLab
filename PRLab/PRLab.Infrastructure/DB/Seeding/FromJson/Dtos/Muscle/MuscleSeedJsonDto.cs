@@ -1,6 +1,6 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
-using PRLab.Domain.Value.Enum.Anatomy;
+using PRLab.Domain.Model.Value.Enum.Anatomy;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Muscle;
 

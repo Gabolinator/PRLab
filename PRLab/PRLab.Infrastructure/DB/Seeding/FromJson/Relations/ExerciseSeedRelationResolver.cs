@@ -1,8 +1,9 @@
 ﻿using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value;
-using PRLab.Domain.Value.Enum.Prescription;
-using PRLab.Domain.Value.Identifier;
+using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Domain.Model.Value.Prescription;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Exercise;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Relations.Interface;
@@ -22,73 +23,73 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
         ArgumentNullException.ThrowIfNull(catalog);
         ArgumentNullException.ThrowIfNull(seedUser);
 
-        if (seedDto.Blocks.Count == 0)
+        if (seedDto.Steps.Count == 0)
         {
             throw new InvalidOperationException(
-                $"Exercise seed '{seedDto.Name}' must provide at least one block.");
+                $"Exercise seed '{seedDto.Name}' must provide at least one Step.");
         }
 
-        ValidateBlockSequences(seedDto);
+        ValidateStepSequences(seedDto);
 
-        foreach (var blockDto in seedDto.Blocks.OrderBy(block => block.Sequence))
+        foreach (var StepDto in seedDto.Steps.OrderBy(Step => Step.Sequence))
         {
             var movement = ResolveMovement(
-                blockDto.Movement,
+                StepDto.Movement,
                 catalog,
                 seedDto.Name,
-                blockDto.Sequence);
+                StepDto.Sequence);
 
             var target = ToWorkTarget(
-                blockDto.Target,
+                StepDto.Target,
                 seedDto.Name,
-                blockDto.Sequence);
+                StepDto.Sequence);
 
             var loadTarget = ToLoadTarget(
-                blockDto.LoadTarget,
+                StepDto.LoadTarget,
                 seedDto.Name,
-                blockDto.Sequence);
+                StepDto.Sequence);
 
             var restBetweenReps = ToRestTarget(
-                blockDto.RestBetweenReps,
+                StepDto.RestBetweenReps,
                 seedDto.Name,
-                blockDto.Sequence,
-                nameof(blockDto.RestBetweenReps));
+                StepDto.Sequence,
+                nameof(StepDto.RestBetweenReps));
 
-            var transitionAfterBlock = ToRestTarget(
-                blockDto.TransitionAfterBlock,
+            var transitionAfterStep = ToRestTarget(
+                StepDto.TransitionAfterStep,
                 seedDto.Name,
-                blockDto.Sequence,
-                nameof(blockDto.TransitionAfterBlock));
+                StepDto.Sequence,
+                nameof(StepDto.TransitionAfterStep));
 
             var executionDetails = ToRepExecutionDetails(
-                blockDto.ExecutionDetails);
+                StepDto.ExecutionDetails);
 
-            exercise.AddBlock(
+            exercise.AddStep(
                 movementId: movement.Id,
                 target: target,
                 loadTarget: loadTarget,
                 restBetweenReps: restBetweenReps,
-                transitionAfterBlock: transitionAfterBlock,
+                transitionAfterStep: transitionAfterStep,
                 executionDetails: executionDetails,
                 changedBy: seedUser,
-                atSequence: blockDto.Sequence);
+                atSequence: StepDto.Sequence);
         }
     }
 
-    private static void ValidateBlockSequences(
+    private static void ValidateStepSequences(
         ExerciseSeedJsonDto seedDto)
     {
-        foreach (var blockDto in seedDto.Blocks)
+        foreach (var StepDto in seedDto.Steps)
         {
-            if (blockDto.Sequence < 1)
+            if (StepDto.Sequence < 1)
             {
                 throw new InvalidOperationException(
-                    $"Exercise seed '{seedDto.Name}' has block with invalid sequence '{blockDto.Sequence}'. Sequence must be greater than zero.");
+                    $"Exercise seed '{seedDto.Name}' has Step with invalid sequence '{StepDto.Sequence}'. Sequence must be greater than zero.");
             }
         }
 
-        var duplicateSequences = seedDto.Blocks
-            .GroupBy(block => block.Sequence)
+        var duplicateSequences = seedDto.Steps
+            .GroupBy(Step => Step.Sequence)
             .Where(group => group.Count() > 1)
             .Select(group => group.Key)
             .ToList();
@@ -96,7 +97,7 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
         if (duplicateSequences.Count > 0)
         {
             throw new InvalidOperationException(
-                $"Exercise seed '{seedDto.Name}' has duplicate block sequence(s): {string.Join(", ", duplicateSequences)}.");
+                $"Exercise seed '{seedDto.Name}' has duplicate Step sequence(s): {string.Join(", ", duplicateSequences)}.");
         }
     }
 
@@ -104,7 +105,7 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
         SeedEntityReferenceJsonDto reference,
         MovementSeedCatalog movementCatalog,
         string exerciseName,
-        int blockSequence)
+        int StepSequence)
     {
         if (reference.Id.HasValue)
         {
@@ -123,24 +124,24 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
         }
 
         throw new InvalidOperationException(
-            $"Exercise seed '{exerciseName}' block '{blockSequence}' movement reference must provide Id, NameKey, or Name.");
+            $"Exercise seed '{exerciseName}' Step '{StepSequence}' movement reference must provide Id, NameKey, or Name.");
     }
 
     private static WorkTarget ToWorkTarget(
         WorkTargetSeedJsonDto dto,
         string exerciseName,
-        int blockSequence)
+        int StepSequence)
     {
         if (dto.TargetType == WorkTargetType.Unspecified)
         {
             throw new InvalidOperationException(
-                $"Exercise seed '{exerciseName}' block '{blockSequence}' must provide a valid target type.");
+                $"Exercise seed '{exerciseName}' Step '{StepSequence}' must provide a valid target type.");
         }
 
         if (dto.Value <= 0)
         {
             throw new InvalidOperationException(
-                $"Exercise seed '{exerciseName}' block '{blockSequence}' must provide a target value greater than zero.");
+                $"Exercise seed '{exerciseName}' Step '{StepSequence}' must provide a target value greater than zero.");
         }
 
         return WorkTarget.New(
@@ -151,7 +152,7 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
     private static LoadTarget ToLoadTarget(
         LoadTargetSeedJsonDto? dto,
         string exerciseName,
-        int blockSequence)
+        int StepSequence)
     {
         if (dto is null || dto.Type == LoadTargetType.None)
         {
@@ -163,31 +164,31 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
             LoadTargetType.BodyWeight => LoadTarget.BodyWeight(),
 
             LoadTargetType.ExternalLoad => LoadTarget.ExternalLoad(
-                RequireLoadValue(dto, exerciseName, blockSequence),
-                RequireLoadUnit(dto, exerciseName, blockSequence)),
+                RequireLoadValue(dto, exerciseName, StepSequence),
+                RequireLoadUnit(dto, exerciseName, StepSequence)),
 
             LoadTargetType.AddedBodyWeightLoad => LoadTarget.AddedBodyWeightLoad(
-                RequireLoadValue(dto, exerciseName, blockSequence),
-                RequireLoadUnit(dto, exerciseName, blockSequence)),
+                RequireLoadValue(dto, exerciseName, StepSequence),
+                RequireLoadUnit(dto, exerciseName, StepSequence)),
 
             LoadTargetType.AssistedBodyWeight => LoadTarget.AssistedBodyWeight(
-                RequireLoadValue(dto, exerciseName, blockSequence),
-                RequireLoadUnit(dto, exerciseName, blockSequence)),
+                RequireLoadValue(dto, exerciseName, StepSequence),
+                RequireLoadUnit(dto, exerciseName, StepSequence)),
 
             _ => throw new InvalidOperationException(
-                $"Exercise seed '{exerciseName}' block '{blockSequence}' has unsupported load target type '{dto.Type}'.")
+                $"Exercise seed '{exerciseName}' Step '{StepSequence}' has unsupported load target type '{dto.Type}'.")
         };
     }
 
     private static decimal RequireLoadValue(
         LoadTargetSeedJsonDto dto,
         string exerciseName,
-        int blockSequence)
+        int StepSequence)
     {
         if (!dto.Value.HasValue)
         {
             throw new InvalidOperationException(
-                $"Exercise seed '{exerciseName}' block '{blockSequence}' load target '{dto.Type}' must provide Value.");
+                $"Exercise seed '{exerciseName}' Step '{StepSequence}' load target '{dto.Type}' must provide Value.");
         }
 
         return dto.Value.Value;
@@ -196,12 +197,12 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
     private static LoadUnit RequireLoadUnit(
         LoadTargetSeedJsonDto dto,
         string exerciseName,
-        int blockSequence)
+        int StepSequence)
     {
         if (!dto.Unit.HasValue)
         {
             throw new InvalidOperationException(
-                $"Exercise seed '{exerciseName}' block '{blockSequence}' load target '{dto.Type}' must provide Unit.");
+                $"Exercise seed '{exerciseName}' Step '{StepSequence}' load target '{dto.Type}' must provide Unit.");
         }
 
         return dto.Unit.Value;
@@ -210,7 +211,7 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
     private static RestTarget ToRestTarget(
         RestTargetSeedJsonDto? dto,
         string exerciseName,
-        int blockSequence,
+        int StepSequence,
         string fieldName)
     {
         if (dto is null || dto.Seconds is null)
@@ -221,7 +222,7 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
         if (dto.Seconds.Value < 0)
         {
             throw new InvalidOperationException(
-                $"Exercise seed '{exerciseName}' block '{blockSequence}' has invalid {fieldName}. Seconds cannot be negative.");
+                $"Exercise seed '{exerciseName}' Step '{StepSequence}' has invalid {fieldName}. Seconds cannot be negative.");
         }
 
         return RestTarget.SecondsDuration(dto.Seconds.Value);

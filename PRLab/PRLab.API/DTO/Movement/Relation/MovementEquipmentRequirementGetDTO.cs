@@ -1,6 +1,6 @@
 ﻿using PRLab.API.DTO.Equipment;
 using PRLab.Domain;
-using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Model.Value.Enum.Movement;
 
 namespace PRLab.API.DTO.Movement.Relation;
 

@@ -1,7 +1,7 @@
 ﻿using PRLab.API.DTO.Movement;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
-using PRLab.Domain.Value.Update;
+using PRLab.Domain.Model.Value.Update;
 
 namespace PRLab.API.Mapper.UpdateMapper;
 

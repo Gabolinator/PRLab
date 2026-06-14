@@ -1,10 +1,11 @@
 ﻿using PRLab.Domain.Model.Interface;
+using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Domain.Model.Value.Ownership;
+using PRLab.Domain.Model.Value.Prescription;
+using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value;
-using PRLab.Domain.Value.Enum.Prescription;
-using PRLab.Domain.Value.Identifier;
-using PRLab.Domain.Value.Ownership;
-using PRLab.Domain.Value.Update;
 
 namespace PRLab.Domain.Model.Entity;
 
@@ -22,10 +23,10 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
 
     public AuditInfo Audit { get; private set; } = null!;
 
-    private readonly List<ExerciseBlock> blocks = [];
+    private readonly List<ExerciseSteps> steps = [];
 
-    public IReadOnlyCollection<ExerciseBlock> Blocks => blocks
-        .OrderBy(block => block.Sequence)
+    public IReadOnlyCollection<ExerciseSteps> Steps => steps
+        .OrderBy(Step => Step.Sequence)
         .ToList();
 
     private Exercise()
@@ -154,7 +155,7 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         User owner,
         LoadTarget? loadTarget = null,
         RestTarget? restBetweenReps = null,
-        RestTarget? transitionAfterBlock = null,
+        RestTarget? transitionAfterStep = null,
         RepExecutionDetails? executionDetails = null)
     {
         ArgumentNullException.ThrowIfNull(movement);
@@ -165,12 +166,12 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
             description: movement.Description.Copy(),
             owner: owner);
 
-        exercise.AddBlock(
+        exercise.AddStep(
             movementId: movement.Id,
             target: WorkTarget.New(value, targetType),
             loadTarget: loadTarget,
             restBetweenReps: restBetweenReps,
-            transitionAfterBlock: transitionAfterBlock,
+            transitionAfterStep: transitionAfterStep,
             executionDetails: executionDetails,
             changedBy: owner);
 
@@ -187,7 +188,7 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
 
         var targetType = movement.DefaultWorkTargetType;
 
-        exercise.AddBlock(
+        exercise.AddStep(
             movementId: movement.Id,
             target: WorkTarget.FromDefaultWorkType(targetType),
             loadTarget: LoadTarget.FromMovement(movement));
@@ -203,7 +204,7 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         User? createdBy = null,
         LoadTarget? loadTarget = null,
         RestTarget? restBetweenReps = null,
-        RestTarget? transitionAfterBlock = null,
+        RestTarget? transitionAfterStep = null,
         RepExecutionDetails? executionDetails = null)
     {
         ArgumentNullException.ThrowIfNull(movement);
@@ -213,12 +214,12 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
             description: movement.Description.Copy(),
             createdBy: createdBy);
 
-        exercise.AddBlock(
+        exercise.AddStep(
             movementId: movement.Id,
             target: WorkTarget.New(value, targetType),
             loadTarget: loadTarget,
             restBetweenReps: restBetweenReps,
-            transitionAfterBlock: transitionAfterBlock,
+            transitionAfterStep: transitionAfterStep,
             executionDetails: executionDetails,
             changedBy: createdBy);
 
@@ -276,9 +277,9 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
             hasChanged = true;
         }
 
-        if (update.Blocks is not null)
+        if (update.Steps is not null)
         {
-            ReplaceBlocks(update.Blocks);
+            ReplaceSteps(update.Steps);
             hasChanged = true;
         }
 
@@ -290,115 +291,115 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         return hasChanged;
     }
 
-    private void ReplaceBlocks(IReadOnlyCollection<ExerciseBlockUpdate> updatedBlocks)
+    private void ReplaceSteps(IReadOnlyCollection<ExerciseStepUpdate> updatedSteps)
     {
-        blocks.Clear();
+        steps.Clear();
 
-        foreach (var updatedBlock in updatedBlocks.OrderBy(block => block.Sequence))
+        foreach (var updatedStep in updatedSteps.OrderBy(Step => Step.Sequence))
         {
-            blocks.Add(
-                ExerciseBlock.New(
+            steps.Add(
+                ExerciseSteps.New(
                     exerciseId: Id,
-                    movementId: updatedBlock.MovementId,
-                    sequence: updatedBlock.Sequence,
-                    target: updatedBlock.Target,
-                    loadTarget: updatedBlock.LoadTarget,
-                    restBetweenReps: updatedBlock.RestBetweenReps,
-                    transitionAfterBlock: updatedBlock.TransitionAfterBlock,
-                    executionDetails: updatedBlock.ExecutionDetails
+                    movementId: updatedStep.MovementId,
+                    sequence: updatedStep.Sequence,
+                    target: updatedStep.Target,
+                    loadTarget: updatedStep.LoadTarget,
+                    restBetweenReps: updatedStep.RestBetweenReps,
+                    transitionAfterStep: updatedStep.TransitionAfterStep,
+                    executionDetails: updatedStep.ExecutionDetails
                 )
             );
         }
 
-        ResequenceBlocks();
+        ResequenceSteps();
     }
 
-    public void AddBlock(
-        ExerciseBlock block,
+    public void AddStep(
+        ExerciseSteps steps,
         User? changedBy = null,
         int? atSequence = null)
     {
-        ArgumentNullException.ThrowIfNull(block);
+        ArgumentNullException.ThrowIfNull(steps);
 
-        var targetSequence = NormalizeInsertSequence(atSequence ?? block.Sequence);
+        var targetSequence = NormalizeInsertSequence(atSequence ?? steps.Sequence);
 
-        ShiftBlocksFromSequence(targetSequence);
+        ShiftStepsFromSequence(targetSequence);
 
-        block.ChangeSequence(targetSequence);
+        steps.ChangeSequence(targetSequence);
 
-        blocks.Add(block);
+        this.steps.Add(steps);
 
         MarkUpdated(changedBy);
     }
 
-    public void AddBlock(
+    public void AddStep(
         MovementId movementId,
         WorkTarget target,
         LoadTarget? loadTarget = null,
         RestTarget? restBetweenReps = null,
-        RestTarget? transitionAfterBlock = null,
+        RestTarget? transitionAfterStep = null,
         RepExecutionDetails? executionDetails = null,
         User? changedBy = null,
         int? atSequence = null)
     {
         ArgumentNullException.ThrowIfNull(target);
 
-        var block = ExerciseBlock.New(
+        var Step = ExerciseSteps.New(
             exerciseId: Id,
             movementId: movementId,
             sequence: GetNextSequence(),
             target: target,
             loadTarget: loadTarget,
             restBetweenReps: restBetweenReps,
-            transitionAfterBlock: transitionAfterBlock,
+            transitionAfterStep: transitionAfterStep,
             executionDetails: executionDetails
         );
 
-        AddBlock(
-            block,
+        AddStep(
+            Step,
             changedBy,
             atSequence);
     }
 
-    public void AddBlock(
+    public void AddStep(
         MovementId movementId,
         decimal value,
         WorkTargetType targetType,
         LoadTarget? loadTarget = null,
         RestTarget? restBetweenReps = null,
-        RestTarget? transitionAfterBlock = null,
+        RestTarget? transitionAfterStep = null,
         RepExecutionDetails? executionDetails = null,
         User? changedBy = null,
         int? atSequence = null)
     {
-        AddBlock(
+        AddStep(
             movementId: movementId,
             target: WorkTarget.New(value, targetType),
             loadTarget: loadTarget,
             restBetweenReps: restBetweenReps,
-            transitionAfterBlock: transitionAfterBlock,
+            transitionAfterStep: transitionAfterStep,
             executionDetails: executionDetails,
             changedBy: changedBy,
             atSequence: atSequence);
     }
     
-    public void RemoveBlock(ExerciseBlockId exerciseBlockId, User? changedBy = null)
+    public void RemoveStep(ExerciseStepsId exerciseStepsId, User? changedBy = null)
     {
-        var block = blocks
-            .FirstOrDefault(existingBlock => existingBlock.Id == exerciseBlockId);
+        var Step = steps
+            .FirstOrDefault(existingStep => existingStep.Id == exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        blocks.Remove(block);
-        ResequenceBlocks();
+        steps.Remove(Step);
+        ResequenceSteps();
         MarkUpdated(changedBy);
     }
 
-    public void MoveBlock(
-        ExerciseBlockId exerciseBlockId,
+    public void MoveStep(
+        ExerciseStepsId exerciseStepsId,
         int newSequence,
         User? changedBy = null)
     {
@@ -407,27 +408,27 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
             throw new ArgumentException("Sequence must be greater than zero.");
         }
 
-        var block = blocks
-            .FirstOrDefault(block => block.Id == exerciseBlockId);
+        var Step = steps
+            .FirstOrDefault(Step => Step.Id == exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        blocks.Remove(block);
+        steps.Remove(Step);
 
         var targetIndex = Math.Min(
             newSequence - 1,
-            blocks.Count
+            steps.Count
         );
 
-        blocks.Insert(
+        steps.Insert(
             targetIndex,
-            block
+            Step
         );
 
-        ResequenceBlocks();
+        ResequenceSteps();
 
         MarkUpdated(changedBy);
     }
@@ -469,170 +470,170 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         MarkDeleted(deletedBy);
     }
 
-    public void ChangeBlockTarget(
-        ExerciseBlockId exerciseBlockId,
+    public void ChangeStepTarget(
+        ExerciseStepsId exerciseStepsId,
         decimal value,
         WorkTargetType targetType,
         User? changedBy = null)
     {
-        var block = GetBlockOrDefault(exerciseBlockId);
+        var Step = GetStepOrDefault(exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        block.ChangeTarget(WorkTarget.New(value, targetType));
+        Step.ChangeTarget(WorkTarget.New(value, targetType));
 
         MarkUpdated(changedBy);
     }
 
-    public void ChangeBlockLoadTarget(
-        ExerciseBlockId exerciseBlockId,
+    public void ChangeStepLoadTarget(
+        ExerciseStepsId exerciseStepsId,
         LoadTarget loadTarget,
         User? changedBy = null)
     {
-        var block = GetBlockOrDefault(exerciseBlockId);
+        var Step = GetStepOrDefault(exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        block.ChangeLoadTarget(loadTarget);
+        Step.ChangeLoadTarget(loadTarget);
 
         MarkUpdated(changedBy);
     }
 
-    public void RemoveBlockLoadTarget(
-        ExerciseBlockId exerciseBlockId,
+    public void RemoveStepLoadTarget(
+        ExerciseStepsId exerciseStepsId,
         User? changedBy = null)
     {
-        var block = GetBlockOrDefault(exerciseBlockId);
+        var Step = GetStepOrDefault(exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        block.RemoveLoadTarget();
+        Step.RemoveLoadTarget();
 
         MarkUpdated(changedBy);
     }
 
-    public void ChangeBlockRestBetweenReps(
-        ExerciseBlockId exerciseBlockId,
+    public void ChangeStepRestBetweenReps(
+        ExerciseStepsId exerciseStepsId,
         RestTarget restBetweenReps,
         User? changedBy = null)
     {
-        var block = GetBlockOrDefault(exerciseBlockId);
+        var Step = GetStepOrDefault(exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        block.ChangeRestBetweenReps(restBetweenReps);
+        Step.ChangeRestBetweenReps(restBetweenReps);
 
         MarkUpdated(changedBy);
     }
 
-    public void RemoveBlockRestBetweenReps(
-        ExerciseBlockId exerciseBlockId,
+    public void RemoveStepRestBetweenReps(
+        ExerciseStepsId exerciseStepsId,
         User? changedBy = null)
     {
-        var block = GetBlockOrDefault(exerciseBlockId);
+        var Step = GetStepOrDefault(exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        block.RemoveRestBetweenReps();
+        Step.RemoveRestBetweenReps();
 
         MarkUpdated(changedBy);
     }
 
-    public void ChangeBlockTransitionAfterBlock(
-        ExerciseBlockId exerciseBlockId,
-        RestTarget transitionAfterBlock,
+    public void ChangeStepTransitionAfterStep(
+        ExerciseStepsId exerciseStepsId,
+        RestTarget transitionAfterStep,
         User? changedBy = null)
     {
-        var block = GetBlockOrDefault(exerciseBlockId);
+        var Step = GetStepOrDefault(exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        block.ChangeTransitionAfterBlock(transitionAfterBlock);
+        Step.ChangeTransitionAfterStep(transitionAfterStep);
 
         MarkUpdated(changedBy);
     }
 
-    public void RemoveBlockTransitionAfterBlock(
-        ExerciseBlockId exerciseBlockId,
+    public void RemoveStepTransitionAfterStep(
+        ExerciseStepsId exerciseStepsId,
         User? changedBy = null)
     {
-        var block = GetBlockOrDefault(exerciseBlockId);
+        var Step = GetStepOrDefault(exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        block.RemoveTransitionAfterBlock();
+        Step.RemoveTransitionAfterStep();
 
         MarkUpdated(changedBy);
     }
 
-    public void ChangeBlockExecutionDetails(
-        ExerciseBlockId exerciseBlockId,
+    public void ChangeStepExecutionDetails(
+        ExerciseStepsId exerciseStepsId,
         RepExecutionDetails executionDetails,
         User? changedBy = null)
     {
-        var block = GetBlockOrDefault(exerciseBlockId);
+        var Step = GetStepOrDefault(exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        block.ChangeExecutionDetails(executionDetails);
+        Step.ChangeExecutionDetails(executionDetails);
 
         MarkUpdated(changedBy);
     }
 
-    public void RemoveBlockExecutionDetails(
-        ExerciseBlockId exerciseBlockId,
+    public void RemoveStepExecutionDetails(
+        ExerciseStepsId exerciseStepsId,
         User? changedBy = null)
     {
-        var block = GetBlockOrDefault(exerciseBlockId);
+        var Step = GetStepOrDefault(exerciseStepsId);
 
-        if (block is null)
+        if (Step is null)
         {
             return;
         }
 
-        block.RemoveExecutionDetails();
+        Step.RemoveExecutionDetails();
 
         MarkUpdated(changedBy);
     }
 
-    private ExerciseBlock? GetBlockOrDefault(ExerciseBlockId exerciseBlockId)
+    private ExerciseSteps? GetStepOrDefault(ExerciseStepsId exerciseStepsId)
     {
-        return blocks
-            .FirstOrDefault(block => block.Id == exerciseBlockId);
+        return steps
+            .FirstOrDefault(Step => Step.Id == exerciseStepsId);
     }
 
     private int GetNextSequence()
     {
-        if (blocks.Count == 0)
+        if (steps.Count == 0)
         {
             return 1;
         }
 
-        return blocks.Max(block => block.Sequence) + 1;
+        return steps.Max(Step => Step.Sequence) + 1;
     }
     
     private int NormalizeInsertSequence(int? atSequence)
@@ -647,11 +648,11 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         if (atSequence <= 0)
         {
             throw new ArgumentException(
-                "Block sequence must be greater than zero.",
+                "Step sequence must be greater than zero.",
                 nameof(atSequence));
         }
 
-        if (atSequence > blocks.Count)
+        if (atSequence > steps.Count)
         {
             return nextSequence;
         }
@@ -659,25 +660,25 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         return atSequence.Value;
     }
 
-    private void ShiftBlocksFromSequence(int sequence)
+    private void ShiftStepsFromSequence(int sequence)
     {
-        foreach (var block in blocks
-                     .Where(existingBlock => existingBlock.Sequence >= sequence)
-                     .OrderByDescending(existingBlock => existingBlock.Sequence))
+        foreach (var Step in steps
+                     .Where(existingStep => existingStep.Sequence >= sequence)
+                     .OrderByDescending(existingStep => existingStep.Sequence))
         {
-            block.ChangeSequence(block.Sequence + 1);
+            Step.ChangeSequence(Step.Sequence + 1);
         }
     }
 
-    private void ResequenceBlocks()
+    private void ResequenceSteps()
     {
-        var orderedBlocks = blocks
-            .OrderBy(block => block.Sequence)
+        var orderedSteps = steps
+            .OrderBy(Step => Step.Sequence)
             .ToList();
 
-        for (var index = 0; index < orderedBlocks.Count; index++)
+        for (var index = 0; index < orderedSteps.Count; index++)
         {
-            orderedBlocks[index].ChangeSequence(index + 1);
+            orderedSteps[index].ChangeSequence(index + 1);
         }
     }
 }

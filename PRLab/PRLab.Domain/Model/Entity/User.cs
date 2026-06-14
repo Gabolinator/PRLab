@@ -1,8 +1,8 @@
 ﻿using PRLab.Domain.Model.Interface;
+using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Enum.System;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value;
-using PRLab.Domain.Value.Enum.System;
-using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Domain.Model.Entity;
 

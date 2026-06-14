@@ -9,5 +9,5 @@ public sealed record ExercisePutDTO
 
     public DescriptionPutDTO? Description { get; init; }
 
-    public IReadOnlyList<ExerciseBlockPutDTO> Blocks { get; init; } = [];
+    public IReadOnlyList<ExerciseStepPutDTO> Blocks { get; init; } = [];
 }

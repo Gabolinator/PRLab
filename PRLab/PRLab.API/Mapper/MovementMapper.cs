@@ -3,9 +3,9 @@ using PRLab.API.DTO.Movement.Relation;
 using PRLab.API.DTO.Muscle;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
+using PRLab.Domain.Model.Value.Enum.Anatomy;
+using PRLab.Domain.Model.Value.Enum.Movement;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value.Enum.Anatomy;
-using PRLab.Domain.Value.Enum.Movement;
 
 namespace PRLab.API.Mapper;
 

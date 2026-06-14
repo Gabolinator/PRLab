@@ -9,5 +9,5 @@ public sealed record ExercisePostDTO
 
     public DescriptionPostDTO? Descriptor { get; init; }
 
-    public IReadOnlyList<ExerciseBlockPostDTO> Blocks { get; init; } = [];
+    public IReadOnlyList<ExerciseStepPostDTO> Steps { get; init; } = [];
 }

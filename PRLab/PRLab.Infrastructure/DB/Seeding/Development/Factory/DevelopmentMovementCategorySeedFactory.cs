@@ -5,7 +5,7 @@ using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value.Enum.Movement;
+using PRLab.Domain.Model.Value.Enum.Movement;
 
 namespace PRLab.Infrastructure.DB.Seeding.Development.Factory;
 

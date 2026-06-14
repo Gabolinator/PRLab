@@ -1,7 +1,8 @@
-﻿using PRLab.Domain;
-using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value.Enum.Movement;
-using PRLab.Domain.Value.Identifier;
+﻿using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.Movement;
+using PRLab.Domain.Model.Value.Identifier;
+
+namespace PRLab.Domain.Model.Join;
 
 public sealed record MovementEquipmentRequirement
 {

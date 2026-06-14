@@ -4,10 +4,10 @@ using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Exercise;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.System;
+using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
-using PRLab.Domain.Value.Enum.System;
-using PRLab.Domain.Value.Update;
 using PRLab.Infrastructure.DB.Context;
 using PRLab.Infrastructure.DB.Helpers;
 
@@ -65,7 +65,7 @@ public class ExerciseSeeder(
             .AsSplitQuery()
             .Include(exercise => exercise.Description)
                 .ThenInclude(description => description.Translations)
-            .Include(exercise => exercise.Blocks)
+            .Include(exercise => exercise.Steps)
                 .ThenInclude(exerciseBlock => exerciseBlock.Movement)
             .FirstOrDefaultAsync(
                 exercise => exercise.NameKey == seedExercise.NameKey,

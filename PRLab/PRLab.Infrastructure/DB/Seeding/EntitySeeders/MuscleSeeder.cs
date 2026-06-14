@@ -6,9 +6,9 @@ using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Muscle;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.System;
+using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities.Interface;
-using PRLab.Domain.Value.Enum.System;
-using PRLab.Domain.Value.Update;
 using PRLab.Infrastructure.DB.Context;
 
 namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;

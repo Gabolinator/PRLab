@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Interface;
+using PRLab.Domain.Model.Value.Enum.Anatomy;
+using PRLab.Domain.Model.Value.Enum.Movement;
+using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Enum.System;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value.Enum.Anatomy;
-using PRLab.Domain.Value.Enum.Movement;
-using PRLab.Domain.Value.Enum.Prescription;
-using PRLab.Domain.Value.Enum.System;
-using PRLab.Domain.Value.Identifier;
 
 namespace PRLab.Tests.DomainTests;
 

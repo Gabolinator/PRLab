@@ -4,8 +4,9 @@ using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Exercise;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Prescription;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value;
 
 namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.ExerciseFactory;
 
@@ -29,7 +30,7 @@ public sealed class DevelopmentExerciseSeedFactory(
 
             var burpee = catalog.GetRequiredByName("Burpee");
 
-            burpeePullUp.AddBlock(
+            burpeePullUp.AddStep(
                 movementId: burpee.Id,
                 target: WorkTarget.ForReps(1),
                 loadTarget: LoadTarget.BodyWeight(),
@@ -37,7 +38,7 @@ public sealed class DevelopmentExerciseSeedFactory(
 
             var pullUp = catalog.GetRequiredByName("Pull Up");
 
-            burpeePullUp.AddBlock(
+            burpeePullUp.AddStep(
                 movementId: pullUp.Id,
                 target: WorkTarget.ForReps(1),
                 loadTarget: LoadTarget.BodyWeight(),

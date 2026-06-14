@@ -2,9 +2,10 @@
 using PRLab.API.DTO.Exercise.Relation;
 using PRLab.API.DTO.Movement;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Prescription;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Value;
-using PRLab.Domain.Value.Enum.Prescription;
 
 namespace PRLab.API.Mapper;
 
@@ -28,9 +29,9 @@ public static class ExerciseMapper
             exercise.Id,
             exercise.Name,
             DescriptionMapper.ToGetDTO(exercise.Description, language),
-            exercise.Blocks
-                .OrderBy(block => block.Sequence)
-                .Select(block => ToBlockGetDTO(block, language))
+            exercise.Steps
+                .OrderBy(Step => Step.Sequence)
+                .Select(Step => ToStepGetDTO(Step, language))
                 .ToList()
         );
     }
@@ -82,16 +83,16 @@ public static class ExerciseMapper
             createdBy
         );
 
-        foreach (var block in payload.Blocks.OrderBy(block => block.Sequence))
+        foreach (var Step in payload.Steps.OrderBy(Step => Step.Sequence))
         {
-            exercise.AddBlock(
-                movementId: block.MovementId,
-                value: block.Target.Value,
-                targetType: block.Target.TargetType,
-                loadTarget: ToLoadTarget(block.LoadTarget),
-                restBetweenReps: ToRestTarget(block.RestBetweenReps),
-                transitionAfterBlock: ToRestTarget(block.TransitionAfterBlock),
-                executionDetails: ToRepExecutionDetails(block.ExecutionDetails),
+            exercise.AddStep(
+                movementId: Step.MovementId,
+                value: Step.Target.Value,
+                targetType: Step.Target.TargetType,
+                loadTarget: ToLoadTarget(Step.LoadTarget),
+                restBetweenReps: ToRestTarget(Step.RestBetweenReps),
+                transitionAfterStep: ToRestTarget(Step.TransitionAfterStep),
+                executionDetails: ToRepExecutionDetails(Step.ExecutionDetails),
                 changedBy: createdBy
             );
         }
@@ -99,24 +100,24 @@ public static class ExerciseMapper
         return exercise;
     }
 
-    private static ExerciseBlockGetDTO ToBlockGetDTO(
-        ExerciseBlock block,
+    private static ExerciseStepGetDTO ToStepGetDTO(
+        ExerciseSteps steps,
         LocalizationHelper.Language? language)
     {
-        ArgumentNullException.ThrowIfNull(block);
+        ArgumentNullException.ThrowIfNull(steps);
 
-        return new ExerciseBlockGetDTO(
-            block.Id,
-            block.Sequence,
+        return new ExerciseStepGetDTO(
+            steps.Id,
+            steps.Sequence,
             new MovementSummaryDTO(
-                block.Movement.Id,
-                block.Movement.Name
+                steps.Movement.Id,
+                steps.Movement.Name
             ),
-            ToWorkTargetGetDTO(block.Target),
-            ToLoadTargetGetDTO(block.LoadTarget),
-            ToRestTargetGetDTO(block.RestBetweenReps),
-            ToRestTargetGetDTO(block.TransitionAfterBlock),
-            ToRepExecutionDetailsGetDTO(block.ExecutionDetails)
+            ToWorkTargetGetDTO(steps.Target),
+            ToLoadTargetGetDTO(steps.LoadTarget),
+            ToRestTargetGetDTO(steps.RestBetweenReps),
+            ToRestTargetGetDTO(steps.TransitionAfterStep),
+            ToRepExecutionDetailsGetDTO(steps.ExecutionDetails)
         );
     }
 

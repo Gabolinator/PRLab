@@ -1,6 +1,5 @@
 ﻿using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value.Identifier;
-using PRLab.Domain.Value.Ownership;
+using PRLab.Domain.Model.Value.Ownership;
 
 namespace PRLab.Domain.Model.Interface;
 

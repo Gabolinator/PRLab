@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
 using PRLab.Domain;
-using PRLab.Domain.Value;
-using PRLab.Domain.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Prescription;
 
 namespace PRLab.Tests.DomainTests.Exercices;
 

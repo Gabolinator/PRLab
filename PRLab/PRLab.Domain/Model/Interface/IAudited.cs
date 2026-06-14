@@ -1,5 +1,5 @@
 ﻿using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Value;
+using PRLab.Domain.Model.Value;
 
 namespace PRLab.Domain.Model.Interface;
 

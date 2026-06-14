@@ -1,7 +1,8 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
-using PRLab.Domain.Value;
-using PRLab.Domain.Value.Enum.Prescription;
-using PRLab.Domain.Value.Enum.System;
+using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Enum.System;
+using PRLab.Domain.Model.Value.Prescription;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Exercise;
 
@@ -15,7 +16,7 @@ public sealed record ExerciseSeedJsonDto
 
     public DescriptionSeedJsonDto? Description { get; init; }
 
-    public IReadOnlyList<ExerciseBlockSeedJsonDto> Blocks { get; init; } = [];
+    public IReadOnlyList<ExerciseStepsSeedJsonDto> Steps { get; init; } = [];
 
     public DataOrigin Origin { get; init; } = DataOrigin.BuiltIn;
 
@@ -35,9 +36,9 @@ public sealed record ExerciseSeedJsonDto
             Description = exercise.Description is null
                 ? null
                 : DescriptionSeedJsonDto.FromDescription(exercise.Description),
-            Blocks = exercise.Blocks
+            Steps = exercise.Steps
                 .OrderBy(block => block.Sequence)
-                .Select(ExerciseBlockSeedJsonDto.FromExerciseBlock)
+                .Select(ExerciseStepsSeedJsonDto.FromExerciseStep)
                 .ToList(),
             Origin = exercise.Ownership.Origin,
             OwnerUserId = exercise.Ownership.OwnerUserId?.Value,
@@ -46,7 +47,7 @@ public sealed record ExerciseSeedJsonDto
     }
 }
 
-public sealed record ExerciseBlockSeedJsonDto
+public sealed record ExerciseStepsSeedJsonDto
 {
     public Guid? Id { get; init; }
 
@@ -60,37 +61,37 @@ public sealed record ExerciseBlockSeedJsonDto
 
     public RestTargetSeedJsonDto? RestBetweenReps { get; init; }
 
-    public RestTargetSeedJsonDto? TransitionAfterBlock { get; init; }
+    public RestTargetSeedJsonDto? TransitionAfterStep { get; init; }
 
     public RepExecutionDetailsSeedJsonDto? ExecutionDetails { get; init; }
 
-    public static ExerciseBlockSeedJsonDto FromExerciseBlock(ExerciseBlock exerciseBlock)
+    public static ExerciseStepsSeedJsonDto FromExerciseStep(ExerciseSteps exerciseSteps)
     {
-        ArgumentNullException.ThrowIfNull(exerciseBlock);
+        ArgumentNullException.ThrowIfNull(exerciseSteps);
 
-        return new ExerciseBlockSeedJsonDto
+        return new ExerciseStepsSeedJsonDto
         {
-            Id = exerciseBlock.Id.Value,
-            Sequence = exerciseBlock.Sequence,
-            Movement = exerciseBlock.Movement is not null
-                ? SeedEntityReferenceJsonDto.FromMovement(exerciseBlock.Movement)
+            Id = exerciseSteps.Id.Value,
+            Sequence = exerciseSteps.Sequence,
+            Movement = exerciseSteps.Movement is not null
+                ? SeedEntityReferenceJsonDto.FromMovement(exerciseSteps.Movement)
                 : new SeedEntityReferenceJsonDto
                 {
-                    Id = exerciseBlock.MovementId.Value,
+                    Id = exerciseSteps.MovementId.Value,
                 },
-            Target = WorkTargetSeedJsonDto.FromWorkTarget(exerciseBlock.Target),
-            LoadTarget = exerciseBlock.LoadTarget.Type == LoadTargetType.None
+            Target = WorkTargetSeedJsonDto.FromWorkTarget(exerciseSteps.Target),
+            LoadTarget = exerciseSteps.LoadTarget.Type == LoadTargetType.None
                 ? null
-                : LoadTargetSeedJsonDto.FromLoadTarget(exerciseBlock.LoadTarget),
-            RestBetweenReps = exerciseBlock.RestBetweenReps.IsEmpty()
+                : LoadTargetSeedJsonDto.FromLoadTarget(exerciseSteps.LoadTarget),
+            RestBetweenReps = exerciseSteps.RestBetweenReps.IsEmpty()
                 ? null
-                : RestTargetSeedJsonDto.FromRestTarget(exerciseBlock.RestBetweenReps),
-            TransitionAfterBlock = exerciseBlock.TransitionAfterBlock.IsEmpty()
+                : RestTargetSeedJsonDto.FromRestTarget(exerciseSteps.RestBetweenReps),
+            TransitionAfterStep = exerciseSteps.TransitionAfterStep.IsEmpty()
                 ? null
-                : RestTargetSeedJsonDto.FromRestTarget(exerciseBlock.TransitionAfterBlock),
-            ExecutionDetails = exerciseBlock.ExecutionDetails.IsEmpty()
+                : RestTargetSeedJsonDto.FromRestTarget(exerciseSteps.TransitionAfterStep),
+            ExecutionDetails = exerciseSteps.ExecutionDetails.IsEmpty()
                 ? null
-                : RepExecutionDetailsSeedJsonDto.FromRepExecutionDetails(exerciseBlock.ExecutionDetails),
+                : RepExecutionDetailsSeedJsonDto.FromRepExecutionDetails(exerciseSteps.ExecutionDetails),
         };
     }
 }
