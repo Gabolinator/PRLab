@@ -1,7 +1,10 @@
-﻿namespace PRLab.Domain.Model.Value.Prescription;
+﻿using PRLab.Domain.Model.Value.Enum.Prescription;
+
+namespace PRLab.Domain.Model.Value.Prescription;
 
 public sealed record RestTarget
 {
+    public RestPolicy RestPolicy { get; init; } = RestPolicy.Fixed; // todo add to all other objects
     public int? Seconds { get; private set; }
 
     private RestTarget()

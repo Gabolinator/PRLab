@@ -2,10 +2,10 @@
 
 public enum WorkMode
 {
-    FixedWork = 1,
-    ForTime = 2,
-    MaxWorkInTime = 3,
-    ForTimeWithCap = 4,
-    EveryMinuteOnTheMinute = 5,
-    Intervals = 6,
+    FixedWork,              // Complete prescribed work
+    ForTime,                // Complete work as fast as possible
+    MaxWorkInTime,          // AMRAP-style
+    ForTimeWithCap,         // Complete work before cap
+    EveryMinuteOnTheMinute, // EMOM
+    Intervals               // Work/rest intervals
 }
