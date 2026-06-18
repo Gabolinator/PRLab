@@ -35,6 +35,11 @@ public sealed record TimeConstraint
     {
         return new TimeConstraint(TimeConstraintKind.Target, duration);
     }
+    
+    public static TimeConstraint Interval(TimeSpan duration)
+    {
+        return new TimeConstraint(TimeConstraintKind.Interval, duration);
+    }
 
     public static TimeConstraint Cap(TimeSpan duration)
     {

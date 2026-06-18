@@ -489,6 +489,23 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
     }
 
     public void ChangeStepLoadTarget(
+        int sequence,
+        LoadTarget loadTarget,
+        User? changedBy = null)
+    {
+        var Step = GetStepOrDefault(sequence);
+
+        if (Step is null)
+        {
+            return;
+        }
+
+        Step.ChangeLoadTarget(loadTarget);
+
+        MarkUpdated(changedBy);
+    }
+    
+    public void ChangeStepLoadTarget(
         ExerciseStepsId exerciseStepsId,
         LoadTarget loadTarget,
         User? changedBy = null)
@@ -626,6 +643,13 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
             .FirstOrDefault(Step => Step.Id == exerciseStepsId);
     }
 
+    private ExerciseSteps? GetStepOrDefault(int exerciseStepSequence)
+    {
+        return steps
+            .FirstOrDefault(Step => Step.Sequence == exerciseStepSequence);
+    }
+
+    
     private int GetNextSequence()
     {
         if (steps.Count == 0)

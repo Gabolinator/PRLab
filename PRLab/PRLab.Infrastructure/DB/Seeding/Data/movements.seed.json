@@ -41,6 +41,7 @@
     "Patterns": [
       "Squat"
     ],
+    "Laterality": "Bilateral",
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
@@ -110,6 +111,7 @@
       "Jump",
       "GetUp"
     ],
+    "Laterality": "Bilateral",
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
@@ -170,6 +172,7 @@
     "Patterns": [
       "Jump"
     ],
+    "Laterality": "Bilateral",
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
@@ -240,11 +243,66 @@
     "Patterns": [
       "Squat"
     ],
+    "Laterality": "Bilateral",
     "VariantOf": {
       "Id": "51385348-fa0b-4e89-80ba-b9af982ca12b",
       "Name": "Bodyweight Squat",
       "NameKey": "bodyweightsquat"
     },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "7d34a872-6801-4d09-bf53-28e9f4f8dbf1",
+    "Name": "Lunge",
+    "NameKey": "lunge",
+    "Category": {
+      "Id": "4cf80344-c533-4c93-b3cd-2040895c0a41",
+      "Name": "Bodyweight",
+      "NameKey": "bodyweight"
+    },
+    "Description": {
+      "Content": "Unilateral lower-body movement performed by stepping into a lunge position."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "TimeUnderTensionSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "b3abfd13-56d4-4ea8-8d72-fab1ec21dcae",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "de89bcaf-c74c-4ac7-ac50-a41fa07b85b3",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "f4589699-ae2a-4585-bdfd-61fac9bafa93",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": "Lunge",
+    "Patterns": [
+      "Lunge"
+    ],
+    "Laterality": "Unilateral",
+    "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "Action": "Ignore"
@@ -303,6 +361,7 @@
     "Patterns": [
       "Pull"
     ],
+    "Laterality": "Bilateral",
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
@@ -356,6 +415,7 @@
     "Patterns": [
       "Push"
     ],
+    "Laterality": "Bilateral",
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,

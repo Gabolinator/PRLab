@@ -41,6 +41,7 @@ public sealed class DevelopmentMovementSeedFactory(
         var bodyweightSquat = CreateMovement(
             name: "Bodyweight Squat",
             movementCategory: bodyweightCategory,
+            laterality: MovementLaterality.Bilateral,
             defaultTargetType: WorkTargetType.Repetitions,
             allowedTargetTypes:
             [
@@ -57,6 +58,7 @@ public sealed class DevelopmentMovementSeedFactory(
         var pushUp = CreateMovement(
             name: "Push Up",
             movementCategory: bodyweightCategory,
+            laterality: MovementLaterality.Bilateral,
             defaultTargetType: WorkTargetType.Repetitions,
             allowedTargetTypes:
             [
@@ -74,6 +76,7 @@ public sealed class DevelopmentMovementSeedFactory(
         var pullUp = CreateMovement(
             name: "Pull Up",
             movementCategory: bodyweightCategory,
+            laterality: MovementLaterality.Bilateral,
             defaultTargetType: WorkTargetType.Repetitions,
             allowedTargetTypes:
             [
@@ -91,6 +94,7 @@ public sealed class DevelopmentMovementSeedFactory(
         var doubleUnder = CreateMovement(
             name: "Double Under",
             movementCategory: bodyweightCategory,
+            laterality: MovementLaterality.Bilateral,
             defaultTargetType: WorkTargetType.Repetitions,
             allowedTargetTypes:
             [
@@ -126,6 +130,7 @@ public sealed class DevelopmentMovementSeedFactory(
     private Domain.Model.Entity.Movement CreateMovement(
         string name,
         MovementCategory movementCategory,
+        MovementLaterality laterality,
         WorkTargetType defaultTargetType,
         IReadOnlyCollection<WorkTargetType> allowedTargetTypes,
         string description)
@@ -135,6 +140,7 @@ public sealed class DevelopmentMovementSeedFactory(
             movementCategory: movementCategory,
             description: Description.New(description),
             defaultWorkTargetType: defaultTargetType,
+            laterality: laterality,
             allowedWorkTargetTypes: allowedTargetTypes,
             createdBy: SeedUser);
     }

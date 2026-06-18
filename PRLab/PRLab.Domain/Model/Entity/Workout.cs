@@ -3,6 +3,7 @@ using PRLab.Domain.Model.Join;
 using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
+using PRLab.Domain.Model.Value.Prescription;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Entity;
@@ -14,6 +15,8 @@ public sealed record Workout : IAudited, IDescribed, IOwnedData
     public string Name { get; private set; } = string.Empty;
 
     public string NameKey { get; private set; } = string.Empty;
+    
+    public EstimatedDuration? EstimatedDuration { get; private set; } //de we compute it from the child ? 
 
     public Description Description { get; private set; } = null!;
 
@@ -316,4 +319,44 @@ public sealed record Workout : IAudited, IDescribed, IOwnedData
             orderedBlocks[index].ChangeSequence(index + 1);
         }
     }
+    
+    public void ChangeEstimatedDuration(
+        EstimatedDuration estimatedDuration,
+        User? changedBy = null)
+    {
+        ArgumentNullException.ThrowIfNull(estimatedDuration);
+
+        if (EstimatedDuration == estimatedDuration)
+        {
+            return;
+        }
+
+        EstimatedDuration = estimatedDuration;
+        MarkUpdated(changedBy);
+    }
+
+    public void RemoveEstimatedDuration(User? changedBy = null)
+    {
+        if (EstimatedDuration is null)
+        {
+            return;
+        }
+
+        EstimatedDuration = null;
+        MarkUpdated(changedBy);
+    }
+
+    public void RecalculateEstimatedDuration(User? changedBy = null)
+    {
+        var estimatedDuration = WorkoutDurationCalculator.EstimateBlockDuration(this);
+
+        if (estimatedDuration is null || EstimatedDuration == estimatedDuration)
+        {
+            return;
+        }
+
+        EstimatedDuration = estimatedDuration;
+        MarkUpdated(changedBy);
+    }
+    
 }

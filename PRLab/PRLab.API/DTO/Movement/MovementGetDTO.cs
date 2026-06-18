@@ -20,4 +20,5 @@ public sealed record MovementGetDTO(
     IReadOnlyList<MuscleSummaryDTO> SecondaryMuscles,
     MovementPattern? PrimaryPattern,
     IReadOnlyList<MovementPattern> Patterns,
+    MovementLaterality Laterality,
     MovementSummaryDTO? VariantOfMovement);

@@ -19,6 +19,8 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
     public WorkoutBlockType BlockType { get; private set; }
 
     public RoundPrescription RoundPrescription { get; private set; } = null!;
+    
+    public EstimatedDuration EstimatedBlockDuration { get; private set; } // do we compute from the childs ? 
 
     public AuditInfo Audit { get; private set; } = null!;
 

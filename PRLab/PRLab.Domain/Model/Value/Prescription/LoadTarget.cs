@@ -36,6 +36,22 @@ public sealed record LoadTarget
         );
     }
 
+    public static LoadTarget RepMax(int value)
+    {
+        return new LoadTarget(
+            value,
+            LoadTargetType.RepMax,
+            LoadUnit.RM);
+    }
+    
+    public static LoadTarget PercentageRepMax(int value)
+    {
+        return new LoadTarget(
+            value,
+            LoadTargetType.RepMax,
+            LoadUnit.Percent);
+    }
+    
     public static LoadTarget ExternalLoad(
         decimal value,
         LoadUnit unit)

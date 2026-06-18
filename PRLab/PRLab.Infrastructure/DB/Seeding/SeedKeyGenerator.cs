@@ -51,6 +51,15 @@ public static class SeedKeyGenerator
             EntityType.Exercise,
             exercise.NameKey);
     }
+    
+    public static string GenerateWorkoutKey(Workout workout)
+    {
+        ArgumentNullException.ThrowIfNull(workout);
+
+        return GenerateKey(
+            EntityType.Workout,
+            workout.NameKey);
+    }
 
     public static string GenerateMuscleKeyFromName(string name)
     {
@@ -94,6 +103,7 @@ public static class SeedKeyGenerator
             EntityType.MovementCategory => "movement-category",
             EntityType.Movement => "movement",
             EntityType.Exercise => "exercise",
+            EntityType.Workout => "workout",
             _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null)
         };
     }

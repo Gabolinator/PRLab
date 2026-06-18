@@ -16,6 +16,8 @@ public sealed class MovementUpdate
     public DescriptionUpdate? Description { get; init; }
 
     public WorkTargetType? DefaultWorkTargetType { get; init; }
+    
+    public MovementLaterality? Laterality { get; init; }
 
     public IReadOnlyCollection<WorkTargetType>? AllowedWorkTargetTypes { get; init; }
 
@@ -56,6 +58,7 @@ public sealed class MovementUpdate
             Muscles = movement.Muscles,
             PrimaryPattern = movement.PrimaryPattern,
             Patterns = movement.Patterns,
+            Laterality =  movement.Laterality,
             VariantOfId = movement.VariantOfId,
             WasVariantOfProvided = true,
             UpdatedBy = user

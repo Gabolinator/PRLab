@@ -23,6 +23,48 @@ public sealed record WorkoutBlockAssignment
     private WorkoutBlockAssignment(
         WorkoutBlockAssignmentId id,
         WorkoutId workoutId,
+        WorkoutBlock workoutBlock,
+        int sequence)
+    {
+        ArgumentNullException.ThrowIfNull(workoutBlock);
+
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Workout block assignment id cannot be empty.", nameof(id));
+        }
+
+        if (workoutId.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Workout id cannot be empty.", nameof(workoutId));
+        }
+
+        if (sequence < 1)
+        {
+            throw new ArgumentException("Sequence must be greater than zero.", nameof(sequence));
+        }
+
+        Id = id;
+        WorkoutId = workoutId;
+        WorkoutBlockId = workoutBlock.Id;
+        WorkoutBlock = workoutBlock;
+        Sequence = sequence;
+    }
+
+    public static WorkoutBlockAssignment New(
+        WorkoutId workoutId,
+        WorkoutBlock workoutBlock,
+        int sequence)
+    {
+        return new WorkoutBlockAssignment(
+            WorkoutBlockAssignmentId.New(),
+            workoutId,
+            workoutBlock,
+            sequence);
+    }
+    
+    private WorkoutBlockAssignment(
+        WorkoutBlockAssignmentId id,
+        WorkoutId workoutId,
         WorkoutBlockId workoutBlockId,
         int sequence)
     {

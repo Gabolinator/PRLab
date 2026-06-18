@@ -56,6 +56,7 @@ public static class MovementMapper
                 .Select(pattern => pattern.Pattern)
                 .OrderBy(pattern => pattern)
                 .ToList(),
+            movement.Laterality,
             movement.VariantOf is null
                 ? null
                 : ToSummaryDTO(movement.VariantOf));
@@ -102,6 +103,7 @@ public static class MovementMapper
             description: payload.Descriptor?.Content,
             owner: currentUser,
             defaultWorkTargetType: payload.DefaultWorkTargetType,
+            laterality: payload.Laterality,
             allowedWorkTargetTypes: payload.AllowedWorkTargetTypes);
 
         ApplyEquipmentRequirements(

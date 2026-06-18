@@ -13,6 +13,7 @@ using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
 using PRLab.Infrastructure.DB.Helpers;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 
@@ -24,7 +25,7 @@ public class MovementSeeder(
 {
     public override string Name => "DevelopmentMovementSeed";
 
-    public override string Version => "1.0.3";
+    public override string Version => "1.0.6";
 
     public override EntityType EntityType => EntityType.Movement;
 
@@ -55,7 +56,7 @@ public class MovementSeeder(
                 changes.Add(result.change);
             }
         }
-        
+
         await db.SaveChangesAsync(ct);
 
         movementCatalog = await SeedCatalogBuilder.CreateMovementCatalog(db, ct);
@@ -83,9 +84,9 @@ public class MovementSeeder(
     }
 
     private async Task<SeedChange?> ApplyMovementVariantSeedItem(
-    SeedRelationItem<MovementId> movementVariantSeedItem,
-    MovementSeedCatalog movementCatalog,
-    CancellationToken ct)
+        SeedRelationItem<MovementId> movementVariantSeedItem,
+        MovementSeedCatalog movementCatalog,
+        CancellationToken ct)
     {
         if (movementVariantSeedItem.Action == SeedAction.Ignore)
         {
@@ -105,7 +106,7 @@ public class MovementSeeder(
             throw new InvalidOperationException(
                 $"Movement '{movementVariantSeedItem.SourceId.Value}' was not found.");
         }
-        
+
         if (sourceMovement.VariantOfId == parentMovement.Id)
         {
             return null;
@@ -119,7 +120,7 @@ public class MovementSeeder(
             $"{sourceMovement.NameKey}->variant-of->{parentMovement.NameKey}",
             SeedChangeType.Updated);
     }
-    
+
     private async Task<(Movement? entity, SeedChange? change)> ApplyMovementSeedItem(
         SeedItem<Movement> movementSeedItem,
         CancellationToken ct)
@@ -132,12 +133,7 @@ public class MovementSeeder(
         var seedMovement = movementSeedItem.Entity;
 
         var existingMovement = await db.Movements
-            .Include(movement => movement.Description)
-                .ThenInclude(description => description.Translations)
-            .Include(movement => movement.MovementCategory)
-            .Include(movement => movement.Muscles)
-            .Include(movement => movement.EquipmentRequirements)
-            .Include(movement => movement.Patterns)
+            .ForFullWrite()
             .FirstOrDefaultAsync(
                 movement => movement.NameKey == seedMovement.NameKey,
                 ct);

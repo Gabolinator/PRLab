@@ -73,6 +73,7 @@ public sealed class JsonMovementSeedFactory(
                 movementCategory: movementCategory,
                 description: description,
                 defaultWorkTargetType: seedDto.DefaultWorkTargetType,
+                laterality: seedDto.Laterality,
                 allowedWorkTargetTypes: seedDto.AllowedWorkTargetTypes,
                 createdBy: SeedUser)
             : Movement.NewBuiltIn(
@@ -80,6 +81,7 @@ public sealed class JsonMovementSeedFactory(
                 movementCategory: movementCategory,
                 description: description,
                 defaultWorkTargetType: seedDto.DefaultWorkTargetType,
+                laterality: seedDto.Laterality,
                 allowedWorkTargetTypes: seedDto.AllowedWorkTargetTypes,
                 createdBy: SeedUser);
 

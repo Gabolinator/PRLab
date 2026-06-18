@@ -23,6 +23,8 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
 
     public MovementCategory MovementCategory { get; private set; } = null!;
 
+    public MovementLaterality Laterality { get; private set; }
+    
     public MovementId? VariantOfId { get; private set; }
 
     public Movement? VariantOf { get; private set; }
@@ -100,6 +102,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         AuditInfo audit,
         OwnershipInfo ownership,
         WorkTargetType defaultWorkTargetType,
+        MovementLaterality laterality = MovementLaterality.Bilateral,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
         if (id.Value == Guid.Empty)
@@ -116,6 +119,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         SetName(name);
         MovementCategory = movementCategory;
         MovementCategoryId = movementCategory.Id;
+        Laterality = laterality;
         Description = description;
         Audit = audit;
         Ownership = ownership;
@@ -133,6 +137,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         AuditInfo audit,
         OwnershipInfo ownership,
         WorkTargetType defaultWorkTargetType,
+        MovementLaterality laterality = MovementLaterality.Bilateral,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
         if (id.Value == Guid.Empty)
@@ -152,6 +157,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         Id = id;
         SetName(name);
         MovementCategoryId = movementCategoryId;
+        Laterality = laterality;
         Description = description;
         Audit = audit;
         Ownership = ownership;
@@ -166,6 +172,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         MovementCategoryId movementCategoryId,
         string? description,
         WorkTargetType defaultWorkTargetType,
+        MovementLaterality laterality,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
         User? createdBy = null)
     {
@@ -177,6 +184,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             AuditInfo.New(createdBy),
             OwnershipInfo.BuiltIn(),
             defaultWorkTargetType,
+            laterality,
             allowedWorkTargetTypes
         );
     }
@@ -186,6 +194,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         MovementCategory movementCategory,
         Description description,
         WorkTargetType defaultWorkTargetType,
+        MovementLaterality laterality,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
         User? createdBy = null)
     {
@@ -197,6 +206,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             AuditInfo.New(createdBy),
             OwnershipInfo.BuiltIn(),
             defaultWorkTargetType,
+            laterality,
             allowedWorkTargetTypes
         );
     }
@@ -207,6 +217,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         MovementCategory movementCategory,
         Description description,
         WorkTargetType defaultWorkTargetType,
+        MovementLaterality laterality,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
         User? createdBy = null)
     {
@@ -218,6 +229,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             AuditInfo.New(createdBy),
             OwnershipInfo.BuiltIn(),
             defaultWorkTargetType,
+            laterality,
             allowedWorkTargetTypes
         );
     }
@@ -228,6 +240,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         string? description,
         User owner,
         WorkTargetType defaultWorkTargetType,
+        MovementLaterality laterality,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
@@ -240,6 +253,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             AuditInfo.New(owner),
             OwnershipInfo.UserCreated(owner),
             defaultWorkTargetType,
+            laterality,
             allowedWorkTargetTypes
         );
     }
@@ -250,6 +264,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         Description description,
         User owner,
         WorkTargetType defaultWorkTargetType,
+        MovementLaterality laterality,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
@@ -262,6 +277,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             AuditInfo.New(owner),
             OwnershipInfo.UserCreated(owner),
             defaultWorkTargetType,
+            laterality,
             allowedWorkTargetTypes
         );
     }
@@ -272,6 +288,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         Description description,
         User coach,
         WorkTargetType defaultWorkTargetType,
+        MovementLaterality laterality = MovementLaterality.Bilateral,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
         ArgumentNullException.ThrowIfNull(coach);
@@ -284,6 +301,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             AuditInfo.New(coach),
             OwnershipInfo.CoachCreated(coach),
             defaultWorkTargetType,
+            laterality,
             allowedWorkTargetTypes
         );
     }
@@ -294,6 +312,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         Description description,
         User owner,
         WorkTargetType defaultWorkTargetType,
+        MovementLaterality laterality = MovementLaterality.Bilateral,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
@@ -306,6 +325,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             AuditInfo.New(owner),
             OwnershipInfo.Imported(owner),
             defaultWorkTargetType,
+            laterality,
             allowedWorkTargetTypes
         );
     }
@@ -338,6 +358,19 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         NameKey = normalizedNameKey;
 
         return true;
+    }
+    
+    public void ChangeLaterality(
+        MovementLaterality laterality,
+        User? changedBy = null)
+    {
+        if (Laterality == laterality)
+        {
+            return;
+        }
+
+        Laterality = laterality;
+        MarkUpdated(changedBy);
     }
 
     public void ChangeCategory(MovementCategoryId movementCategoryId, User? changedBy = null)
@@ -796,6 +829,13 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             MovementCategoryId = update.MovementCategoryId.Value;
             hasChanged = true;
         }
+        
+        if (update.Laterality.HasValue
+            && Laterality != update.Laterality.Value)
+        {
+            Laterality = update.Laterality.Value;
+            hasChanged = true;
+        }
 
         if (update.Description is not null)
         {
@@ -880,11 +920,29 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             return false;
         }
 
-        allowedWorkTargets.Clear();
+        var targetTypesToRemove = allowedWorkTargets
+            .Where(allowedWorkTarget => !normalizedTargetTypes.Contains(allowedWorkTarget.TargetType))
+            .ToList();
 
-        foreach (var targetType in normalizedTargetTypes)
+        foreach (var allowedWorkTarget in targetTypesToRemove)
         {
-            AddAllowedWorkTargetTypeWithoutAudit(targetType);
+            allowedWorkTargets.Remove(allowedWorkTarget);
+        }
+
+        var existingTargetTypes = allowedWorkTargets
+            .Select(allowedWorkTarget => allowedWorkTarget.TargetType)
+            .ToHashSet();
+
+        var targetTypesToAdd = normalizedTargetTypes
+            .Where(targetType => !existingTargetTypes.Contains(targetType))
+            .ToList();
+
+        foreach (var targetType in targetTypesToAdd)
+        {
+            allowedWorkTargets.Add(
+                MovementAllowedWorkTarget.New(
+                    Id,
+                    targetType));
         }
 
         return true;

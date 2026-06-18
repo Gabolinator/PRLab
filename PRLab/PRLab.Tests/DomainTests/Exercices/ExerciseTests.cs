@@ -3,6 +3,7 @@ using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Enum.Movement;
 using PRLab.Domain.Model.Value.Enum.Prescription;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
@@ -145,7 +146,8 @@ public sealed class ExerciseTests
             movementName,
             movementCategoryId,
             movementDescriptionText,
-            defaultWorkTargetType: WorkTargetType.Repetitions
+            defaultWorkTargetType: WorkTargetType.Repetitions,
+            laterality: MovementLaterality.Bilateral
         );
 
         var exercise = Exercise.FromMovementBuiltIn(
@@ -163,17 +165,17 @@ public sealed class ExerciseTests
         exercise.Ownership.OwnerUserId.Should().BeNull();
         exercise.Steps.Should().ContainSingle();
 
-        var Step = exercise.Steps.First();
+        var step = exercise.Steps.First();
 
-        Step.ExerciseId.Should().Be(exercise.Id);
-        Step.MovementId.Should().Be(movement.Id);
-        Step.Sequence.Should().Be(1);
-        Step.Target.Value.Should().Be(value);
-        Step.Target.TargetType.Should().Be(targetType);
-        Step.LoadTarget.Type.Should().Be(LoadTargetType.None);
-        Step.RestBetweenReps.IsEmpty().Should().BeTrue();
-        Step.TransitionAfterStep.IsEmpty().Should().BeTrue();
-        Step.ExecutionDetails.IsEmpty().Should().BeTrue();
+        step.ExerciseId.Should().Be(exercise.Id);
+        step.MovementId.Should().Be(movement.Id);
+        step.Sequence.Should().Be(1);
+        step.Target.Value.Should().Be(value);
+        step.Target.TargetType.Should().Be(targetType);
+        step.LoadTarget.Type.Should().Be(LoadTargetType.None);
+        step.RestBetweenReps.IsEmpty().Should().BeTrue();
+        step.TransitionAfterStep.IsEmpty().Should().BeTrue();
+        step.ExecutionDetails.IsEmpty().Should().BeTrue();
     }
 
     [Fact]
@@ -190,7 +192,8 @@ public sealed class ExerciseTests
             movementName,
             movementCategoryId,
             movementDescriptionText,
-            defaultWorkTargetType: WorkTargetType.Repetitions
+            defaultWorkTargetType: WorkTargetType.Repetitions,
+            laterality: MovementLaterality.Bilateral
         );
 
         var exercise = Exercise.FromMovementUserCreated(
@@ -243,7 +246,8 @@ public sealed class ExerciseTests
             movementName,
             movementCategoryId,
             movementDescriptionText,
-            defaultWorkTargetType: WorkTargetType.Repetitions
+            defaultWorkTargetType: WorkTargetType.Repetitions,
+            laterality: MovementLaterality.Bilateral
         );
 
         var exercise = Exercise.FromMovementBuiltIn(
@@ -257,14 +261,14 @@ public sealed class ExerciseTests
             executionDetails
         );
 
-        var Step = exercise.Steps.First();
+        var step = exercise.Steps.First();
 
-        Step.Target.Value.Should().Be(value);
-        Step.Target.TargetType.Should().Be(targetType);
-        Step.LoadTarget.Should().Be(loadTarget);
-        Step.RestBetweenReps.Should().Be(restBetweenReps);
-        Step.TransitionAfterStep.Should().Be(transitionAfterStep);
-        Step.ExecutionDetails.Should().Be(executionDetails);
+        step.Target.Value.Should().Be(value);
+        step.Target.TargetType.Should().Be(targetType);
+        step.LoadTarget.Should().Be(loadTarget);
+        step.RestBetweenReps.Should().Be(restBetweenReps);
+        step.TransitionAfterStep.Should().Be(transitionAfterStep);
+        step.ExecutionDetails.Should().Be(executionDetails);
     }
 
     [Fact]
@@ -353,16 +357,16 @@ public sealed class ExerciseTests
             executionDetails
         );
 
-        var Step = exercise.Steps.First();
+        var step = exercise.Steps.First();
 
-        Step.MovementId.Should().Be(movementId);
-        Step.Sequence.Should().Be(1);
-        Step.Target.Value.Should().Be(value);
-        Step.Target.TargetType.Should().Be(targetType);
-        Step.LoadTarget.Should().Be(loadTarget);
-        Step.RestBetweenReps.Should().Be(restBetweenReps);
-        Step.TransitionAfterStep.Should().Be(transitionAfterStep);
-        Step.ExecutionDetails.Should().Be(executionDetails);
+        step.MovementId.Should().Be(movementId);
+        step.Sequence.Should().Be(1);
+        step.Target.Value.Should().Be(value);
+        step.Target.TargetType.Should().Be(targetType);
+        step.LoadTarget.Should().Be(loadTarget);
+        step.RestBetweenReps.Should().Be(restBetweenReps);
+        step.TransitionAfterStep.Should().Be(transitionAfterStep);
+        step.ExecutionDetails.Should().Be(executionDetails);
     }
 
     [Fact]
@@ -422,9 +426,9 @@ public sealed class ExerciseTests
             WorkTargetType.Repetitions
         );
 
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
 
-        exercise.RemoveStep(StepId);
+        exercise.RemoveStep(stepId);
 
         exercise.Steps.Should().BeEmpty();
     }
@@ -541,10 +545,10 @@ public sealed class ExerciseTests
             WorkTargetType.Repetitions
         );
 
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
 
         var act = () => exercise.MoveStep(
-            StepId,
+            stepId,
             0
         );
 
@@ -668,12 +672,12 @@ public sealed class ExerciseTests
     {
         var exercise = CreateExerciseWithOneStep();
 
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
         var newValue = 30m;
         var newTargetType = WorkTargetType.DurationSeconds;
 
         exercise.ChangeStepTarget(
-            StepId,
+            stepId,
             newValue,
             newTargetType
         );
@@ -706,7 +710,7 @@ public sealed class ExerciseTests
     public void ChangeStepLoadTarget_ShouldChangeLoadTarget_WhenStepExists()
     {
         var exercise = CreateExerciseWithOneStep();
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
 
         var loadTarget = LoadTarget.ExternalLoad(
             80m,
@@ -714,7 +718,7 @@ public sealed class ExerciseTests
         );
 
         exercise.ChangeStepLoadTarget(
-            StepId,
+            stepId,
             loadTarget
         );
 
@@ -749,7 +753,7 @@ public sealed class ExerciseTests
     public void RemoveStepLoadTarget_ShouldSetLoadTargetToNone_WhenStepExists()
     {
         var exercise = CreateExerciseWithOneStep();
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
 
         var loadTarget = LoadTarget.ExternalLoad(
             80m,
@@ -757,11 +761,11 @@ public sealed class ExerciseTests
         );
 
         exercise.ChangeStepLoadTarget(
-            StepId,
+            stepId,
             loadTarget
         );
 
-        exercise.RemoveStepLoadTarget(StepId);
+        exercise.RemoveStepLoadTarget(stepId);
 
         exercise.Steps.First().LoadTarget.Type.Should().Be(LoadTargetType.None);
         exercise.Steps.First().LoadTarget.Value.Should().BeNull();
@@ -772,11 +776,11 @@ public sealed class ExerciseTests
     public void ChangeStepRestBetweenReps_ShouldChangeRestBetweenReps_WhenStepExists()
     {
         var exercise = CreateExerciseWithOneStep();
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
         var restBetweenReps = RestTarget.SecondsDuration(10);
 
         exercise.ChangeStepRestBetweenReps(
-            StepId,
+            stepId,
             restBetweenReps
         );
 
@@ -787,15 +791,15 @@ public sealed class ExerciseTests
     public void RemoveStepRestBetweenReps_ShouldSetRestBetweenRepsToNone_WhenStepExists()
     {
         var exercise = CreateExerciseWithOneStep();
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
         var restBetweenReps = RestTarget.SecondsDuration(10);
 
         exercise.ChangeStepRestBetweenReps(
-            StepId,
+            stepId,
             restBetweenReps
         );
 
-        exercise.RemoveStepRestBetweenReps(StepId);
+        exercise.RemoveStepRestBetweenReps(stepId);
 
         exercise.Steps.First().RestBetweenReps.IsEmpty().Should().BeTrue();
     }
@@ -804,11 +808,11 @@ public sealed class ExerciseTests
     public void ChangeStepTransitionAfterStep_ShouldChangeTransitionAfterStep_WhenStepExists()
     {
         var exercise = CreateExerciseWithOneStep();
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
         var transitionAfterStep = RestTarget.SecondsDuration(120);
 
         exercise.ChangeStepTransitionAfterStep(
-            StepId,
+            stepId,
             transitionAfterStep
         );
 
@@ -819,15 +823,15 @@ public sealed class ExerciseTests
     public void RemoveStepTransitionAfterStep_ShouldSetTransitionAfterStepToNone_WhenStepExists()
     {
         var exercise = CreateExerciseWithOneStep();
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
         var transitionAfterStep = RestTarget.SecondsDuration(120);
 
         exercise.ChangeStepTransitionAfterStep(
-            StepId,
+            stepId,
             transitionAfterStep
         );
 
-        exercise.RemoveStepTransitionAfterStep(StepId);
+        exercise.RemoveStepTransitionAfterStep(stepId);
 
         exercise.Steps.First().TransitionAfterStep.IsEmpty().Should().BeTrue();
     }
@@ -836,7 +840,7 @@ public sealed class ExerciseTests
     public void ChangeStepExecutionDetails_ShouldChangeExecutionDetails_WhenStepExists()
     {
         var exercise = CreateExerciseWithOneStep();
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
 
         var executionDetails = RepExecutionDetails.New(
             eccentricSeconds: 3,
@@ -845,7 +849,7 @@ public sealed class ExerciseTests
         );
 
         exercise.ChangeStepExecutionDetails(
-            StepId,
+            stepId,
             executionDetails
         );
 
@@ -856,7 +860,7 @@ public sealed class ExerciseTests
     public void RemoveStepExecutionDetails_ShouldSetExecutionDetailsToEmpty_WhenStepExists()
     {
         var exercise = CreateExerciseWithOneStep();
-        var StepId = exercise.Steps.First().Id;
+        var stepId = exercise.Steps.First().Id;
 
         var executionDetails = RepExecutionDetails.New(
             eccentricSeconds: 3,
@@ -865,11 +869,11 @@ public sealed class ExerciseTests
         );
 
         exercise.ChangeStepExecutionDetails(
-            StepId,
+            stepId,
             executionDetails
         );
 
-        exercise.RemoveStepExecutionDetails(StepId);
+        exercise.RemoveStepExecutionDetails(stepId);
 
         exercise.Steps.First().ExecutionDetails.IsEmpty().Should().BeTrue();
     }

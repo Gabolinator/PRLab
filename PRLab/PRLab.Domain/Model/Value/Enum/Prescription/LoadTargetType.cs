@@ -12,4 +12,5 @@ public enum LoadTargetType
     PercentageOfOneRepMax = 8,
     RateOfPerceivedExertion = 9,
     RepsInReserve = 10,
+    RepMax = 11,
 }

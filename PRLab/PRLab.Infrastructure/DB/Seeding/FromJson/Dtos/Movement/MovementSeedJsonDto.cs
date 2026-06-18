@@ -29,6 +29,8 @@ public sealed record MovementSeedJsonDto
     public MovementPattern? PrimaryPattern { get; init; }
 
     public IReadOnlyList<MovementPattern> Patterns { get; init; } = [];
+    
+    public MovementLaterality Laterality { get; init; } = MovementLaterality.Bilateral;
 
     public SeedEntityReferenceJsonDto? VariantOf { get; init; }
 
@@ -85,6 +87,7 @@ public sealed record MovementSeedJsonDto
                 .Select(pattern => pattern.Pattern)
                 .OrderBy(pattern => pattern)
                 .ToList(),
+            Laterality = movement.Laterality,
             VariantOf = movement.VariantOf is not null
                 ? SeedEntityReferenceJsonDto.FromMovement(movement.VariantOf)
                 : null,

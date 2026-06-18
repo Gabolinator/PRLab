@@ -6,4 +6,5 @@ public enum LoadUnit
     Pound = 2,
     Percent = 3,
     Level = 4,
+    RM = 6,
 }

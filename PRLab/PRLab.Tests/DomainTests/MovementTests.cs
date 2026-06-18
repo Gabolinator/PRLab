@@ -17,6 +17,7 @@ public sealed class MovementTests
         MovementCategoryId? movementCategoryId = null,
         string? description = null,
         WorkTargetType defaultWorkTargetType = WorkTargetType.Repetitions,
+        MovementLaterality laterality = MovementLaterality.Bilateral,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
         return Movement.NewBuiltIn(
@@ -24,6 +25,7 @@ public sealed class MovementTests
             movementCategoryId ?? MovementCategoryId.New(),
             description,
             defaultWorkTargetType,
+            laterality,
             allowedWorkTargetTypes);
     }
 
@@ -38,11 +40,13 @@ public sealed class MovementTests
             name,
             movementCategoryId,
             descriptionText,
-            WorkTargetType.Repetitions);
+            WorkTargetType.Repetitions,
+            MovementLaterality.Bilateral);
 
         movement.Name.Should().Be(FormatingUtilities.NormalizeName(name));
         movement.NameKey.Should().Be(FormatingUtilities.NormalizeNameKey(name));
         movement.MovementCategoryId.Should().Be(movementCategoryId);
+        movement.Laterality.Should().Be(MovementLaterality.Bilateral);
         movement.Description.GetContent().Should().Be(descriptionText);
         movement.DefaultWorkTargetType.Should().Be(WorkTargetType.Repetitions);
         movement.AllowedWorkTargets.Should().ContainSingle();
@@ -60,6 +64,19 @@ public sealed class MovementTests
     }
 
     [Fact]
+    public void NewBuiltIn_ShouldCreateMovement_WithUnilateralLaterality()
+    {
+        var movement = Movement.NewBuiltIn(
+            "Single Arm Row",
+            MovementCategoryId.New(),
+            "Single-side pulling movement.",
+            WorkTargetType.Repetitions,
+            MovementLaterality.Unilateral);
+
+        movement.Laterality.Should().Be(MovementLaterality.Unilateral);
+    }
+
+    [Fact]
     public void NewUserCreated_ShouldCreateMovement_WithOwner()
     {
         var owner = User.New("Test User");
@@ -72,11 +89,13 @@ public sealed class MovementTests
             movementCategoryId,
             descriptionText,
             owner,
-            WorkTargetType.Repetitions);
+            WorkTargetType.Repetitions,
+            MovementLaterality.Bilateral);
 
         movement.Name.Should().Be(FormatingUtilities.NormalizeName(name));
         movement.NameKey.Should().Be(FormatingUtilities.NormalizeNameKey(name));
         movement.MovementCategoryId.Should().Be(movementCategoryId);
+        movement.Laterality.Should().Be(MovementLaterality.Bilateral);
         movement.Description.GetContent().Should().Be(descriptionText);
         movement.DefaultWorkTargetType.Should().Be(WorkTargetType.Repetitions);
         movement.AllowedWorkTargets.Should().ContainSingle();
@@ -99,7 +118,8 @@ public sealed class MovementTests
             name,
             movementCategoryId,
             descriptionText,
-            WorkTargetType.Repetitions);
+            WorkTargetType.Repetitions,
+            MovementLaterality.Bilateral);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -111,7 +131,8 @@ public sealed class MovementTests
             "Push Up",
             MovementCategoryId.New(),
             null,
-            WorkTargetType.Repetitions);
+            WorkTargetType.Repetitions,
+            MovementLaterality.Bilateral);
 
         movement.DefaultWorkTargetType.Should().Be(WorkTargetType.Repetitions);
         movement.AllowedWorkTargets.Should().ContainSingle();
@@ -126,6 +147,7 @@ public sealed class MovementTests
             MovementCategoryId.New(),
             null,
             WorkTargetType.DistanceMeters,
+            MovementLaterality.Bilateral,
             [
                 WorkTargetType.DurationSeconds,
                 WorkTargetType.Calories

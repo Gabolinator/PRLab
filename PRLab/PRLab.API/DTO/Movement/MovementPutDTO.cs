@@ -25,6 +25,8 @@ public sealed record MovementPutDTO
     public MovementPattern? PrimaryPattern { get; init; }
 
     public IReadOnlyList<MovementPattern> Patterns { get; init; } = [];
+    
+    public MovementLaterality? Laterality { get; init; }
 
     public MovementId? VariantOfMovementId { get; init; }
 }

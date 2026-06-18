@@ -9,6 +9,8 @@ public sealed record RoundPrescription
     public RestTarget? RestBetweenRounds { get; init; }
 
     public RestTarget? RestAfterBlock { get; init; }
+    
+    public EstimatedDuration? EstimatedRoundDuration { get; init; } //per round or for the whole thing ? 
 
     private RoundPrescription()
     {
@@ -19,7 +21,8 @@ public sealed record RoundPrescription
         int numRounds,
         TimeSpan? prepareTime,
         RestTarget? restBetweenRounds,
-        RestTarget? restAfterBlock)
+        RestTarget? restAfterBlock,
+        EstimatedDuration? estimatedRoundDuration)
     {
         if (numRounds < 1)
         {
@@ -35,29 +38,34 @@ public sealed record RoundPrescription
         PrepareTime = prepareTime;
         RestBetweenRounds = restBetweenRounds;
         RestAfterBlock = restAfterBlock;
+        EstimatedRoundDuration = estimatedRoundDuration;
     }
 
     public static RoundPrescription Once(
         TimeSpan? prepareTime = null,
-        RestTarget? restAfterBlock = null)
+        RestTarget? restAfterBlock = null,
+        EstimatedDuration? estimatedDuration = null)
     {
         return new RoundPrescription(
             1,
             prepareTime,
             null,
-            restAfterBlock);
+            restAfterBlock,
+            estimatedDuration);
     }
 
     public static RoundPrescription Rounds(
         int numRounds,
         TimeSpan? prepareTime = null,
         RestTarget? restBetweenRounds = null,
-        RestTarget? restAfterBlock = null)
+        RestTarget? restAfterBlock = null,
+        EstimatedDuration? estimatedDuration = null)
     {
         return new RoundPrescription(
             numRounds,
             prepareTime,
             restBetweenRounds,
-            restAfterBlock);
+            restAfterBlock,
+            estimatedDuration);
     }
 }

@@ -15,7 +15,7 @@ public static class MovementModelBuilder
         modelBuilder.CreateMovementEquipmentRequirementTableModel();
         modelBuilder.CreateMovementAllowedWorkTargetTableModel();
     }
-    
+
     public static void CreateMovementTableModel(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Movement>(movement =>
@@ -44,6 +44,11 @@ public static class MovementModelBuilder
                     value => MovementCategoryId.FromGuid(value))
                 .IsRequired();
 
+            movement.Property(movement => movement.Laterality)
+                .HasConversion<string>()
+                .HasMaxLength(80)
+                .IsRequired();
+
             movement.Property(movement => movement.VariantOfId)
                 .HasConversion<Guid?>(
                     movementId => movementId.HasValue ? movementId.Value.Value : null,
@@ -57,7 +62,7 @@ public static class MovementModelBuilder
                 .HasConversion<string>()
                 .HasMaxLength(80)
                 .IsRequired();
-            
+
             movement.HasOne(movement => movement.Description)
                 .WithMany()
                 .IsRequired()
@@ -104,7 +109,7 @@ public static class MovementModelBuilder
                         userId => userId.HasValue ? userId.Value.Value : null,
                         value => value.HasValue ? UserId.FromGuid(value.Value) : null);
             });
-            
+
             movement.OwnsOne(movement => movement.Ownership, ownership =>
             {
                 ownership.Property(ownershipInfo => ownershipInfo.Origin)
@@ -118,7 +123,7 @@ public static class MovementModelBuilder
                     .HasConversion<Guid?>(
                         userId => userId.HasValue ? userId.Value.Value : null,
                         value => value.HasValue ? UserId.FromGuid(value.Value) : null);
-                
+
                 ownership.HasIndex(ownershipInfo => ownershipInfo.Origin)
                     .HasDatabaseName("IX_Movement_DataOrigin");
 
@@ -137,7 +142,7 @@ public static class MovementModelBuilder
 
             movement.Navigation(movement => movement.Variants)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
-            
+
             movement.Navigation(movement => movement.AllowedWorkTargets)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
         });
@@ -172,7 +177,7 @@ public static class MovementModelBuilder
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }
-    
+
     public static void CreateMovementPatternTagTableModel(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<MovementPatternTag>(movementPatternTag =>
@@ -305,12 +310,14 @@ public static class MovementModelBuilder
 
             movement.HasIndex(movement => movement.MovementCategoryId);
 
+            movement.HasIndex(movement => movement.Laterality);
+
             movement.HasIndex(movement => movement.VariantOfId);
 
             movement.HasIndex(movement => movement.PrimaryPattern);
 
             movement.HasIndex("DescriptionId");
-            
+
             movement.HasIndex(movement => movement.DefaultWorkTargetType);
         });
 
@@ -329,8 +336,7 @@ public static class MovementModelBuilder
         {
             movementEquipment.HasIndex(movementEquipment => movementEquipment.EquipmentId);
         });
-        
-        
+
         modelBuilder.Entity<MovementAllowedWorkTarget>(allowedWorkTarget =>
         {
             allowedWorkTarget.HasIndex(allowedWorkTarget => allowedWorkTarget.TargetType);

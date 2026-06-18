@@ -21,7 +21,7 @@ public sealed record WorkoutBlockSegmentStep
 
     public int Sequence { get; init; }
 
-    public RestTarget? Rest { get; init; }
+    public RestTarget? Rest { get; init; } // if a rest step
 
     public string? Notes { get; init; }
 
@@ -51,10 +51,7 @@ public sealed record WorkoutBlockSegmentStep
             throw new ArgumentException("Workout block segment id cannot be empty.", nameof(segmentId));
         }
 
-        if (sequence < 1)
-        {
-            throw new ArgumentException("Sequence must be greater than zero.", nameof(sequence));
-        }
+        ValidateSequenceOrThrow(sequence);
 
         Id = id;
         SegmentId = segmentId;
@@ -156,12 +153,59 @@ public sealed record WorkoutBlockSegmentStep
 
         return true;
     }
+    
+    public WorkoutBlockSegmentStep WithRestAfterStep(RestTarget? restAfterStep)
+    {
+        var prescription = Prescription ?? WorkoutStepPrescription.New();
 
+        return this with
+        {
+            Prescription = prescription.WithRestAfterStep(restAfterStep)
+        };
+    }
+    
+    public WorkoutBlockSegmentStep WithSequence(int sequence)
+    {
+       ValidateSequenceOrThrow(sequence);
+       return this with
+       {
+           Sequence = sequence,
+       };
+    }
+
+    public WorkoutBlockSegmentStep ApplyDefaultRestAfterStep(RestTarget? defaultRestAfterStep)
+    {
+        if (StepKind != WorkoutStepKind.Exercise)
+        {
+            return this;
+        }
+
+        if (defaultRestAfterStep is null)
+        {
+            return this;
+        }
+
+        if (Prescription?.RestAfterStep is not null)
+        {
+            return this;
+        }
+
+        return WithRestAfterStep(defaultRestAfterStep);
+    }
+    
     private void ValidateOrThrow()
     {
         if (!IsValid())
         {
             throw new InvalidOperationException("Workout block segment step is invalid.");
+        }
+    }
+    
+    private static void ValidateSequenceOrThrow(int sequence)
+    {
+        if (sequence < 1)
+        {
+            throw new ArgumentException("Sequence must be greater than zero.", nameof(sequence));
         }
     }
 }

@@ -6,5 +6,6 @@ public enum TimeConstraintKind
     Cap = 2,
     Minimum = 3,
     Window = 4,
-    RemainingSegmentTime = 5
+    RemainingSegmentTime = 5,
+    Interval = 6,
 }

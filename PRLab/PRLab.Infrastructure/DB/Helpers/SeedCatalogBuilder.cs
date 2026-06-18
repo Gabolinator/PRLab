@@ -5,6 +5,7 @@ using PRLab.Domain.Model.Catalog;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Helpers;
 
@@ -64,18 +65,7 @@ public static class SeedCatalogBuilder
         CancellationToken ct)
     {
         var movements = await db.Movements
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Include(movement => movement.MovementCategory)
-            .Include(movement => movement.Description)
-                .ThenInclude(description => description.Translations)
-            .Include(movement => movement.AllowedWorkTargets)
-            .Include(movement => movement.EquipmentRequirements)
-                .ThenInclude(movementEquipment => movementEquipment.Equipment)
-            .Include(movement => movement.Muscles)
-                .ThenInclude(movementMuscle => movementMuscle.Muscle)
-            .Include(movement => movement.VariantOf)
-            .Include(movement => movement.Patterns)
+            .ForFullRead()
             .OrderBy(movement => movement.Name)
             .ToListAsync(ct);
 
@@ -85,6 +75,7 @@ public static class SeedCatalogBuilder
                 movement => movement.Id,
                 movement => movement.NameKey));
     }
+
 
     public static async Task<ExerciseSeedCatalog> CreateExerciseCatalog(
         PRLabPgDBContext db,

@@ -13,7 +13,7 @@ public sealed record MovementPostDTO
     public required MovementCategoryId MovementCategoryId { get; init; }
 
     public DescriptionPostDTO? Descriptor { get; init; }
-
+    
     public required WorkTargetType DefaultWorkTargetType { get; init; }
 
     public IReadOnlyList<WorkTargetType> AllowedWorkTargetTypes { get; init; } = [];
@@ -23,8 +23,10 @@ public sealed record MovementPostDTO
     public IReadOnlyList<MovementMusclePostDTO> Muscles { get; init; } = [];
 
     public MovementPattern? PrimaryPattern { get; init; }
-
+    
     public IReadOnlyList<MovementPattern> Patterns { get; init; } = [];
+    
+    public MovementLaterality Laterality { get; init; }
 
     public MovementId? VariantOfMovementId { get; init; }
 }

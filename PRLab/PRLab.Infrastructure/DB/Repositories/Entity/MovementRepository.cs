@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Repositories.Entity;
-using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.Anatomy;
+using PRLab.Domain.Model.Value.Enum.Movement;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Repositories.Entity;
 
@@ -85,6 +86,16 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
 
         return await BaseMovementReadQuery()
             .Where(movement => movement.MovementCategoryId == movementCategoryId)
+            .OrderBy(movement => movement.Name)
+            .ToListAsync(ct);
+    }
+
+    public async Task<IReadOnlyCollection<Movement>> ListByLateralityAsync(
+        MovementLaterality laterality,
+        CancellationToken ct)
+    {
+        return await BaseMovementReadQuery()
+            .Where(movement => movement.Laterality == laterality)
             .OrderBy(movement => movement.Name)
             .ToListAsync(ct);
     }
@@ -218,36 +229,11 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
 
     private IQueryable<Movement> BaseMovementReadQuery()
     {
-        return BaseMovementQuery()
-            .AsNoTracking();
+        return db.Movements.ForFullRead();
     }
 
     private IQueryable<Movement> BaseMovementWriteQuery()
     {
-        return BaseMovementQuery();
-    }
-
-    private IQueryable<Movement> BaseMovementQuery()
-    {
-        return db.Movements
-            .AsSplitQuery()
-            .Include(movement => movement.Description)
-            .ThenInclude(description => description.Translations)
-            .Include(movement => movement.MovementCategory)
-            .ThenInclude(movementCategory => movementCategory.Description)
-            .ThenInclude(description => description.Translations)
-            .Include(movement => movement.VariantOf)
-            .Include(movement => movement.Variants)
-            .Include(movement => movement.Patterns)
-            .Include(movement => movement.AllowedWorkTargets)
-            .Include(movement => movement.Muscles)
-            .ThenInclude(movementMuscle => movementMuscle.Muscle)
-            .ThenInclude(muscle => muscle.Description)
-            .ThenInclude(description => description.Translations)
-            .Include(movement => movement.EquipmentRequirements)
-            .ThenInclude(requirement => requirement.Equipment)
-            .ThenInclude(equipment => equipment.Description)
-            .ThenInclude(description => description.Translations)
-            .Where(movement => !movement.Audit.IsDeleted);
+        return db.Movements.ForFullWrite();
     }
 }

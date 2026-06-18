@@ -11,6 +11,8 @@ public sealed record WorkoutStepPrescription
     public RestTarget? RestAfterStep { get; init; }
 
     public TimeConstraint? TimeConstraint { get; init; }
+    
+    public EstimatedDuration? EstimatedStepDuration { get; init; }
 
     public int? Sets { get; init; }
 
@@ -26,6 +28,7 @@ public sealed record WorkoutStepPrescription
         LoadTarget? loadTarget = null,
         RestTarget? restAfterStep = null,
         TimeConstraint? timeConstraint = null,
+        EstimatedDuration? estimatedDuration = null,
         int? sets = null,
         string? notes = null)
     {
@@ -40,6 +43,7 @@ public sealed record WorkoutStepPrescription
             LoadTarget = loadTarget,
             RestAfterStep = restAfterStep,
             TimeConstraint = timeConstraint,
+            EstimatedStepDuration = estimatedDuration,
             Sets = sets,
             Notes = notes
         };
@@ -57,6 +61,22 @@ public sealed record WorkoutStepPrescription
             LoadTarget = firstBlock?.LoadTarget,
             RestAfterStep = firstBlock?.TransitionAfterStep,
             Notes = null
+        };
+    }
+
+    public WorkoutStepPrescription WithEstimatedDurationSeconds(int seconds)
+    {
+        return this with
+        {
+            EstimatedStepDuration = EstimatedDuration.Seconds(seconds),
+        };
+    }
+
+    public WorkoutStepPrescription WithRestAfterStep(RestTarget? restAfterStep)
+    {
+        return this with
+        {
+           RestAfterStep = restAfterStep,
         };
     }
 }
