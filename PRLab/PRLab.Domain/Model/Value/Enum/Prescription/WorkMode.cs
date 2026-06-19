@@ -6,6 +6,5 @@ public enum WorkMode
     ForTime,                // Complete work as fast as possible
     MaxWorkInTime,          // AMRAP-style
     ForTimeWithCap,         // Complete work before cap
-    EveryMinuteOnTheMinute, // EMOM
-    Intervals               // Work/rest intervals
+    Intervals               // Work/rest intervals - or emoms
 }

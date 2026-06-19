@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.Prescription;
 
 namespace PRLab.Domain.Model.Value.Prescription;
 
@@ -13,8 +14,13 @@ public sealed record WorkoutStepPrescription
     public TimeConstraint? TimeConstraint { get; init; }
     
     public EstimatedDuration? EstimatedStepDuration { get; init; }
+    
+    public WorkIntentPrescription? IntentOverride { get; init; }
 
-    public int? Sets { get; init; }
+    public WorkPartitionPrescription? Partition { get; init; }
+    
+    // todo hook
+    public LateralityExecution? LateralityExecution { get; init; }
 
     public string? Notes { get; init; }
 
@@ -29,13 +35,10 @@ public sealed record WorkoutStepPrescription
         RestTarget? restAfterStep = null,
         TimeConstraint? timeConstraint = null,
         EstimatedDuration? estimatedDuration = null,
-        int? sets = null,
+        WorkPartitionPrescription? partition = null,
+        WorkIntentPrescription? intentOverride = null,
         string? notes = null)
     {
-        if (sets.HasValue && sets.Value < 1)
-        {
-            throw new ArgumentException("Sets must be greater than zero.", nameof(sets));
-        }
 
         return new WorkoutStepPrescription
         {
@@ -44,7 +47,8 @@ public sealed record WorkoutStepPrescription
             RestAfterStep = restAfterStep,
             TimeConstraint = timeConstraint,
             EstimatedStepDuration = estimatedDuration,
-            Sets = sets,
+            Partition = partition,
+            IntentOverride = intentOverride,
             Notes = notes
         };
     }

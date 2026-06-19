@@ -11,6 +11,9 @@ public sealed record LoadTarget
     public LoadTargetType Type { get; private set; }
 
     public LoadUnit? Unit { get; private set; }
+    
+    //todo hook
+    public LoadReference? LoadReference { get; private set; }
 
     private LoadTarget()
     {

@@ -9,6 +9,9 @@ public sealed record TargetIntensity
     public decimal? Value { get; init; }
 
     public TargetIntensityRange? Range { get; init; }
+    
+    // todo hook 
+    public PaceTarget? PaceTarget { get; init; }
 
     private TargetIntensity()
     {

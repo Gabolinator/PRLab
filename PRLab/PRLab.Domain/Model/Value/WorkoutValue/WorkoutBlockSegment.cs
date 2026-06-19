@@ -17,7 +17,7 @@ public sealed record WorkoutBlockSegment
 
     public WorkMode WorkMode { get; private set; }
 
-    public WorkIntentPrescription WorkIntentPrescription { get; private set; }
+    public WorkIntentPrescription Intent { get; private set; }
 
     public WorkoutScoreType ScoreType { get; private set; }
 
@@ -46,7 +46,7 @@ public sealed record WorkoutBlockSegment
         string name,
         int sequence,
         WorkMode workMode,
-        WorkIntentPrescription workIntentPrescription,
+        WorkIntentPrescription intent,
         WorkoutScoreType scoreType,
         TimeConstraint? timeConstraint,
         EstimatedDuration? estimatedSegmentDuration,
@@ -73,7 +73,7 @@ public sealed record WorkoutBlockSegment
         Name = name.Trim();
         Sequence = sequence;
         WorkMode = workMode;
-        WorkIntentPrescription = workIntentPrescription;
+        Intent = intent;
         ScoreType = scoreType;
         TimeConstraint = timeConstraint;
         RestAfterSegment = restAfterSegment;

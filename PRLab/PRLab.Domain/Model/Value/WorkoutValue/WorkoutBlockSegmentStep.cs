@@ -41,6 +41,11 @@ public sealed record WorkoutBlockSegmentStep
         RestTarget? rest,
         string? notes)
     {
+        if (StepKind == WorkoutStepKind.Rest && (Rest is null || Rest.IsEmpty()))
+        {
+            throw new ArgumentException("Workout Rest block must have RestTarget");
+        }
+        
         if (id.Value == Guid.Empty)
         {
             throw new ArgumentException("Workout block segment step id cannot be empty.", nameof(id));

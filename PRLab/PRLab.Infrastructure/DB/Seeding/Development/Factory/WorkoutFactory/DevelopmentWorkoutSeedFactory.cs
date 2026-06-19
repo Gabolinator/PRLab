@@ -38,7 +38,7 @@ public class DevelopmentWorkoutSeedFactory(
         var block1 = WorkoutBlock.NewBuiltIn(
             name: "Block 1",
             blockType: WorkoutBlockType.Metcon,
-            roundPrescription: RoundPrescription.Rounds(
+            roundPrescription: BlockRepeatPrescription.Rounds(
                 numRounds: 3,
                 restAfterBlock: RestTarget.SecondsDuration(300)));
 
@@ -156,7 +156,7 @@ public class DevelopmentWorkoutSeedFactory(
         var hyroxBlock = WorkoutBlock.NewBuiltIn(
             name: "Ausdauer",
             blockType: WorkoutBlockType.Endurance,
-            roundPrescription: RoundPrescription.Rounds(
+            roundPrescription: BlockRepeatPrescription.Rounds(
                 numRounds: 7,
                 estimatedDuration: EstimatedDuration.Minutes(7.5f)));
 
@@ -230,7 +230,7 @@ public class DevelopmentWorkoutSeedFactory(
         var strengthBlock = WorkoutBlock.NewBuiltIn(
             name: "Back Squat",
             blockType: WorkoutBlockType.Strength,
-            roundPrescription: RoundPrescription.Rounds(
+            roundPrescription: BlockRepeatPrescription.Rounds(
                 numRounds: 10,
                 restBetweenRounds: RestTarget.SecondsDuration(120),
                 estimatedDuration: EstimatedDuration.Minutes(2)));
@@ -259,7 +259,7 @@ public class DevelopmentWorkoutSeedFactory(
         var metconBlock = WorkoutBlock.NewBuiltIn(
             name: "Metcon",
             blockType: WorkoutBlockType.Metcon,
-            roundPrescription: RoundPrescription.Rounds(
+            roundPrescription: BlockRepeatPrescription.Rounds(
                 numRounds: 5,
                 estimatedDuration: EstimatedDuration.Minutes(4)));
 

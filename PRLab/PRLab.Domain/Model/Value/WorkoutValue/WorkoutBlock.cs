@@ -18,10 +18,9 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
 
     public WorkoutBlockType BlockType { get; private set; }
 
-    public RoundPrescription RoundPrescription { get; private set; } = null!;
-    
-    public EstimatedDuration EstimatedBlockDuration { get; private set; } // do we compute from the childs ? 
-
+    // how many times do we do the whole block ? 
+    public BlockRepeatPrescription BlockRepeatPrescription { get; private set; }
+   
     public AuditInfo Audit { get; private set; } = null!;
 
     public OwnershipInfo Ownership { get; private set; } = null!;
@@ -41,7 +40,7 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
         WorkoutBlockId id,
         string name,
         WorkoutBlockType blockType,
-        RoundPrescription roundPrescription,
+        BlockRepeatPrescription blockRepeatPrescription,
         AuditInfo audit,
         OwnershipInfo ownership)
     {
@@ -50,14 +49,14 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
             throw new ArgumentException("Workout block id cannot be empty.", nameof(id));
         }
 
-        ArgumentNullException.ThrowIfNull(roundPrescription);
+        ArgumentNullException.ThrowIfNull(blockRepeatPrescription);
         ArgumentNullException.ThrowIfNull(audit);
         ArgumentNullException.ThrowIfNull(ownership);
 
         Id = id;
         SetName(name);
         BlockType = blockType;
-        RoundPrescription = roundPrescription;
+        BlockRepeatPrescription = blockRepeatPrescription;
         Audit = audit;
         Ownership = ownership;
     }
@@ -65,14 +64,14 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
     public static WorkoutBlock NewBuiltIn(
         string name,
         WorkoutBlockType blockType,
-        RoundPrescription? roundPrescription = null,
+        BlockRepeatPrescription? roundPrescription = null,
         User? createdBy = null)
     {
         return new WorkoutBlock(
             WorkoutBlockId.New(),
             name,
             blockType,
-            roundPrescription ?? RoundPrescription.Once(),
+            roundPrescription ?? BlockRepeatPrescription.Once(),
             AuditInfo.New(createdBy),
             OwnershipInfo.BuiltIn());
     }
@@ -81,7 +80,7 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
         string name,
         WorkoutBlockType blockType,
         User owner,
-        RoundPrescription? roundPrescription = null)
+        BlockRepeatPrescription? roundPrescription = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
@@ -89,7 +88,7 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
             WorkoutBlockId.New(),
             name,
             blockType,
-            roundPrescription ?? RoundPrescription.Once(),
+            roundPrescription ?? BlockRepeatPrescription.Once(),
             AuditInfo.New(owner),
             OwnershipInfo.UserCreated(owner));
     }
@@ -98,7 +97,7 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
         string name,
         WorkoutBlockType blockType,
         User owner,
-        RoundPrescription? roundPrescription = null)
+        BlockRepeatPrescription? roundPrescription = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
@@ -106,7 +105,7 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
             WorkoutBlockId.New(),
             name,
             blockType,
-            roundPrescription ?? RoundPrescription.Once(),
+            roundPrescription ?? BlockRepeatPrescription.Once(),
             AuditInfo.New(owner),
             OwnershipInfo.Imported(owner));
     }
@@ -133,17 +132,17 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
     }
 
     public void ChangeRoundPrescription(
-        RoundPrescription roundPrescription,
+        BlockRepeatPrescription blockRepeatPrescription,
         User? changedBy = null)
     {
-        ArgumentNullException.ThrowIfNull(roundPrescription);
+        ArgumentNullException.ThrowIfNull(blockRepeatPrescription);
 
-        if (RoundPrescription == roundPrescription)
+        if (BlockRepeatPrescription == blockRepeatPrescription)
         {
             return;
         }
 
-        RoundPrescription = roundPrescription;
+        BlockRepeatPrescription = blockRepeatPrescription;
         MarkUpdated(changedBy);
     }
 

@@ -6,6 +6,7 @@ public enum RestPolicy
     Fixed,
     NoMoreThan,
     AtLeast,
+    Range,
     AsNeeded,
     UntilRecovered
 }

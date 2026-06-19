@@ -7,6 +7,9 @@ public sealed record WorkTarget
     public decimal Value { get; private set; }
 
     public WorkTargetType TargetType { get; private set; }
+    
+    //todo include in model
+    public WorkTargetScope Scope { get; private set; } = WorkTargetScope.Total;
 
     private WorkTarget()
     {
@@ -15,20 +18,25 @@ public sealed record WorkTarget
 
     private WorkTarget(
         decimal value,
-        WorkTargetType targetType)
+        WorkTargetType targetType,
+        WorkTargetScope scope)
     {
         Value = ValidateValue(value);
         TargetType = targetType;
+        Scope = scope;
     }
 
     public static WorkTarget New(
         decimal value,
-        WorkTargetType targetType)
+        WorkTargetType targetType,
+        WorkTargetScope scope = WorkTargetScope.Total)
     {
         return new WorkTarget(
             value,
-            targetType);
+            targetType,
+            scope);
     }
+
 
     public static WorkTarget ForReps(
         int reps)
@@ -68,6 +76,23 @@ public sealed record WorkTarget
         return New(
             seconds,
             WorkTargetType.TimeUnderTensionSeconds);
+    }
+    
+    public static WorkTarget ForRepsPerSide(int reps)
+    {
+        return New(
+            reps,
+            WorkTargetType.Repetitions,
+            WorkTargetScope.PerSide);
+    }
+
+    
+    public static WorkTarget ForDurationPerSide(int seconds)
+    {
+        return New(
+            seconds,
+            WorkTargetType.DurationSeconds,
+            WorkTargetScope.PerSide);
     }
     
     public static WorkTarget FromDefaultWorkType(WorkTargetType targetType)
