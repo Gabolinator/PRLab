@@ -6,6 +6,8 @@ using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Prescription;
+using PRLab.Domain.Model.Value.Prescription.Load;
+using PRLab.Domain.Model.Value.Prescription.Work;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.ExerciseFactory;

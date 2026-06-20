@@ -2,7 +2,9 @@
 using PRLab.Domain;
 using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 using PRLab.Domain.Model.Value.Prescription;
+using PRLab.Domain.Model.Value.Prescription.Load;
 
 namespace PRLab.Tests.DomainTests.Exercices;
 

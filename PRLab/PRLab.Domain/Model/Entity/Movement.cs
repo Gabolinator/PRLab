@@ -4,6 +4,7 @@ using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Enum.Anatomy;
 using PRLab.Domain.Model.Value.Enum.Movement;
 using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
 using PRLab.Domain.Model.Value.Update;

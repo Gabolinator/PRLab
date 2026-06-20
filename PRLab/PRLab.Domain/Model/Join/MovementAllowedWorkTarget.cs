@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.Domain.Model.Join;

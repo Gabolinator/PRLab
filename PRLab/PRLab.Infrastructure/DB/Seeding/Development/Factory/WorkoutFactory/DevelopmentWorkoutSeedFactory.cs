@@ -6,8 +6,16 @@ using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Enum.Prescription.Load;
+using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.Workout;
 using PRLab.Domain.Model.Value.Prescription;
+using PRLab.Domain.Model.Value.Prescription.Common;
+using PRLab.Domain.Model.Value.Prescription.Load;
+using PRLab.Domain.Model.Value.Prescription.Rest;
+using PRLab.Domain.Model.Value.Prescription.Time;
+using PRLab.Domain.Model.Value.Prescription.Work;
+using PRLab.Domain.Model.Value.Prescription.Workout;
 using PRLab.Domain.Model.Value.WorkoutValue;
 using PRLab.Infrastructure.DB.Seeding.Development.Factory.MovementFactory;
 

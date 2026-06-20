@@ -4,6 +4,7 @@ using PRLab.Domain.Model.Value.Enum.Workout;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
 using PRLab.Domain.Model.Value.Prescription;
+using PRLab.Domain.Model.Value.Prescription.Workout;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Value.WorkoutValue;

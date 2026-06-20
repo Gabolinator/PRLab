@@ -1,6 +1,9 @@
 ﻿using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Prescription;
+using PRLab.Domain.Model.Value.Prescription.Load;
+using PRLab.Domain.Model.Value.Prescription.Rest;
+using PRLab.Domain.Model.Value.Prescription.Work;
 
 namespace PRLab.Domain.Model.Value;
 

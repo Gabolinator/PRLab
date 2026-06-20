@@ -2,8 +2,13 @@
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Enum.Prescription.Load;
+using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Prescription;
+using PRLab.Domain.Model.Value.Prescription.Load;
+using PRLab.Domain.Model.Value.Prescription.Rest;
+using PRLab.Domain.Model.Value.Prescription.Work;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Exercise;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Relations.Interface;

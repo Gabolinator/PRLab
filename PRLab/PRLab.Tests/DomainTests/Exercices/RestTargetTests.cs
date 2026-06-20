@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Prescription;
+using PRLab.Domain.Model.Value.Prescription.Rest;
 
 namespace PRLab.Tests.DomainTests.Exercices;
 

@@ -1,5 +1,6 @@
 ﻿using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 
 namespace PRLab.API.DTO.Exercise.Relation;
 
