@@ -7,5 +7,4 @@ public enum TimeConstraintKind
     Minimum = 3,
     Window = 4,
     RemainingSegmentTime = 5,
-    Interval = 6,
 }

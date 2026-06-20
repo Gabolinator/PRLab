@@ -27,7 +27,7 @@ public static class BuilderExtensions
        IConfiguration configuration =  builder.Configuration;
 
        services.AddUtilities(clock, logger)
-           .AddInfrastructure(configuration, logger, true)
+           .AddInfrastructure(configuration, logger)
            .AddSwagger()
            .AddControllers();
    }

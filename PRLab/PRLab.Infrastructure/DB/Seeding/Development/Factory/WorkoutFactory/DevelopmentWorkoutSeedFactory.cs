@@ -5,11 +5,9 @@ using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
-using PRLab.Domain.Model.Value.Enum.Prescription;
 using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.Workout;
-using PRLab.Domain.Model.Value.Prescription;
 using PRLab.Domain.Model.Value.Prescription.Common;
 using PRLab.Domain.Model.Value.Prescription.Load;
 using PRLab.Domain.Model.Value.Prescription.Rest;
@@ -17,43 +15,77 @@ using PRLab.Domain.Model.Value.Prescription.Time;
 using PRLab.Domain.Model.Value.Prescription.Work;
 using PRLab.Domain.Model.Value.Prescription.Workout;
 using PRLab.Domain.Model.Value.WorkoutValue;
-using PRLab.Infrastructure.DB.Seeding.Development.Factory.MovementFactory;
+using PRLab.Domain.Utilities.Interface;
+using PRLab.Infrastructure.DB.Helpers;
 
 namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.WorkoutFactory;
 
 public class DevelopmentWorkoutSeedFactory(
     IUserService userService,
-    ExerciseSeedCatalog catalog,
-    ILogger<DevelopmentMovementSeedFactory> logger) : IWorkoutSeedFactory
+    IAppLogger logger) : IWorkoutSeedFactory
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    public IReadOnlyList<SeedItem<Workout>> CreateInitialData()
+    public IReadOnlyList<SeedItem<Workout>> CreateInitialData(ExerciseSeedCatalog catalog)
     {
-        var run = catalog.GetRequiredByName("running");
-        var burpeePullUp = catalog.GetRequiredByName("burpeepullup");
-        var wallBall = catalog.GetRequiredByName("wallball");
-        var deadlift = catalog.GetRequiredByName("deadlift");
-        var row = catalog.GetRequiredByName("row");
+        var run = catalog.GetRequiredByNameKey("running");
+        var burpeePullUp = catalog.GetRequiredByNameKey("burpeepullup");
+        var wallBall = catalog.GetRequiredByNameKey("wallball");
+        var deadlift = catalog.GetRequiredByNameKey("deadlift");
+        var row = catalog.GetRequiredByNameKey("row");
 
+        var assaultBike = catalog.GetRequiredByNameKey("assaultbike");
+        var skiErg = catalog.GetRequiredByNameKey("skierg");
+        var lateralBurpeeOverBarbell = catalog.GetRequiredByNameKey("lateralburpeeoverbarbell");
+        var backSquat = catalog.GetRequiredByNameKey("backsquat");
+        var doubleDumbbellHangPowerClean = catalog.GetRequiredByNameKey("doubledumbbellhangpowerclean");
+
+        var workouts = new List<Workout>
+        {
+            CreateMixedConditioningWorkout(
+                run,
+                burpeePullUp,
+                wallBall,
+                deadlift,
+                row),
+
+            CreateHyroxWorkout(
+                assaultBike,
+                skiErg,
+                lateralBurpeeOverBarbell),
+
+            CreateCrossFitWorkout(
+                assaultBike,
+                backSquat,
+                doubleDumbbellHangPowerClean)
+        };
+
+        return workouts
+            .Select(workout => new SeedItem<Workout>(
+                SeedKeyGenerator.GenerateWorkoutKey(workout),
+                workout,
+                SeedAction.CreateIfMissing))
+            .ToList();
+    }
+
+    private static Workout CreateMixedConditioningWorkout(
+        Exercise run,
+        Exercise burpeePullUp,
+        Exercise wallBall,
+        Exercise deadlift,
+        Exercise row)
+    {
         var workout = Workout.NewBuiltIn(
             name: "Mixed Conditioning + Deadlift",
-            description: "3 rounds of mixed conditioning segments, then rest before block 2.");
+            description: "3 repeats of mixed conditioning segments, then rest before block 2.");
 
-        // Block 1:
-        // Do all segments 3 times.
-        // Rest 5 min after the whole block.
         var block1 = WorkoutBlock.NewBuiltIn(
             name: "Block 1",
             blockType: WorkoutBlockType.Metcon,
-            roundPrescription: BlockRepeatPrescription.Rounds(
-                numRounds: 3,
+            repeatPrescription: BlockRepeatPrescription.Repeat(
+                repeatCount: 3,
                 restAfterBlock: RestTarget.SecondsDuration(300)));
 
-        // Segment 1:
-        // Run 400m with 2 min cap,
-        // then 10 burpee pull-ups for time,
-        // then rest 2 min.
         var segment1 = WorkoutBlockSegment.ForTime(
             workoutBlockId: block1.Id,
             name: "Run + Burpee Pull-Up",
@@ -65,7 +97,7 @@ public class DevelopmentWorkoutSeedFactory(
         segment1.AddStep(
             WorkoutBlockSegmentStep.NewExerciseStep(
                 segmentId: segment1.Id,
-                exercise: run, // error it was written deadlift
+                exerciseId: run.Id,
                 sequence: 1,
                 prescription: WorkoutStepPrescription.New(
                     workTarget: WorkTarget.ForDistance(400),
@@ -74,17 +106,13 @@ public class DevelopmentWorkoutSeedFactory(
         segment1.AddStep(
             WorkoutBlockSegmentStep.NewExerciseStep(
                 segmentId: segment1.Id,
-                exercise: burpeePullUp,
+                exerciseId: burpeePullUp.Id,
                 sequence: 2,
                 prescription: WorkoutStepPrescription.New(
                     workTarget: WorkTarget.ForReps(10))));
 
         block1.AddSegment(segment1);
 
-        // Segment 2:
-        // 30 wall balls,
-        // then 20 cal row,
-        // then rest 2 min.
         var segment2 = WorkoutBlockSegment.ForTime(
             workoutBlockId: block1.Id,
             name: "Wall Ball + Row",
@@ -95,7 +123,7 @@ public class DevelopmentWorkoutSeedFactory(
         segment2.AddStep(
             WorkoutBlockSegmentStep.NewExerciseStep(
                 segmentId: segment2.Id,
-                exercise: wallBall,
+                exerciseId: wallBall.Id,
                 sequence: 1,
                 prescription: WorkoutStepPrescription.New(
                     workTarget: WorkTarget.ForReps(30),
@@ -106,7 +134,7 @@ public class DevelopmentWorkoutSeedFactory(
         segment2.AddStep(
             WorkoutBlockSegmentStep.NewExerciseStep(
                 segmentId: segment2.Id,
-                exercise: row,
+                exerciseId: row.Id,
                 sequence: 2,
                 prescription: WorkoutStepPrescription.New(
                         workTarget: WorkTarget.ForCalories(20))
@@ -114,9 +142,6 @@ public class DevelopmentWorkoutSeedFactory(
 
         block1.AddSegment(segment2);
 
-        // Segment 3:
-        // 3 sets of 2RM deadlift,
-        // 3 min rest after each step/set.
         var segment3 = WorkoutBlockSegment.FixedWork(
             workoutBlockId: block1.Id,
             name: "Deadlift 2RM",
@@ -127,49 +152,45 @@ public class DevelopmentWorkoutSeedFactory(
         segment3.AddStep(
             WorkoutBlockSegmentStep.NewExerciseStep(
                 segmentId: segment3.Id,
-                exercise: deadlift,
+                exerciseId: deadlift.Id,
                 sequence: 1,
                 prescription: WorkoutStepPrescription.New(
                     workTarget: WorkTarget.ForReps(2),
-                    sets: 3,
+                    partition: WorkPartitionPrescription.Repeated(
+                        repeatCount: 3,
+                        restBetweenRepeats: RestTarget.SecondsDuration(180)),
                     loadTarget: LoadTarget.RepMax(2),
                     notes: "Build to 2RM.")));
 
         block1.AddSegment(segment3);
 
-        // Attach block to workout.
-        var block1Assignment = WorkoutBlockAssignment.New(
-            workoutId: workout.Id,
-            workoutBlockId: block1.Id,
-            sequence: 1);
+        workout.AddBlock(
+            WorkoutBlockAssignment.New(
+                workoutId: workout.Id,
+                workoutBlock: block1,
+                sequence: 1));
 
-        workout.AddBlock(block1Assignment);
+        return workout;
+    }
 
-
-        //todo
-
-
-
-        // Existing Exercise objects assumed:
-// assaultBike
-// skiErg
-// lateralBurpeeOverBarbell
-// backSquat
-// doubleDumbbellHangPowerClean
-
-        var hyroxWorkout = Workout.NewBuiltIn(
+    private static Workout CreateHyroxWorkout(
+        Exercise assaultBike,
+        Exercise skiErg,
+        Exercise lateralBurpeeOverBarbell)
+    {
+        var workout = Workout.NewBuiltIn(
             name: "Ausdauer / Hyrox",
-            description: "7 rounds of rotating intervals: bike, ski, lateral burpees, rest, rest.");
+            description: "7 repeats of rotating intervals: bike, ski, lateral burpees, rest, rest.");
 
-        var hyroxBlock = WorkoutBlock.NewBuiltIn(
+        var block = WorkoutBlock.NewBuiltIn(
             name: "Ausdauer",
             blockType: WorkoutBlockType.Endurance,
-            roundPrescription: BlockRepeatPrescription.Rounds(
-                numRounds: 7,
-                estimatedDuration: EstimatedDuration.Minutes(7.5f)));
+            repeatPrescription: BlockRepeatPrescription.Repeat(
+                repeatCount: 7,
+                estimatedRepeatDuration: EstimatedDuration.Minutes(7.5f)));
 
-        var hyroxSegment = WorkoutBlockSegment.StepIntervals(
-            workoutBlockId: hyroxBlock.Id,
+        var segment = WorkoutBlockSegment.StepIntervals(
+            workoutBlockId: block.Id,
             name: "Every 1:30 Rotation",
             sequence: 1,
             intent: WorkIntent.Normal,
@@ -177,71 +198,72 @@ public class DevelopmentWorkoutSeedFactory(
             stepIntervalSeconds: 90,
             scoreType: WorkoutScoreType.Completed);
 
-        var assaultBike = catalog.GetRequiredByName("assaultbike");
-        var skiErg = catalog.GetRequiredByName("skierg");
-        var lateralBurpeeOverBarbell = catalog.GetRequiredByName("lateralBurpeeOverBarbell");
-        var backSquat = catalog.GetRequiredByName("backsquat");
-        var doubleDumbbellHangPowerClean = catalog.GetRequiredByName("doubleDumbbellHangPowerClean");
-
-
-        hyroxSegment.AddLast(
+        segment.AddLast(
             WorkoutBlockSegmentStep.NewExerciseStep(
-                segmentId: hyroxSegment.Id,
-                exercise: assaultBike,
+                segmentId: segment.Id,
+                exerciseId: assaultBike.Id,
                 sequence: 1,
                 prescription: WorkoutStepPrescription.New(
                     workTarget: WorkTarget.ForCalories(20),
                     notes: "Scaling: 20/15, 15/11, 11/8 calories.")));
 
-        hyroxSegment.AddLast(
+        segment.AddLast(
             WorkoutBlockSegmentStep.NewExerciseStep(
-                segmentId: hyroxSegment.Id,
-                exercise: skiErg,
-                sequence: 1,
+                segmentId: segment.Id,
+                exerciseId: skiErg.Id,
+                sequence: 2,
                 prescription: WorkoutStepPrescription.New(
                     workTarget: WorkTarget.ForCalories(20),
                     notes: "Scaling: 20/15, 15/11, 11/8 calories.")));
 
-        hyroxSegment.AddLast(
+        segment.AddLast(
             WorkoutBlockSegmentStep.NewExerciseStep(
-                segmentId: hyroxSegment.Id,
-                exercise: lateralBurpeeOverBarbell,
-                sequence: 1,
+                segmentId: segment.Id,
+                exerciseId: lateralBurpeeOverBarbell.Id,
+                sequence: 3,
                 prescription: WorkoutStepPrescription.New(
                     workTarget: WorkTarget.ForReps(18),
                     notes: "Scaling: 18, 14, 11 reps.")));
 
-        hyroxSegment.AddLast(
+        segment.AddLast(
             WorkoutBlockSegmentStep.NewRestStep(
-                segmentId: hyroxSegment.Id,
+                segmentId: segment.Id,
                 rest: RestTarget.SecondsDuration(90),
-                sequence: 1));
+                sequence: 4));
 
-        hyroxSegment.AddLast(
+        segment.AddLast(
             WorkoutBlockSegmentStep.NewRestStep(
-                segmentId: hyroxSegment.Id,
+                segmentId: segment.Id,
                 rest: RestTarget.SecondsDuration(90),
-                sequence: 1));
+                sequence: 5));
 
-        hyroxBlock.AddSegment(hyroxSegment);
+        block.AddSegment(segment);
 
-        hyroxWorkout.AddBlock(
+        workout.AddBlock(
             WorkoutBlockAssignment.New(
-                workoutId: hyroxWorkout.Id,
-                workoutBlock: hyroxBlock,
+                workoutId: workout.Id,
+                workoutBlock: block,
                 sequence: 1));
 
-        var crossFitWorkout = Workout.NewBuiltIn(
+        return workout;
+    }
+
+    private static Workout CreateCrossFitWorkout(
+        Exercise assaultBike,
+        Exercise backSquat,
+        Exercise doubleDumbbellHangPowerClean)
+    {
+        var workout = Workout.NewBuiltIn(
             name: "CrossFit Back Squat + Metcon",
-            description: "Back squat strength piece followed by 5-round metcon.");
+            description: "Back squat strength piece followed by 5-repeat metcon.");
 
         var strengthBlock = WorkoutBlock.NewBuiltIn(
             name: "Back Squat",
             blockType: WorkoutBlockType.Strength,
-            roundPrescription: BlockRepeatPrescription.Rounds(
-                numRounds: 10,
-                restBetweenRounds: RestTarget.SecondsDuration(120),
-                estimatedDuration: EstimatedDuration.Minutes(2)));
+            repeatPrescription: BlockRepeatPrescription.Repeat(
+                repeatCount: 10,
+                restBetweenRepeats: RestTarget.SecondsDuration(120),
+                estimatedRepeatDuration: EstimatedDuration.Minutes(2)));
 
         var strengthSegment = WorkoutBlockSegment.FixedWork(
             workoutBlockId: strengthBlock.Id,
@@ -254,11 +276,10 @@ public class DevelopmentWorkoutSeedFactory(
         strengthSegment.AddLast(
             WorkoutBlockSegmentStep.NewExerciseStep(
                 segmentId: strengthSegment.Id,
-                exercise: backSquat,
+                exerciseId: backSquat.Id,
                 sequence: 1,
                 prescription: WorkoutStepPrescription.New(
                     workTarget: WorkTarget.ForReps(1),
-                    sets: 1,
                     loadTarget: LoadTarget.PercentageRepMax(70),
                     notes: "Go every 2 minutes.")));
 
@@ -267,9 +288,9 @@ public class DevelopmentWorkoutSeedFactory(
         var metconBlock = WorkoutBlock.NewBuiltIn(
             name: "Metcon",
             blockType: WorkoutBlockType.Metcon,
-            roundPrescription: BlockRepeatPrescription.Rounds(
-                numRounds: 5,
-                estimatedDuration: EstimatedDuration.Minutes(4)));
+            repeatPrescription: BlockRepeatPrescription.Repeat(
+                repeatCount: 5,
+                estimatedRepeatDuration: EstimatedDuration.Minutes(4)));
 
         var metconSegment = WorkoutBlockSegment.ForTimeWithCap(
             workoutBlockId: metconBlock.Id,
@@ -282,7 +303,7 @@ public class DevelopmentWorkoutSeedFactory(
         metconSegment.AddLast(
             WorkoutBlockSegmentStep.NewExerciseStep(
                 segmentId: metconSegment.Id,
-                exercise: assaultBike,
+                exerciseId: assaultBike.Id,
                 sequence: 1,
                 prescription: WorkoutStepPrescription.New(
                     workTarget: WorkTarget.ForCalories(20),
@@ -291,8 +312,8 @@ public class DevelopmentWorkoutSeedFactory(
         metconSegment.AddLast(
             WorkoutBlockSegmentStep.NewExerciseStep(
                 segmentId: metconSegment.Id,
-                exercise: doubleDumbbellHangPowerClean,
-                sequence: 1,
+                exerciseId: doubleDumbbellHangPowerClean.Id,
+                sequence: 2,
                 prescription: WorkoutStepPrescription.New(
                     workTarget: WorkTarget.ForReps(17),
                     loadTarget: LoadTarget.ExternalLoad(22.5m, LoadUnit.Kilogram),
@@ -300,25 +321,18 @@ public class DevelopmentWorkoutSeedFactory(
 
         metconBlock.AddSegment(metconSegment);
 
-        crossFitWorkout.AddBlock(
+        workout.AddBlock(
             WorkoutBlockAssignment.New(
-                workoutId: crossFitWorkout.Id,
+                workoutId: workout.Id,
                 workoutBlock: strengthBlock,
                 sequence: 1));
 
-        crossFitWorkout.AddBlock(
+        workout.AddBlock(
             WorkoutBlockAssignment.New(
-                workoutId: crossFitWorkout.Id,
+                workoutId: workout.Id,
                 workoutBlock: metconBlock,
                 sequence: 2));
 
-        var workouts = new List<Workout>{workout, hyroxWorkout , crossFitWorkout};
-
-        return workouts.Select(workout=> new SeedItem<Workout>(
-            SeedKeyGenerator.GenerateWorkoutKey(workout),
-            workout,
-            SeedAction.CreateIfMissing)).ToList();
+        return workout;
     }
-
-
 }

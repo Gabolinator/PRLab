@@ -1,17 +1,77 @@
 [
   {
-    "Id": "258fda7b-25f9-471e-8539-4197d483889d",
+    "Id": "c00e9e44-fa88-4e25-bfe2-6e265fe21f72",
+    "Name": "Assault Bike",
+    "NameKey": "assaultbike",
+    "Description": {
+      "Content": "Assault bike work prescribed by calories, time, distance, or interval format."
+    },
+    "Steps": [
+      {
+        "Id": "5a984247-b5ff-4991-aee2-5d6238b9dbcc",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "f820b42a-59eb-426a-8c17-e86c8b2cb3ad",
+          "Name": "Assault Bike",
+          "NameKey": "assaultbike"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Calories"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "97246881-cc67-44e4-914b-ef79c1d6d60a",
+    "Name": "Back Squat",
+    "NameKey": "backsquat",
+    "Description": {
+      "Content": "Barbell back squat prescribed by reps, sets, load, or percentage."
+    },
+    "Steps": [
+      {
+        "Id": "43686ac1-33f8-4a96-a9af-cbb3c6b2395d",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "98da7eaa-e1bf-4f8b-98c2-dcc3f3174a62",
+          "Name": "Back Squat",
+          "NameKey": "backsquat"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "f389c322-86f6-408e-8164-f3c0972b0655",
     "Name": "Bodyweight Squat",
     "NameKey": "bodyweightsquat",
     "Description": {
       "Content": "Basic lower-body squat movement performed without external load."
     },
-    "Blocks": [
+    "Steps": [
       {
-        "Id": "6c0225cd-04f8-46df-a8c4-e1504b7cc94e",
+        "Id": "80ef2cd4-7ff8-42ed-9dc9-06f01da9d5e3",
         "Sequence": 1,
         "Movement": {
-          "Id": "51385348-fa0b-4e89-80ba-b9af982ca12b",
+          "Id": "03b6b428-1156-4c1a-be02-033e850c97b3",
           "Name": "Bodyweight Squat",
           "NameKey": "bodyweightsquat"
         },
@@ -25,7 +85,7 @@
           "Unit": null
         },
         "RestBetweenReps": null,
-        "TransitionAfterBlock": null,
+        "TransitionAfterStep": null,
         "ExecutionDetails": null
       }
     ],
@@ -34,18 +94,18 @@
     "Action": "Ignore"
   },
   {
-    "Id": "739ac2c8-a0d5-46dc-945c-b0723476e0a5",
+    "Id": "69b9b19b-046f-4421-a87c-61fb303bc2a3",
     "Name": "Burpee",
     "NameKey": "burpee",
     "Description": {
       "Content": "Full-body bodyweight conditioning movement combining a squat, plank or push-up position, and jump."
     },
-    "Blocks": [
+    "Steps": [
       {
-        "Id": "6436ed36-c6a0-4382-ab4b-3dacbd62fe46",
+        "Id": "75771652-cff6-46f4-9ca4-c860eeea4fc3",
         "Sequence": 1,
         "Movement": {
-          "Id": "181345ef-4a29-4ed6-aff4-d1298ed7220a",
+          "Id": "2e896c7a-b168-4f5f-bd81-bae7f3b4b8a8",
           "Name": "Burpee",
           "NameKey": "burpee"
         },
@@ -59,7 +119,7 @@
           "Unit": null
         },
         "RestBetweenReps": null,
-        "TransitionAfterBlock": null,
+        "TransitionAfterStep": null,
         "ExecutionDetails": null
       }
     ],
@@ -68,18 +128,18 @@
     "Action": "Ignore"
   },
   {
-    "Id": "64eb94c3-dc74-47f4-9a96-12a3bc9d7b54",
+    "Id": "2fb60ef8-55d2-4e1b-961c-42e42b362b5b",
     "Name": "Burpee Pull-Up",
     "NameKey": "burpeepullup",
     "Description": {
       "Content": "Burpee performed directly into a pull-up."
     },
-    "Blocks": [
+    "Steps": [
       {
-        "Id": "ebe3315b-ff1a-4174-9a39-39713716cb2f",
+        "Id": "bffe59ae-e8ca-4a8c-9b02-6f2a4be90ab6",
         "Sequence": 1,
         "Movement": {
-          "Id": "181345ef-4a29-4ed6-aff4-d1298ed7220a",
+          "Id": "2e896c7a-b168-4f5f-bd81-bae7f3b4b8a8",
           "Name": "Burpee",
           "NameKey": "burpee"
         },
@@ -93,14 +153,14 @@
           "Unit": null
         },
         "RestBetweenReps": null,
-        "TransitionAfterBlock": null,
+        "TransitionAfterStep": null,
         "ExecutionDetails": null
       },
       {
-        "Id": "782077e1-3b0f-4b89-9b82-b5b3ae40193e",
+        "Id": "1b87a8cf-db23-43a8-8dbe-9bc0a05a52a5",
         "Sequence": 2,
         "Movement": {
-          "Id": "be5ce8f1-76cd-45a6-9043-63919057060a",
+          "Id": "5a173188-169d-4cdf-ba3b-f98c80dbe408",
           "Name": "Pull Up",
           "NameKey": "pullup"
         },
@@ -114,7 +174,7 @@
           "Unit": null
         },
         "RestBetweenReps": null,
-        "TransitionAfterBlock": null,
+        "TransitionAfterStep": null,
         "ExecutionDetails": null
       }
     ],
@@ -123,18 +183,78 @@
     "Action": "Ignore"
   },
   {
-    "Id": "ec6698f8-3242-4bf9-9317-31829ed1b0bb",
+    "Id": "b392e025-edaf-416a-9b1c-541d69c34ed2",
+    "Name": "Deadlift",
+    "NameKey": "deadlift",
+    "Description": {
+      "Content": "Barbell deadlift prescribed by reps, load, or strength target."
+    },
+    "Steps": [
+      {
+        "Id": "38420c4b-4045-4245-8114-e401f23ddb48",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "dc23a078-b81d-4a44-83bd-de67510d1f72",
+          "Name": "Deadlift",
+          "NameKey": "deadlift"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "9388465e-1beb-49f2-988c-4d9aba81d886",
+    "Name": "Double Dumbbell Hang Power Clean",
+    "NameKey": "doubledumbbellhangpowerclean",
+    "Description": {
+      "Content": "Two-dumbbell hang power clean prescribed by reps and load."
+    },
+    "Steps": [
+      {
+        "Id": "6e7d437d-b553-4e85-b4a7-f3fd992a4c61",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "a19089ff-ddfc-4346-b8d1-0cb8cbb37b8d",
+          "Name": "Double Dumbbell Hang Power Clean",
+          "NameKey": "doubledumbbellhangpowerclean"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "70724d21-5ed5-4f4b-886c-661b82681e6f",
     "Name": "Double Under",
     "NameKey": "doubleunder",
     "Description": {
       "Content": "Jump rope movement where the rope passes under the feet twice per jump."
     },
-    "Blocks": [
+    "Steps": [
       {
-        "Id": "ef16ac25-a1ec-47d3-9528-f09eada94a38",
+        "Id": "6b238ab1-0141-42c0-8c19-01aeb57657e2",
         "Sequence": 1,
         "Movement": {
-          "Id": "ae12cb4c-cf1a-449d-bade-f4aa98365593",
+          "Id": "967aff04-8ef5-4971-8391-2002b511d3c3",
           "Name": "Double Under",
           "NameKey": "doubleunder"
         },
@@ -148,7 +268,7 @@
           "Unit": null
         },
         "RestBetweenReps": null,
-        "TransitionAfterBlock": null,
+        "TransitionAfterStep": null,
         "ExecutionDetails": null
       }
     ],
@@ -157,18 +277,18 @@
     "Action": "Ignore"
   },
   {
-    "Id": "454ddb64-1da0-45d9-a297-53a4d8e280f1",
+    "Id": "1ec986f1-2b85-40a1-9c16-cd5a11b1214c",
     "Name": "Goblet Squat",
     "NameKey": "gobletsquat",
     "Description": {
       "Content": "Squat variation performed while holding a kettlebell or dumbbell in front of the chest."
     },
-    "Blocks": [
+    "Steps": [
       {
-        "Id": "45e58506-66fb-442e-b83d-ea150f969c61",
+        "Id": "fc09f7de-cb2b-4e1c-bc1d-25126e30d31b",
         "Sequence": 1,
         "Movement": {
-          "Id": "489ff266-ebc8-4270-89e0-3b514e7af83d",
+          "Id": "e6331313-c506-4933-8aa3-6179d2975cb4",
           "Name": "Goblet Squat",
           "NameKey": "gobletsquat"
         },
@@ -178,7 +298,7 @@
         },
         "LoadTarget": null,
         "RestBetweenReps": null,
-        "TransitionAfterBlock": null,
+        "TransitionAfterStep": null,
         "ExecutionDetails": null
       }
     ],
@@ -187,18 +307,52 @@
     "Action": "Ignore"
   },
   {
-    "Id": "cf4754ca-5ef1-42af-b43b-f25834cb7290",
+    "Id": "73cefaad-3efb-42c4-90f1-bee25903b860",
+    "Name": "Lateral Burpee Over Barbell",
+    "NameKey": "lateralburpeeoverbarbell",
+    "Description": {
+      "Content": "Lateral burpee performed over a barbell."
+    },
+    "Steps": [
+      {
+        "Id": "c1e2e1a6-4ab2-4c40-916b-7ffdd20e8df6",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "11f91f64-764a-4b29-9350-d18dc746eb02",
+          "Name": "Lateral Burpee Over Barbell",
+          "NameKey": "lateralburpeeoverbarbell"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": {
+          "Value": null,
+          "Type": "BodyWeight",
+          "Unit": null
+        },
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ff49e93b-13af-4948-a96e-126e0f259a84",
     "Name": "Pull Up",
     "NameKey": "pullup",
     "Description": {
       "Content": "Bodyweight upper-body pulling movement performed from a bar."
     },
-    "Blocks": [
+    "Steps": [
       {
-        "Id": "03f1ea20-562b-4e39-9533-a0672a72944f",
+        "Id": "434ac3fb-ec06-4ed6-bbfa-7ae1394a98b8",
         "Sequence": 1,
         "Movement": {
-          "Id": "be5ce8f1-76cd-45a6-9043-63919057060a",
+          "Id": "5a173188-169d-4cdf-ba3b-f98c80dbe408",
           "Name": "Pull Up",
           "NameKey": "pullup"
         },
@@ -212,7 +366,7 @@
           "Unit": null
         },
         "RestBetweenReps": null,
-        "TransitionAfterBlock": null,
+        "TransitionAfterStep": null,
         "ExecutionDetails": null
       }
     ],
@@ -221,18 +375,18 @@
     "Action": "Ignore"
   },
   {
-    "Id": "32065585-6806-48b3-8dda-cd6d389d1b4c",
+    "Id": "d57809c0-e1c7-4015-b090-60e7765b4f0d",
     "Name": "Push Up",
     "NameKey": "pushup",
     "Description": {
       "Content": "Bodyweight upper-body pushing movement performed from the floor."
     },
-    "Blocks": [
+    "Steps": [
       {
-        "Id": "1df38ab7-4db9-4800-b8cf-d2b24ed70b8b",
+        "Id": "72307578-6e8f-4531-9c96-755b20374c4e",
         "Sequence": 1,
         "Movement": {
-          "Id": "9705ffd5-6432-4f32-b127-d124082861a4",
+          "Id": "ed0e0af8-ee8b-4a0f-a304-0e842ed80b41",
           "Name": "Push Up",
           "NameKey": "pushup"
         },
@@ -246,7 +400,127 @@
           "Unit": null
         },
         "RestBetweenReps": null,
-        "TransitionAfterBlock": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "edc9d136-5df0-4d12-a81a-53c61525b80c",
+    "Name": "Row",
+    "NameKey": "row",
+    "Description": {
+      "Content": "Row erg work prescribed by calories, distance, time, or interval format."
+    },
+    "Steps": [
+      {
+        "Id": "509d33ec-3adc-49f3-8038-39a4abc45323",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "80f9b665-e34d-422b-806b-6625f52d3f48",
+          "Name": "Row",
+          "NameKey": "row"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Calories"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "cf3529ec-fa1b-4605-98a9-55cee6b87621",
+    "Name": "Running",
+    "NameKey": "running",
+    "Description": {
+      "Content": "Running prescribed by distance, time, pace, or interval format."
+    },
+    "Steps": [
+      {
+        "Id": "0dcbf4da-6074-4030-9185-9b283a80978c",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "b992e2ce-f92b-42ae-ba34-66d514bbf4bc",
+          "Name": "Running",
+          "NameKey": "running"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "DistanceMeters"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ab156891-31dd-4eb8-8d24-4dd7d0e5ec72",
+    "Name": "Ski Erg",
+    "NameKey": "skierg",
+    "Description": {
+      "Content": "Ski erg work prescribed by calories, distance, time, or interval format."
+    },
+    "Steps": [
+      {
+        "Id": "cea58e68-8e0d-4b24-8bfc-16a2ea940b38",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "c8f1acc9-35bc-4f15-85a8-8662faafc9f6",
+          "Name": "Ski Erg",
+          "NameKey": "skierg"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Calories"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "347b5ed6-8e8d-430e-82a7-9bb76c72a988",
+    "Name": "Wall Ball",
+    "NameKey": "wallball",
+    "Description": {
+      "Content": "Wall ball shot performed with a weighted ball to a target."
+    },
+    "Steps": [
+      {
+        "Id": "4825e5b0-e5fe-472e-99c6-70d481440333",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "d69b1f24-024b-4715-aac5-b5ba332cdc30",
+          "Name": "Wall Ball",
+          "NameKey": "wallball"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
         "ExecutionDetails": null
       }
     ],

@@ -162,6 +162,36 @@ public static class ExerciseModelBuilder
                 loadTarget.Property(target => target.Unit)
                     .HasConversion<string>()
                     .HasMaxLength(80);
+
+                loadTarget.Property(target => target.ReferenceRepMax);
+
+                loadTarget.OwnsOne(target => target.LoadReference, loadReference =>
+                {
+                    loadReference.Property(reference => reference.Kind)
+                        .HasConversion<string>()
+                        .HasMaxLength(80);
+
+                    loadReference.Property(reference => reference.ExerciseId)
+                        .HasConversion(
+                            exerciseId => exerciseId.HasValue
+                                ? exerciseId.Value.Value
+                                : (Guid?)null,
+                            value => value.HasValue
+                                ? ExerciseId.FromGuid(value.Value)
+                                : null);
+
+                    loadReference.Property(reference => reference.MovementId)
+                        .HasConversion(
+                            movementId => movementId.HasValue
+                                ? movementId.Value.Value
+                                : (Guid?)null,
+                            value => value.HasValue
+                                ? MovementId.FromGuid(value.Value)
+                                : null);
+
+                    loadReference.Property(reference => reference.Name)
+                        .HasMaxLength(200);
+                });
             });
 
             exerciseBlock.OwnsOne(exerciseBlock => exerciseBlock.RestBetweenReps, restTarget =>

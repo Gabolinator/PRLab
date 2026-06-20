@@ -1,5 +1,16 @@
 [
   {
+    "Id": "c94d96ab-b844-42de-b06f-9e8c40937b70",
+    "Name": "Assault Bike",
+    "NameKey": "assaultbike",
+    "Description": {
+      "Content": "Air-resistance bike used for conditioning, intervals, and calorie-based work."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
     "Id": "491f5821-79f1-491e-bbbd-a842b1931c57",
     "Name": "Barbell",
     "NameKey": "barbell",
@@ -60,6 +71,50 @@
     "NameKey": "resistanceband",
     "Description": {
       "Content": "Elastic training band used to add variable resistance, assistance, or mobility work to strength and conditioning movements."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "5f9f553c-1f46-4f79-be3d-9ef89e5ad94f",
+    "Name": "Row Erg",
+    "NameKey": "rowerg",
+    "Description": {
+      "Content": "Indoor rowing machine used for rowing distance, calorie, duration, and interval work."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "513c7344-0562-4059-8a1e-ac17e5f3a1db",
+    "Name": "Ski Erg",
+    "NameKey": "skierg",
+    "Description": {
+      "Content": "Ski ergometer used for upper-body dominant conditioning, calories, distance, and interval work."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "93813f88-0b6b-4d26-99a7-de69410e66c3",
+    "Name": "Squat Rack",
+    "NameKey": "squatrack",
+    "Description": {
+      "Content": "Rack used to support a loaded barbell for squats and other strength movements."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "0dcb243c-1e2b-4c9d-b1aa-203dd7d5a57b",
+    "Name": "Wall Ball",
+    "NameKey": "wallball",
+    "Description": {
+      "Content": "Weighted medicine ball used for wall ball shots, throws, squats, and conditioning movements."
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,

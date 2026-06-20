@@ -7,12 +7,14 @@ using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Exercise;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Muscle;
+using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Workout;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Seeding.Config;
 using PRLab.Infrastructure.DB.Seeding.Development.Factory;
 using PRLab.Infrastructure.DB.Seeding.Development.Factory.ExerciseFactory;
 using PRLab.Infrastructure.DB.Seeding.Development.Factory.MovementFactory;
 using PRLab.Infrastructure.DB.Seeding.Development.Factory.MuscleFactory;
+using PRLab.Infrastructure.DB.Seeding.Development.Factory.WorkoutFactory;
 using PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 using PRLab.Infrastructure.DB.Seeding.Export;
 using PRLab.Infrastructure.DB.Seeding.Export.Exporter;
@@ -32,12 +34,18 @@ public static class SeedingModularityExtensions
         var seedingOptions = configuration
             .GetSection("Seeding")
             .Get<SeedingOptions>();
+
+        var options = seedingOptions ?? new SeedingOptions();
         
-        return services
-            .AddSeedingConfig(configuration)
-            .AddSeedDataFactories(seedingOptions ?? new SeedingOptions(), logger)
-            .AddDataSeeders()
-            .AddSeedExporters();
+        logger.Log(@$"Seeding is Enabled : {options.SeedingEnabled} - to: {options.SeedFileDirectory}");
+        
+        return options.SeedingEnabled 
+            ? services
+            .AddSeedingConfig(options)
+            .AddSeedDataFactories(options, logger)
+            .AddDataSeeders(options)
+            .AddSeedExporters()
+            : services;
     }
 
     private static IServiceCollection AddSeedRelationResolver(
@@ -56,7 +64,8 @@ public static class SeedingModularityExtensions
         SeedingOptions options,
         IAppLogger logger)
     {
-        logger.Log($"Seeding from {options.Source}");
+        logger.Log($"Adding Seeding Factory: {options.Source}");
+        
         return options.Source switch
         {
             SeedingSource.JsonFiles => services.AddSeedRelationResolver(logger)
@@ -73,12 +82,13 @@ public static class SeedingModularityExtensions
                 .AddScoped<IMovementCategorySeedFactory, DevelopmentMovementCategorySeedFactory>()
                 .AddScoped<IMuscleAntagonistSeedFactory, DevelopmentMuscleAntagonistSeedFactory>()
                 .AddScoped<IMovementSeedFactory, DevelopmentMovementSeedFactory>()
-                .AddScoped<IExerciseSeedFactory, DevelopmentExerciseSeedFactory>(),
+                .AddScoped<IExerciseSeedFactory, DevelopmentExerciseSeedFactory>()
+                .AddScoped<IWorkoutSeedFactory, DevelopmentWorkoutSeedFactory>(),
             _ => services
         };
     }
 
-    private static IServiceCollection AddDataSeeders(this IServiceCollection services)
+    private static IServiceCollection AddDataSeeders(this IServiceCollection services, SeedingOptions options)
     {
         services.AddSeederIfFactoryExists<IEquipmentSeedFactory, EquipmentSeeder>();
         services.AddSeederIfFactoryExists<IMuscleSeedFactory, MuscleSeeder>();
@@ -86,6 +96,7 @@ public static class SeedingModularityExtensions
         services.AddSeederIfFactoryExists<IMovementCategorySeedFactory, MovementCategorySeeder>();
         services.AddSeederIfFactoryExists<IMovementSeedFactory, MovementSeeder>();
         services.AddSeederIfFactoryExists<IExerciseSeedFactory, ExerciseSeeder>();
+        services.AddSeederIfFactoryExists<IWorkoutSeedFactory, WorkoutSeeder>();
         
         services.AddScoped<IDataSeeder, EntityDataSeeder>();
 
@@ -112,11 +123,11 @@ public static class SeedingModularityExtensions
 
     private static IServiceCollection AddSeedingConfig(
         this IServiceCollection services,
-        IConfiguration configuration)
+        SeedingOptions options)
     {
-        services.Configure<SeedingOptions>(
-            configuration.GetSection("Seeding"));
+        ArgumentNullException.ThrowIfNull(options);
 
+        services.AddSingleton(options);
         services.AddSingleton<ISeedingConfig, SeedingConfig>();
 
         return services;

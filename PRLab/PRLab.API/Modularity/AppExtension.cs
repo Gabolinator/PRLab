@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Seeding.Config;
 
 namespace PRLab.API.Modularity;
 
@@ -69,9 +71,11 @@ public static class AppExtension
         }
 
         var seeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
-
+        var option = scope.ServiceProvider.GetRequiredService<SeedingOptions>();
+        
         logger.Log("Seeding development data");
-        await seeder.SeedAsync();
+
+        await seeder.SeedAsync(option.EntitiesToSeed);
         logger.Log("Seeding development data - Completed");
     }
 

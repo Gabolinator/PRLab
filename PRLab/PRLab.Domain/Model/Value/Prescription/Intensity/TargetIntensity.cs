@@ -10,8 +10,7 @@ public sealed record TargetIntensity
     public decimal? Value { get; init; }
 
     public TargetIntensityRange? Range { get; init; }
-    
-    // todo hook 
+
     public PaceTarget? PaceTarget { get; init; }
 
     private TargetIntensity()
@@ -22,21 +21,19 @@ public sealed record TargetIntensity
     private TargetIntensity(
         IntensityMeasureType type,
         decimal? value,
-        TargetIntensityRange? range)
+        TargetIntensityRange? range,
+        PaceTarget? paceTarget)
     {
-        if (value is null && range is null)
-        {
-            throw new ArgumentException("Target intensity must have a value or range.");
-        }
-
-        if (value is not null && range is not null)
-        {
-            throw new ArgumentException("Target intensity cannot have both a value and a range.");
-        }
+        ValidateOrThrow(
+            type,
+            value,
+            range,
+            paceTarget);
 
         Type = type;
         Value = value;
         Range = range;
+        PaceTarget = paceTarget;
     }
 
     public static TargetIntensity Rpe(decimal value)
@@ -74,9 +71,30 @@ public sealed record TargetIntensity
         return NewValue(IntensityMeasureType.RepsInTheTank, reps);
     }
 
-    public static TargetIntensity Pace(decimal value)
+    public static TargetIntensity Pace(PaceTarget paceTarget)
     {
-        return NewValue(IntensityMeasureType.Pace, value);
+        ArgumentNullException.ThrowIfNull(paceTarget);
+
+        return NewPace(
+            IntensityMeasureType.Pace,
+            paceTarget);
+    }
+
+    public static TargetIntensity PacePerKilometer(TimeSpan pace)
+    {
+        return Pace(PaceTarget.PerKilometer(pace));
+    }
+
+    public static TargetIntensity PacePerMile(TimeSpan pace)
+    {
+        return Pace(PaceTarget.PerMile(pace));
+    }
+
+    public static TargetIntensity SplitPer500Meters(TimeSpan split)
+    {
+        return NewPace(
+            IntensityMeasureType.SplitTime,
+            PaceTarget.Per500Meters(split));
     }
 
     public static TargetIntensity Watts(decimal value)
@@ -99,7 +117,12 @@ public sealed record TargetIntensity
         decimal value)
     {
         ValidateIntensityValue(type, value);
-        return new TargetIntensity(type, value, null);
+
+        return new TargetIntensity(
+            type,
+            value,
+            null,
+            null);
     }
 
     private static TargetIntensity NewRange(
@@ -112,7 +135,68 @@ public sealed record TargetIntensity
         return new TargetIntensity(
             type,
             null,
-            TargetIntensityRange.New(minValue, maxValue));
+            TargetIntensityRange.New(minValue, maxValue),
+            null);
+    }
+
+    private static TargetIntensity NewPace(
+        IntensityMeasureType type,
+        PaceTarget paceTarget)
+    {
+        return new TargetIntensity(
+            type,
+            null,
+            null,
+            paceTarget);
+    }
+
+    private static void ValidateOrThrow(
+        IntensityMeasureType type,
+        decimal? value,
+        TargetIntensityRange? range,
+        PaceTarget? paceTarget)
+    {
+        var providedCount = 0;
+
+        if (value is not null)
+        {
+            providedCount++;
+        }
+
+        if (range is not null)
+        {
+            providedCount++;
+        }
+
+        if (paceTarget is not null)
+        {
+            providedCount++;
+        }
+
+        if (providedCount == 0)
+        {
+            throw new ArgumentException("Target intensity must have a value, range, or pace target.");
+        }
+
+        if (providedCount > 1)
+        {
+            throw new ArgumentException("Target intensity cannot have more than one target shape.");
+        }
+
+        if (paceTarget is not null && !SupportsPaceTarget(type))
+        {
+            throw new ArgumentException($"{type} intensity cannot use a pace target.", nameof(paceTarget));
+        }
+
+        if (SupportsPaceTarget(type) && paceTarget is null)
+        {
+            throw new ArgumentException($"{type} intensity requires a pace target.", nameof(paceTarget));
+        }
+    }
+
+    private static bool SupportsPaceTarget(IntensityMeasureType type)
+    {
+        return type is IntensityMeasureType.Pace or IntensityMeasureType.SplitTime;
     }
 
     private static void ValidateIntensityRange(
@@ -120,6 +204,11 @@ public sealed record TargetIntensity
         decimal minValue,
         decimal maxValue)
     {
+        if (SupportsPaceTarget(type))
+        {
+            throw new ArgumentException($"{type} intensity should use PaceTarget instead of decimal range.");
+        }
+
         if (minValue > maxValue)
         {
             throw new ArgumentException("Minimum intensity cannot be greater than maximum intensity.");
@@ -133,6 +222,11 @@ public sealed record TargetIntensity
         IntensityMeasureType type,
         decimal value)
     {
+        if (SupportsPaceTarget(type))
+        {
+            throw new ArgumentException($"{type} intensity should use PaceTarget instead of decimal value.");
+        }
+
         if (value < 0)
         {
             throw new ArgumentException("Intensity value cannot be negative.", nameof(value));

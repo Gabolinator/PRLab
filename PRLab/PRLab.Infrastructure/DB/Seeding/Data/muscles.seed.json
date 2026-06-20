@@ -1,6 +1,6 @@
 [
   {
-    "Id": "2ad41ab1-a343-4de3-94fa-781539060ef8",
+    "Id": "dc732a4d-c7f9-417e-a10e-db99e3f23351",
     "Name": "Abductors",
     "NameKey": "abductors",
     "LatinName": "Musculi abductores coxae",
@@ -10,7 +10,7 @@
     },
     "Antagonists": [
       {
-        "Id": "fd216ac0-37f7-43d9-aa71-0ab3b9590795",
+        "Id": "2c06eda6-7537-4032-a896-38f5dc8c172d",
         "Name": "Adductors",
         "NameKey": "adductors"
       }
@@ -18,7 +18,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "b3abfd13-56d4-4ea8-8d72-fab1ec21dcae",
+    "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
     "Name": "Abs",
     "NameKey": "abs",
     "LatinName": "Musculus rectus abdominis",
@@ -28,7 +28,7 @@
     },
     "Antagonists": [
       {
-        "Id": "b42fb5e9-024a-4b55-b1f2-4c340a067737",
+        "Id": "21b4dc83-4395-4d34-ac25-fb315bb6c0c8",
         "Name": "Spinal Erectors",
         "NameKey": "spinalerectors"
       }
@@ -36,7 +36,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "fd216ac0-37f7-43d9-aa71-0ab3b9590795",
+    "Id": "2c06eda6-7537-4032-a896-38f5dc8c172d",
     "Name": "Adductors",
     "NameKey": "adductors",
     "LatinName": "Musculi adductores femoris",
@@ -46,7 +46,7 @@
     },
     "Antagonists": [
       {
-        "Id": "2ad41ab1-a343-4de3-94fa-781539060ef8",
+        "Id": "dc732a4d-c7f9-417e-a10e-db99e3f23351",
         "Name": "Abductors",
         "NameKey": "abductors"
       }
@@ -54,7 +54,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "bc51ade0-3220-4feb-ab26-cbd468959925",
+    "Id": "e18398f8-f3a8-4077-a496-f30f32106ae7",
     "Name": "Biceps",
     "NameKey": "biceps",
     "LatinName": "Musculus biceps brachii",
@@ -64,7 +64,7 @@
     },
     "Antagonists": [
       {
-        "Id": "8437c6c1-1e05-405d-95ec-ca31e9084c8f",
+        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
         "Name": "Triceps",
         "NameKey": "triceps"
       }
@@ -72,7 +72,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "e988f7d9-6abd-40a9-bbc2-3f6eebd3f491",
+    "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
     "Name": "Calves",
     "NameKey": "calves",
     "LatinName": "Musculus gastrocnemius",
@@ -82,7 +82,7 @@
     },
     "Antagonists": [
       {
-        "Id": "fcc5908e-b5dc-406b-a9fb-bd5a4423b535",
+        "Id": "dddd065c-ef14-4247-beca-2a948c5d5589",
         "Name": "Shins",
         "NameKey": "shins"
       }
@@ -90,7 +90,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "774d5928-1d6f-46c1-b6c6-16a1e332de21",
+    "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
     "Name": "Chest",
     "NameKey": "chest",
     "LatinName": "Musculus pectoralis major",
@@ -100,7 +100,7 @@
     },
     "Antagonists": [
       {
-        "Id": "c52a062d-79c4-4315-88e0-852d99cd1740",
+        "Id": "bcf29181-4ac9-4409-8d20-8049d1e93629",
         "Name": "Lats",
         "NameKey": "lats"
       }
@@ -108,7 +108,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "39d83aea-52ce-487d-bb5f-ce5e35f0c73c",
+    "Id": "fdce71e9-495b-4bee-8ac4-47820d84e10c",
     "Name": "Forearms Extensors",
     "NameKey": "forearmsextensors",
     "LatinName": "Musculi extensores antebrachii",
@@ -118,7 +118,7 @@
     },
     "Antagonists": [
       {
-        "Id": "9bdaa797-42df-4429-9e68-74d3cfea3ed5",
+        "Id": "8fed90f8-83d6-4d3f-b247-05d7ac465742",
         "Name": "Forearms Flexors",
         "NameKey": "forearmsflexors"
       }
@@ -126,7 +126,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "9bdaa797-42df-4429-9e68-74d3cfea3ed5",
+    "Id": "8fed90f8-83d6-4d3f-b247-05d7ac465742",
     "Name": "Forearms Flexors",
     "NameKey": "forearmsflexors",
     "LatinName": "Musculi flexores antebrachii",
@@ -136,7 +136,7 @@
     },
     "Antagonists": [
       {
-        "Id": "39d83aea-52ce-487d-bb5f-ce5e35f0c73c",
+        "Id": "fdce71e9-495b-4bee-8ac4-47820d84e10c",
         "Name": "Forearms Extensors",
         "NameKey": "forearmsextensors"
       }
@@ -144,7 +144,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "be44309a-edda-4a27-8a38-67bb0023eca6",
+    "Id": "f39e8edb-c7d2-4808-9f27-f85248bb7f88",
     "Name": "Front Delts",
     "NameKey": "frontdelts",
     "LatinName": "Musculus deltoideus pars clavicularis",
@@ -154,7 +154,7 @@
     },
     "Antagonists": [
       {
-        "Id": "87a055af-3f34-47d0-9106-2bd63a169f00",
+        "Id": "7ea13765-b488-43d8-9ac7-4f04559cea1b",
         "Name": "Rear Delts",
         "NameKey": "reardelts"
       }
@@ -162,7 +162,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "de89bcaf-c74c-4ac7-ac50-a41fa07b85b3",
+    "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
     "Name": "Glutes",
     "NameKey": "glutes",
     "LatinName": "Musculus gluteus maximus",
@@ -172,7 +172,7 @@
     },
     "Antagonists": [
       {
-        "Id": "35d6f9c8-530f-4063-b4d9-c8eb77edf1f7",
+        "Id": "888003ed-6fde-494c-9c0e-a459dd9d64f9",
         "Name": "Hip Flexors",
         "NameKey": "hipflexors"
       }
@@ -180,7 +180,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "f4589699-ae2a-4585-bdfd-61fac9bafa93",
+    "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
     "Name": "Hamstrings",
     "NameKey": "hamstrings",
     "LatinName": "Musculi ischiocrurales",
@@ -190,7 +190,7 @@
     },
     "Antagonists": [
       {
-        "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
         "Name": "Quads",
         "NameKey": "quads"
       }
@@ -198,7 +198,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "35d6f9c8-530f-4063-b4d9-c8eb77edf1f7",
+    "Id": "888003ed-6fde-494c-9c0e-a459dd9d64f9",
     "Name": "Hip Flexors",
     "NameKey": "hipflexors",
     "LatinName": "Musculus iliopsoas",
@@ -208,7 +208,7 @@
     },
     "Antagonists": [
       {
-        "Id": "de89bcaf-c74c-4ac7-ac50-a41fa07b85b3",
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
         "Name": "Glutes",
         "NameKey": "glutes"
       }
@@ -216,7 +216,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "c52a062d-79c4-4315-88e0-852d99cd1740",
+    "Id": "bcf29181-4ac9-4409-8d20-8049d1e93629",
     "Name": "Lats",
     "NameKey": "lats",
     "LatinName": "Musculus latissimus dorsi",
@@ -226,7 +226,7 @@
     },
     "Antagonists": [
       {
-        "Id": "774d5928-1d6f-46c1-b6c6-16a1e332de21",
+        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
         "Name": "Chest",
         "NameKey": "chest"
       }
@@ -234,7 +234,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "6f221385-60bc-4f0a-819a-8682dd6791e3",
+    "Id": "f8443d64-c54a-4b95-aa26-0e184e579ef3",
     "Name": "Neck Flexors",
     "NameKey": "neckflexors",
     "LatinName": "Musculi flexores colli",
@@ -244,7 +244,7 @@
     },
     "Antagonists": [
       {
-        "Id": "82b3fec8-4744-439d-9430-3b461aa9d50a",
+        "Id": "6df2da73-2702-4d79-9b5e-d8f0a0ed27c4",
         "Name": "Traps",
         "NameKey": "traps"
       }
@@ -252,7 +252,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
+    "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
     "Name": "Quads",
     "NameKey": "quads",
     "LatinName": "Musculus quadriceps femoris",
@@ -262,7 +262,7 @@
     },
     "Antagonists": [
       {
-        "Id": "f4589699-ae2a-4585-bdfd-61fac9bafa93",
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
         "Name": "Hamstrings",
         "NameKey": "hamstrings"
       }
@@ -270,7 +270,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "87a055af-3f34-47d0-9106-2bd63a169f00",
+    "Id": "7ea13765-b488-43d8-9ac7-4f04559cea1b",
     "Name": "Rear Delts",
     "NameKey": "reardelts",
     "LatinName": "Musculus deltoideus pars spinalis",
@@ -280,7 +280,7 @@
     },
     "Antagonists": [
       {
-        "Id": "be44309a-edda-4a27-8a38-67bb0023eca6",
+        "Id": "f39e8edb-c7d2-4808-9f27-f85248bb7f88",
         "Name": "Front Delts",
         "NameKey": "frontdelts"
       }
@@ -288,7 +288,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "fcc5908e-b5dc-406b-a9fb-bd5a4423b535",
+    "Id": "dddd065c-ef14-4247-beca-2a948c5d5589",
     "Name": "Shins",
     "NameKey": "shins",
     "LatinName": "Musculus tibialis anterior",
@@ -298,7 +298,7 @@
     },
     "Antagonists": [
       {
-        "Id": "e988f7d9-6abd-40a9-bbc2-3f6eebd3f491",
+        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
         "Name": "Calves",
         "NameKey": "calves"
       }
@@ -306,7 +306,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "b42fb5e9-024a-4b55-b1f2-4c340a067737",
+    "Id": "21b4dc83-4395-4d34-ac25-fb315bb6c0c8",
     "Name": "Spinal Erectors",
     "NameKey": "spinalerectors",
     "LatinName": "Musculus erector spinae",
@@ -316,7 +316,7 @@
     },
     "Antagonists": [
       {
-        "Id": "b3abfd13-56d4-4ea8-8d72-fab1ec21dcae",
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
         "Name": "Abs",
         "NameKey": "abs"
       }
@@ -324,7 +324,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "82b3fec8-4744-439d-9430-3b461aa9d50a",
+    "Id": "6df2da73-2702-4d79-9b5e-d8f0a0ed27c4",
     "Name": "Traps",
     "NameKey": "traps",
     "LatinName": "Musculus trapezius",
@@ -334,7 +334,7 @@
     },
     "Antagonists": [
       {
-        "Id": "6f221385-60bc-4f0a-819a-8682dd6791e3",
+        "Id": "f8443d64-c54a-4b95-aa26-0e184e579ef3",
         "Name": "Neck Flexors",
         "NameKey": "neckflexors"
       }
@@ -342,7 +342,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "8437c6c1-1e05-405d-95ec-ca31e9084c8f",
+    "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
     "Name": "Triceps",
     "NameKey": "triceps",
     "LatinName": "Musculus triceps brachii",
@@ -352,7 +352,7 @@
     },
     "Antagonists": [
       {
-        "Id": "bc51ade0-3220-4feb-ab26-cbd468959925",
+        "Id": "e18398f8-f3a8-4077-a496-f30f32106ae7",
         "Name": "Biceps",
         "NameKey": "biceps"
       }

@@ -21,7 +21,7 @@ public static class PRToolServicesExtensions
         IClock clock, IAppLogger logger )
     {
        return services.AddUtilities(clock, logger)
-            .AddInfrastructure(configuration, logger, addSeeding: true)
+            .AddInfrastructure(configuration, logger)
             .AddPRToolHandlers();
     }
 }

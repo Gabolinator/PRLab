@@ -13,15 +13,16 @@ public static class InfrastructureModularity
     }
 
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration,
-        IAppLogger logger, bool addSeeding = false)
+        IAppLogger logger)
 
     {
         var updatedServices = services
             .AddDBContextConfiguration(configuration, logger)
             .AddRepositories()
-            .AddUserService();
-
-        return !addSeeding ? updatedServices : updatedServices.AddDataSeeding(configuration, logger);
+            .AddUserService()
+            .AddDataSeeding(configuration, logger);
+        
+        return updatedServices;
     }
 
 }

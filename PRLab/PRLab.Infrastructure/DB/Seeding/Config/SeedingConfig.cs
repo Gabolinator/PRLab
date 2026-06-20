@@ -1,15 +1,14 @@
-﻿using Microsoft.Extensions.Options;
-using PRLab.Application.Interface.DB.Seeding;
+﻿using PRLab.Application.Interface.DB.Seeding;
 
 namespace PRLab.Infrastructure.DB.Seeding.Config;
 
-public sealed class SeedingConfig(IOptions<SeedingOptions> options) : ISeedingConfig
+public sealed class SeedingConfig(SeedingOptions options) : ISeedingConfig
 {
     public string SeedFileDirectory
     {
         get
         {
-            var seedFileDirectory = options.Value.SeedFileDirectory;
+            var seedFileDirectory = options.SeedFileDirectory;
 
             if (string.IsNullOrWhiteSpace(seedFileDirectory))
             {
@@ -19,13 +18,6 @@ public sealed class SeedingConfig(IOptions<SeedingOptions> options) : ISeedingCo
             return seedFileDirectory;
         }
     }
-    
-    public SeedingSource Source
-    {
-        get
-        {
-            var seedFromFile = options.Value.Source;
-            return seedFromFile;
-        }
-    }
+
+    public SeedingSource Source => options.Source;
 }

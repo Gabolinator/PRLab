@@ -22,7 +22,7 @@ public sealed class EquipmentSeeder(
     public override EntityType EntityType => EntityType.Equipment;
     public override string Name => "DevelopmentEquipmentSeed";
 
-    public override string Version => "1.0.0";
+    public override string Version => "1.0.1";
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
 

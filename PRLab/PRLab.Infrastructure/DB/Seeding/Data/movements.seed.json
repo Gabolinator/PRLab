@@ -1,6 +1,176 @@
 [
   {
-    "Id": "51385348-fa0b-4e89-80ba-b9af982ca12b",
+    "Id": "f820b42a-59eb-426a-8c17-e86c8b2cb3ad",
+    "Name": "Assault Bike",
+    "NameKey": "assaultbike",
+    "Category": {
+      "Id": "e83690f3-51ff-4060-896f-2a2926ff9134",
+      "Name": "Hyrox",
+      "NameKey": "hyrox"
+    },
+    "Description": {
+      "Content": "Air-bike conditioning movement using coordinated arm and leg effort for calories, time, or intervals."
+    },
+    "DefaultWorkTargetType": "Calories",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "DistanceMeters",
+      "Calories"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "machine",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "c94d96ab-b844-42de-b06f-9e8c40937b70",
+            "Name": "Assault Bike",
+            "NameKey": "assaultbike"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "bcf29181-4ac9-4409-8d20-8049d1e93629",
+        "Name": "Lats",
+        "NameKey": "lats",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "98da7eaa-e1bf-4f8b-98c2-dcc3f3174a62",
+    "Name": "Back Squat",
+    "NameKey": "backsquat",
+    "Category": {
+      "Id": "c334102b-f652-43c9-b6a1-9fd0ce726532",
+      "Name": "Powerlifting",
+      "NameKey": "powerlifting"
+    },
+    "Description": {
+      "Content": "Loaded squat variation performed with a barbell on the back."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "TimeUnderTensionSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "load",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "491f5821-79f1-491e-bbbd-a842b1931c57",
+            "Name": "Barbell",
+            "NameKey": "barbell"
+          }
+        ]
+      },
+      {
+        "GroupKey": "support",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "93813f88-0b6b-4d26-99a7-de69410e66c3",
+            "Name": "Squat Rack",
+            "NameKey": "squatrack"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "21b4dc83-4395-4d34-ac25-fb315bb6c0c8",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": "Squat",
+    "Patterns": [
+      "Squat"
+    ],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "03b6b428-1156-4c1a-be02-033e850c97b3",
+      "Name": "Bodyweight Squat",
+      "NameKey": "bodyweightsquat"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "03b6b428-1156-4c1a-be02-033e850c97b3",
     "Name": "Bodyweight Squat",
     "NameKey": "bodyweightsquat",
     "Category": {
@@ -19,19 +189,19 @@
     "EquipmentRequirements": [],
     "Muscles": [
       {
-        "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "de89bcaf-c74c-4ac7-ac50-a41fa07b85b3",
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "f4589699-ae2a-4585-bdfd-61fac9bafa93",
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
@@ -48,7 +218,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "181345ef-4a29-4ed6-aff4-d1298ed7220a",
+    "Id": "2e896c7a-b168-4f5f-bd81-bae7f3b4b8a8",
     "Name": "Burpee",
     "NameKey": "burpee",
     "Category": {
@@ -68,37 +238,37 @@
     "EquipmentRequirements": [],
     "Muscles": [
       {
-        "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "b3abfd13-56d4-4ea8-8d72-fab1ec21dcae",
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "e988f7d9-6abd-40a9-bbc2-3f6eebd3f491",
+        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
         "Name": "Calves",
         "NameKey": "calves",
         "Role": "Secondary"
       },
       {
-        "Id": "774d5928-1d6f-46c1-b6c6-16a1e332de21",
+        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
         "Name": "Chest",
         "NameKey": "chest",
         "Role": "Secondary"
       },
       {
-        "Id": "de89bcaf-c74c-4ac7-ac50-a41fa07b85b3",
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "8437c6c1-1e05-405d-95ec-ca31e9084c8f",
+        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
         "Name": "Triceps",
         "NameKey": "triceps",
         "Role": "Secondary"
@@ -118,7 +288,169 @@
     "Action": "Ignore"
   },
   {
-    "Id": "ae12cb4c-cf1a-449d-bade-f4aa98365593",
+    "Id": "dc23a078-b81d-4a44-83bd-de67510d1f72",
+    "Name": "Deadlift",
+    "NameKey": "deadlift",
+    "Category": {
+      "Id": "c334102b-f652-43c9-b6a1-9fd0ce726532",
+      "Name": "Powerlifting",
+      "NameKey": "powerlifting"
+    },
+    "Description": {
+      "Content": "Loaded hinge-style strength movement where a barbell is lifted from the floor to standing."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "TimeUnderTensionSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "load",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "491f5821-79f1-491e-bbbd-a842b1931c57",
+            "Name": "Barbell",
+            "NameKey": "barbell"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8fed90f8-83d6-4d3f-b247-05d7ac465742",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "21b4dc83-4395-4d34-ac25-fb315bb6c0c8",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "6df2da73-2702-4d79-9b5e-d8f0a0ed27c4",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": "Pull",
+    "Patterns": [
+      "Pull"
+    ],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "a19089ff-ddfc-4346-b8d1-0cb8cbb37b8d",
+    "Name": "Double Dumbbell Hang Power Clean",
+    "NameKey": "doubledumbbellhangpowerclean",
+    "Category": {
+      "Id": "6dac43db-54a0-47e9-9858-ab7ffba564fb",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Explosive dumbbell clean variation performed from the hang with two dumbbells."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "TimeUnderTensionSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "load",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "a7c9fcad-ae65-4c77-bed6-86645a689a85",
+            "Name": "Dumbbell",
+            "NameKey": "dumbbell"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8fed90f8-83d6-4d3f-b247-05d7ac465742",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "6df2da73-2702-4d79-9b5e-d8f0a0ed27c4",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": "Pull",
+    "Patterns": [
+      "Pull"
+    ],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "967aff04-8ef5-4971-8391-2002b511d3c3",
     "Name": "Double Under",
     "NameKey": "doubleunder",
     "Category": {
@@ -150,19 +482,19 @@
     ],
     "Muscles": [
       {
-        "Id": "e988f7d9-6abd-40a9-bbc2-3f6eebd3f491",
+        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
         "Name": "Calves",
         "NameKey": "calves",
         "Role": "Primary"
       },
       {
-        "Id": "b3abfd13-56d4-4ea8-8d72-fab1ec21dcae",
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Secondary"
@@ -179,7 +511,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "489ff266-ebc8-4270-89e0-3b514e7af83d",
+    "Id": "e6331313-c506-4933-8aa3-6179d2975cb4",
     "Name": "Goblet Squat",
     "NameKey": "gobletsquat",
     "Category": {
@@ -215,25 +547,25 @@
     ],
     "Muscles": [
       {
-        "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "b3abfd13-56d4-4ea8-8d72-fab1ec21dcae",
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "de89bcaf-c74c-4ac7-ac50-a41fa07b85b3",
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "f4589699-ae2a-4585-bdfd-61fac9bafa93",
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
@@ -245,7 +577,7 @@
     ],
     "Laterality": "Bilateral",
     "VariantOf": {
-      "Id": "51385348-fa0b-4e89-80ba-b9af982ca12b",
+      "Id": "03b6b428-1156-4c1a-be02-033e850c97b3",
       "Name": "Bodyweight Squat",
       "NameKey": "bodyweightsquat"
     },
@@ -254,7 +586,88 @@
     "Action": "Ignore"
   },
   {
-    "Id": "7d34a872-6801-4d09-bf53-28e9f4f8dbf1",
+    "Id": "11f91f64-764a-4b29-9350-d18dc746eb02",
+    "Name": "Lateral Burpee Over Barbell",
+    "NameKey": "lateralburpeeoverbarbell",
+    "Category": {
+      "Id": "6dac43db-54a0-47e9-9858-ab7ffba564fb",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Burpee variation where the athlete performs a burpee and jumps laterally over a barbell."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds",
+      "Calories"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "obstacle",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "491f5821-79f1-491e-bbbd-a842b1931c57",
+            "Name": "Barbell",
+            "NameKey": "barbell"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": "Complex",
+    "Patterns": [
+      "Push",
+      "Jump",
+      "GetUp"
+    ],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "a686b0f2-0cea-4061-a5cf-37b58b7ec570",
     "Name": "Lunge",
     "NameKey": "lunge",
     "Category": {
@@ -273,25 +686,25 @@
     "EquipmentRequirements": [],
     "Muscles": [
       {
-        "Id": "43a53d5d-e79c-4d49-bdc6-93216784e33d",
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "b3abfd13-56d4-4ea8-8d72-fab1ec21dcae",
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "de89bcaf-c74c-4ac7-ac50-a41fa07b85b3",
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "f4589699-ae2a-4585-bdfd-61fac9bafa93",
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
@@ -308,7 +721,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "be5ce8f1-76cd-45a6-9043-63919057060a",
+    "Id": "5a173188-169d-4cdf-ba3b-f98c80dbe408",
     "Name": "Pull Up",
     "NameKey": "pullup",
     "Category": {
@@ -339,19 +752,19 @@
     ],
     "Muscles": [
       {
-        "Id": "c52a062d-79c4-4315-88e0-852d99cd1740",
+        "Id": "bcf29181-4ac9-4409-8d20-8049d1e93629",
         "Name": "Lats",
         "NameKey": "lats",
         "Role": "Primary"
       },
       {
-        "Id": "b3abfd13-56d4-4ea8-8d72-fab1ec21dcae",
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "bc51ade0-3220-4feb-ab26-cbd468959925",
+        "Id": "e18398f8-f3a8-4077-a496-f30f32106ae7",
         "Name": "Biceps",
         "NameKey": "biceps",
         "Role": "Secondary"
@@ -368,7 +781,7 @@
     "Action": "Ignore"
   },
   {
-    "Id": "9705ffd5-6432-4f32-b127-d124082861a4",
+    "Id": "ed0e0af8-ee8b-4a0f-a304-0e842ed80b41",
     "Name": "Push Up",
     "NameKey": "pushup",
     "Category": {
@@ -387,25 +800,25 @@
     "EquipmentRequirements": [],
     "Muscles": [
       {
-        "Id": "774d5928-1d6f-46c1-b6c6-16a1e332de21",
+        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
         "Name": "Chest",
         "NameKey": "chest",
         "Role": "Primary"
       },
       {
-        "Id": "b3abfd13-56d4-4ea8-8d72-fab1ec21dcae",
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "be44309a-edda-4a27-8a38-67bb0023eca6",
+        "Id": "f39e8edb-c7d2-4808-9f27-f85248bb7f88",
         "Name": "Front Delts",
         "NameKey": "frontdelts",
         "Role": "Secondary"
       },
       {
-        "Id": "8437c6c1-1e05-405d-95ec-ca31e9084c8f",
+        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
         "Name": "Triceps",
         "NameKey": "triceps",
         "Role": "Secondary"
@@ -413,6 +826,309 @@
     ],
     "PrimaryPattern": "Push",
     "Patterns": [
+      "Push"
+    ],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "80f9b665-e34d-422b-806b-6625f52d3f48",
+    "Name": "Row",
+    "NameKey": "row",
+    "Category": {
+      "Id": "e5a3b0dc-fc62-4edf-9411-015b332030f6",
+      "Name": "Cardio",
+      "NameKey": "cardio"
+    },
+    "Description": {
+      "Content": "Rowing movement performed on a rowing ergometer for distance, calories, time, or intervals."
+    },
+    "DefaultWorkTargetType": "Calories",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "DistanceMeters",
+      "Calories"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "machine",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "5f9f553c-1f46-4f79-be3d-9ef89e5ad94f",
+            "Name": "Row Erg",
+            "NameKey": "rowerg"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "bcf29181-4ac9-4409-8d20-8049d1e93629",
+        "Name": "Lats",
+        "NameKey": "lats",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "e18398f8-f3a8-4077-a496-f30f32106ae7",
+        "Name": "Biceps",
+        "NameKey": "biceps",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": "Pull",
+    "Patterns": [
+      "Pull"
+    ],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "b992e2ce-f92b-42ae-ba34-66d514bbf4bc",
+    "Name": "Running",
+    "NameKey": "running",
+    "Category": {
+      "Id": "a1f2f629-0bbc-4c60-850f-b36da0d65d90",
+      "Name": "Running",
+      "NameKey": "running"
+    },
+    "Description": {
+      "Content": "Locomotion movement based on jogging, running, sprinting, or interval-based run work."
+    },
+    "DefaultWorkTargetType": "DistanceMeters",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "DistanceMeters",
+      "Calories"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "c8f1acc9-35bc-4f15-85a8-8662faafc9f6",
+    "Name": "Ski Erg",
+    "NameKey": "skierg",
+    "Category": {
+      "Id": "e83690f3-51ff-4060-896f-2a2926ff9134",
+      "Name": "Hyrox",
+      "NameKey": "hyrox"
+    },
+    "Description": {
+      "Content": "Ski ergometer pulling movement used for calories, distance, time, and interval conditioning."
+    },
+    "DefaultWorkTargetType": "Calories",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "DistanceMeters",
+      "Calories"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "machine",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "513c7344-0562-4059-8a1e-ac17e5f3a1db",
+            "Name": "Ski Erg",
+            "NameKey": "skierg"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "bcf29181-4ac9-4409-8d20-8049d1e93629",
+        "Name": "Lats",
+        "NameKey": "lats",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8fed90f8-83d6-4d3f-b247-05d7ac465742",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": "Pull",
+    "Patterns": [
+      "Pull"
+    ],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "d69b1f24-024b-4715-aac5-b5ba332cdc30",
+    "Name": "Wall Ball",
+    "NameKey": "wallball",
+    "Category": {
+      "Id": "e83690f3-51ff-4060-896f-2a2926ff9134",
+      "Name": "Hyrox",
+      "NameKey": "hyrox"
+    },
+    "Description": {
+      "Content": "Squat and throw movement performed with a weighted wall ball toward a target."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds",
+      "Calories"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "ball",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "0dcb243c-1e2b-4c9d-b1aa-203dd7d5a57b",
+            "Name": "Wall Ball",
+            "NameKey": "wallball"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "f39e8edb-c7d2-4808-9f27-f85248bb7f88",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": "Complex",
+    "Patterns": [
+      "Squat",
       "Push"
     ],
     "Laterality": "Bilateral",

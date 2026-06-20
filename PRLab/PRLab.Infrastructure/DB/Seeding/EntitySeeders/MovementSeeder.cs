@@ -25,7 +25,7 @@ public class MovementSeeder(
 {
     public override string Name => "DevelopmentMovementSeed";
 
-    public override string Version => "1.0.6";
+    public override string Version => "1.0.1";
 
     public override EntityType EntityType => EntityType.Movement;
 

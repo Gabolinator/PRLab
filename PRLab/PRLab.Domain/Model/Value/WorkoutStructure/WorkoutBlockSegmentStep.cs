@@ -81,7 +81,7 @@ public sealed record WorkoutBlockSegmentStep
         string? notes = null)
     {
         ArgumentNullException.ThrowIfNull(exercise);
-
+    
         return new WorkoutBlockSegmentStep(
             WorkoutBlockSegmentStepId.New(),
             segmentId,
@@ -94,6 +94,25 @@ public sealed record WorkoutBlockSegmentStep
             notes ?? prescription?.Notes);
     }
 
+    public static WorkoutBlockSegmentStep NewExerciseStep(
+        WorkoutBlockSegmentId segmentId,
+        ExerciseId exerciseId,
+        int sequence,
+        WorkoutStepPrescription? prescription = null,
+        string? notes = null)
+    {
+        return new WorkoutBlockSegmentStep(
+            id: WorkoutBlockSegmentStepId.New(),
+            segmentId: segmentId,
+            stepKind: WorkoutStepKind.Exercise,
+            sequence: sequence,
+            exerciseId: exerciseId,
+            exercise: null,
+            prescription: prescription,
+            rest: null,
+            notes: notes);
+    }
+    
     public static WorkoutBlockSegmentStep NewRestStep(
         WorkoutBlockSegmentId segmentId,
         RestTarget rest,

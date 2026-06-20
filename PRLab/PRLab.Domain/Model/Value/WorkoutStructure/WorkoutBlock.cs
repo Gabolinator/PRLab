@@ -65,14 +65,14 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
     public static WorkoutBlock NewBuiltIn(
         string name,
         WorkoutBlockType blockType,
-        BlockRepeatPrescription? roundPrescription = null,
+        BlockRepeatPrescription? repeatPrescription = null,
         User? createdBy = null)
     {
         return new WorkoutBlock(
             WorkoutBlockId.New(),
             name,
             blockType,
-            roundPrescription ?? BlockRepeatPrescription.Once(),
+            repeatPrescription ?? BlockRepeatPrescription.Once(),
             AuditInfo.New(createdBy),
             OwnershipInfo.BuiltIn());
     }
@@ -81,7 +81,7 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
         string name,
         WorkoutBlockType blockType,
         User owner,
-        BlockRepeatPrescription? roundPrescription = null)
+        BlockRepeatPrescription? repeatPrescription = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
@@ -89,7 +89,7 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
             WorkoutBlockId.New(),
             name,
             blockType,
-            roundPrescription ?? BlockRepeatPrescription.Once(),
+            repeatPrescription ?? BlockRepeatPrescription.Once(),
             AuditInfo.New(owner),
             OwnershipInfo.UserCreated(owner));
     }
@@ -98,7 +98,7 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
         string name,
         WorkoutBlockType blockType,
         User owner,
-        BlockRepeatPrescription? roundPrescription = null)
+        BlockRepeatPrescription? repeatPrescription = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
@@ -106,7 +106,7 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
             WorkoutBlockId.New(),
             name,
             blockType,
-            roundPrescription ?? BlockRepeatPrescription.Once(),
+            repeatPrescription ?? BlockRepeatPrescription.Once(),
             AuditInfo.New(owner),
             OwnershipInfo.Imported(owner));
     }
@@ -132,7 +132,7 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
         MarkUpdated(changedBy);
     }
 
-    public void ChangeRoundPrescription(
+    public void ChangeRepeatPrescription(
         BlockRepeatPrescription blockRepeatPrescription,
         User? changedBy = null)
     {

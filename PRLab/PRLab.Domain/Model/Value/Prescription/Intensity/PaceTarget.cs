@@ -1,10 +1,12 @@
-﻿namespace PRLab.Domain.Model.Value.Prescription.Intensity;
+﻿using PRLab.Domain.Model.Value.Enum.Prescription.Intensity;
+
+namespace PRLab.Domain.Model.Value.Prescription.Intensity;
 
 public sealed record PaceTarget
 {
     public PaceUnit Unit { get; init; }
 
-    public decimal SecondsPerUnit { get; init; }
+    public TimeSpan Duration { get; init; }
 
     private PaceTarget()
     {
@@ -13,35 +15,35 @@ public sealed record PaceTarget
 
     private PaceTarget(
         PaceUnit unit,
-        decimal secondsPerUnit)
+        TimeSpan duration)
     {
-        if (secondsPerUnit <= 0)
+        if (duration <= TimeSpan.Zero)
         {
-            throw new ArgumentException("Pace must be greater than zero.", nameof(secondsPerUnit));
+            throw new ArgumentException("Pace duration must be greater than zero.", nameof(duration));
         }
 
         Unit = unit;
-        SecondsPerUnit = secondsPerUnit;
+        Duration = duration;
     }
 
-    public static PaceTarget PerKilometer(TimeSpan pace)
+    public static PaceTarget PerKilometer(TimeSpan duration)
     {
         return new PaceTarget(
             PaceUnit.PerKilometer,
-            (decimal)pace.TotalSeconds);
+            duration);
     }
 
-    public static PaceTarget PerMile(TimeSpan pace)
+    public static PaceTarget PerMile(TimeSpan duration)
     {
         return new PaceTarget(
             PaceUnit.PerMile,
-            (decimal)pace.TotalSeconds);
+            duration);
     }
 
-    public static PaceTarget Per500Meters(TimeSpan pace)
+    public static PaceTarget Per500Meters(TimeSpan duration)
     {
         return new PaceTarget(
             PaceUnit.Per500Meters,
-            (decimal)pace.TotalSeconds);
+            duration);
     }
 }

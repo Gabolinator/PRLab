@@ -34,15 +34,18 @@ public sealed class EntityDataSeeder(
         ValidateRequestedEntities(entitiesToSeed);
 
         var results = new List<SeedResult>();
-        
+
         foreach (var entitySeeder in entitySeeders
                      .Where(entitySeeder => entitiesToSeed.Contains(entitySeeder.EntityType))
                      .OrderBy(entitySeeder => entitySeeder.Order))
         {
-           var result =  await entitySeeder.SeedAsync(ct);
+            var result = await entitySeeder.SeedAsync(ct);
+
             logger.Log($"Seeded {entitySeeder.EntityType} - Changes: {result.ChangeCount}");
+
             results.Add(result);
         }
+
         return results;
     }
 

@@ -16,7 +16,7 @@ public sealed class DevelopmentMovementSeedFactory(
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    public IReadOnlyList<SeedItem<Domain.Model.Entity.Movement>> CreateInitialData(
+    public IReadOnlyList<SeedItem<Movement>> CreateInitialData(
         MovementSeedCatalogs catalogs)
     {
         var movementCategoryCatalog = catalogs.MovementCategory;

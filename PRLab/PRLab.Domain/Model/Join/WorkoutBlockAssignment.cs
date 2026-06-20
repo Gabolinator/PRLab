@@ -94,17 +94,17 @@ public sealed record WorkoutBlockAssignment
         Sequence = sequence;
     }
 
-    public static WorkoutBlockAssignment New(
-        WorkoutId workoutId,
-        WorkoutBlockId workoutBlockId,
-        int sequence)
-    {
-        return new WorkoutBlockAssignment(
-            WorkoutBlockAssignmentId.New(),
-            workoutId,
-            workoutBlockId,
-            sequence);
-    }
+    // public static WorkoutBlockAssignment New(
+    //     WorkoutId workoutId,
+    //     WorkoutBlockId workoutBlockId,
+    //     int sequence)
+    // {
+    //     return new WorkoutBlockAssignment(
+    //         WorkoutBlockAssignmentId.New(),
+    //         workoutId,
+    //         workoutBlockId,
+    //         sequence);
+    // }
 
     public void ChangeSequence(int sequence)
     {
