@@ -2,7 +2,7 @@
 
 public sealed record EstimatedDuration
 {
-    public TimeSpan Expected { get; init; }
+    public TimeSpan? Expected { get; init; }
 
     public TimeSpan? Minimum { get; init; }
 
@@ -14,49 +14,38 @@ public sealed record EstimatedDuration
     }
 
     private EstimatedDuration(
-        TimeSpan expected,
-        TimeSpan? minimum = null,
-        TimeSpan? maximum = null)
+        TimeSpan? expected,
+        TimeSpan? minimum,
+        TimeSpan? maximum)
     {
-        if (expected <= TimeSpan.Zero)
+        if (expected.HasValue && expected.Value < TimeSpan.Zero)
         {
-            throw new ArgumentException(
-                "Estimated duration must be greater than zero.",
-                nameof(expected));
+            throw new ArgumentException("Expected duration cannot be negative.", nameof(expected));
         }
 
-        if (minimum.HasValue && minimum.Value <= TimeSpan.Zero)
+        if (minimum.HasValue && minimum.Value < TimeSpan.Zero)
         {
-            throw new ArgumentException(
-                "Minimum estimated duration must be greater than zero.",
-                nameof(minimum));
+            throw new ArgumentException("Minimum duration cannot be negative.", nameof(minimum));
         }
 
-        if (maximum.HasValue && maximum.Value <= TimeSpan.Zero)
+        if (maximum.HasValue && maximum.Value < TimeSpan.Zero)
         {
-            throw new ArgumentException(
-                "Maximum estimated duration must be greater than zero.",
-                nameof(maximum));
+            throw new ArgumentException("Maximum duration cannot be negative.", nameof(maximum));
         }
 
         if (minimum.HasValue && maximum.HasValue && minimum.Value > maximum.Value)
         {
-            throw new ArgumentException(
-                "Minimum estimated duration cannot be greater than maximum estimated duration.");
+            throw new ArgumentException("Minimum duration cannot be greater than maximum duration.");
         }
 
-        if (minimum.HasValue && expected < minimum.Value)
+        if (expected.HasValue && minimum.HasValue && expected.Value < minimum.Value)
         {
-            throw new ArgumentException(
-                "Expected estimated duration cannot be lower than minimum estimated duration.",
-                nameof(expected));
+            throw new ArgumentException("Expected duration cannot be less than minimum duration.");
         }
 
-        if (maximum.HasValue && expected > maximum.Value)
+        if (expected.HasValue && maximum.HasValue && expected.Value > maximum.Value)
         {
-            throw new ArgumentException(
-                "Expected estimated duration cannot be greater than maximum estimated duration.",
-                nameof(expected));
+            throw new ArgumentException("Expected duration cannot be greater than maximum duration.");
         }
 
         Expected = expected;
@@ -64,37 +53,40 @@ public sealed record EstimatedDuration
         Maximum = maximum;
     }
 
-    public static EstimatedDuration Minutes(float minutes)
-    {
-        return From(TimeSpan.FromMinutes(minutes));
-    }
-    
-    public static EstimatedDuration Seconds(int seconds)
-    {
-        return From(TimeSpan.FromSeconds(seconds));
-    }
-
-    public static EstimatedDuration MinutesWithMinMax(
-        int expected,
-        int? minimum = null,
-        int? maximum = null)
-    {
-        return new EstimatedDuration(
-            TimeSpan.FromMinutes(expected),
-            minimum.HasValue ? TimeSpan.FromMinutes(minimum.Value) : null,
-            maximum.HasValue ? TimeSpan.FromMinutes(maximum.Value) : null);
-    }
-
-    public static EstimatedDuration From(TimeSpan duration)
-    {
-        return new EstimatedDuration(duration);
-    }
-
-    public static EstimatedDuration FromWithMinMax(
-        TimeSpan expected,
+    public static EstimatedDuration New(
+        TimeSpan? expected = null,
         TimeSpan? minimum = null,
         TimeSpan? maximum = null)
     {
-        return new EstimatedDuration(expected, minimum, maximum);
+        if (!expected.HasValue && !minimum.HasValue && !maximum.HasValue)
+        {
+            throw new ArgumentException(
+                "Estimated duration must provide at least one value.");
+        }
+
+        return new EstimatedDuration(
+            expected,
+            minimum,
+            maximum);
+    }
+
+    public static EstimatedDuration Seconds(int seconds)
+    {
+        return New(TimeSpan.FromSeconds(seconds));
+    }
+
+    public static EstimatedDuration Minutes(float minutes)
+    {
+        return New(TimeSpan.FromMinutes(minutes));
+    }
+
+    public static EstimatedDuration Range(
+        TimeSpan minimum,
+        TimeSpan maximum)
+    {
+        return New(
+            expected: null,
+            minimum: minimum,
+            maximum: maximum);
     }
 }

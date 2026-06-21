@@ -101,6 +101,63 @@ public sealed record WorkoutBlockSegment
         EstimatedSegmentDuration = estimatedSegmentDuration;
     }
 
+    public static WorkoutBlockSegment New(
+        WorkoutBlockId workoutBlockId,
+        string name,
+        int sequence,
+        WorkMode workMode,
+        WorkIntentPrescription intent,
+        WorkoutScoreType scoreType,
+        TimeConstraint? timeConstraint = null,
+        IntervalPrescription? intervalPrescription = null,
+        EstimatedDuration? estimatedSegmentDuration = null,
+        RestTarget? restAfterStep = null,
+        RestTarget? restAfterSegment = null)
+    {
+        return new WorkoutBlockSegment(
+            WorkoutBlockSegmentId.New(),
+            workoutBlockId,
+            name,
+            sequence,
+            workMode,
+            intent,
+            scoreType,
+            timeConstraint,
+            intervalPrescription,
+            estimatedSegmentDuration,
+            restAfterStep,
+            restAfterSegment);
+    }
+    
+    public static WorkoutBlockSegment NewWithId(
+        WorkoutBlockSegmentId id,
+        WorkoutBlockId workoutBlockId,
+        string name,
+        int sequence,
+        WorkMode workMode,
+        WorkIntentPrescription intent,
+        WorkoutScoreType scoreType,
+        TimeConstraint? timeConstraint = null,
+        IntervalPrescription? intervalPrescription = null,
+        EstimatedDuration? estimatedSegmentDuration = null,
+        RestTarget? restAfterStep = null,
+        RestTarget? restAfterSegment = null)
+    {
+        return new WorkoutBlockSegment(
+            id,
+            workoutBlockId,
+            name,
+            sequence,
+            workMode,
+            intent,
+            scoreType,
+            timeConstraint,
+            intervalPrescription,
+            estimatedSegmentDuration,
+            restAfterStep,
+            restAfterSegment);
+    }
+    
     public static WorkoutBlockSegment ForTime(
         WorkoutBlockId workoutBlockId,
         string name,

@@ -82,12 +82,7 @@ public static class SeedCatalogBuilder
         CancellationToken ct)
     {
         var exercises = await db.Exercises
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Include(exercise => exercise.Description)
-            .ThenInclude(description => description.Translations)
-            .Include(exercise => exercise.Steps)
-            .ThenInclude(exerciseBlock => exerciseBlock.Movement)
+            .ForFullRead()
             .OrderBy(exercise => exercise.Name)
             .ToListAsync(ct);
 
@@ -96,5 +91,21 @@ public static class SeedCatalogBuilder
                 exercises,
                 exercise => exercise.Id,
                 exercise => exercise.NameKey));
+    }
+
+    public static async Task<WorkoutSeedCatalog> CreateWorkoutCatalog(
+        PRLabPgDBContext db,
+        CancellationToken ct)
+    {
+        var workouts = await db.Workouts
+            .ForFullRead()
+            .OrderBy(workout => workout.Name)
+            .ToListAsync(ct);
+
+        return new WorkoutSeedCatalog(
+            new EntityCatalog<WorkoutId, Workout>(
+                workouts,
+                workout => workout.Id,
+                workout => workout.NameKey));
     }
 }

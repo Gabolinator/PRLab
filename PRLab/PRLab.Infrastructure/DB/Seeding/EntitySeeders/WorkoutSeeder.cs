@@ -5,6 +5,7 @@ using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Workout;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.System;
+using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
 using PRLab.Infrastructure.DB.Helpers;
@@ -91,11 +92,10 @@ public class WorkoutSeeder(
 
         logger.Log($"Seeder Updating - {EntityType} : {seedWorkout.NameKey}");
 
-        // var hasChanged = existingWorkout.Update(
-        //     WorkoutUpdate.FromWorkout(
-        //         seedWorkout,
-        //         SeedUser));
-        var hasChanged = true;
+        var hasChanged = existingWorkout.Update(
+            WorkoutUpdate.FromWorkout(
+                seedWorkout,
+                SeedUser));
         return hasChanged
             ? (
                 existingWorkout,

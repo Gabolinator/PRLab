@@ -55,7 +55,8 @@ public static class SeedingModularityExtensions
         return services
             .AddScoped<IMuscleAntagonistSeedRelationResolver, MuscleAntagonistSeedRelationResolver>()
             .AddScoped<IMovementSeedRelationResolver, MovementSeedRelationResolver>()
-            .AddScoped<IExerciseSeedRelationResolver, ExerciseSeedRelationResolver>();
+            .AddScoped<IExerciseSeedRelationResolver, ExerciseSeedRelationResolver>()
+            .AddScoped<IWorkoutSeedRelationResolver, WorkoutSeedRelationResolver>();
 
     }
 
@@ -74,7 +75,8 @@ public static class SeedingModularityExtensions
                 .AddScoped<IMuscleSeedFactory, JsonMuscleSeedFactory>()
                 .AddScoped<IMuscleAntagonistSeedFactory, JsonMuscleSeedFactory>()
                 .AddScoped<IMovementSeedFactory, JsonMovementSeedFactory>()
-                .AddScoped<IExerciseSeedFactory, JsonExerciseSeedFactory>(),
+                .AddScoped<IExerciseSeedFactory, JsonExerciseSeedFactory>()
+                .AddScoped<IWorkoutSeedFactory, JsonWorkoutSeedFactory>(),
 
             SeedingSource.Factory => services
                 .AddScoped<IEquipmentSeedFactory, DevelopmentEquipmentSeedFactory>()
@@ -139,7 +141,8 @@ public static class SeedingModularityExtensions
             .AddScoped<ISeedDataExporter, MovementCategoryJsonDataExporter>()
             .AddScoped<ISeedDataExporter, MuscleJsonDataExporter>()
             .AddScoped<ISeedDataExporter, MovementJsonDataExporter>()
-            .AddScoped<ISeedDataExporter, ExerciseJsonDataExporter>();
+            .AddScoped<ISeedDataExporter, ExerciseJsonDataExporter>()
+            .AddScoped<ISeedDataExporter, WorkoutJsonDataExporter>();
             
         services.AddScoped<ISeedDataExportOrchestrator, SeedDataExportOrchestrator>();
 

@@ -13,6 +13,7 @@ public static class SeedFileNames
             [EntityType.MovementCategory] = "movement-categories.seed.json",
             [EntityType.Movement] = "movements.seed.json",
             [EntityType.Exercise] = "exercises.seed.json",
+            [EntityType.Workout] = "workouts.seed.json",
             
         };
 

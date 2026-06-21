@@ -1,0 +1,661 @@
+[
+  {
+    "Id": "7ce2e8f9-5812-4463-9156-e250bc19d64b",
+    "Name": "Ausdauer / Hyrox",
+    "NameKey": "ausdauer/hyrox",
+    "Description": {
+      "Content": "7 repeats of rotating intervals: bike, ski, lateral burpees, rest, rest."
+    },
+    "EstimatedDuration": null,
+    "Blocks": [
+      {
+        "Id": "f26eae2c-8597-4be3-9491-ec41525c3a5e",
+        "Sequence": 1,
+        "Block": {
+          "Id": "72f698e8-ea42-4cfa-81e1-1402bb6c9405",
+          "Name": "Ausdauer",
+          "NameKey": "ausdauer",
+          "BlockType": "Endurance",
+          "BlockRepeatPrescription": {
+            "RepeatCount": 7,
+            "PrepareTime": null,
+            "RestBetweenRepeats": null,
+            "RestAfterBlock": null,
+            "EstimatedRepeatDuration": {
+              "Expected": "00:07:30",
+              "Minimum": null,
+              "Maximum": null
+            }
+          },
+          "Segments": [
+            {
+              "Id": "d32d418b-4f3a-493b-a079-e73713932d28",
+              "Name": "Every 1:30 Rotation",
+              "Sequence": 1,
+              "WorkMode": "Intervals",
+              "Intent": {
+                "WorkIntent": "Normal",
+                "TargetIntensity": null
+              },
+              "ScoreType": "Completed",
+              "TimeConstraint": null,
+              "IntervalPrescription": {
+                "Duration": "00:01:30",
+                "Scope": "PerStep",
+                "StartsOnClock": true
+              },
+              "EstimatedSegmentDuration": null,
+              "RestAfterStep": null,
+              "RestAfterSegment": null,
+              "Steps": [
+                {
+                  "Id": "1363d3d4-e354-4755-a16e-bfc384bc9835",
+                  "Sequence": 1,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "c00e9e44-fa88-4e25-bfe2-6e265fe21f72",
+                    "Name": "Assault Bike",
+                    "NameKey": "assaultbike"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 20,
+                      "TargetType": "Calories",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": null,
+                    "RestAfterStep": null,
+                    "TimeConstraint": null,
+                    "EstimatedStepDuration": null,
+                    "IntentOverride": null,
+                    "Partition": null,
+                    "SideExecution": null,
+                    "Notes": "Scaling: 20/15, 15/11, 11/8 calories."
+                  },
+                  "Rest": null,
+                  "Notes": null
+                },
+                {
+                  "Id": "4b865251-9842-48c4-8b55-b28c244dc688",
+                  "Sequence": 2,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "ab156891-31dd-4eb8-8d24-4dd7d0e5ec72",
+                    "Name": "Ski Erg",
+                    "NameKey": "skierg"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 20,
+                      "TargetType": "Calories",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": null,
+                    "RestAfterStep": null,
+                    "TimeConstraint": null,
+                    "EstimatedStepDuration": null,
+                    "IntentOverride": null,
+                    "Partition": null,
+                    "SideExecution": null,
+                    "Notes": "Scaling: 20/15, 15/11, 11/8 calories."
+                  },
+                  "Rest": null,
+                  "Notes": null
+                },
+                {
+                  "Id": "51e20bfc-afa4-46f4-b9d4-8e245c6e69ec",
+                  "Sequence": 3,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "73cefaad-3efb-42c4-90f1-bee25903b860",
+                    "Name": "Lateral Burpee Over Barbell",
+                    "NameKey": "lateralburpeeoverbarbell"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 18,
+                      "TargetType": "Repetitions",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": null,
+                    "RestAfterStep": null,
+                    "TimeConstraint": null,
+                    "EstimatedStepDuration": null,
+                    "IntentOverride": null,
+                    "Partition": null,
+                    "SideExecution": null,
+                    "Notes": "Scaling: 18, 14, 11 reps."
+                  },
+                  "Rest": null,
+                  "Notes": null
+                },
+                {
+                  "Id": "eb2d883b-02cf-4fcd-939d-3f013b623eb5",
+                  "Sequence": 4,
+                  "StepKind": "Rest",
+                  "Exercise": null,
+                  "Prescription": null,
+                  "Rest": {
+                    "Policy": "Fixed",
+                    "Seconds": 90,
+                    "MinimumSeconds": null,
+                    "MaximumSeconds": null
+                  },
+                  "Notes": null
+                },
+                {
+                  "Id": "664a118b-6bb8-4f99-804a-a7b5e29ae345",
+                  "Sequence": 5,
+                  "StepKind": "Rest",
+                  "Exercise": null,
+                  "Prescription": null,
+                  "Rest": {
+                    "Policy": "Fixed",
+                    "Seconds": 90,
+                    "MinimumSeconds": null,
+                    "MaximumSeconds": null
+                  },
+                  "Notes": null
+                }
+              ]
+            }
+          ],
+          "Origin": "BuiltIn",
+          "OwnerUserId": null
+        }
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "cf537113-a833-4143-bbdd-faf79fba1f22",
+    "Name": "CrossFit Back Squat \u002B Metcon",
+    "NameKey": "crossfitbacksquat\u002Bmetcon",
+    "Description": {
+      "Content": "Back squat strength piece followed by 5-repeat metcon."
+    },
+    "EstimatedDuration": null,
+    "Blocks": [
+      {
+        "Id": "8fcf6a02-890e-4d48-a89a-2714cf7a7f5e",
+        "Sequence": 1,
+        "Block": {
+          "Id": "c1d6afb1-46e4-4133-8626-5bed2f4d5d13",
+          "Name": "Back Squat",
+          "NameKey": "backsquat",
+          "BlockType": "Strength",
+          "BlockRepeatPrescription": {
+            "RepeatCount": 10,
+            "PrepareTime": null,
+            "RestBetweenRepeats": {
+              "Policy": "Fixed",
+              "Seconds": 120,
+              "MinimumSeconds": null,
+              "MaximumSeconds": null
+            },
+            "RestAfterBlock": null,
+            "EstimatedRepeatDuration": {
+              "Expected": "00:02:00",
+              "Minimum": null,
+              "Maximum": null
+            }
+          },
+          "Segments": [
+            {
+              "Id": "6ca730a0-51f2-4380-ab1d-4cbadf30361c",
+              "Name": "Back Squat 1x1",
+              "Sequence": 1,
+              "WorkMode": "FixedWork",
+              "Intent": {
+                "WorkIntent": "MaxEffort",
+                "TargetIntensity": null
+              },
+              "ScoreType": "MaxLoad",
+              "TimeConstraint": null,
+              "IntervalPrescription": null,
+              "EstimatedSegmentDuration": {
+                "Expected": "00:20:00",
+                "Minimum": null,
+                "Maximum": null
+              },
+              "RestAfterStep": null,
+              "RestAfterSegment": null,
+              "Steps": [
+                {
+                  "Id": "1a1dd80d-0250-45c3-b42f-ea52acc202b2",
+                  "Sequence": 1,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "97246881-cc67-44e4-914b-ef79c1d6d60a",
+                    "Name": "Back Squat",
+                    "NameKey": "backsquat"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 1,
+                      "TargetType": "Repetitions",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": {
+                      "Value": 70,
+                      "Type": "RepMax",
+                      "Unit": "Percent",
+                      "ReferenceRepMax": 1,
+                      "LoadReference": null
+                    },
+                    "RestAfterStep": null,
+                    "TimeConstraint": null,
+                    "EstimatedStepDuration": null,
+                    "IntentOverride": null,
+                    "Partition": null,
+                    "SideExecution": null,
+                    "Notes": "Go every 2 minutes."
+                  },
+                  "Rest": null,
+                  "Notes": null
+                }
+              ]
+            }
+          ],
+          "Origin": "BuiltIn",
+          "OwnerUserId": null
+        }
+      },
+      {
+        "Id": "eaaf3284-a661-4ed5-aded-1b52e201c31c",
+        "Sequence": 2,
+        "Block": {
+          "Id": "e361b903-521d-4810-9431-20c220955bda",
+          "Name": "Metcon",
+          "NameKey": "metcon",
+          "BlockType": "Metcon",
+          "BlockRepeatPrescription": {
+            "RepeatCount": 5,
+            "PrepareTime": null,
+            "RestBetweenRepeats": null,
+            "RestAfterBlock": null,
+            "EstimatedRepeatDuration": {
+              "Expected": "00:04:00",
+              "Minimum": null,
+              "Maximum": null
+            }
+          },
+          "Segments": [
+            {
+              "Id": "8417bc9e-9fc6-4bda-ac5d-a501a84f70ad",
+              "Name": "Bike \u002B Dumbbell Hang Power Cleans",
+              "Sequence": 1,
+              "WorkMode": "ForTimeWithCap",
+              "Intent": {
+                "WorkIntent": "ForTime",
+                "TargetIntensity": null
+              },
+              "ScoreType": "TimeToComplete",
+              "TimeConstraint": {
+                "Kind": "Cap",
+                "Duration": "00:02:00"
+              },
+              "IntervalPrescription": null,
+              "EstimatedSegmentDuration": null,
+              "RestAfterStep": null,
+              "RestAfterSegment": {
+                "Policy": "Fixed",
+                "Seconds": 120,
+                "MinimumSeconds": null,
+                "MaximumSeconds": null
+              },
+              "Steps": [
+                {
+                  "Id": "80f6d020-104a-4304-97f5-19ed9213bc80",
+                  "Sequence": 1,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "c00e9e44-fa88-4e25-bfe2-6e265fe21f72",
+                    "Name": "Assault Bike",
+                    "NameKey": "assaultbike"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 20,
+                      "TargetType": "Calories",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": null,
+                    "RestAfterStep": null,
+                    "TimeConstraint": null,
+                    "EstimatedStepDuration": null,
+                    "IntentOverride": null,
+                    "Partition": null,
+                    "SideExecution": null,
+                    "Notes": "Scaling: 20/15, 15/11, 11/8 calories."
+                  },
+                  "Rest": null,
+                  "Notes": null
+                },
+                {
+                  "Id": "0c05467e-a3dc-4691-afee-008ee9a94fb2",
+                  "Sequence": 2,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "9388465e-1beb-49f2-988c-4d9aba81d886",
+                    "Name": "Double Dumbbell Hang Power Clean",
+                    "NameKey": "doubledumbbellhangpowerclean"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 17,
+                      "TargetType": "Repetitions",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": {
+                      "Value": 22.5,
+                      "Type": "ExternalLoad",
+                      "Unit": "Kilogram",
+                      "ReferenceRepMax": null,
+                      "LoadReference": null
+                    },
+                    "RestAfterStep": null,
+                    "TimeConstraint": null,
+                    "EstimatedStepDuration": null,
+                    "IntentOverride": null,
+                    "Partition": null,
+                    "SideExecution": null,
+                    "Notes": "Scaling: 22.5/15, 15/10, 10/7.5 kg."
+                  },
+                  "Rest": null,
+                  "Notes": null
+                }
+              ]
+            }
+          ],
+          "Origin": "BuiltIn",
+          "OwnerUserId": null
+        }
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  },
+  {
+    "Id": "441354cc-9d10-4933-8768-13b253200597",
+    "Name": "Mixed Conditioning \u002B Deadlift",
+    "NameKey": "mixedconditioning\u002Bdeadlift",
+    "Description": {
+      "Content": "3 repeats of mixed conditioning segments, then rest before block 2."
+    },
+    "EstimatedDuration": null,
+    "Blocks": [
+      {
+        "Id": "8b769f6f-8466-4253-8634-7dc250eb276a",
+        "Sequence": 1,
+        "Block": {
+          "Id": "b106ad37-e7d8-4d84-ab9b-69111c16e089",
+          "Name": "Block 1",
+          "NameKey": "block1",
+          "BlockType": "Metcon",
+          "BlockRepeatPrescription": {
+            "RepeatCount": 3,
+            "PrepareTime": null,
+            "RestBetweenRepeats": null,
+            "RestAfterBlock": {
+              "Policy": "Fixed",
+              "Seconds": 300,
+              "MinimumSeconds": null,
+              "MaximumSeconds": null
+            },
+            "EstimatedRepeatDuration": null
+          },
+          "Segments": [
+            {
+              "Id": "0ac3820e-0796-4e10-9c1b-e6612f0e25f7",
+              "Name": "Run \u002B Burpee Pull-Up",
+              "Sequence": 1,
+              "WorkMode": "ForTime",
+              "Intent": {
+                "WorkIntent": "ForTime",
+                "TargetIntensity": null
+              },
+              "ScoreType": "TimeToComplete",
+              "TimeConstraint": null,
+              "IntervalPrescription": null,
+              "EstimatedSegmentDuration": {
+                "Expected": "00:03:00",
+                "Minimum": null,
+                "Maximum": null
+              },
+              "RestAfterStep": null,
+              "RestAfterSegment": {
+                "Policy": "Fixed",
+                "Seconds": 120,
+                "MinimumSeconds": null,
+                "MaximumSeconds": null
+              },
+              "Steps": [
+                {
+                  "Id": "4a3e656c-34ce-46e5-9fed-2d639dfaf83a",
+                  "Sequence": 1,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "cf3529ec-fa1b-4605-98a9-55cee6b87621",
+                    "Name": "Running",
+                    "NameKey": "running"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 400,
+                      "TargetType": "DistanceMeters",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": null,
+                    "RestAfterStep": null,
+                    "TimeConstraint": {
+                      "Kind": "Cap",
+                      "Duration": "00:02:00"
+                    },
+                    "EstimatedStepDuration": null,
+                    "IntentOverride": null,
+                    "Partition": null,
+                    "SideExecution": null,
+                    "Notes": null
+                  },
+                  "Rest": null,
+                  "Notes": null
+                },
+                {
+                  "Id": "9f0da8ef-2c21-43d9-b696-731f9a086354",
+                  "Sequence": 2,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "2fb60ef8-55d2-4e1b-961c-42e42b362b5b",
+                    "Name": "Burpee Pull-Up",
+                    "NameKey": "burpeepullup"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 10,
+                      "TargetType": "Repetitions",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": null,
+                    "RestAfterStep": null,
+                    "TimeConstraint": null,
+                    "EstimatedStepDuration": null,
+                    "IntentOverride": null,
+                    "Partition": null,
+                    "SideExecution": null,
+                    "Notes": null
+                  },
+                  "Rest": null,
+                  "Notes": null
+                }
+              ]
+            },
+            {
+              "Id": "79c41627-6933-491c-870d-7198bb21c5ad",
+              "Name": "Wall Ball \u002B Row",
+              "Sequence": 2,
+              "WorkMode": "ForTime",
+              "Intent": {
+                "WorkIntent": "ForTime",
+                "TargetIntensity": null
+              },
+              "ScoreType": "TimeToComplete",
+              "TimeConstraint": null,
+              "IntervalPrescription": null,
+              "EstimatedSegmentDuration": null,
+              "RestAfterStep": null,
+              "RestAfterSegment": {
+                "Policy": "Fixed",
+                "Seconds": 120,
+                "MinimumSeconds": null,
+                "MaximumSeconds": null
+              },
+              "Steps": [
+                {
+                  "Id": "a82d6fd4-c72c-4962-8f4e-04c1559b4041",
+                  "Sequence": 1,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "347b5ed6-8e8d-430e-82a7-9bb76c72a988",
+                    "Name": "Wall Ball",
+                    "NameKey": "wallball"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 30,
+                      "TargetType": "Repetitions",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": {
+                      "Value": 9,
+                      "Type": "ExternalLoad",
+                      "Unit": "Kilogram",
+                      "ReferenceRepMax": null,
+                      "LoadReference": null
+                    },
+                    "RestAfterStep": null,
+                    "TimeConstraint": {
+                      "Kind": "Cap",
+                      "Duration": "00:02:00"
+                    },
+                    "EstimatedStepDuration": {
+                      "Expected": "00:01:40",
+                      "Minimum": null,
+                      "Maximum": null
+                    },
+                    "IntentOverride": null,
+                    "Partition": null,
+                    "SideExecution": null,
+                    "Notes": null
+                  },
+                  "Rest": null,
+                  "Notes": null
+                },
+                {
+                  "Id": "53dd6771-1d18-4785-892a-b91babee9f66",
+                  "Sequence": 2,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "edc9d136-5df0-4d12-a81a-53c61525b80c",
+                    "Name": "Row",
+                    "NameKey": "row"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 20,
+                      "TargetType": "Calories",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": null,
+                    "RestAfterStep": null,
+                    "TimeConstraint": null,
+                    "EstimatedStepDuration": {
+                      "Expected": "00:01:00",
+                      "Minimum": null,
+                      "Maximum": null
+                    },
+                    "IntentOverride": null,
+                    "Partition": null,
+                    "SideExecution": null,
+                    "Notes": null
+                  },
+                  "Rest": null,
+                  "Notes": null
+                }
+              ]
+            },
+            {
+              "Id": "63b35008-4b54-41a1-b27d-ae5917a30a75",
+              "Name": "Deadlift 2RM",
+              "Sequence": 3,
+              "WorkMode": "FixedWork",
+              "Intent": {
+                "WorkIntent": "MaxEffort",
+                "TargetIntensity": null
+              },
+              "ScoreType": "MaxLoad",
+              "TimeConstraint": null,
+              "IntervalPrescription": null,
+              "EstimatedSegmentDuration": null,
+              "RestAfterStep": null,
+              "RestAfterSegment": null,
+              "Steps": [
+                {
+                  "Id": "38ed47f8-1ad6-4b2b-a0c7-3d3c3f5f3da6",
+                  "Sequence": 1,
+                  "StepKind": "Exercise",
+                  "Exercise": {
+                    "Id": "b392e025-edaf-416a-9b1c-541d69c34ed2",
+                    "Name": "Deadlift",
+                    "NameKey": "deadlift"
+                  },
+                  "Prescription": {
+                    "WorkTarget": {
+                      "Value": 2,
+                      "TargetType": "Repetitions",
+                      "Scope": "Total"
+                    },
+                    "LoadTarget": {
+                      "Value": 2,
+                      "Type": "RepMax",
+                      "Unit": "RM",
+                      "ReferenceRepMax": null,
+                      "LoadReference": null
+                    },
+                    "RestAfterStep": null,
+                    "TimeConstraint": null,
+                    "EstimatedStepDuration": null,
+                    "IntentOverride": null,
+                    "Partition": {
+                      "Strategy": "Repeated",
+                      "RepeatCount": 3,
+                      "RestBetweenRepeats": {
+                        "Policy": "Fixed",
+                        "Seconds": 180,
+                        "MinimumSeconds": null,
+                        "MaximumSeconds": null
+                      },
+                      "RepeatDetails": []
+                    },
+                    "SideExecution": null,
+                    "Notes": "Build to 2RM."
+                  },
+                  "Rest": null,
+                  "Notes": null
+                }
+              ]
+            }
+          ],
+          "Origin": "BuiltIn",
+          "OwnerUserId": null
+        }
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "Action": "Ignore"
+  }
+]

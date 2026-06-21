@@ -77,6 +77,22 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
             OwnershipInfo.BuiltIn());
     }
 
+    public static WorkoutBlock  NewBuiltInWithId(
+        WorkoutBlockId id,
+        string name,
+        WorkoutBlockType blockType,
+        BlockRepeatPrescription? repeatPrescription = null,
+        User? createdBy = null)
+    {
+        return new WorkoutBlock(
+            id,
+            name,
+            blockType,
+            repeatPrescription ?? BlockRepeatPrescription.Once(),
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn());
+    }
+    
     public static WorkoutBlock NewUserCreated(
         string name,
         WorkoutBlockType blockType,

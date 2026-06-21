@@ -5,6 +5,7 @@ using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
 using PRLab.Domain.Model.Value.Prescription;
 using PRLab.Domain.Model.Value.Prescription.Common;
+using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Entity;
@@ -79,6 +80,20 @@ public sealed record Workout : IAudited, IDescribed, IOwnedData
     {
         return new Workout(
             WorkoutId.New(),
+            name,
+            description,
+            AuditInfo.New(createdBy),
+            OwnershipInfo.BuiltIn());
+    }
+    
+    public static Workout NewBuiltInWithId(
+        WorkoutId id,
+        string name,
+        Description description,
+        User createdBy)
+    {
+        return new Workout(
+            id,
             name,
             description,
             AuditInfo.New(createdBy),
@@ -359,5 +374,104 @@ public sealed record Workout : IAudited, IDescribed, IOwnedData
         EstimatedDuration = estimatedDuration;
         MarkUpdated(changedBy);
     }
+
+    public bool Update(WorkoutUpdate update)
+    {
+        ArgumentNullException.ThrowIfNull(update);
+
+        var hasChanged = false;
+
+        if (!string.IsNullOrWhiteSpace(update.Name))
+        {
+            hasChanged = TrySetName(update.Name) || hasChanged;
+        }
+
+        if (update.Description is not null)
+        {
+            Description = Description.ChangeContent(
+                update.Description.Content,
+                update.Description.Language);
+
+            hasChanged = true;
+        }
+
+        if (update.WasEstimatedDurationProvided)
+        {
+            if (update.EstimatedDuration is null)
+            {
+                RemoveEstimatedDuration();
+            }
+            else
+            {
+                ChangeEstimatedDuration(update.EstimatedDuration);
+            }
+
+            hasChanged = true;
+        }
+
+        if (update.Blocks is not null)
+        {
+            ReplaceBlocks(update.Blocks);
+            hasChanged = true;
+        }
+
+        if (hasChanged)
+        {
+            MarkUpdated(update.UpdatedBy);
+        }
+
+        return hasChanged;
+    }
     
+
+    private void ReplaceBlocks(
+        IReadOnlyCollection<WorkoutBlockAssignmentUpdate> updates)
+    {
+        ArgumentNullException.ThrowIfNull(updates);
+
+        ValidateBlockUpdates(updates);
+
+        blocks.Clear();
+
+        foreach (var update in updates.OrderBy(block => block.Sequence))
+        {
+            blocks.Add(
+                WorkoutBlockAssignment.New(
+                    workoutId: Id,
+                    workoutBlock: update.WorkoutBlock,
+                    sequence: update.Sequence));
+        }
+
+        ResequenceBlocks();
+    }
+
+    private static void ValidateBlockUpdates(
+        IReadOnlyCollection<WorkoutBlockAssignmentUpdate> updates)
+    {
+        foreach (var update in updates)
+        {
+            ArgumentNullException.ThrowIfNull(update);
+            ArgumentNullException.ThrowIfNull(update.WorkoutBlock);
+
+            if (update.Sequence < 1)
+            {
+                throw new ArgumentException(
+                    "Workout block assignment sequence must be greater than zero.",
+                    nameof(updates));
+            }
+        }
+
+        var duplicateSequences = updates
+            .GroupBy(update => update.Sequence)
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key)
+            .ToList();
+
+        if (duplicateSequences.Count > 0)
+        {
+            throw new ArgumentException(
+                $"Workout block assignment sequence contains duplicate value(s): {string.Join(", ", duplicateSequences)}.",
+                nameof(updates));
+        }
+    }
 }
