@@ -8,10 +8,11 @@ using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
+using PRLab.Infrastructure.DB.Seeding.Validation;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 
-public class JsonMovementCategorySeedFactory(
+public sealed class JsonMovementCategorySeedFactory(
     IUserService userService,
     ISeedingConfig config)
     : BaseJsonSeedFactory<MovementCategory, MovementCategorySeedJsonDto>(userService, config),
@@ -20,44 +21,121 @@ public class JsonMovementCategorySeedFactory(
     protected override EntityType Entity =>
         EntityType.MovementCategory;
 
-    public IReadOnlyList<SeedItem<MovementCategory>> CreateInitialData()
+    public IReadOnlyList<SeedItem<MovementCategory>> CreateInitialData(
+        SeedExecutionOptions options)
     {
-        return CreateSeedItems();
+        return CreateSeedItems(options);
     }
 
-    public override SeedItem<MovementCategory> ToSeedItem(MovementCategorySeedJsonDto seedDto)
+    public override SeedItem<MovementCategory> ToSeedItem(
+        SeedExecutionOptions options,
+        MovementCategorySeedJsonDto seedDto)
     {
-        if (string.IsNullOrWhiteSpace(seedDto.Name))
-        {
-            throw new InvalidOperationException($"{Entity} seed name cannot be empty.");
-        }
+        ArgumentNullException.ThrowIfNull(options);
 
-        if (seedDto.Id == Guid.Empty)
-        {
-            throw new InvalidOperationException(
-                $"{Entity} seed '{seedDto.Name}' has an empty id. Omit the Id property or provide a valid id.");
-        }
+        Validate(seedDto);
 
         var description = seedDto.Description is null
             ? Description.None()
             : seedDto.Description.ToDescription();
 
-        var movementCategory = seedDto.Id.HasValue
-            ? MovementCategory.NewBuiltInWithId(
-                MovementCategoryId.FromGuid(seedDto.Id.Value),
-                seedDto.Name,
-                seedDto.BaseMovementCategory,
-                description,
-                SeedUser)
-            : MovementCategory.NewBuiltIn(
-                seedDto.Name,
-                seedDto.BaseMovementCategory,
-                description,
-                SeedUser);
+        var shouldUseSeedId =
+            seedDto.Id.HasValue &&
+            !options.IgnoreTopLevelIds;
+
+        var movementCategory = shouldUseSeedId
+            ? CreateMovementCategoryWithId(seedDto, description)
+            : CreateMovementCategory(seedDto, description);
 
         return new SeedItem<MovementCategory>(
             SeedKeyGenerator.GenerateMovementCategoryKey(movementCategory),
             movementCategory,
-            seedDto.Action);
+            options.ResolveAction(seedDto.Action));
+    }
+
+    public override void Validate(MovementCategorySeedJsonDto seedDto)
+        => MovementCategorySeedValidator.Validate(seedDto);
+
+    private MovementCategory CreateMovementCategory(
+        MovementCategorySeedJsonDto seedDto,
+        Description description)
+    {
+        return seedDto.Origin switch
+        {
+            DataOrigin.BuiltIn => MovementCategory.NewBuiltIn(
+                seedDto.Name,
+                seedDto.BaseMovementCategory,
+                description,
+                SeedUser,
+                seedDto.VisibilityScope),
+
+            DataOrigin.UserCreated => MovementCategory.NewUserCreated(
+                seedDto.Name,
+                seedDto.BaseMovementCategory,
+                description,
+                GetRequiredOwner(seedDto),
+                seedDto.VisibilityScope),
+
+            DataOrigin.Imported => MovementCategory.NewImported(
+                seedDto.Name,
+                seedDto.BaseMovementCategory,
+                description,
+                GetRequiredOwner(seedDto),
+                seedDto.VisibilityScope),
+
+            DataOrigin.CoachCreated => MovementCategory.NewCoachCreated(
+                seedDto.Name,
+                seedDto.BaseMovementCategory,
+                description,
+                GetRequiredOwner(seedDto),
+                seedDto.VisibilityScope),
+
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(seedDto),
+                seedDto.Origin,
+                $"{Entity} seed '{seedDto.Name}' has unsupported data origin.")
+        };
+    }
+
+    private MovementCategory CreateMovementCategoryWithId(
+        MovementCategorySeedJsonDto seedDto,
+        Description description)
+    {
+        var id = MovementCategoryId.FromGuid(seedDto.Id!.Value);
+
+        return seedDto.Origin switch
+        {
+            DataOrigin.BuiltIn => MovementCategory.NewBuiltInWithId(
+                id,
+                seedDto.Name,
+                seedDto.BaseMovementCategory,
+                description,
+                SeedUser,
+                seedDto.VisibilityScope),
+
+            _ => throw new InvalidOperationException(
+                $"{Entity} seed '{seedDto.Name}' has a fixed Id but is not BuiltIn. " +
+                "Only built-in seed data should use stable seed ids for now.")
+        };
+    }
+
+    private User GetRequiredOwner(MovementCategorySeedJsonDto seedDto)
+    {
+        if (!seedDto.OwnerUserId.HasValue || seedDto.OwnerUserId.Value == Guid.Empty)
+        {
+            throw new InvalidOperationException(
+                $"{Entity} seed '{seedDto.Name}' uses origin '{seedDto.Origin}' but has no valid OwnerUserId.");
+        }
+
+        /*
+         * Temporary seed-side owner.
+         *
+         * Long term, this should probably resolve an existing User from a UserSeedCatalog
+         * or IUserRepository instead of creating a lightweight domain instance.
+         */
+        return User.Existing(
+            UserId.FromGuid(seedDto.OwnerUserId.Value),
+            $"Seed Owner {seedDto.OwnerUserId.Value}",
+            UserRole.User);
     }
 }

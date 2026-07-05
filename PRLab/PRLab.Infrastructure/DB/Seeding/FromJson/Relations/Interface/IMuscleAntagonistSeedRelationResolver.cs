@@ -8,6 +8,7 @@ namespace PRLab.Infrastructure.DB.Seeding.FromJson.Relations.Interface;
 public interface IMuscleAntagonistSeedRelationResolver
 {
     IReadOnlyList<SeedRelationItem<MuscleId>> Resolve(
+        SeedExecutionOptions options,
         IReadOnlyCollection<MuscleSeedJsonDto> seedDtos,
         MuscleSeedCatalog muscleCatalog);
 }

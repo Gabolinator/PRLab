@@ -6,5 +6,5 @@ namespace PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 
 public interface IMuscleAntagonistSeedFactory
 {
-    IReadOnlyList<SeedRelationItem<MuscleId>> CreateInitialData(MuscleSeedCatalog muscleCatalog);
+    IReadOnlyList<SeedRelationItem<MuscleId>> CreateInitialData(SeedExecutionOptions options, MuscleSeedCatalog muscleCatalog);
 }

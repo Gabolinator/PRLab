@@ -1,4 +1,5 @@
 ﻿using PRLab.API.DTO.Description;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.API.DTO.Equipment;
@@ -6,6 +7,7 @@ namespace PRLab.API.DTO.Equipment;
 public record EquipmentGetDTO(
     EquipmentId Id,
     string Name,
-    DescriptionGetDTO? Descriptor);
+    DescriptionGetDTO? Descriptor,
+    VisibilityScope Visibility);
 
 

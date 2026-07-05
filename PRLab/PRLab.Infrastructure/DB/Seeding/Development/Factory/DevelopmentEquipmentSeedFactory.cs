@@ -11,8 +11,10 @@ public sealed class DevelopmentEquipmentSeedFactory(IUserService userService) : 
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    public IReadOnlyList<SeedItem<Equipment>> CreateInitialData()
+    public IReadOnlyList<SeedItem<Equipment>> CreateInitialData(SeedExecutionOptions options)
     {
+        //we ignore options here
+        
         var barbell = Equipment.NewBuiltIn(
             "Barbell",
             Description.New("Long metal bar used for loaded strength training."),

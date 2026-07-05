@@ -1,6 +1,6 @@
 [
   {
-    "Id": "c94d96ab-b844-42de-b06f-9e8c40937b70",
+    "Id": "63e011d7-693c-4dc7-b3c5-3c4afe18b7a9",
     "Name": "Assault Bike",
     "NameKey": "assaultbike",
     "Description": {
@@ -8,10 +8,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "491f5821-79f1-491e-bbbd-a842b1931c57",
+    "Id": "b4278276-3896-436d-a8bd-fc23c8945bc5",
     "Name": "Barbell",
     "NameKey": "barbell",
     "Description": {
@@ -19,10 +20,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "a7c9fcad-ae65-4c77-bed6-86645a689a85",
+    "Id": "1b5ba8fc-7745-4eee-be44-f6c8a35048db",
     "Name": "Dumbbell",
     "NameKey": "dumbbell",
     "Description": {
@@ -30,10 +32,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "ffe3052c-8a09-49d7-a42c-0c6f17d956a8",
+    "Id": "0feb109b-93e9-4fd2-a9e4-72fa337b5485",
     "Name": "Jump Rope",
     "NameKey": "jumprope",
     "Description": {
@@ -41,10 +44,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "cb6cef99-d25b-40f2-be85-0c80c70308c6",
+    "Id": "d5927312-a9f0-4ffe-aaeb-b6bb7d54f113",
     "Name": "Kettlebell",
     "NameKey": "kettlebell",
     "Description": {
@@ -52,10 +56,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "b6fab579-8d60-4664-a4bf-f36dc44605ef",
+    "Id": "99d790ca-c308-4394-9f53-fb9d90267ad9",
     "Name": "Pull-up Bar",
     "NameKey": "pullupbar",
     "Description": {
@@ -63,10 +68,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "f28ba6b8-e448-444b-9e1f-4454542d845f",
+    "Id": "aa5314b2-5815-489f-a7a5-328bc01541a2",
     "Name": "Resistance Band",
     "NameKey": "resistanceband",
     "Description": {
@@ -74,10 +80,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "5f9f553c-1f46-4f79-be3d-9ef89e5ad94f",
+    "Id": "58ee61e6-30c5-4ba0-ac82-7c185ae22738",
     "Name": "Row Erg",
     "NameKey": "rowerg",
     "Description": {
@@ -85,10 +92,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "513c7344-0562-4059-8a1e-ac17e5f3a1db",
+    "Id": "74832798-63e1-4acd-bda3-65d2c287e415",
     "Name": "Ski Erg",
     "NameKey": "skierg",
     "Description": {
@@ -96,10 +104,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "93813f88-0b6b-4d26-99a7-de69410e66c3",
+    "Id": "8e0930f3-fffa-403c-afa8-b05b087833e3",
     "Name": "Squat Rack",
     "NameKey": "squatrack",
     "Description": {
@@ -107,10 +116,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "0dcb243c-1e2b-4c9d-b1aa-203dd7d5a57b",
+    "Id": "135ce605-a7b8-49c2-b5e8-e3f07d25d3c5",
     "Name": "Wall Ball",
     "NameKey": "wallball",
     "Description": {
@@ -118,6 +128,7 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   }
 ]

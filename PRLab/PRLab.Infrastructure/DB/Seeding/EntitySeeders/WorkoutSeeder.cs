@@ -26,10 +26,10 @@ public class WorkoutSeeder(
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
+    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(SeedExecutionOptions options, CancellationToken ct)
     {
         var catalog = await SeedCatalogBuilder.CreateExerciseCatalog(db, ct);
-        var workoutSeedItems = seedFactory.CreateInitialData(catalog);
+        var workoutSeedItems = seedFactory.CreateInitialData(options, catalog);
 
         var changes = new List<SeedChange>();
 

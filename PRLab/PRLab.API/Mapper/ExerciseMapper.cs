@@ -36,7 +36,8 @@ public static class ExerciseMapper
             exercise.Steps
                 .OrderBy(Step => Step.Sequence)
                 .Select(Step => ToStepGetDTO(Step, language))
-                .ToList()
+                .ToList(),
+            exercise.Visibility.Scope
         );
     }
 
@@ -84,7 +85,8 @@ public static class ExerciseMapper
         var exercise = Exercise.NewUserCreated(
             payload.Name,
             description,
-            createdBy
+            createdBy,
+            payload.Visibility
         );
 
         foreach (var Step in payload.Steps.OrderBy(Step => Step.Sequence))

@@ -38,6 +38,8 @@ public sealed record MovementSeedJsonDto
     public DataOrigin Origin { get; init; } = DataOrigin.BuiltIn;
 
     public Guid? OwnerUserId { get; init; }
+    
+    public VisibilityScope? VisibilityScope { get; init; }
 
     public SeedAction Action { get; init; } = SeedAction.Ignore;
 
@@ -95,6 +97,7 @@ public sealed record MovementSeedJsonDto
             Origin = movement.Ownership.Origin,
             OwnerUserId = movement.Ownership.OwnerUserId?.Value,
             Action = SeedAction.Ignore,
+            VisibilityScope = movement.Visibility.Scope
         };
     }
 }

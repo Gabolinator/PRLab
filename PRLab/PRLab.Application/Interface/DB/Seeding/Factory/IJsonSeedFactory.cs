@@ -6,5 +6,5 @@ public interface IJsonSeedFactory<TEntity, TJsonDto>
 {
     IReadOnlyList<TJsonDto> LoadSeedDtos();
 
-    public SeedItem<TEntity> ToSeedItem(TJsonDto seedDto);
+    public SeedItem<TEntity> ToSeedItem(SeedExecutionOptions options, TJsonDto seedDto);
 }

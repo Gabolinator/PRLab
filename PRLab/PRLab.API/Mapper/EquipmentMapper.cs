@@ -24,7 +24,8 @@ public static class EquipmentMapper
         return new EquipmentGetDTO(
             equipment.Id,
             equipment.Name,
-            DescriptionMapper.ToGetDTO(equipment.Description, language)
+            DescriptionMapper.ToGetDTO(equipment.Description, language),
+            equipment.Visibility.Scope
         );
     }
 
@@ -62,7 +63,8 @@ public static class EquipmentMapper
         return Equipment.NewUserCreated(
             payload.Name,
             description,
-            currentUser
+            currentUser,
+            payload.VisibilityScope
         );
     }
 

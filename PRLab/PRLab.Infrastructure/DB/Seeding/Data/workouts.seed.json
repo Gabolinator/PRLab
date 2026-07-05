@@ -1,6 +1,6 @@
 [
   {
-    "Id": "7ce2e8f9-5812-4463-9156-e250bc19d64b",
+    "Id": "469ba430-814e-45f1-a2c4-55e9d184efcd",
     "Name": "Ausdauer / Hyrox",
     "NameKey": "ausdauer/hyrox",
     "Description": {
@@ -9,10 +9,10 @@
     "EstimatedDuration": null,
     "Blocks": [
       {
-        "Id": "f26eae2c-8597-4be3-9491-ec41525c3a5e",
+        "Id": "c99f3aa1-c376-46f3-9f7f-bf388d709aca",
         "Sequence": 1,
         "Block": {
-          "Id": "72f698e8-ea42-4cfa-81e1-1402bb6c9405",
+          "Id": "31e4c07b-eb8d-482c-af80-c0124da996da",
           "Name": "Ausdauer",
           "NameKey": "ausdauer",
           "BlockType": "Endurance",
@@ -29,7 +29,7 @@
           },
           "Segments": [
             {
-              "Id": "d32d418b-4f3a-493b-a079-e73713932d28",
+              "Id": "77c8d6ad-7e45-4489-b257-33eb94c140ed",
               "Name": "Every 1:30 Rotation",
               "Sequence": 1,
               "WorkMode": "Intervals",
@@ -49,11 +49,11 @@
               "RestAfterSegment": null,
               "Steps": [
                 {
-                  "Id": "1363d3d4-e354-4755-a16e-bfc384bc9835",
+                  "Id": "da21e2b0-eda0-40d4-81ee-6beaa6951e9e",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "c00e9e44-fa88-4e25-bfe2-6e265fe21f72",
+                    "Id": "4b441b31-cc9f-48a2-90b8-c6736d831a0d",
                     "Name": "Assault Bike",
                     "NameKey": "assaultbike"
                   },
@@ -76,11 +76,11 @@
                   "Notes": null
                 },
                 {
-                  "Id": "4b865251-9842-48c4-8b55-b28c244dc688",
+                  "Id": "e05e7bee-c970-4ba5-af18-e44f2f95088d",
                   "Sequence": 2,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "ab156891-31dd-4eb8-8d24-4dd7d0e5ec72",
+                    "Id": "13b9c6f3-f46a-4e8f-8567-035f4c9f2a9d",
                     "Name": "Ski Erg",
                     "NameKey": "skierg"
                   },
@@ -103,11 +103,11 @@
                   "Notes": null
                 },
                 {
-                  "Id": "51e20bfc-afa4-46f4-b9d4-8e245c6e69ec",
+                  "Id": "0bb3a308-5d17-47d5-9082-2d78b764272c",
                   "Sequence": 3,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "73cefaad-3efb-42c4-90f1-bee25903b860",
+                    "Id": "972a8030-f343-4bc1-a5a6-68b9fdcb2e14",
                     "Name": "Lateral Burpee Over Barbell",
                     "NameKey": "lateralburpeeoverbarbell"
                   },
@@ -130,7 +130,7 @@
                   "Notes": null
                 },
                 {
-                  "Id": "eb2d883b-02cf-4fcd-939d-3f013b623eb5",
+                  "Id": "cbb6cd4d-8182-469d-929c-2361d04333ba",
                   "Sequence": 4,
                   "StepKind": "Rest",
                   "Exercise": null,
@@ -144,7 +144,7 @@
                   "Notes": null
                 },
                 {
-                  "Id": "664a118b-6bb8-4f99-804a-a7b5e29ae345",
+                  "Id": "124f145d-997f-4a12-b148-77e39d84cb22",
                   "Sequence": 5,
                   "StepKind": "Rest",
                   "Exercise": null,
@@ -161,16 +161,18 @@
             }
           ],
           "Origin": "BuiltIn",
-          "OwnerUserId": null
+          "OwnerUserId": null,
+          "VisibilityScope": "Public"
         }
       }
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "cf537113-a833-4143-bbdd-faf79fba1f22",
+    "Id": "ef0ec1c4-7ef1-40bf-a713-5d8a0f0418ac",
     "Name": "CrossFit Back Squat \u002B Metcon",
     "NameKey": "crossfitbacksquat\u002Bmetcon",
     "Description": {
@@ -179,10 +181,10 @@
     "EstimatedDuration": null,
     "Blocks": [
       {
-        "Id": "8fcf6a02-890e-4d48-a89a-2714cf7a7f5e",
+        "Id": "2f2f2dfb-94cd-4540-b702-e34be22cdef5",
         "Sequence": 1,
         "Block": {
-          "Id": "c1d6afb1-46e4-4133-8626-5bed2f4d5d13",
+          "Id": "f2e228b6-3a16-43ba-8684-86d5d837ddfe",
           "Name": "Back Squat",
           "NameKey": "backsquat",
           "BlockType": "Strength",
@@ -204,7 +206,7 @@
           },
           "Segments": [
             {
-              "Id": "6ca730a0-51f2-4380-ab1d-4cbadf30361c",
+              "Id": "1133f0fa-8366-4367-8d89-7c873ff485bd",
               "Name": "Back Squat 1x1",
               "Sequence": 1,
               "WorkMode": "FixedWork",
@@ -224,11 +226,11 @@
               "RestAfterSegment": null,
               "Steps": [
                 {
-                  "Id": "1a1dd80d-0250-45c3-b42f-ea52acc202b2",
+                  "Id": "9eab3488-b195-4807-a1ec-ca7482eea62a",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "97246881-cc67-44e4-914b-ef79c1d6d60a",
+                    "Id": "33ba89e9-6ed7-48ff-9376-a917a44b846a",
                     "Name": "Back Squat",
                     "NameKey": "backsquat"
                   },
@@ -260,14 +262,15 @@
             }
           ],
           "Origin": "BuiltIn",
-          "OwnerUserId": null
+          "OwnerUserId": null,
+          "VisibilityScope": "Public"
         }
       },
       {
-        "Id": "eaaf3284-a661-4ed5-aded-1b52e201c31c",
+        "Id": "ce1c0a07-29b2-4143-88e0-46557e385d32",
         "Sequence": 2,
         "Block": {
-          "Id": "e361b903-521d-4810-9431-20c220955bda",
+          "Id": "6bca72c9-77af-456f-b43b-fc0e039c4f08",
           "Name": "Metcon",
           "NameKey": "metcon",
           "BlockType": "Metcon",
@@ -284,7 +287,7 @@
           },
           "Segments": [
             {
-              "Id": "8417bc9e-9fc6-4bda-ac5d-a501a84f70ad",
+              "Id": "fc88b49b-4143-42b3-8ba3-9b2552d988e6",
               "Name": "Bike \u002B Dumbbell Hang Power Cleans",
               "Sequence": 1,
               "WorkMode": "ForTimeWithCap",
@@ -308,11 +311,11 @@
               },
               "Steps": [
                 {
-                  "Id": "80f6d020-104a-4304-97f5-19ed9213bc80",
+                  "Id": "4b3e4179-eac9-4a7f-850f-5aada37a1591",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "c00e9e44-fa88-4e25-bfe2-6e265fe21f72",
+                    "Id": "4b441b31-cc9f-48a2-90b8-c6736d831a0d",
                     "Name": "Assault Bike",
                     "NameKey": "assaultbike"
                   },
@@ -335,11 +338,11 @@
                   "Notes": null
                 },
                 {
-                  "Id": "0c05467e-a3dc-4691-afee-008ee9a94fb2",
+                  "Id": "df568bfb-a50a-48c4-b086-0f6fa9359d47",
                   "Sequence": 2,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "9388465e-1beb-49f2-988c-4d9aba81d886",
+                    "Id": "854744f4-8695-43b7-8253-f6082bbb8af3",
                     "Name": "Double Dumbbell Hang Power Clean",
                     "NameKey": "doubledumbbellhangpowerclean"
                   },
@@ -371,16 +374,18 @@
             }
           ],
           "Origin": "BuiltIn",
-          "OwnerUserId": null
+          "OwnerUserId": null,
+          "VisibilityScope": "Public"
         }
       }
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "441354cc-9d10-4933-8768-13b253200597",
+    "Id": "6e7e9acf-5863-4a8e-b3d6-c9bf5aa302c9",
     "Name": "Mixed Conditioning \u002B Deadlift",
     "NameKey": "mixedconditioning\u002Bdeadlift",
     "Description": {
@@ -389,10 +394,10 @@
     "EstimatedDuration": null,
     "Blocks": [
       {
-        "Id": "8b769f6f-8466-4253-8634-7dc250eb276a",
+        "Id": "26030810-8600-46cc-835f-6341ca1d4f59",
         "Sequence": 1,
         "Block": {
-          "Id": "b106ad37-e7d8-4d84-ab9b-69111c16e089",
+          "Id": "ec16701b-1e4e-420a-88cb-51282c6e65d1",
           "Name": "Block 1",
           "NameKey": "block1",
           "BlockType": "Metcon",
@@ -410,7 +415,7 @@
           },
           "Segments": [
             {
-              "Id": "0ac3820e-0796-4e10-9c1b-e6612f0e25f7",
+              "Id": "4725e850-71a0-4633-a7d9-d31d2143cce4",
               "Name": "Run \u002B Burpee Pull-Up",
               "Sequence": 1,
               "WorkMode": "ForTime",
@@ -435,11 +440,11 @@
               },
               "Steps": [
                 {
-                  "Id": "4a3e656c-34ce-46e5-9fed-2d639dfaf83a",
+                  "Id": "204ff241-35a4-4e5b-a3e1-f9d9c2b98a8d",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "cf3529ec-fa1b-4605-98a9-55cee6b87621",
+                    "Id": "97d1747b-28b7-4102-8b22-561fdbb9525a",
                     "Name": "Running",
                     "NameKey": "running"
                   },
@@ -465,11 +470,11 @@
                   "Notes": null
                 },
                 {
-                  "Id": "9f0da8ef-2c21-43d9-b696-731f9a086354",
+                  "Id": "60198fb9-14da-431a-8374-288b5a09784f",
                   "Sequence": 2,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "2fb60ef8-55d2-4e1b-961c-42e42b362b5b",
+                    "Id": "e6b47a1d-c232-47db-9265-6f6420099341",
                     "Name": "Burpee Pull-Up",
                     "NameKey": "burpeepullup"
                   },
@@ -494,7 +499,7 @@
               ]
             },
             {
-              "Id": "79c41627-6933-491c-870d-7198bb21c5ad",
+              "Id": "5cbff918-c38a-4264-b79d-627b4cbe2502",
               "Name": "Wall Ball \u002B Row",
               "Sequence": 2,
               "WorkMode": "ForTime",
@@ -515,11 +520,11 @@
               },
               "Steps": [
                 {
-                  "Id": "a82d6fd4-c72c-4962-8f4e-04c1559b4041",
+                  "Id": "3a9a5648-cd15-431c-bc78-f1038e5d92a0",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "347b5ed6-8e8d-430e-82a7-9bb76c72a988",
+                    "Id": "fe464d08-fdd6-4ab9-a37b-49f4a8cf846f",
                     "Name": "Wall Ball",
                     "NameKey": "wallball"
                   },
@@ -555,11 +560,11 @@
                   "Notes": null
                 },
                 {
-                  "Id": "53dd6771-1d18-4785-892a-b91babee9f66",
+                  "Id": "db4cda14-8c1c-49d7-94fd-dc7e6bbaa2d0",
                   "Sequence": 2,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "edc9d136-5df0-4d12-a81a-53c61525b80c",
+                    "Id": "5d583994-354f-4faa-9306-a2e1df38fcf1",
                     "Name": "Row",
                     "NameKey": "row"
                   },
@@ -588,7 +593,7 @@
               ]
             },
             {
-              "Id": "63b35008-4b54-41a1-b27d-ae5917a30a75",
+              "Id": "0741fa43-b2a6-4eb5-af6a-f6de347e8ea3",
               "Name": "Deadlift 2RM",
               "Sequence": 3,
               "WorkMode": "FixedWork",
@@ -604,11 +609,11 @@
               "RestAfterSegment": null,
               "Steps": [
                 {
-                  "Id": "38ed47f8-1ad6-4b2b-a0c7-3d3c3f5f3da6",
+                  "Id": "a04149d3-fe34-4853-a570-f85a4cb94e2e",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
-                    "Id": "b392e025-edaf-416a-9b1c-541d69c34ed2",
+                    "Id": "5566ce27-7ac6-4362-879d-655a9fe57bef",
                     "Name": "Deadlift",
                     "NameKey": "deadlift"
                   },
@@ -650,12 +655,14 @@
             }
           ],
           "Origin": "BuiltIn",
-          "OwnerUserId": null
+          "OwnerUserId": null,
+          "VisibilityScope": "Public"
         }
       }
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   }
 ]

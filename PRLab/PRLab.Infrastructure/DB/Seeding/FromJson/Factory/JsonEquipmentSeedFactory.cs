@@ -1,13 +1,12 @@
 ﻿using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
-using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 using PRLab.Application.Models.DB.Seeding;
-using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
+using PRLab.Infrastructure.DB.Seeding.Validation;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 
@@ -20,39 +19,35 @@ public sealed class JsonEquipmentSeedFactory(
     protected override EntityType Entity =>
         EntityType.Equipment;
 
-    public IReadOnlyList<SeedItem<Equipment>> CreateInitialData()
+    public IReadOnlyList<SeedItem<Equipment>> CreateInitialData(SeedExecutionOptions options)
     {
-        return CreateSeedItems();
+        return CreateSeedItems(options);
     }
 
-    public override SeedItem<Equipment> ToSeedItem(EquipmentSeedJsonDto seedDto)
+    public override SeedItem<Equipment> ToSeedItem(SeedExecutionOptions options, EquipmentSeedJsonDto seedDto)
     {
-        if (string.IsNullOrWhiteSpace(seedDto.Name))
-        {
-            throw new InvalidOperationException($"{Entity} seed name cannot be empty.");
-        }
-
-        if (seedDto.Id == Guid.Empty)
-        {
-            throw new InvalidOperationException(
-                $"{Entity} seed '{seedDto.Name}' has an empty id. Omit the Id property or provide a valid id.");
-        }
-
-        ValidateOwnership(seedDto);
-
+        Validate(seedDto);
+        
         var description = seedDto.Description is null
             ? Description.None()
             : seedDto.Description.ToDescription();
 
-        var equipment = seedDto.Id.HasValue
+        var shouldUseSeedId =
+            seedDto.Id.HasValue &&
+            !options.IgnoreTopLevelIds;
+
+        var equipment = shouldUseSeedId
             ? CreateEquipmentWithId(seedDto, description)
             : CreateEquipment(seedDto, description);
 
         return new SeedItem<Equipment>(
             SeedKeyGenerator.GenerateEquipmentKey(equipment),
             equipment,
-            seedDto.Action);
+            options.ResolveAction(seedDto.Action));
     }
+
+    public override void Validate(EquipmentSeedJsonDto seedDto)
+        => EquipmentSeedValidator.Validate(seedDto);
 
     private Equipment CreateEquipment(
         EquipmentSeedJsonDto seedDto,
@@ -63,22 +58,26 @@ public sealed class JsonEquipmentSeedFactory(
             DataOrigin.BuiltIn => Equipment.NewBuiltIn(
                 seedDto.Name,
                 description,
-                SeedUser),
+                SeedUser,
+                seedDto.VisibilityScope),
 
             DataOrigin.UserCreated => Equipment.NewUserCreated(
                 seedDto.Name,
                 description,
-                GetRequiredOwner(seedDto)),
+                GetRequiredOwner(seedDto),
+                seedDto.VisibilityScope),
 
             DataOrigin.Imported => Equipment.NewImported(
                 seedDto.Name,
                 description,
-                GetRequiredOwner(seedDto)),
+                GetRequiredOwner(seedDto),
+                seedDto.VisibilityScope),
 
             DataOrigin.CoachCreated => Equipment.NewCoachCreated(
                 seedDto.Name,
                 description,
-                GetRequiredOwner(seedDto)),
+                GetRequiredOwner(seedDto),
+                seedDto.VisibilityScope),
 
             _ => throw new ArgumentOutOfRangeException(
                 nameof(seedDto),
@@ -99,7 +98,8 @@ public sealed class JsonEquipmentSeedFactory(
                 id,
                 seedDto.Name,
                 description,
-                SeedUser),
+                SeedUser,
+                seedDto.VisibilityScope),
 
             _ => throw new InvalidOperationException(
                 $"{Entity} seed '{seedDto.Name}' has a fixed Id but is not BuiltIn. " +
@@ -125,22 +125,5 @@ public sealed class JsonEquipmentSeedFactory(
             UserId.FromGuid(seedDto.OwnerUserId.Value),
             $"Seed Owner {seedDto.OwnerUserId.Value}",
             UserRole.User);
-    }
-
-    private void ValidateOwnership(EquipmentSeedJsonDto seedDto)
-    {
-        if (seedDto.Origin == DataOrigin.BuiltIn &&
-            seedDto.OwnerUserId.HasValue)
-        {
-            throw new InvalidOperationException(
-                $"{Entity} seed '{seedDto.Name}' is BuiltIn and should not have OwnerUserId.");
-        }
-
-        if (seedDto.Origin != DataOrigin.BuiltIn &&
-            !seedDto.OwnerUserId.HasValue)
-        {
-            throw new InvalidOperationException(
-                $"{Entity} seed '{seedDto.Name}' uses origin '{seedDto.Origin}' and must have OwnerUserId.");
-        }
     }
 }

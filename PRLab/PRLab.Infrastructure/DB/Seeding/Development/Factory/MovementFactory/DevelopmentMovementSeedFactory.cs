@@ -17,8 +17,11 @@ public sealed class DevelopmentMovementSeedFactory(
     private User SeedUser => userService.GetSystemAdminUser("Seed");
 
     public IReadOnlyList<SeedItem<Movement>> CreateInitialData(
+        SeedExecutionOptions options,
         MovementSeedCatalogs catalogs)
     {
+        //ignore options
+        
         var movementCategoryCatalog = catalogs.MovementCategory;
         var equipmentCatalog = catalogs.Equipment;
         var muscleCatalog = catalogs.Muscle;

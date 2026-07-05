@@ -54,12 +54,14 @@ public abstract class BaseJsonSeedFactory<TEntity, TJsonDto>(
         return seedDtos ?? [];
     }
 
-    public IReadOnlyList<SeedItem<TEntity>> CreateSeedItems()
+    public IReadOnlyList<SeedItem<TEntity>> CreateSeedItems(SeedExecutionOptions options)
     {
         return LoadSeedDtos()
-            .Select(ToSeedItem)
+            .Select(item => ToSeedItem(options, item))
             .ToList();
     }
     
-    public abstract SeedItem<TEntity> ToSeedItem(TJsonDto seedDto);
+    public abstract SeedItem<TEntity> ToSeedItem(SeedExecutionOptions options, TJsonDto seedDto);
+    
+    public abstract void Validate(TJsonDto seedDto);
 }

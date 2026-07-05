@@ -25,13 +25,13 @@ public class MovementSeeder(
 {
     public override string Name => "DevelopmentMovementSeed";
 
-    public override string Version => "1.0.1";
+    public override string Version => "1.0.0";
 
     public override EntityType EntityType => EntityType.Movement;
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
+    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(SeedExecutionOptions options, CancellationToken ct)
     {
         var equipmentCatalog = await SeedCatalogBuilder.CreateEquipmentCatalog(db, ct);
         var muscleCatalog = await SeedCatalogBuilder.CreateMuscleCatalog(db, ct);
@@ -39,6 +39,7 @@ public class MovementSeeder(
         var movementCatalog = await SeedCatalogBuilder.CreateMovementCatalog(db, ct);
 
         var movementSeedItems = seedFactory.CreateInitialData(
+            options,
             new MovementSeedCatalogs(
                 equipmentCatalog,
                 muscleCatalog,
@@ -63,7 +64,9 @@ public class MovementSeeder(
 
         if (seedFactory is IMovementVariantSeedFactory variantSeedFactory)
         {
-            var variantRelations = variantSeedFactory.CreateVariantInitialData(
+            var variantRelations = 
+                variantSeedFactory.CreateVariantInitialData(
+                    options,
                 movementCatalog);
 
             foreach (var variantRelation in variantRelations)

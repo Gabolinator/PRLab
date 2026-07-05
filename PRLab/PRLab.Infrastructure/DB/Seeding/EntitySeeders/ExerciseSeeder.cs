@@ -21,17 +21,17 @@ public class ExerciseSeeder(
 {
     public override string Name => "DevelopmentExerciseSeed";
 
-    public override string Version => "1.0.1";
+    public override string Version => "1.0.0";
 
     public override EntityType EntityType => EntityType.Exercise;
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
+    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(SeedExecutionOptions options, CancellationToken ct)
     {
         var movementCatalog = await SeedCatalogBuilder.CreateMovementCatalog(db, ct);
 
-        var exerciseSeedItems = seedFactory.CreateInitialData(movementCatalog);
+        var exerciseSeedItems = seedFactory.CreateInitialData(options, movementCatalog);
 
         var changes = new List<SeedChange>();
 

@@ -14,6 +14,7 @@ using PRLab.Domain.Model.Value.Prescription.Rest;
 using PRLab.Domain.Model.Value.Prescription.Time;
 using PRLab.Domain.Model.Value.Prescription.Work;
 using PRLab.Domain.Model.Value.Prescription.Workout;
+using PRLab.Domain.Model.Value.WorkoutStructure;
 using PRLab.Domain.Model.Value.WorkoutValue;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Helpers;
@@ -26,8 +27,9 @@ public class DevelopmentWorkoutSeedFactory(
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    public IReadOnlyList<SeedItem<Workout>> CreateInitialData(ExerciseSeedCatalog catalog)
+    public IReadOnlyList<SeedItem<Workout>> CreateInitialData(SeedExecutionOptions options, ExerciseSeedCatalog catalog)
     {
+        //ingore options
         var run = catalog.GetRequiredByNameKey("running");
         var burpeePullUp = catalog.GetRequiredByNameKey("burpeepullup");
         var wallBall = catalog.GetRequiredByNameKey("wallball");

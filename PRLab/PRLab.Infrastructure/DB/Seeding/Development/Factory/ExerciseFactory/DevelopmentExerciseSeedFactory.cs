@@ -18,8 +18,12 @@ public sealed class DevelopmentExerciseSeedFactory(
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    public IReadOnlyList<SeedItem<Exercise>> CreateInitialData(MovementSeedCatalog catalog)
+    public IReadOnlyList<SeedItem<Exercise>> CreateInitialData(
+        SeedExecutionOptions options,
+        MovementSeedCatalog catalog)
     {
+        
+        //ignore options
         try
         {
             var burpeePullUp = Exercise.NewBuiltIn(

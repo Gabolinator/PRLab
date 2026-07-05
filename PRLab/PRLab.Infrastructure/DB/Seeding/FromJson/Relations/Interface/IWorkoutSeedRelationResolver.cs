@@ -10,5 +10,6 @@ public interface IWorkoutSeedRelationResolver
         Workout exercise,
         WorkoutSeedJsonDto seedDto,
         ExerciseSeedCatalog catalog,
+        SeedExecutionOptions options,
         User seedUser);
 }

@@ -28,6 +28,24 @@ public sealed class ToolCommandUsageLogger(
             PrintSeedUsage(dataSeeder.BaseEntitySeederTypes.Select(SeedReferences.GetEntityAlias).ToList());
         }
     }
+    
+    public void LogSeedOptions(
+        SeedExecutionOptions options)
+    {
+        if (options == SeedExecutionOptions.Default)
+        {
+            logger.Log("Seed mode: Default");
+            return;
+        }
+
+        logger.Log(
+            $"Seed mode: Custom - " +
+            $"ActionOverride: {options.ActionOverride?.ToString() ?? "none"}, " +
+            $"IgnoreSeedHistory: {options.IgnoreSeedHistory}, " +
+            $"IgnoreTopLevelIds: {options.IgnoreTopLevelIds}, " +
+            $"IgnoreReferenceIds: {options.IgnoreReferenceIds}",
+            Color.Yellow);
+    }
 
     public void PrintSeedUsage(IReadOnlyList<string> entities)
     {

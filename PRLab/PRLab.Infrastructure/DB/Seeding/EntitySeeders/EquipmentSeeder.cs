@@ -22,18 +22,21 @@ public sealed class EquipmentSeeder(
     public override EntityType EntityType => EntityType.Equipment;
     public override string Name => "DevelopmentEquipmentSeed";
 
-    public override string Version => "1.0.1";
+    public override string Version => "1.0.0";
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
+    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(SeedExecutionOptions options, CancellationToken ct)
     {
-        var equipmentSeedItems = seedFactory.CreateInitialData();
+        var equipmentSeedItems = seedFactory.CreateInitialData(options);
         var changes = new List<SeedChange>();
 
         foreach (var equipmentSeedItem in equipmentSeedItems)
         {
-            var result = await ApplyEquipmentSeedItem(equipmentSeedItem, ct);
+            var result = await ApplyEquipmentSeedItem(
+                equipmentSeedItem,
+                options,
+                ct);
 
             if (result.change is not null)
             {
@@ -46,9 +49,15 @@ public sealed class EquipmentSeeder(
 
     private async Task<(Equipment? entity, SeedChange? change)> ApplyEquipmentSeedItem(
         SeedItem<Equipment> equipmentSeedItem,
+        SeedExecutionOptions options,
         CancellationToken ct)
     {
-        if (equipmentSeedItem.Action == SeedAction.Ignore)
+        ArgumentNullException.ThrowIfNull(equipmentSeedItem);
+        ArgumentNullException.ThrowIfNull(options);
+
+        var seedAction = equipmentSeedItem.Action;
+
+        if (seedAction == SeedAction.Ignore)
         {
             return (null, null);
         }
@@ -73,7 +82,7 @@ public sealed class EquipmentSeeder(
                 new SeedChange(seedEquipment.NameKey, SeedChangeType.Created));
         }
 
-        if (equipmentSeedItem.Action == SeedAction.CreateIfMissing)
+        if (seedAction == SeedAction.CreateIfMissing)
         {
             return (existingEquipment, null);
         }

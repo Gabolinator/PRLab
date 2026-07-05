@@ -1,4 +1,5 @@
-﻿using PRLab.Application.Models.DB.Seeding;
+﻿
+using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Identifier;
@@ -12,9 +13,14 @@ public sealed class MuscleAntagonistSeedRelationResolver
     : IMuscleAntagonistSeedRelationResolver
 {
     public IReadOnlyList<SeedRelationItem<MuscleId>> Resolve(
+        SeedExecutionOptions options,
         IReadOnlyCollection<MuscleSeedJsonDto> seedDtos,
         MuscleSeedCatalog muscleCatalog)
     {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(seedDtos);
+        ArgumentNullException.ThrowIfNull(muscleCatalog);
+
         var relations = new List<SeedRelationItem<MuscleId>>();
 
         foreach (var seedDto in seedDtos)
@@ -24,11 +30,15 @@ public sealed class MuscleAntagonistSeedRelationResolver
                 continue;
             }
 
-            var sourceMuscle = ResolveMuscleFromSeedDto(seedDto, muscleCatalog);
+            var sourceMuscle = ResolveMuscleFromSeedDto(
+                options,
+                seedDto,
+                muscleCatalog);
 
             foreach (var antagonistRef in seedDto.Antagonists)
             {
                 var antagonistMuscle = ResolveMuscleReference(
+                    options,
                     antagonistRef,
                     muscleCatalog);
 
@@ -44,10 +54,11 @@ public sealed class MuscleAntagonistSeedRelationResolver
     }
 
     private static Muscle ResolveMuscleFromSeedDto(
+        SeedExecutionOptions options,
         MuscleSeedJsonDto seedDto,
         MuscleSeedCatalog muscleCatalog)
     {
-        if (seedDto.Id.HasValue)
+        if (seedDto.Id.HasValue && !options.IgnoreTopLevelIds)
         {
             return muscleCatalog.GetRequiredById(
                 MuscleId.FromGuid(seedDto.Id.Value));
@@ -58,14 +69,21 @@ public sealed class MuscleAntagonistSeedRelationResolver
             return muscleCatalog.GetRequiredByNameKey(seedDto.NameKey);
         }
 
-        return muscleCatalog.GetRequiredByName(seedDto.Name);
+        if (!string.IsNullOrWhiteSpace(seedDto.Name))
+        {
+            return muscleCatalog.GetRequiredByName(seedDto.Name);
+        }
+
+        throw new InvalidOperationException(
+            "Muscle seed must provide Id, NameKey, or Name.");
     }
 
     private static Muscle ResolveMuscleReference(
+        SeedExecutionOptions options,
         SeedEntityReferenceJsonDto reference,
         MuscleSeedCatalog muscleCatalog)
     {
-        if (reference.Id.HasValue)
+        if (reference.Id.HasValue && !options.IgnoreReferenceIds)
         {
             return muscleCatalog.GetRequiredById(
                 MuscleId.FromGuid(reference.Id.Value));

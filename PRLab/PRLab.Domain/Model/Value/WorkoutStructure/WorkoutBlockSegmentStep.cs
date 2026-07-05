@@ -72,6 +72,8 @@ public sealed record WorkoutBlockSegmentStep
 
         ValidateOrThrow();
     }
+    
+    
 
     public static WorkoutBlockSegmentStep NewExerciseStep(
         WorkoutBlockSegmentId segmentId,

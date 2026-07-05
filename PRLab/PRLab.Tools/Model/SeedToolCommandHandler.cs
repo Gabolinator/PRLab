@@ -63,8 +63,19 @@ public sealed class SeedToolCommandHandler(
 
         try
         {
-            var results = await dataSeeder.SeedAsync(seedEntities);
-            var changes = results
+            var options = ResolveSeedExecutionOptions(data);
+
+            usageLogger.LogSeedOptions(options);
+
+            if (!ConfirmSeedExecution(options))
+            {
+                logger.Log("Seed cancelled.", Color.Yellow);
+                return;
+            }
+            
+            var results = await dataSeeder.SeedAsync(
+                seedEntities,
+                options);    var changes = results
                 .Where(result => result.Changed)
                 .ToList();
 
@@ -95,5 +106,55 @@ public sealed class SeedToolCommandHandler(
             logger.LogError($"Seeding data for [{seedEntityNames}] failed : {exception.Message}");
             throw;
         }
+    }
+    
+    private static bool RequiresDangerousSeedConfirmation(
+        SeedExecutionOptions options)
+    {
+        return options.IgnoreSeedHistory
+               || options.ActionOverride.HasValue
+               || options.IgnoreTopLevelIds
+               || options.IgnoreReferenceIds;
+    }
+    
+    private bool ConfirmSeedExecution(
+        SeedExecutionOptions options)
+    {
+        if (!RequiresDangerousSeedConfirmation(options))
+        {
+            return true;
+        }
+
+        logger.LogWarning(
+            "Are you sure you want to proceed with seed with those options? " +
+            "There could be destructive seeding that cannot be reverted.");
+
+        logger.LogWarning(
+            "Type 'y' to confirm. Anything else will cancel.");
+
+        var firstConfirmation = Console.ReadLine();
+
+        if (!string.Equals(firstConfirmation, "y", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        logger.LogWarning(
+            "Type 'y' a second time to really confirm. Anything else will cancel.");
+
+        var secondConfirmation = Console.ReadLine();
+
+        return string.Equals(secondConfirmation, "y", StringComparison.OrdinalIgnoreCase);
+    }
+    
+    private static SeedExecutionOptions ResolveSeedExecutionOptions(
+        PRToolCommandInputData data)
+    {
+        if (data.HasOption("--full-reseed", "--reseed"))
+        {
+            return SeedExecutionOptions.FullReseed;
+        }
+
+        return SeedExecutionOptions.Default;
     }
 }

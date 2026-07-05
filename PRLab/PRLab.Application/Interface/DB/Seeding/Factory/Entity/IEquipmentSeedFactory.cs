@@ -3,7 +3,7 @@ using PRLab.Domain.Model.Entity;
 
 namespace PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 
-public interface IEquipmentSeedFactory
+public interface IEquipmentSeedFactory 
 {
-    public IReadOnlyList<SeedItem<Equipment>> CreateInitialData();
+    public IReadOnlyList<SeedItem<Equipment>> CreateInitialData(SeedExecutionOptions options);
 }

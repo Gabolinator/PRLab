@@ -25,7 +25,8 @@ public static class MovementCategoryMapper
             movementCategory.Id,
             movementCategory.Name,
             DescriptionMapper.ToGetDTO(movementCategory.Description, language),
-            movementCategory.BaseMovementCategory);
+            movementCategory.BaseMovementCategory,
+            movementCategory.Visibility.Scope);
     }
 
     public static IReadOnlyCollection<MovementCategoryGetDTO> ToGetDTOs(
@@ -62,7 +63,8 @@ public static class MovementCategoryMapper
             payload.Name,
             payload.BaseCategory,
             description,
-            createdBy);
+            createdBy,
+            payload.Visibility);
     }
     
     public static MovementCategorySummaryDTO? ToSummaryDTO(MovementCategory category) =>

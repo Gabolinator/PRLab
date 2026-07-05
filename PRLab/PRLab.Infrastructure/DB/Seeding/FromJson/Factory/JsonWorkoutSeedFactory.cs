@@ -9,6 +9,7 @@ using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.WorkoutJsons;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Relations.Interface;
+using PRLab.Infrastructure.DB.Seeding.Validation;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 
@@ -20,13 +21,17 @@ public sealed class JsonWorkoutSeedFactory(
 {
     protected override EntityType Entity => EntityType.Workout;
 
-    public override SeedItem<Workout> ToSeedItem(WorkoutSeedJsonDto seedDto)
+    public override SeedItem<Workout> ToSeedItem(SeedExecutionOptions options, WorkoutSeedJsonDto seedDto)
     {
         throw new NotSupportedException(
             "Workout seeds require an exercise catalog. Use CreateInitialData(...catalog).");
     }
 
+    public override void Validate(WorkoutSeedJsonDto seedDto)
+        => WorkoutSeedValidator.Validate(seedDto);
+
     public IReadOnlyList<SeedItem<Workout>> CreateInitialData(
+        SeedExecutionOptions options,
         ExerciseSeedCatalog catalog)
     {
         ArgumentNullException.ThrowIfNull(catalog);
@@ -34,24 +39,27 @@ public sealed class JsonWorkoutSeedFactory(
         var seedDtos = LoadSeedDtos();
 
         return seedDtos
-            .Select(seedDto => ToSeedItem(seedDto, catalog))
+            .Select(seedDto => ToSeedItem(options, seedDto, catalog))
             .ToList();
     }
 
     private SeedItem<Workout> ToSeedItem(
+        SeedExecutionOptions options,
         WorkoutSeedJsonDto seedDto,
         ExerciseSeedCatalog catalog)
     {
+        ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(seedDto);
         ArgumentNullException.ThrowIfNull(catalog);
 
-        ValidateSeedDto(seedDto);
+        Validate(seedDto);
 
         var description = seedDto.Description is null
             ? Description.None()
             : seedDto.Description.ToDescription();
 
         var workout = CreateWorkout(
+            options,
             seedDto,
             description);
 
@@ -63,70 +71,42 @@ public sealed class JsonWorkoutSeedFactory(
             workout,
             seedDto,
             catalog,
+            options,
             SeedUser);
 
         return new SeedItem<Workout>(
             SeedKeyGenerator.GenerateWorkoutKey(workout),
             workout,
-            seedDto.Action);
-    }
-
-    private static void ValidateSeedDto(
-        WorkoutSeedJsonDto seedDto)
-    {
-        if (string.IsNullOrWhiteSpace(seedDto.Name))
-        {
-            throw new InvalidOperationException("Workout seed name cannot be empty.");
-        }
-
-        if (seedDto.Id == Guid.Empty)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{seedDto.Name}' has an empty id. Omit the Id property or provide a valid id.");
-        }
-
-        if (seedDto.Origin == DataOrigin.BuiltIn && seedDto.OwnerUserId is not null)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{seedDto.Name}' is BuiltIn and should not provide OwnerUserId.");
-        }
-
-        if (seedDto.Origin != DataOrigin.BuiltIn && seedDto.OwnerUserId is null)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{seedDto.Name}' has origin '{seedDto.Origin}' but no OwnerUserId.");
-        }
-
-        var duplicateBlockSequence = seedDto.Blocks
-            .GroupBy(block => block.Sequence)
-            .FirstOrDefault(group => group.Count() > 1);
-
-        if (duplicateBlockSequence is not null)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{seedDto.Name}' has duplicate block sequence '{duplicateBlockSequence.Key}'.");
-        }
+            options.ResolveAction(seedDto.Action));
     }
 
     private Workout CreateWorkout(
+        SeedExecutionOptions options,
         WorkoutSeedJsonDto seedDto,
         Description description)
     {
+        var shouldUseSeedId =
+            seedDto.Id.HasValue &&
+            !options.IgnoreTopLevelIds;
+
         return seedDto.Origin switch
         {
-            DataOrigin.BuiltIn when seedDto.Id.HasValue => Workout.NewBuiltInWithId(
-                id: WorkoutId.FromGuid(seedDto.Id.Value),
+            DataOrigin.BuiltIn when shouldUseSeedId => Workout.NewBuiltInWithId(
+                id: WorkoutId.FromGuid(seedDto.Id!.Value),
                 name: seedDto.Name,
                 description: description,
-                createdBy: SeedUser),
+                createdBy: SeedUser,
+                visibilityScope: seedDto.VisibilityScope),
 
             DataOrigin.BuiltIn => Workout.NewBuiltIn(
                 name: seedDto.Name,
                 description: description,
-                createdBy: SeedUser),
+                createdBy: SeedUser,
+                visibilityScope: seedDto.VisibilityScope),
 
             _ => throw new NotSupportedException(
-                $"JSON workout seeding currently only supports {nameof(DataOrigin.BuiltIn)} workouts. Workout seed '{seedDto.Name}' has origin '{seedDto.Origin}'.")
+                $"JSON workout seeding currently only supports {nameof(DataOrigin.BuiltIn)} workouts. " +
+                $"Workout seed '{seedDto.Name}' has origin '{seedDto.Origin}'.")
         };
     }
 

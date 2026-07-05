@@ -1,18 +1,20 @@
 ﻿using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Access;
 using PRLab.Domain.Model.Value.Enum.Anatomy;
 using PRLab.Domain.Model.Value.Enum.Movement;
-using PRLab.Domain.Model.Value.Enum.Prescription;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
 using PRLab.Domain.Model.Value.Update;
+using PRLab.Domain.Policies;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Entity;
 
-public sealed record Movement : IAudited, IDescribed, IOwnedData
+public sealed record Movement : IAudited, IDescribed, IOwnedData, IVisibilityScoped
 {
     public MovementId Id { get; init; }
 
@@ -67,6 +69,8 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
     public OwnershipInfo Ownership { get; private set; } = null!;
 
     public AuditInfo Audit { get; private set; } = null!;
+    
+    public VisibilityInfo Visibility { get; private set; } = null!;
 
     private HashSet<MovementId> VariantIDs => Variants
         .Select(variant => variant.Id)
@@ -94,7 +98,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
     {
         // EF Core
     }
-
+    
     private Movement(
         MovementId id,
         string name,
@@ -102,19 +106,32 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         Description description,
         AuditInfo audit,
         OwnershipInfo ownership,
+        VisibilityInfo visibility,
         WorkTargetType defaultWorkTargetType,
         MovementLaterality laterality = MovementLaterality.Bilateral,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Movement id cannot be empty.", nameof(id));
-        }
+        DomainGuard.NotEmptyId(
+            id.Value,
+            nameof(id));
+
+        DomainGuard.NotEmptyName(
+            name,
+            nameof(name));
 
         ArgumentNullException.ThrowIfNull(movementCategory);
         ArgumentNullException.ThrowIfNull(description);
         ArgumentNullException.ThrowIfNull(audit);
         ArgumentNullException.ThrowIfNull(ownership);
+        ArgumentNullException.ThrowIfNull(visibility);
+
+        DataAccessPolicy.ValidateOwnership(
+            ownership.Origin,
+            ownership.OwnerUserId);
+
+        DataAccessPolicy.ValidateVisibility(
+            ownership.Origin,
+            visibility.Scope);
 
         Id = id;
         SetName(name);
@@ -124,6 +141,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         Description = description;
         Audit = audit;
         Ownership = ownership;
+        Visibility = visibility;
 
         SetWorkTargetTypesDuringCreation(
             defaultWorkTargetType,
@@ -137,23 +155,31 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         Description description,
         AuditInfo audit,
         OwnershipInfo ownership,
+        VisibilityInfo visibility,
         WorkTargetType defaultWorkTargetType,
         MovementLaterality laterality = MovementLaterality.Bilateral,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Movement id cannot be empty.", nameof(id));
-        }
+        DomainGuard.NotEmptyId(
+            id.Value,
+            nameof(id));
 
-        if (movementCategoryId.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Movement category id cannot be empty.", nameof(movementCategoryId));
-        }
+        DomainGuard.NotEmptyName(
+            name,
+            nameof(name));
 
         ArgumentNullException.ThrowIfNull(description);
         ArgumentNullException.ThrowIfNull(audit);
         ArgumentNullException.ThrowIfNull(ownership);
+        ArgumentNullException.ThrowIfNull(visibility);
+
+        DataAccessPolicy.ValidateOwnership(
+            ownership.Origin,
+            ownership.OwnerUserId);
+
+        DataAccessPolicy.ValidateVisibility(
+            ownership.Origin,
+            visibility.Scope);
 
         Id = id;
         SetName(name);
@@ -162,6 +188,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         Description = description;
         Audit = audit;
         Ownership = ownership;
+        Visibility = visibility;
 
         SetWorkTargetTypesDuringCreation(
             defaultWorkTargetType,
@@ -175,15 +202,19 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         WorkTargetType defaultWorkTargetType,
         MovementLaterality laterality,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new Movement(
             MovementId.New(),
             name,
             movementCategoryId,
             Description.New(description),
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn(),
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
             defaultWorkTargetType,
             laterality,
             allowedWorkTargetTypes
@@ -197,15 +228,19 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         WorkTargetType defaultWorkTargetType,
         MovementLaterality laterality,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new Movement(
             MovementId.New(),
             name,
             movementCategory,
             description,
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn(),
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
             defaultWorkTargetType,
             laterality,
             allowedWorkTargetTypes
@@ -220,15 +255,19 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         WorkTargetType defaultWorkTargetType,
         MovementLaterality laterality,
         IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new Movement(
             id,
             name,
             movementCategory,
             description,
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn(),
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
             defaultWorkTargetType,
             laterality,
             allowedWorkTargetTypes
@@ -242,9 +281,12 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         User owner,
         WorkTargetType defaultWorkTargetType,
         MovementLaterality laterality,
-        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.UserCreated(owner);
 
         return new Movement(
             MovementId.New(),
@@ -252,7 +294,8 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             movementCategoryId,
             Description.New(description),
             AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner),
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
             defaultWorkTargetType,
             laterality,
             allowedWorkTargetTypes
@@ -266,9 +309,12 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         User owner,
         WorkTargetType defaultWorkTargetType,
         MovementLaterality laterality,
-        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.UserCreated(owner);
 
         return new Movement(
             MovementId.New(),
@@ -276,7 +322,8 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             movementCategory,
             description,
             AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner),
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
             defaultWorkTargetType,
             laterality,
             allowedWorkTargetTypes
@@ -290,9 +337,12 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         User coach,
         WorkTargetType defaultWorkTargetType,
         MovementLaterality laterality = MovementLaterality.Bilateral,
-        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(coach);
+
+        var ownership = OwnershipInfo.CoachCreated(coach);
 
         return new Movement(
             MovementId.New(),
@@ -300,7 +350,8 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             movementCategory,
             description,
             AuditInfo.New(coach),
-            OwnershipInfo.CoachCreated(coach),
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
             defaultWorkTargetType,
             laterality,
             allowedWorkTargetTypes
@@ -314,9 +365,12 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
         User owner,
         WorkTargetType defaultWorkTargetType,
         MovementLaterality laterality = MovementLaterality.Bilateral,
-        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null)
+        IReadOnlyCollection<WorkTargetType>? allowedWorkTargetTypes = null,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.Imported(owner);
 
         return new Movement(
             MovementId.New(),
@@ -324,11 +378,33 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData
             movementCategory,
             description,
             AuditInfo.New(owner),
-            OwnershipInfo.Imported(owner),
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
             defaultWorkTargetType,
             laterality,
             allowedWorkTargetTypes
         );
+    }
+
+    public bool UpdateVisibility(
+        VisibilityInfo visibility,
+        User? changedBy = null)
+    {
+        ArgumentNullException.ThrowIfNull(visibility);
+
+        if (Visibility == visibility)
+        {
+            return false;
+        }
+
+        DataAccessPolicy.ValidateVisibility(
+            Ownership.Origin,
+            visibility.Scope);
+
+        Visibility = visibility;
+        MarkUpdated(changedBy);
+
+        return true;
     }
     
     private void SetName(string name)

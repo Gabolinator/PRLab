@@ -1,4 +1,5 @@
-﻿using PRLab.Domain;
+﻿using PRLab.Application.Models.DB.Seeding;
+using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.System;
 
 namespace PRLab.Application.Interface.DB.Seeding;
@@ -10,5 +11,6 @@ public interface IDataSeeder
     
     Task<IReadOnlyList<SeedResult>> SeedAsync(
         IReadOnlyCollection<EntityType>? entities = null,
+        SeedExecutionOptions? options = null,
         CancellationToken ct = default);
 }

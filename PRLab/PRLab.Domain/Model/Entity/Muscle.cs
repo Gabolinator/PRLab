@@ -45,6 +45,19 @@ public sealed record Muscle : IAudited, IDescribed
         Description description,
         AuditInfo audit)
     {
+        // muscles are always built-in so no visibility scope - there always Public
+        
+        DomainGuard.NotEmptyId(
+            id.Value,
+            nameof(id));
+
+        DomainGuard.NotEmptyName(
+            name,
+            nameof(name));
+        
+        ArgumentNullException.ThrowIfNull(description);
+        ArgumentNullException.ThrowIfNull(audit);
+        
         Id = id;
         SetName(name);
         LatinName = NormalizeLatinName(latinName);

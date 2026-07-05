@@ -92,6 +92,18 @@ public static class ExerciseModelBuilder
                 ownership.HasIndex(ownershipInfo => ownershipInfo.OwnerUserId)
                     .HasDatabaseName("IX_Exercise_OwnerUserId");
             });
+            
+            exercise.OwnsOne(exercise => exercise.Visibility, visibility =>
+            {
+                visibility.Property(visibilityInfo => visibilityInfo.Scope)
+                    .HasColumnName("VisibilityScope")
+                    .HasConversion<string>()
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                visibility.HasIndex(visibilityInfo => visibilityInfo.Scope)
+                    .HasDatabaseName("IX_Exercise_VisibilityScope");
+            });
 
             exercise.Navigation(exercise => exercise.Steps)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);

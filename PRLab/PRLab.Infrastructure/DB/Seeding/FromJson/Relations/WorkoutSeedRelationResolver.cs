@@ -6,6 +6,7 @@ using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 using PRLab.Domain.Model.Value.Enum.Prescription.Rest;
 using PRLab.Domain.Model.Value.Enum.Prescription.Time;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Enum.Workout;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Prescription.Common;
@@ -15,12 +16,14 @@ using PRLab.Domain.Model.Value.Prescription.Rest;
 using PRLab.Domain.Model.Value.Prescription.Time;
 using PRLab.Domain.Model.Value.Prescription.Work;
 using PRLab.Domain.Model.Value.Prescription.Workout;
+using PRLab.Domain.Model.Value.WorkoutStructure;
 using PRLab.Domain.Model.Value.WorkoutValue;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.WorkoutJsons;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.WorkoutJsons.Prescription;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.WorkoutJsons.Structure;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Relations.Interface;
+using PRLab.Infrastructure.DB.Seeding.Validation;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Relations;
 
@@ -30,11 +33,13 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
         Workout workout,
         WorkoutSeedJsonDto seedDto,
         ExerciseSeedCatalog catalog,
+        SeedExecutionOptions options,
         User seedUser)
     {
         ArgumentNullException.ThrowIfNull(workout);
         ArgumentNullException.ThrowIfNull(seedDto);
         ArgumentNullException.ThrowIfNull(catalog);
+        ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(seedUser);
 
         if (seedDto.Blocks.Count == 0)
@@ -43,13 +48,15 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
                 $"Workout seed '{seedDto.Name}' must provide at least one block.");
         }
 
-        ValidateBlockSequences(seedDto);
+        WorkoutSeedValidator.ValidateBlockSequences(seedDto);
 
         foreach (var assignmentDto in seedDto.Blocks.OrderBy(block => block.Sequence))
         {
             var block = ToWorkoutBlock(
+                options,
                 assignmentDto.Block,
                 seedDto.Name,
+                seedDto.Origin,
                 assignmentDto.Sequence,
                 catalog,
                 seedUser);
@@ -62,43 +69,22 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
         }
     }
 
-    private static void ValidateBlockSequences(
-        WorkoutSeedJsonDto seedDto)
-    {
-        foreach (var blockDto in seedDto.Blocks)
-        {
-            if (blockDto.Sequence < 1)
-            {
-                throw new InvalidOperationException(
-                    $"Workout seed '{seedDto.Name}' has block with invalid sequence '{blockDto.Sequence}'. Sequence must be greater than zero.");
-            }
-        }
-
-        var duplicateSequences = seedDto.Blocks
-            .GroupBy(block => block.Sequence)
-            .Where(group => group.Count() > 1)
-            .Select(group => group.Key)
-            .ToList();
-
-        if (duplicateSequences.Count > 0)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{seedDto.Name}' has duplicate block sequence(s): {string.Join(", ", duplicateSequences)}.");
-        }
-    }
-
-    private static WorkoutBlock ToWorkoutBlock(
+    private WorkoutBlock ToWorkoutBlock(
+        SeedExecutionOptions options,
         WorkoutBlockSeedJsonDto blockDto,
         string workoutName,
+        DataOrigin workoutOrigin,
         int blockSequence,
         ExerciseSeedCatalog catalog,
         User seedUser)
     {
+        ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(blockDto);
 
-        ValidateBlockDto(
+        WorkoutBlockSeedValidator.Validate(
             blockDto,
             workoutName,
+            workoutOrigin,
             blockSequence);
 
         var repeatPrescription = ToBlockRepeatPrescription(
@@ -106,22 +92,29 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
             workoutName,
             blockSequence);
 
-        var block = blockDto.Id.HasValue
+        var shouldUseSeedId =
+            blockDto.Id.HasValue &&
+            !options.IgnoreTopLevelIds;
+
+        var block = shouldUseSeedId
             ? WorkoutBlock.NewBuiltInWithId(
-                id: WorkoutBlockId.FromGuid(blockDto.Id.Value),
+                id: WorkoutBlockId.FromGuid(blockDto.Id!.Value),
                 name: blockDto.Name,
                 blockType: blockDto.BlockType,
                 repeatPrescription: repeatPrescription,
-                createdBy: seedUser)
+                createdBy: seedUser,
+                visibilityScope: blockDto.VisibilityScope)
             : WorkoutBlock.NewBuiltIn(
                 name: blockDto.Name,
                 blockType: blockDto.BlockType,
                 repeatPrescription: repeatPrescription,
-                createdBy: seedUser);
+                createdBy: seedUser,
+                visibilityScope: blockDto.VisibilityScope);
 
         foreach (var segmentDto in blockDto.Segments.OrderBy(segment => segment.Sequence))
         {
             var segment = ToSegment(
+                options,
                 segmentDto,
                 block.Id,
                 catalog,
@@ -134,118 +127,69 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
         return block;
     }
 
-    private static void ValidateBlockDto(
-        WorkoutBlockSeedJsonDto blockDto,
-        string workoutName,
-        int blockSequence)
-    {
-        if (string.IsNullOrWhiteSpace(blockDto.Name))
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{workoutName}' block '{blockSequence}' must provide a name.");
-        }
-
-        if (blockDto.Id == Guid.Empty)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{workoutName}' block '{blockDto.Name}' has an empty id. Omit the Id property or provide a valid id.");
-        }
-
-        if (blockDto.Segments.Count == 0)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{workoutName}' block '{blockDto.Name}' must provide at least one segment.");
-        }
-
-        ValidateSegmentSequences(
-            blockDto.Segments,
-            workoutName,
-            blockDto.Name);
-    }
-
-    private static void ValidateSegmentSequences(
-        IReadOnlyList<WorkoutBlockSegmentSeedJsonDto> segments,
-        string workoutName,
-        string blockName)
-    {
-        foreach (var segmentDto in segments)
-        {
-            if (segmentDto.Sequence < 1)
-            {
-                throw new InvalidOperationException(
-                    $"Workout seed '{workoutName}' block '{blockName}' has segment with invalid sequence '{segmentDto.Sequence}'. Sequence must be greater than zero.");
-            }
-        }
-
-        var duplicateSequences = segments
-            .GroupBy(segment => segment.Sequence)
-            .Where(group => group.Count() > 1)
-            .Select(group => group.Key)
-            .ToList();
-
-        if (duplicateSequences.Count > 0)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{workoutName}' block '{blockName}' has duplicate segment sequence(s): {string.Join(", ", duplicateSequences)}.");
-        }
-    }
-
     private static WorkoutBlockSegment ToSegment(
-        WorkoutBlockSegmentSeedJsonDto segmentDto,
-        WorkoutBlockId workoutBlockId,
-        ExerciseSeedCatalog catalog,
-        string workoutName,
-        string blockName)
+    SeedExecutionOptions options,
+    WorkoutBlockSegmentSeedJsonDto segmentDto,
+    WorkoutBlockId workoutBlockId,
+    ExerciseSeedCatalog catalog,
+    string workoutName,
+    string blockName)
+{
+    ArgumentNullException.ThrowIfNull(options);
+    ArgumentNullException.ThrowIfNull(segmentDto);
+
+    ValidateSegmentDto(
+        segmentDto,
+        workoutName,
+        blockName);
+
+    var shouldUseSeedId =
+        segmentDto.Id.HasValue &&
+        !options.IgnoreTopLevelIds;
+
+    var segment = shouldUseSeedId
+        ? WorkoutBlockSegment.NewWithId(
+            id: WorkoutBlockSegmentId.FromGuid(segmentDto.Id!.Value),
+            workoutBlockId: workoutBlockId,
+            name: segmentDto.Name,
+            sequence: segmentDto.Sequence,
+            workMode: segmentDto.WorkMode,
+            intent: ToWorkIntentPrescription(segmentDto.Intent),
+            scoreType: segmentDto.ScoreType,
+            timeConstraint: ToTimeConstraint(segmentDto.TimeConstraint),
+            intervalPrescription: ToIntervalPrescription(segmentDto.IntervalPrescription),
+            estimatedSegmentDuration: ToEstimatedDuration(segmentDto.EstimatedSegmentDuration),
+            restAfterStep: ToRestTarget(segmentDto.RestAfterStep),
+            restAfterSegment: ToRestTarget(segmentDto.RestAfterSegment))
+        : WorkoutBlockSegment.New(
+            workoutBlockId: workoutBlockId,
+            name: segmentDto.Name,
+            sequence: segmentDto.Sequence,
+            workMode: segmentDto.WorkMode,
+            intent: ToWorkIntentPrescription(segmentDto.Intent),
+            scoreType: segmentDto.ScoreType,
+            timeConstraint: ToTimeConstraint(segmentDto.TimeConstraint),
+            intervalPrescription: ToIntervalPrescription(segmentDto.IntervalPrescription),
+            estimatedSegmentDuration: ToEstimatedDuration(segmentDto.EstimatedSegmentDuration),
+            restAfterStep: ToRestTarget(segmentDto.RestAfterStep),
+            restAfterSegment: ToRestTarget(segmentDto.RestAfterSegment));
+
+    foreach (var stepDto in segmentDto.Steps.OrderBy(step => step.Sequence))
     {
-        ArgumentNullException.ThrowIfNull(segmentDto);
-
-        ValidateSegmentDto(
-            segmentDto,
+        var step = ToStep(
+            options,
+            stepDto,
+            segment.Id,
+            catalog,
             workoutName,
-            blockName);
+            blockName,
+            segmentDto.Name);
 
-        var segment = segmentDto.Id.HasValue
-            ? WorkoutBlockSegment.NewWithId(
-                id: WorkoutBlockSegmentId.FromGuid(segmentDto.Id.Value),
-                workoutBlockId: workoutBlockId,
-                name: segmentDto.Name,
-                sequence: segmentDto.Sequence,
-                workMode: segmentDto.WorkMode,
-                intent: ToWorkIntentPrescription(segmentDto.Intent),
-                scoreType: segmentDto.ScoreType,
-                timeConstraint: ToTimeConstraint(segmentDto.TimeConstraint),
-                intervalPrescription: ToIntervalPrescription(segmentDto.IntervalPrescription),
-                estimatedSegmentDuration: ToEstimatedDuration(segmentDto.EstimatedSegmentDuration),
-                restAfterStep: ToRestTarget(segmentDto.RestAfterStep),
-                restAfterSegment: ToRestTarget(segmentDto.RestAfterSegment))
-            : WorkoutBlockSegment.New(
-                workoutBlockId: workoutBlockId,
-                name: segmentDto.Name,
-                sequence: segmentDto.Sequence,
-                workMode: segmentDto.WorkMode,
-                intent: ToWorkIntentPrescription(segmentDto.Intent),
-                scoreType: segmentDto.ScoreType,
-                timeConstraint: ToTimeConstraint(segmentDto.TimeConstraint),
-                intervalPrescription: ToIntervalPrescription(segmentDto.IntervalPrescription),
-                estimatedSegmentDuration: ToEstimatedDuration(segmentDto.EstimatedSegmentDuration),
-                restAfterStep: ToRestTarget(segmentDto.RestAfterStep),
-                restAfterSegment: ToRestTarget(segmentDto.RestAfterSegment));
-
-        foreach (var stepDto in segmentDto.Steps.OrderBy(step => step.Sequence))
-        {
-            var step = ToStep(
-                stepDto,
-                segment.Id,
-                catalog,
-                workoutName,
-                blockName,
-                segmentDto.Name);
-
-            segment.AddStep(step);
-        }
-
-        return segment;
+        segment.AddStep(step);
     }
+
+    return segment;
+}
 
     private static void ValidateSegmentDto(
         WorkoutBlockSegmentSeedJsonDto segmentDto,
@@ -306,72 +250,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
     }
 
     private static WorkoutBlockSegmentStep ToStep(
-        WorkoutBlockSegmentStepSeedJsonDto stepDto,
-        WorkoutBlockSegmentId segmentId,
-        string workoutName,
-        string blockName,
-        string segmentName)
-    {
-        ArgumentNullException.ThrowIfNull(stepDto);
-
-        if (stepDto.Id == Guid.Empty)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{workoutName}' block '{blockName}' segment '{segmentName}' step '{stepDto.Sequence}' has an empty id. Omit the Id property or provide a valid id.");
-        }
-
-        return stepDto.StepKind switch
-        {
-            WorkoutStepKind.Exercise => ToExerciseStep(
-                stepDto,
-                segmentId,
-                workoutName,
-                blockName,
-                segmentName),
-
-            WorkoutStepKind.Rest => ToRestStep(
-                stepDto,
-                segmentId,
-                workoutName,
-                blockName,
-                segmentName),
-
-            WorkoutStepKind.Instruction => ToInstructionStep(
-                stepDto,
-                segmentId,
-                workoutName,
-                blockName,
-                segmentName),
-
-            _ => throw new InvalidOperationException(
-                $"Workout seed '{workoutName}' block '{blockName}' segment '{segmentName}' step '{stepDto.Sequence}' has unsupported step kind '{stepDto.StepKind}'.")
-        };
-    }
-
-    private static WorkoutBlockSegmentStep ToExerciseStep(
-        WorkoutBlockSegmentStepSeedJsonDto stepDto,
-        WorkoutBlockSegmentId segmentId,
-        string workoutName,
-        string blockName,
-        string segmentName)
-    {
-        if (stepDto.Exercise is null)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{workoutName}' block '{blockName}' segment '{segmentName}' exercise step '{stepDto.Sequence}' must provide Exercise.");
-        }
-
-        if (stepDto.Prescription is null)
-        {
-            throw new InvalidOperationException(
-                $"Workout seed '{workoutName}' block '{blockName}' segment '{segmentName}' exercise step '{stepDto.Sequence}' must provide Prescription.");
-        }
-
-        throw new InvalidOperationException(
-            "Use ToExerciseStep overload that receives ExerciseSeedCatalog.");
-    }
-    
-        private static WorkoutBlockSegmentStep ToStep(
+        SeedExecutionOptions options,
         WorkoutBlockSegmentStepSeedJsonDto stepDto,
         WorkoutBlockSegmentId segmentId,
         ExerciseSeedCatalog catalog,
@@ -379,6 +258,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
         string blockName,
         string segmentName)
     {
+        ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(stepDto);
 
         if (stepDto.Id == Guid.Empty)
@@ -390,6 +270,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
         return stepDto.StepKind switch
         {
             WorkoutStepKind.Exercise => ToExerciseStep(
+                options,
                 stepDto,
                 segmentId,
                 catalog,
@@ -417,6 +298,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
     }
 
     private static WorkoutBlockSegmentStep ToExerciseStep(
+        SeedExecutionOptions options,
         WorkoutBlockSegmentStepSeedJsonDto stepDto,
         WorkoutBlockSegmentId segmentId,
         ExerciseSeedCatalog catalog,
@@ -437,6 +319,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
         }
 
         var exercise = ResolveExercise(
+            options,
             stepDto.Exercise,
             catalog,
             workoutName,
@@ -446,11 +329,14 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
 
         return WorkoutBlockSegmentStep.NewExerciseStep(
             segmentId: segmentId,
-            exercise: exercise,
+            exerciseId: exercise.Id,
             sequence: stepDto.Sequence,
-            prescription: ToWorkoutStepPrescription(stepDto.Prescription),
+            prescription: ToWorkoutStepPrescription(
+                options,
+                stepDto.Prescription),
             notes: stepDto.Notes);
     }
+    
 
     private static WorkoutBlockSegmentStep ToRestStep(
         WorkoutBlockSegmentStepSeedJsonDto stepDto,
@@ -491,7 +377,8 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
             sequence: stepDto.Sequence);
     }
     
-        private static Exercise ResolveExercise(
+    private static Exercise ResolveExercise(
+        SeedExecutionOptions options,
         SeedEntityReferenceJsonDto reference,
         ExerciseSeedCatalog catalog,
         string workoutName,
@@ -499,7 +386,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
         string segmentName,
         int stepSequence)
     {
-        if (reference.Id.HasValue)
+        if (reference.Id.HasValue && !options.IgnoreReferenceIds)
         {
             return catalog.GetRequiredById(
                 ExerciseId.FromGuid(reference.Id.Value));
@@ -539,16 +426,17 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
     }
 
     private static WorkoutStepPrescription ToWorkoutStepPrescription(
+        SeedExecutionOptions options,
         WorkoutStepPrescriptionSeedJsonDto dto)
     {
         var prescription = WorkoutStepPrescription.New(
             workTarget: ToWorkTarget(dto.WorkTarget),
-            loadTarget: ToLoadTarget(dto.LoadTarget),
+            loadTarget: ToLoadTarget(options, dto.LoadTarget),
             restAfterStep: ToRestTarget(dto.RestAfterStep),
             timeConstraint: ToTimeConstraint(dto.TimeConstraint),
             estimatedDuration: ToEstimatedDuration(dto.EstimatedStepDuration),
             intentOverride: ToNullableWorkIntentPrescription(dto.IntentOverride),
-            partition: ToWorkPartitionPrescription(dto.Partition),
+            partition: ToWorkPartitionPrescription(options, dto.Partition),
             notes: dto.Notes);
 
         return dto.SideExecution.HasValue
@@ -577,6 +465,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
     }
 
     private static LoadTarget? ToLoadTarget(
+        SeedExecutionOptions options,
         LoadTargetSeedJsonDto? dto)
     {
         if (dto is null)
@@ -590,13 +479,13 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
 
             LoadTargetType.BodyWeight => LoadTarget.BodyWeight(),
 
-            LoadTargetType.RepMax => LoadTarget.RepMax(
-                RequireReferenceRepMax(dto),
-                ToLoadReference(dto.LoadReference)),
+            LoadTargetType.RepMax when dto.Unit == LoadUnit.RM => LoadTarget.RepMax(
+                RequireRepMaxReps(dto),
+                ToLoadReference(options, dto.LoadReference)),
 
-            LoadTargetType.PercentageOfOneRepMax => LoadTarget.PercentageRepMax(
+            LoadTargetType.RepMax when dto.Unit == LoadUnit.Percent => LoadTarget.PercentageRepMax(
                 RequireLoadValue(dto),
-                ToLoadReference(dto.LoadReference),
+                ToLoadReference(options, dto.LoadReference),
                 RequireReferenceRepMax(dto)),
 
             LoadTargetType.ExternalLoad => LoadTarget.ExternalLoad(
@@ -612,8 +501,22 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
                 RequireLoadUnit(dto)),
 
             _ => throw new InvalidOperationException(
-                $"Unsupported load target type '{dto.Type}'.")
+                $"Unsupported load target type/unit combination '{dto.Type}' / '{dto.Unit}'.")
         };
+    }
+    
+    private static int RequireRepMaxReps(
+        LoadTargetSeedJsonDto dto)
+    {
+        var value = RequireLoadValue(dto);
+
+        if (value % 1 != 0)
+        {
+            throw new InvalidOperationException(
+                $"Load target '{dto.Type}' with unit '{dto.Unit}' must provide a whole-number Value.");
+        }
+
+        return (int)value;
     }
 
     private static decimal RequireLoadValue(
@@ -653,11 +556,24 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
     }
 
     private static LoadReference? ToLoadReference(
+        SeedExecutionOptions options,
         LoadReferenceSeedJsonDto? dto)
     {
         if (dto is null)
         {
             return null;
+        }
+
+        if (dto.Kind == LoadReferenceKind.Named && !string.IsNullOrWhiteSpace(dto.Name))
+        {
+            return LoadReference.Named(dto.Name);
+        }
+
+        if (options.IgnoreReferenceIds)
+        {
+            throw new InvalidOperationException(
+                $"Load reference kind '{dto.Kind}' uses an id-based reference, but seed execution is ignoring reference ids. " +
+                "Use a Named load reference in seed JSON, or extend LoadReferenceSeedJsonDto to support NameKey/Name references.");
         }
 
         return dto.Kind switch
@@ -667,9 +583,6 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
 
             LoadReferenceKind.Movement when dto.MovementId.HasValue =>
                 LoadReference.Movement(MovementId.FromGuid(dto.MovementId.Value)),
-
-            LoadReferenceKind.Named when !string.IsNullOrWhiteSpace(dto.Name) =>
-                LoadReference.Named(dto.Name),
 
             _ => throw new InvalidOperationException(
                 $"Invalid load reference. Kind '{dto.Kind}' must provide the matching ExerciseId, MovementId, or Name.")
@@ -853,6 +766,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
     }
 
     private static WorkPartitionPrescription? ToWorkPartitionPrescription(
+        SeedExecutionOptions options,
         WorkPartitionPrescriptionSeedJsonDto? dto)
     {
         if (dto is null)
@@ -869,7 +783,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
             WorkPartitionStrategy.VariableRepeats => WorkPartitionPrescription.VariableRepeats(
                 repeatDetails: dto.RepeatDetails
                     .OrderBy(repeat => repeat.Sequence)
-                    .Select(ToWorkRepeatPrescription)
+                    .Select(repeat => ToWorkRepeatPrescription(options, repeat))
                     .ToList(),
                 restBetweenRepeats: ToRestTarget(dto.RestBetweenRepeats)),
 
@@ -895,6 +809,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
     }
 
     private static WorkRepeatPrescription ToWorkRepeatPrescription(
+        SeedExecutionOptions options,
         WorkRepeatPrescriptionSeedJsonDto dto)
     {
         ArgumentNullException.ThrowIfNull(dto);
@@ -908,7 +823,7 @@ public sealed class WorkoutSeedRelationResolver : IWorkoutSeedRelationResolver
         return WorkRepeatPrescription.New(
             sequence: dto.Sequence,
             workTarget: ToWorkTarget(dto.WorkTarget),
-            loadTarget: ToLoadTarget(dto.LoadTarget),
+            loadTarget: ToLoadTarget(options, dto.LoadTarget),
             targetIntensity: ToTargetIntensity(dto.TargetIntensity),
             restAfterRepeat: ToRestTarget(dto.RestAfterRepeat),
             notes: dto.Notes);

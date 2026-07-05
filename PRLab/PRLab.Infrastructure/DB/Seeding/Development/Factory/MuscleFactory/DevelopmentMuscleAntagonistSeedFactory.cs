@@ -9,8 +9,11 @@ namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.MuscleFactory;
 public sealed class DevelopmentMuscleAntagonistSeedFactory(ILogger<DevelopmentMuscleAntagonistSeedFactory> logger) : IMuscleAntagonistSeedFactory
 {
     public IReadOnlyList<SeedRelationItem<MuscleId>> CreateInitialData(
+        SeedExecutionOptions options,
         MuscleSeedCatalog muscleCatalog)
     {
+        
+        //ignore options here 
         ArgumentNullException.ThrowIfNull(muscleCatalog);
 
         return

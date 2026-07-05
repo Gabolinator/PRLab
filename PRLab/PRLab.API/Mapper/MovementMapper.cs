@@ -59,7 +59,8 @@ public static class MovementMapper
             movement.Laterality,
             movement.VariantOf is null
                 ? null
-                : ToSummaryDTO(movement.VariantOf));
+                : ToSummaryDTO(movement.VariantOf),
+            movement.Visibility.Scope);
     }
 
     public static IReadOnlyCollection<MovementGetDTO> ToGetDTOs(
@@ -104,7 +105,8 @@ public static class MovementMapper
             owner: currentUser,
             defaultWorkTargetType: payload.DefaultWorkTargetType,
             laterality: payload.Laterality,
-            allowedWorkTargetTypes: payload.AllowedWorkTargetTypes);
+            allowedWorkTargetTypes: payload.AllowedWorkTargetTypes,
+            payload.Visibility);
 
         ApplyEquipmentRequirements(
             movement,

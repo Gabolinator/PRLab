@@ -11,6 +11,7 @@ using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Muscle;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Relations.Interface;
+using PRLab.Infrastructure.DB.Seeding.Validation;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 
@@ -24,31 +25,31 @@ public sealed class JsonMuscleSeedFactory(
 {
     protected override EntityType Entity => EntityType.Muscle;
 
-    public IReadOnlyList<SeedItem<Muscle>> CreateInitialData()
+    public IReadOnlyList<SeedItem<Muscle>> CreateInitialData(
+        SeedExecutionOptions options)
     {
-        return CreateSeedItems();
+        return CreateSeedItems(options);
     }
 
-    public override SeedItem<Muscle> ToSeedItem(MuscleSeedJsonDto seedDto)
+    public override SeedItem<Muscle> ToSeedItem(
+        SeedExecutionOptions options,
+        MuscleSeedJsonDto seedDto)
     {
-        if (string.IsNullOrWhiteSpace(seedDto.Name))
-        {
-            throw new InvalidOperationException($"{Entity} seed name cannot be empty.");
-        }
+        ArgumentNullException.ThrowIfNull(options);
 
-        if (seedDto.Id == Guid.Empty)
-        {
-            throw new InvalidOperationException(
-                $"{Entity} seed '{seedDto.Name}' has an empty id. Omit the Id property or provide a valid id.");
-        }
+        Validate(seedDto);
 
         var description = seedDto.Description is null
             ? Description.None()
             : seedDto.Description.ToDescription();
 
-        var muscle = seedDto.Id.HasValue
+        var shouldUseSeedId =
+            seedDto.Id.HasValue &&
+            !options.IgnoreTopLevelIds;
+
+        var muscle = shouldUseSeedId
             ? Muscle.NewWithId(
-                MuscleId.FromGuid(seedDto.Id.Value),
+                MuscleId.FromGuid(seedDto.Id!.Value),
                 seedDto.Name,
                 seedDto.LatinName,
                 seedDto.BodySection,
@@ -64,15 +65,23 @@ public sealed class JsonMuscleSeedFactory(
         return new SeedItem<Muscle>(
             SeedKeyGenerator.GenerateMuscleKey(muscle),
             muscle,
-            seedDto.Action);
+            options.ResolveAction(seedDto.Action));
     }
 
+    public override void Validate(MuscleSeedJsonDto seedDto)
+        => MuscleSeedValidator.Validate(seedDto);
+
     public IReadOnlyList<SeedRelationItem<MuscleId>> CreateInitialData(
+        SeedExecutionOptions options,
         MuscleSeedCatalog muscleCatalog)
     {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(muscleCatalog);
+
         var seedDtos = LoadSeedDtos();
 
         return antagonistRelationResolver.Resolve(
+            options,
             seedDtos,
             muscleCatalog);
     }

@@ -1,8 +1,8 @@
 ﻿using PRLab.API.DTO.Description;
 using PRLab.API.DTO.Movement.Relation;
 using PRLab.Domain.Model.Value.Enum.Movement;
-using PRLab.Domain.Model.Value.Enum.Prescription;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.API.DTO.Movement;
@@ -14,7 +14,7 @@ public sealed record MovementPostDTO
     public required MovementCategoryId MovementCategoryId { get; init; }
 
     public DescriptionPostDTO? Descriptor { get; init; }
-    
+
     public required WorkTargetType DefaultWorkTargetType { get; init; }
 
     public IReadOnlyList<WorkTargetType> AllowedWorkTargetTypes { get; init; } = [];
@@ -24,10 +24,13 @@ public sealed record MovementPostDTO
     public IReadOnlyList<MovementMusclePostDTO> Muscles { get; init; } = [];
 
     public MovementPattern? PrimaryPattern { get; init; }
-    
+
     public IReadOnlyList<MovementPattern> Patterns { get; init; } = [];
-    
+
     public MovementLaterality Laterality { get; init; }
 
     public MovementId? VariantOfMovementId { get; init; }
+
+    public required VisibilityScope Visibility { get; init; }
+
 }

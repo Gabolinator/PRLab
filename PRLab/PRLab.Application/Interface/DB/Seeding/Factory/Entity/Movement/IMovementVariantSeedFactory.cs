@@ -7,5 +7,6 @@ namespace PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 public interface IMovementVariantSeedFactory
 {
     IReadOnlyList<SeedRelationItem<MovementId>> CreateVariantInitialData(
+        SeedExecutionOptions options,
         MovementSeedCatalog movementCatalog);
 }

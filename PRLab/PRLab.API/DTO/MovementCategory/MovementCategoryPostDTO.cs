@@ -2,6 +2,7 @@
 using PRLab.API.DTO.Description;
 using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.Movement;
+using PRLab.Domain.Model.Value.Enum.System;
 
 namespace PRLab.API.DTO.MovementCategory;
 
@@ -16,6 +17,8 @@ public record MovementCategoryPostDTO
     public BaseMovementCategory BaseCategory { get; init; }
     
     public DescriptionPostDTO? Description { get; init; }
+    
+    public required VisibilityScope Visibility { get; init; }
 }
 
 public static class MovementCategoryPostDTOExtensions

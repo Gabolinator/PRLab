@@ -90,6 +90,18 @@ public static class MovementCategoryModelBuilder
                 ownership.HasIndex(ownershipInfo => ownershipInfo.OwnerUserId)
                     .HasDatabaseName("IX_MovementCategory_OwnerUserId");
             });
+            
+            movementCategory.OwnsOne(movementCategory => movementCategory.Visibility, visibility =>
+            {
+                visibility.Property(visibilityInfo => visibilityInfo.Scope)
+                    .HasColumnName("VisibilityScope")
+                    .HasConversion<string>()
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                visibility.HasIndex(visibilityInfo => visibilityInfo.Scope)
+                    .HasDatabaseName("IX_MovementCategory_VisibilityScope");
+            });
         });
     }
 

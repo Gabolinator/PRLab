@@ -1,5 +1,6 @@
 ﻿using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Enum.Workout;
+using PRLab.Domain.Model.Value.WorkoutStructure;
 using PRLab.Domain.Model.Value.WorkoutValue;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.WorkoutJsons.Prescription;
 
@@ -22,6 +23,8 @@ public sealed record WorkoutBlockSeedJsonDto
     public DataOrigin Origin { get; init; } = DataOrigin.BuiltIn;
 
     public Guid? OwnerUserId { get; init; }
+    
+    public VisibilityScope? VisibilityScope { get; init; }
 
     public static WorkoutBlockSeedJsonDto FromWorkoutBlock(WorkoutBlock workoutBlock)
     {
@@ -41,7 +44,8 @@ public sealed record WorkoutBlockSeedJsonDto
                 .Select(WorkoutBlockSegmentSeedJsonDto.FromSegment)
                 .ToList(),
             Origin = workoutBlock.Ownership.Origin,
-            OwnerUserId = workoutBlock.Ownership.OwnerUserId?.Value
+            OwnerUserId = workoutBlock.Ownership.OwnerUserId?.Value,
+            VisibilityScope = workoutBlock.Visibility.Scope,
         };
     }
 }

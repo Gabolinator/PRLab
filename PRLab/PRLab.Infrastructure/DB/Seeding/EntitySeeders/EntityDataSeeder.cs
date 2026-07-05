@@ -1,4 +1,5 @@
 ﻿using PRLab.Application.Interface.DB.Seeding;
+using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Utilities.Interface;
@@ -25,8 +26,11 @@ public sealed class EntityDataSeeder(
 
     public async Task<IReadOnlyList<SeedResult>> SeedAsync(
         IReadOnlyCollection<EntityType>? entities = null,
+        SeedExecutionOptions? options = null,
         CancellationToken ct = default)
     {
+        var seedOptions = options ?? SeedExecutionOptions.Default;
+        
         var entitiesToSeed = entities is null || entities.Count == 0
             ? EntitySeederTypes
             : entities.ToHashSet();
@@ -39,7 +43,7 @@ public sealed class EntityDataSeeder(
                      .Where(entitySeeder => entitiesToSeed.Contains(entitySeeder.EntityType))
                      .OrderBy(entitySeeder => entitySeeder.Order))
         {
-            var result = await entitySeeder.SeedAsync(ct);
+            var result = await entitySeeder.SeedAsync(seedOptions, ct);
 
             logger.Log($"Seeded {entitySeeder.EntityType} - Changes: {result.ChangeCount}");
 

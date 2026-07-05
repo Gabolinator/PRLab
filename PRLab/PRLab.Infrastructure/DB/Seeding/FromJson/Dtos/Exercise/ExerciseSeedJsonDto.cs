@@ -27,6 +27,8 @@ public sealed record ExerciseSeedJsonDto
     public DataOrigin Origin { get; init; } = DataOrigin.BuiltIn;
 
     public Guid? OwnerUserId { get; init; }
+    
+    public VisibilityScope? VisibilityScope { get; init; }
 
     public SeedAction Action { get; init; } = SeedAction.Ignore;
 
@@ -49,6 +51,7 @@ public sealed record ExerciseSeedJsonDto
             Origin = exercise.Ownership.Origin,
             OwnerUserId = exercise.Ownership.OwnerUserId?.Value,
             Action = SeedAction.Ignore,
+            VisibilityScope = exercise.Visibility.Scope
         };
     }
 }

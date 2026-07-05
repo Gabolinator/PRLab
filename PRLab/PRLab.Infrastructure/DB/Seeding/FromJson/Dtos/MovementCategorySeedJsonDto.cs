@@ -21,6 +21,8 @@ public class MovementCategorySeedJsonDto
     public DataOrigin Origin { get; init; } = DataOrigin.BuiltIn;
 
     public Guid? OwnerUserId { get; init; }
+    
+    public VisibilityScope? VisibilityScope { get; init; }
 
     public SeedAction Action { get; init; } = SeedAction.Ignore;
 
@@ -38,6 +40,7 @@ public class MovementCategorySeedJsonDto
                 ? null
                 : DescriptionSeedJsonDto.FromDescription(category.Description),
             Action = SeedAction.Ignore,
+            VisibilityScope = category.Visibility.Scope
         };
     }
     

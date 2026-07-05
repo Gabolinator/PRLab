@@ -11,8 +11,12 @@ public sealed class PRToolCommandInputData
     public string? Target { get; init; }
 
     public string? FilePath { get; init; }
-    
-    public bool TargetIsAll => !string.IsNullOrWhiteSpace(Target) && string.Equals(Target, SeedTargets.All, StringComparison.OrdinalIgnoreCase);
+
+    public IReadOnlyList<string> Options { get; init; } = [];
+
+    public bool TargetIsAll =>
+        !string.IsNullOrWhiteSpace(Target)
+        && string.Equals(Target, SeedTargets.All, StringComparison.OrdinalIgnoreCase);
 
     public static PRToolCommandInputData FromInput(
         string[] args,
@@ -20,6 +24,15 @@ public sealed class PRToolCommandInputData
     {
         ArgumentNullException.ThrowIfNull(args);
         ArgumentNullException.ThrowIfNull(config);
+
+        var options = args
+            .Where(argument => argument.StartsWith("--", StringComparison.Ordinal))
+            .ToList();
+
+        var filePath = args.Length > config.FilePathIndex
+                       && !args[config.FilePathIndex].StartsWith("--", StringComparison.Ordinal)
+            ? args[config.FilePathIndex]
+            : null;
 
         return new PRToolCommandInputData
         {
@@ -30,10 +43,17 @@ public sealed class PRToolCommandInputData
             Target = args.Length > config.TargetIndex
                 ? args[config.TargetIndex]
                 : null,
-            FilePath = args.Length > config.FilePathIndex
-                ? args[config.FilePathIndex]
-                : null
+            FilePath = filePath,
+            Options = options
         };
+    }
+
+    public bool HasOption(
+        params string[] optionAliases)
+    {
+        return Options.Any(option =>
+            optionAliases.Any(alias =>
+                string.Equals(option, alias, StringComparison.OrdinalIgnoreCase)));
     }
 
     public bool IsValid()

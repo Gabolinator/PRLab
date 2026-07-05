@@ -3,6 +3,7 @@ using PRLab.Application.Interface.DB;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
+using PRLab.Domain.Model.Value.WorkoutStructure;
 using PRLab.Domain.Model.Value.WorkoutValue;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;

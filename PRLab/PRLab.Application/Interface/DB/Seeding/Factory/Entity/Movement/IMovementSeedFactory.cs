@@ -6,5 +6,6 @@ namespace PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 public interface IMovementSeedFactory
 {
     IReadOnlyList<SeedItem<Domain.Model.Entity.Movement>> CreateInitialData(
+        SeedExecutionOptions options,
         MovementSeedCatalogs catalogs);
 }

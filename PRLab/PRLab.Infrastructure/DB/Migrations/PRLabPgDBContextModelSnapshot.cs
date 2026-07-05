@@ -505,7 +505,7 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.ToTable("ExerciseBlock", "public");
                 });
 
-            modelBuilder.Entity("PRLab.Domain.Model.Value.WorkoutValue.WorkoutBlock", b =>
+            modelBuilder.Entity("PRLab.Domain.Model.Value.WorkoutStructure.WorkoutBlock", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -685,12 +685,37 @@ namespace PRLab.Infrastructure.DB.Migrations
                                 .HasForeignKey("EquipmentId");
                         });
 
+                    b.OwnsOne("PRLab.Domain.Model.Value.Access.VisibilityInfo", "Visibility", b1 =>
+                        {
+                            b1.Property<Guid>("EquipmentId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Scope")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("VisibilityScope");
+
+                            b1.HasKey("EquipmentId");
+
+                            b1.HasIndex("Scope")
+                                .HasDatabaseName("IX_Equipment_VisibilityScope");
+
+                            b1.ToTable("Equipment", "public");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EquipmentId");
+                        });
+
                     b.Navigation("Audit")
                         .IsRequired();
 
                     b.Navigation("Description");
 
                     b.Navigation("Ownership")
+                        .IsRequired();
+
+                    b.Navigation("Visibility")
                         .IsRequired();
                 });
 
@@ -768,12 +793,37 @@ namespace PRLab.Infrastructure.DB.Migrations
                                 .HasForeignKey("ExerciseId");
                         });
 
+                    b.OwnsOne("PRLab.Domain.Model.Value.Access.VisibilityInfo", "Visibility", b1 =>
+                        {
+                            b1.Property<Guid>("ExerciseId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Scope")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("VisibilityScope");
+
+                            b1.HasKey("ExerciseId");
+
+                            b1.HasIndex("Scope")
+                                .HasDatabaseName("IX_Exercise_VisibilityScope");
+
+                            b1.ToTable("Exercise", "public");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ExerciseId");
+                        });
+
                     b.Navigation("Audit")
                         .IsRequired();
 
                     b.Navigation("Description");
 
                     b.Navigation("Ownership")
+                        .IsRequired();
+
+                    b.Navigation("Visibility")
                         .IsRequired();
                 });
 
@@ -862,6 +912,28 @@ namespace PRLab.Infrastructure.DB.Migrations
                                 .HasForeignKey("MovementId");
                         });
 
+                    b.OwnsOne("PRLab.Domain.Model.Value.Access.VisibilityInfo", "Visibility", b1 =>
+                        {
+                            b1.Property<Guid>("MovementId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Scope")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("VisibilityScope");
+
+                            b1.HasKey("MovementId");
+
+                            b1.HasIndex("Scope")
+                                .HasDatabaseName("IX_Movement_VisibilityScope");
+
+                            b1.ToTable("Movement", "public");
+
+                            b1.WithOwner()
+                                .HasForeignKey("MovementId");
+                        });
+
                     b.Navigation("Audit")
                         .IsRequired();
 
@@ -873,6 +945,9 @@ namespace PRLab.Infrastructure.DB.Migrations
                         .IsRequired();
 
                     b.Navigation("VariantOf");
+
+                    b.Navigation("Visibility")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PRLab.Domain.Model.Entity.MovementCategory", b =>
@@ -949,12 +1024,37 @@ namespace PRLab.Infrastructure.DB.Migrations
                                 .HasForeignKey("MovementCategoryId");
                         });
 
+                    b.OwnsOne("PRLab.Domain.Model.Value.Access.VisibilityInfo", "Visibility", b1 =>
+                        {
+                            b1.Property<Guid>("MovementCategoryId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Scope")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("VisibilityScope");
+
+                            b1.HasKey("MovementCategoryId");
+
+                            b1.HasIndex("Scope")
+                                .HasDatabaseName("IX_MovementCategory_VisibilityScope");
+
+                            b1.ToTable("MovementCategory", "public");
+
+                            b1.WithOwner()
+                                .HasForeignKey("MovementCategoryId");
+                        });
+
                     b.Navigation("Audit")
                         .IsRequired();
 
                     b.Navigation("Description");
 
                     b.Navigation("Ownership")
+                        .IsRequired();
+
+                    b.Navigation("Visibility")
                         .IsRequired();
                 });
 
@@ -1102,7 +1202,7 @@ namespace PRLab.Infrastructure.DB.Migrations
                             b1.Property<Guid>("WorkoutId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<TimeSpan>("Expected")
+                            b1.Property<TimeSpan?>("Expected")
                                 .HasColumnType("interval")
                                 .HasColumnName("EstimatedDurationExpected");
 
@@ -1151,6 +1251,28 @@ namespace PRLab.Infrastructure.DB.Migrations
                                 .HasForeignKey("WorkoutId");
                         });
 
+                    b.OwnsOne("PRLab.Domain.Model.Value.Access.VisibilityInfo", "Visibility", b1 =>
+                        {
+                            b1.Property<Guid>("WorkoutId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Scope")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("VisibilityScope");
+
+                            b1.HasKey("WorkoutId");
+
+                            b1.HasIndex("Scope")
+                                .HasDatabaseName("IX_Workout_VisibilityScope");
+
+                            b1.ToTable("Workout", "public");
+
+                            b1.WithOwner()
+                                .HasForeignKey("WorkoutId");
+                        });
+
                     b.Navigation("Audit")
                         .IsRequired();
 
@@ -1159,6 +1281,9 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.Navigation("EstimatedDuration");
 
                     b.Navigation("Ownership")
+                        .IsRequired();
+
+                    b.Navigation("Visibility")
                         .IsRequired();
                 });
 
@@ -1246,7 +1371,7 @@ namespace PRLab.Infrastructure.DB.Migrations
 
             modelBuilder.Entity("PRLab.Domain.Model.Join.WorkoutBlockAssignment", b =>
                 {
-                    b.HasOne("PRLab.Domain.Model.Value.WorkoutValue.WorkoutBlock", "WorkoutBlock")
+                    b.HasOne("PRLab.Domain.Model.Value.WorkoutStructure.WorkoutBlock", "WorkoutBlock")
                         .WithMany()
                         .HasForeignKey("WorkoutBlockId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1472,7 +1597,7 @@ namespace PRLab.Infrastructure.DB.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PRLab.Domain.Model.Value.WorkoutValue.WorkoutBlock", b =>
+            modelBuilder.Entity("PRLab.Domain.Model.Value.WorkoutStructure.WorkoutBlock", b =>
                 {
                     b.OwnsOne("PRLab.Domain.Model.Value.Prescription.Workout.BlockRepeatPrescription", "BlockRepeatPrescription", b1 =>
                         {
@@ -1499,7 +1624,7 @@ namespace PRLab.Infrastructure.DB.Migrations
                                     b2.Property<Guid>("BlockRepeatPrescriptionWorkoutBlockId")
                                         .HasColumnType("uuid");
 
-                                    b2.Property<TimeSpan>("Expected")
+                                    b2.Property<TimeSpan?>("Expected")
                                         .HasColumnType("interval")
                                         .HasColumnName("EstimatedRepeatDurationExpected");
 
@@ -1655,6 +1780,28 @@ namespace PRLab.Infrastructure.DB.Migrations
                                 .HasForeignKey("WorkoutBlockId");
                         });
 
+                    b.OwnsOne("PRLab.Domain.Model.Value.Access.VisibilityInfo", "Visibility", b1 =>
+                        {
+                            b1.Property<Guid>("WorkoutBlockId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Scope")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("VisibilityScope");
+
+                            b1.HasKey("WorkoutBlockId");
+
+                            b1.HasIndex("Scope")
+                                .HasDatabaseName("IX_WorkoutBlock_VisibilityScope");
+
+                            b1.ToTable("WorkoutBlock", "public");
+
+                            b1.WithOwner()
+                                .HasForeignKey("WorkoutBlockId");
+                        });
+
                     b.Navigation("Audit")
                         .IsRequired();
 
@@ -1663,11 +1810,14 @@ namespace PRLab.Infrastructure.DB.Migrations
 
                     b.Navigation("Ownership")
                         .IsRequired();
+
+                    b.Navigation("Visibility")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PRLab.Domain.Model.Value.WorkoutValue.WorkoutBlockSegment", b =>
                 {
-                    b.HasOne("PRLab.Domain.Model.Value.WorkoutValue.WorkoutBlock", null)
+                    b.HasOne("PRLab.Domain.Model.Value.WorkoutStructure.WorkoutBlock", null)
                         .WithMany("Segments")
                         .HasForeignKey("WorkoutBlockId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1705,7 +1855,7 @@ namespace PRLab.Infrastructure.DB.Migrations
                             b1.Property<Guid>("WorkoutBlockSegmentId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<TimeSpan>("Expected")
+                            b1.Property<TimeSpan?>("Expected")
                                 .HasColumnType("interval")
                                 .HasColumnName("EstimatedSegmentDurationExpected");
 
@@ -2240,7 +2390,7 @@ namespace PRLab.Infrastructure.DB.Migrations
                                     b2.Property<Guid>("WorkoutStepPrescriptionWorkoutBlockSegmentStepId")
                                         .HasColumnType("uuid");
 
-                                    b2.Property<TimeSpan>("Expected")
+                                    b2.Property<TimeSpan?>("Expected")
                                         .HasColumnType("interval");
 
                                     b2.Property<TimeSpan?>("Maximum")
@@ -2557,7 +2707,7 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.Navigation("Blocks");
                 });
 
-            modelBuilder.Entity("PRLab.Domain.Model.Value.WorkoutValue.WorkoutBlock", b =>
+            modelBuilder.Entity("PRLab.Domain.Model.Value.WorkoutStructure.WorkoutBlock", b =>
                 {
                     b.Navigation("Segments");
                 });

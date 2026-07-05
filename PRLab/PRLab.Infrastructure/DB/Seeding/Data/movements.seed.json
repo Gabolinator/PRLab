@@ -1,10 +1,10 @@
 [
   {
-    "Id": "f820b42a-59eb-426a-8c17-e86c8b2cb3ad",
+    "Id": "3a8f2d12-cb1a-4dcb-95bc-0fdbf27986e2",
     "Name": "Assault Bike",
     "NameKey": "assaultbike",
     "Category": {
-      "Id": "e83690f3-51ff-4060-896f-2a2926ff9134",
+      "Id": "bd4a56bd-d759-42ee-8493-92d5826881d2",
       "Name": "Hyrox",
       "NameKey": "hyrox"
     },
@@ -23,7 +23,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "c94d96ab-b844-42de-b06f-9e8c40937b70",
+            "Id": "63e011d7-693c-4dc7-b3c5-3c4afe18b7a9",
             "Name": "Assault Bike",
             "NameKey": "assaultbike"
           }
@@ -32,43 +32,43 @@
     ],
     "Muscles": [
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
         "Name": "Calves",
         "NameKey": "calves",
         "Role": "Secondary"
       },
       {
-        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
         "Name": "Chest",
         "NameKey": "chest",
         "Role": "Secondary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
       },
       {
-        "Id": "bcf29181-4ac9-4409-8d20-8049d1e93629",
+        "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
         "Name": "Lats",
         "NameKey": "lats",
         "Role": "Secondary"
@@ -80,14 +80,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "98da7eaa-e1bf-4f8b-98c2-dcc3f3174a62",
+    "Id": "486661cf-963a-4b86-8a55-517f47ec2169",
     "Name": "Back Squat",
     "NameKey": "backsquat",
     "Category": {
-      "Id": "c334102b-f652-43c9-b6a1-9fd0ce726532",
+      "Id": "5f924600-1838-4084-838e-45e6a8457d0c",
       "Name": "Powerlifting",
       "NameKey": "powerlifting"
     },
@@ -105,7 +106,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "491f5821-79f1-491e-bbbd-a842b1931c57",
+            "Id": "b4278276-3896-436d-a8bd-fc23c8945bc5",
             "Name": "Barbell",
             "NameKey": "barbell"
           }
@@ -116,7 +117,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "93813f88-0b6b-4d26-99a7-de69410e66c3",
+            "Id": "8e0930f3-fffa-403c-afa8-b05b087833e3",
             "Name": "Squat Rack",
             "NameKey": "squatrack"
           }
@@ -125,31 +126,31 @@
     ],
     "Muscles": [
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
       },
       {
-        "Id": "21b4dc83-4395-4d34-ac25-fb315bb6c0c8",
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
         "Name": "Spinal Erectors",
         "NameKey": "spinalerectors",
         "Role": "Secondary"
@@ -161,20 +162,21 @@
     ],
     "Laterality": "Bilateral",
     "VariantOf": {
-      "Id": "03b6b428-1156-4c1a-be02-033e850c97b3",
+      "Id": "38b43fe0-b408-431a-be99-619446d599fe",
       "Name": "Bodyweight Squat",
       "NameKey": "bodyweightsquat"
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "03b6b428-1156-4c1a-be02-033e850c97b3",
+    "Id": "38b43fe0-b408-431a-be99-619446d599fe",
     "Name": "Bodyweight Squat",
     "NameKey": "bodyweightsquat",
     "Category": {
-      "Id": "4cf80344-c533-4c93-b3cd-2040895c0a41",
+      "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
       "Name": "Bodyweight",
       "NameKey": "bodyweight"
     },
@@ -189,19 +191,19 @@
     "EquipmentRequirements": [],
     "Muscles": [
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
@@ -215,14 +217,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "2e896c7a-b168-4f5f-bd81-bae7f3b4b8a8",
+    "Id": "37e57f66-b2d1-4770-8815-c790e0325459",
     "Name": "Burpee",
     "NameKey": "burpee",
     "Category": {
-      "Id": "4cf80344-c533-4c93-b3cd-2040895c0a41",
+      "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
       "Name": "Bodyweight",
       "NameKey": "bodyweight"
     },
@@ -238,37 +241,37 @@
     "EquipmentRequirements": [],
     "Muscles": [
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
         "Name": "Calves",
         "NameKey": "calves",
         "Role": "Secondary"
       },
       {
-        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
         "Name": "Chest",
         "NameKey": "chest",
         "Role": "Secondary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
         "Name": "Triceps",
         "NameKey": "triceps",
         "Role": "Secondary"
@@ -285,14 +288,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "dc23a078-b81d-4a44-83bd-de67510d1f72",
+    "Id": "4316dd12-67a5-4969-b8fe-78c1eeafa41f",
     "Name": "Deadlift",
     "NameKey": "deadlift",
     "Category": {
-      "Id": "c334102b-f652-43c9-b6a1-9fd0ce726532",
+      "Id": "5f924600-1838-4084-838e-45e6a8457d0c",
       "Name": "Powerlifting",
       "NameKey": "powerlifting"
     },
@@ -310,7 +314,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "491f5821-79f1-491e-bbbd-a842b1931c57",
+            "Id": "b4278276-3896-436d-a8bd-fc23c8945bc5",
             "Name": "Barbell",
             "NameKey": "barbell"
           }
@@ -319,43 +323,43 @@
     ],
     "Muscles": [
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Primary"
       },
       {
-        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "8fed90f8-83d6-4d3f-b247-05d7ac465742",
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
         "Name": "Forearms Flexors",
         "NameKey": "forearmsflexors",
         "Role": "Secondary"
       },
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Secondary"
       },
       {
-        "Id": "21b4dc83-4395-4d34-ac25-fb315bb6c0c8",
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
         "Name": "Spinal Erectors",
         "NameKey": "spinalerectors",
         "Role": "Secondary"
       },
       {
-        "Id": "6df2da73-2702-4d79-9b5e-d8f0a0ed27c4",
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
         "Name": "Traps",
         "NameKey": "traps",
         "Role": "Secondary"
@@ -369,14 +373,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "a19089ff-ddfc-4346-b8d1-0cb8cbb37b8d",
+    "Id": "c5c039a1-2f0e-4d71-94fa-eda8b4211406",
     "Name": "Double Dumbbell Hang Power Clean",
     "NameKey": "doubledumbbellhangpowerclean",
     "Category": {
-      "Id": "6dac43db-54a0-47e9-9858-ab7ffba564fb",
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
       "Name": "CrossFit",
       "NameKey": "crossfit"
     },
@@ -394,7 +399,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "a7c9fcad-ae65-4c77-bed6-86645a689a85",
+            "Id": "1b5ba8fc-7745-4eee-be44-f6c8a35048db",
             "Name": "Dumbbell",
             "NameKey": "dumbbell"
           }
@@ -403,37 +408,37 @@
     ],
     "Muscles": [
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "8fed90f8-83d6-4d3f-b247-05d7ac465742",
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
         "Name": "Forearms Flexors",
         "NameKey": "forearmsflexors",
         "Role": "Secondary"
       },
       {
-        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
       },
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Secondary"
       },
       {
-        "Id": "6df2da73-2702-4d79-9b5e-d8f0a0ed27c4",
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
         "Name": "Traps",
         "NameKey": "traps",
         "Role": "Secondary"
@@ -447,14 +452,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "967aff04-8ef5-4971-8391-2002b511d3c3",
+    "Id": "1250af3d-2419-491b-ad17-4f2d6e5b3f49",
     "Name": "Double Under",
     "NameKey": "doubleunder",
     "Category": {
-      "Id": "4cf80344-c533-4c93-b3cd-2040895c0a41",
+      "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
       "Name": "Bodyweight",
       "NameKey": "bodyweight"
     },
@@ -473,7 +479,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "ffe3052c-8a09-49d7-a42c-0c6f17d956a8",
+            "Id": "0feb109b-93e9-4fd2-a9e4-72fa337b5485",
             "Name": "Jump Rope",
             "NameKey": "jumprope"
           }
@@ -482,19 +488,19 @@
     ],
     "Muscles": [
       {
-        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
         "Name": "Calves",
         "NameKey": "calves",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Secondary"
@@ -508,14 +514,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "e6331313-c506-4933-8aa3-6179d2975cb4",
+    "Id": "377eee1c-9cdf-44e5-adbd-4ede91d68ca1",
     "Name": "Goblet Squat",
     "NameKey": "gobletsquat",
     "Category": {
-      "Id": "066dfa75-3e0c-4a5d-a9f1-1d71f1d7e5b9",
+      "Id": "b53d177e-bd72-4d2e-948e-ad8ef1fcff08",
       "Name": "Weightlifting",
       "NameKey": "weightlifting"
     },
@@ -533,12 +540,12 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "a7c9fcad-ae65-4c77-bed6-86645a689a85",
+            "Id": "1b5ba8fc-7745-4eee-be44-f6c8a35048db",
             "Name": "Dumbbell",
             "NameKey": "dumbbell"
           },
           {
-            "Id": "cb6cef99-d25b-40f2-be85-0c80c70308c6",
+            "Id": "d5927312-a9f0-4ffe-aaeb-b6bb7d54f113",
             "Name": "Kettlebell",
             "NameKey": "kettlebell"
           }
@@ -547,25 +554,25 @@
     ],
     "Muscles": [
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
@@ -577,20 +584,21 @@
     ],
     "Laterality": "Bilateral",
     "VariantOf": {
-      "Id": "03b6b428-1156-4c1a-be02-033e850c97b3",
+      "Id": "38b43fe0-b408-431a-be99-619446d599fe",
       "Name": "Bodyweight Squat",
       "NameKey": "bodyweightsquat"
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "11f91f64-764a-4b29-9350-d18dc746eb02",
+    "Id": "cbfecdd0-cce9-43bd-bde5-09c12398b301",
     "Name": "Lateral Burpee Over Barbell",
     "NameKey": "lateralburpeeoverbarbell",
     "Category": {
-      "Id": "6dac43db-54a0-47e9-9858-ab7ffba564fb",
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
       "Name": "CrossFit",
       "NameKey": "crossfit"
     },
@@ -609,7 +617,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "491f5821-79f1-491e-bbbd-a842b1931c57",
+            "Id": "b4278276-3896-436d-a8bd-fc23c8945bc5",
             "Name": "Barbell",
             "NameKey": "barbell"
           }
@@ -618,37 +626,37 @@
     ],
     "Muscles": [
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
         "Name": "Calves",
         "NameKey": "calves",
         "Role": "Secondary"
       },
       {
-        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
         "Name": "Chest",
         "NameKey": "chest",
         "Role": "Secondary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
         "Name": "Triceps",
         "NameKey": "triceps",
         "Role": "Secondary"
@@ -664,14 +672,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "a686b0f2-0cea-4061-a5cf-37b58b7ec570",
+    "Id": "f2529676-8163-48c1-bed7-c3f88a6821ec",
     "Name": "Lunge",
     "NameKey": "lunge",
     "Category": {
-      "Id": "4cf80344-c533-4c93-b3cd-2040895c0a41",
+      "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
       "Name": "Bodyweight",
       "NameKey": "bodyweight"
     },
@@ -686,25 +695,25 @@
     "EquipmentRequirements": [],
     "Muscles": [
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
@@ -718,14 +727,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "5a173188-169d-4cdf-ba3b-f98c80dbe408",
+    "Id": "02b62c46-dfc8-442f-9276-db9acf93953c",
     "Name": "Pull Up",
     "NameKey": "pullup",
     "Category": {
-      "Id": "4cf80344-c533-4c93-b3cd-2040895c0a41",
+      "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
       "Name": "Bodyweight",
       "NameKey": "bodyweight"
     },
@@ -743,7 +753,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "b6fab579-8d60-4664-a4bf-f36dc44605ef",
+            "Id": "99d790ca-c308-4394-9f53-fb9d90267ad9",
             "Name": "Pull-up Bar",
             "NameKey": "pullupbar"
           }
@@ -752,19 +762,19 @@
     ],
     "Muscles": [
       {
-        "Id": "bcf29181-4ac9-4409-8d20-8049d1e93629",
+        "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
         "Name": "Lats",
         "NameKey": "lats",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "e18398f8-f3a8-4077-a496-f30f32106ae7",
+        "Id": "e691e48b-8e41-4282-9d73-fcb73f7fb446",
         "Name": "Biceps",
         "NameKey": "biceps",
         "Role": "Secondary"
@@ -778,14 +788,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "ed0e0af8-ee8b-4a0f-a304-0e842ed80b41",
+    "Id": "e6078848-2e2b-433d-b4e6-7b4591ea6a80",
     "Name": "Push Up",
     "NameKey": "pushup",
     "Category": {
-      "Id": "4cf80344-c533-4c93-b3cd-2040895c0a41",
+      "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
       "Name": "Bodyweight",
       "NameKey": "bodyweight"
     },
@@ -800,25 +811,25 @@
     "EquipmentRequirements": [],
     "Muscles": [
       {
-        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
         "Name": "Chest",
         "NameKey": "chest",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "f39e8edb-c7d2-4808-9f27-f85248bb7f88",
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
         "Name": "Front Delts",
         "NameKey": "frontdelts",
         "Role": "Secondary"
       },
       {
-        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
         "Name": "Triceps",
         "NameKey": "triceps",
         "Role": "Secondary"
@@ -832,14 +843,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "80f9b665-e34d-422b-806b-6625f52d3f48",
+    "Id": "6e23e8f1-7c85-499c-89b1-3ac04c6c759b",
     "Name": "Row",
     "NameKey": "row",
     "Category": {
-      "Id": "e5a3b0dc-fc62-4edf-9411-015b332030f6",
+      "Id": "52921f7f-a1ee-4bc4-a79d-cf7e468c2f6f",
       "Name": "Cardio",
       "NameKey": "cardio"
     },
@@ -858,7 +870,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "5f9f553c-1f46-4f79-be3d-9ef89e5ad94f",
+            "Id": "58ee61e6-30c5-4ba0-ac82-7c185ae22738",
             "Name": "Row Erg",
             "NameKey": "rowerg"
           }
@@ -867,37 +879,37 @@
     ],
     "Muscles": [
       {
-        "Id": "bcf29181-4ac9-4409-8d20-8049d1e93629",
+        "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
         "Name": "Lats",
         "NameKey": "lats",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "e18398f8-f3a8-4077-a496-f30f32106ae7",
+        "Id": "e691e48b-8e41-4282-9d73-fcb73f7fb446",
         "Name": "Biceps",
         "NameKey": "biceps",
         "Role": "Secondary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
       },
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Secondary"
@@ -911,14 +923,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "b992e2ce-f92b-42ae-ba34-66d514bbf4bc",
+    "Id": "60a34045-072a-40bc-969d-a32531d1766a",
     "Name": "Running",
     "NameKey": "running",
     "Category": {
-      "Id": "a1f2f629-0bbc-4c60-850f-b36da0d65d90",
+      "Id": "3d08a932-8de7-4fc7-bc85-2f93f9ed16e4",
       "Name": "Running",
       "NameKey": "running"
     },
@@ -934,31 +947,31 @@
     "EquipmentRequirements": [],
     "Muscles": [
       {
-        "Id": "a3c715a3-890d-4ac3-9fcb-ff9f95cac1c1",
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
         "Name": "Calves",
         "NameKey": "calves",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
       },
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Secondary"
@@ -970,14 +983,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "c8f1acc9-35bc-4f15-85a8-8662faafc9f6",
+    "Id": "1908c201-719c-4914-8c90-3a261e1f589d",
     "Name": "Ski Erg",
     "NameKey": "skierg",
     "Category": {
-      "Id": "e83690f3-51ff-4060-896f-2a2926ff9134",
+      "Id": "bd4a56bd-d759-42ee-8493-92d5826881d2",
       "Name": "Hyrox",
       "NameKey": "hyrox"
     },
@@ -996,7 +1010,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "513c7344-0562-4059-8a1e-ac17e5f3a1db",
+            "Id": "74832798-63e1-4acd-bda3-65d2c287e415",
             "Name": "Ski Erg",
             "NameKey": "skierg"
           }
@@ -1005,37 +1019,37 @@
     ],
     "Muscles": [
       {
-        "Id": "bcf29181-4ac9-4409-8d20-8049d1e93629",
+        "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
         "Name": "Lats",
         "NameKey": "lats",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "8fed90f8-83d6-4d3f-b247-05d7ac465742",
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
         "Name": "Forearms Flexors",
         "NameKey": "forearmsflexors",
         "Role": "Secondary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Secondary"
       },
       {
-        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
         "Name": "Triceps",
         "NameKey": "triceps",
         "Role": "Secondary"
@@ -1049,14 +1063,15 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "d69b1f24-024b-4715-aac5-b5ba332cdc30",
+    "Id": "37376bd7-25b7-42ea-8d8b-b4977330f7a1",
     "Name": "Wall Ball",
     "NameKey": "wallball",
     "Category": {
-      "Id": "e83690f3-51ff-4060-896f-2a2926ff9134",
+      "Id": "bd4a56bd-d759-42ee-8493-92d5826881d2",
       "Name": "Hyrox",
       "NameKey": "hyrox"
     },
@@ -1075,7 +1090,7 @@
         "Kind": "RequiredGroup",
         "Options": [
           {
-            "Id": "0dcb243c-1e2b-4c9d-b1aa-203dd7d5a57b",
+            "Id": "135ce605-a7b8-49c2-b5e8-e3f07d25d3c5",
             "Name": "Wall Ball",
             "NameKey": "wallball"
           }
@@ -1084,43 +1099,43 @@
     ],
     "Muscles": [
       {
-        "Id": "96789e25-d559-4f91-950d-d4a09c1883ba",
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
         "Name": "Quads",
         "NameKey": "quads",
         "Role": "Primary"
       },
       {
-        "Id": "dc586813-ff22-48e2-a5aa-81809390964d",
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
         "Name": "Abs",
         "NameKey": "abs",
         "Role": "Secondary"
       },
       {
-        "Id": "dd25fe28-6607-45cb-8b06-3ebb3cae9001",
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
         "Name": "Chest",
         "NameKey": "chest",
         "Role": "Secondary"
       },
       {
-        "Id": "f39e8edb-c7d2-4808-9f27-f85248bb7f88",
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
         "Name": "Front Delts",
         "NameKey": "frontdelts",
         "Role": "Secondary"
       },
       {
-        "Id": "ee2f158a-6927-42b6-ad1c-0ac787ef9ee8",
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
         "Name": "Glutes",
         "NameKey": "glutes",
         "Role": "Secondary"
       },
       {
-        "Id": "0a5715a1-8e85-4a6b-903e-cbc6625522de",
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
         "Name": "Hamstrings",
         "NameKey": "hamstrings",
         "Role": "Secondary"
       },
       {
-        "Id": "280356a9-0d96-493e-b7ee-004ef9bfb21d",
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
         "Name": "Triceps",
         "NameKey": "triceps",
         "Role": "Secondary"
@@ -1135,6 +1150,7 @@
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   }
 ]

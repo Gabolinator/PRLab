@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
-using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 using PRLab.Application.Models.DB.Seeding;
-using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Update;
@@ -27,9 +25,9 @@ public sealed class MovementCategorySeeder(
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
+    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(SeedExecutionOptions options, CancellationToken ct)
     {
-        var movementCategorySeedItems = seedFactory.CreateInitialData();
+        var movementCategorySeedItems = seedFactory.CreateInitialData(options);
 
         var changes = new List<SeedChange>();
 

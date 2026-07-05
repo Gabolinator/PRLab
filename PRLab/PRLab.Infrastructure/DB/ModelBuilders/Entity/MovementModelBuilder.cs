@@ -130,6 +130,18 @@ public static class MovementModelBuilder
                 ownership.HasIndex(ownershipInfo => ownershipInfo.OwnerUserId)
                     .HasDatabaseName("IX_Movement_OwnerUserId");
             });
+            
+            movement.OwnsOne(movement => movement.Visibility, visibility =>
+            {
+                visibility.Property(visibilityInfo => visibilityInfo.Scope)
+                    .HasColumnName("VisibilityScope")
+                    .HasConversion<string>()
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                visibility.HasIndex(visibilityInfo => visibilityInfo.Scope)
+                    .HasDatabaseName("IX_Movement_VisibilityScope");
+            });
 
             movement.Navigation(movement => movement.Patterns)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);

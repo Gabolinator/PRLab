@@ -1,6 +1,7 @@
 ﻿using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Access;
 using PRLab.Domain.Model.Value.Enum.System;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
@@ -19,6 +20,8 @@ public sealed record EquipmentSeedJsonDto
 
     public Guid? OwnerUserId { get; init; }
 
+    public VisibilityScope? VisibilityScope { get; init; }
+
     public SeedAction Action { get; init; } = SeedAction.Ignore;
 
     public static EquipmentSeedJsonDto FromEquipment(Equipment equipment)
@@ -35,6 +38,7 @@ public sealed record EquipmentSeedJsonDto
                 : DescriptionSeedJsonDto.FromDescription(equipment.Description),
             Origin = equipment.Ownership.Origin,
             OwnerUserId = equipment.Ownership.OwnerUserId?.Value,
+            VisibilityScope = equipment.Visibility.Scope,
             Action = SeedAction.Ignore,
         };
     }

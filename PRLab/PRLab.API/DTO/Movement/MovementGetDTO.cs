@@ -5,6 +5,7 @@ using PRLab.API.DTO.Muscle;
 using PRLab.Domain.Model.Value.Enum.Movement;
 using PRLab.Domain.Model.Value.Enum.Prescription;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.API.DTO.Movement;
@@ -22,4 +23,5 @@ public sealed record MovementGetDTO(
     MovementPattern? PrimaryPattern,
     IReadOnlyList<MovementPattern> Patterns,
     MovementLaterality Laterality,
-    MovementSummaryDTO? VariantOfMovement);
+    MovementSummaryDTO? VariantOfMovement,
+    VisibilityScope Visibility);

@@ -27,9 +27,9 @@ public sealed class MuscleSeeder(
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
     
-    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
+    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(SeedExecutionOptions options, CancellationToken ct)
     {
-        var muscleSeedItems = seedFactory.CreateInitialData();
+        var muscleSeedItems = seedFactory.CreateInitialData(options);
 
         var changes = new List<SeedChange>();
 

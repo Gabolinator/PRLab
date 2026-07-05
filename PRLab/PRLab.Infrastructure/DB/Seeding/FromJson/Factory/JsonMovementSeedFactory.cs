@@ -4,15 +4,13 @@ using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
-using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
-using PRLab.Domain.Model.Value.Enum.Prescription;
-using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Movement; 
 using PRLab.Infrastructure.DB.Seeding.FromJson.Relations.Interface;
+using PRLab.Infrastructure.DB.Seeding.Validation;
 
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 
@@ -25,101 +23,34 @@ public sealed class JsonMovementSeedFactory(
 {
     protected override EntityType Entity => EntityType.Movement;
 
-    public override SeedItem<Movement> ToSeedItem(MovementSeedJsonDto seedDto)
+    public override SeedItem<Movement> ToSeedItem(SeedExecutionOptions options, MovementSeedJsonDto seedDto)
     {
         throw new NotSupportedException(
             "Movement seeds require equipment, muscle, and movement category catalogs. Use CreateInitialData(...catalogs).");
     }
 
+    public override void Validate(MovementSeedJsonDto seedDto)
+        => MovementSeedValidator.Validate(seedDto);
+    
     public IReadOnlyList<SeedItem<Movement>> CreateInitialData(
+        SeedExecutionOptions options,
         MovementSeedCatalogs catalogs)
     {
         var seedDtos = LoadSeedDtos();
 
         return seedDtos
-            .Select(seedDto => ToSeedItem(seedDto, catalogs))
+            .Select(seedDto => ToSeedItem(options, seedDto, catalogs))
             .ToList();
     }
-
-    private SeedItem<Movement> ToSeedItem(
-        MovementSeedJsonDto seedDto,
-        MovementSeedCatalogs catalogs)
-    {
-        if (string.IsNullOrWhiteSpace(seedDto.Name))
-        {
-            throw new InvalidOperationException($"{Entity} seed name cannot be empty.");
-        }
-
-        if (seedDto.Id == Guid.Empty)
-        {
-            throw new InvalidOperationException(
-                $"{Entity} seed '{seedDto.Name}' has an empty id. Omit the Id property or provide a valid id.");
-        }
-
-        ValidateWorkTargetTypes(seedDto);
-
-        var movementCategory = ResolveMovementCategory(
-            seedDto.Category,
-            catalogs.MovementCategory,
-            seedDto.Name);
-
-        var description = seedDto.Description is null
-            ? Description.None()
-            : seedDto.Description.ToDescription();
-
-        var movement = seedDto.Id.HasValue
-            ? Movement.NewBuiltInWithId(
-                id: MovementId.FromGuid(seedDto.Id.Value),
-                name: seedDto.Name,
-                movementCategory: movementCategory,
-                description: description,
-                defaultWorkTargetType: seedDto.DefaultWorkTargetType,
-                laterality: seedDto.Laterality,
-                allowedWorkTargetTypes: seedDto.AllowedWorkTargetTypes,
-                createdBy: SeedUser)
-            : Movement.NewBuiltIn(
-                name: seedDto.Name,
-                movementCategory: movementCategory,
-                description: description,
-                defaultWorkTargetType: seedDto.DefaultWorkTargetType,
-                laterality: seedDto.Laterality,
-                allowedWorkTargetTypes: seedDto.AllowedWorkTargetTypes,
-                createdBy: SeedUser);
-
-        relationResolver.ApplyRelations(
-            movement,
-            seedDto,
-            catalogs,
-            SeedUser,
-            includeVariant: false);
-
-        return new SeedItem<Movement>(
-            SeedKeyGenerator.GenerateMovementKey(movement),
-            movement,
-            seedDto.Action);
-    }
-
-    private static void ValidateWorkTargetTypes(MovementSeedJsonDto seedDto)
-    {
-        if (seedDto.DefaultWorkTargetType == WorkTargetType.Unspecified)
-        {
-            throw new InvalidOperationException(
-                $"Movement seed '{seedDto.Name}' must provide a DefaultWorkTargetType.");
-        }
-
-        if (seedDto.AllowedWorkTargetTypes.Any(targetType => targetType == WorkTargetType.Unspecified))
-        {
-            throw new InvalidOperationException(
-                $"Movement seed '{seedDto.Name}' has an invalid AllowedWorkTargetTypes value.");
-        }
-    }
-
+    
+    
     private static MovementCategory ResolveMovementCategory(
+        SeedExecutionOptions options,
         SeedEntityReferenceJsonDto reference,
         MovementCategorySeedCatalog movementCategoryCatalog,
         string movementName)
     {
-        if (reference.Id.HasValue)
+        if (reference.Id.HasValue && !options.IgnoreReferenceIds)
         {
             return movementCategoryCatalog.GetRequiredById(
                 MovementCategoryId.FromGuid(reference.Id.Value));
@@ -139,9 +70,73 @@ public sealed class JsonMovementSeedFactory(
             $"Movement seed '{movementName}' must provide a category Id, NameKey, or Name.");
     }
 
+    private SeedItem<Movement> ToSeedItem(
+        SeedExecutionOptions options,
+        MovementSeedJsonDto seedDto,
+        MovementSeedCatalogs catalogs)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(seedDto);
+        ArgumentNullException.ThrowIfNull(catalogs);
+
+        Validate(seedDto);
+
+        var movementCategory = ResolveMovementCategory(
+            options,
+            seedDto.Category,
+            catalogs.MovementCategory,
+            seedDto.Name);
+
+        var description = seedDto.Description is null
+            ? Description.None()
+            : seedDto.Description.ToDescription();
+
+        var shouldUseSeedId =
+            seedDto.Id.HasValue &&
+            !options.IgnoreTopLevelIds;
+
+        var movement = shouldUseSeedId
+            ? Movement.NewBuiltInWithId(
+                id: MovementId.FromGuid(seedDto.Id!.Value),
+                name: seedDto.Name,
+                movementCategory: movementCategory,
+                description: description,
+                defaultWorkTargetType: seedDto.DefaultWorkTargetType,
+                laterality: seedDto.Laterality,
+                allowedWorkTargetTypes: seedDto.AllowedWorkTargetTypes,
+                createdBy: SeedUser,
+                visibilityScope: seedDto.VisibilityScope)
+            : Movement.NewBuiltIn(
+                name: seedDto.Name,
+                movementCategory: movementCategory,
+                description: description,
+                defaultWorkTargetType: seedDto.DefaultWorkTargetType,
+                laterality: seedDto.Laterality,
+                allowedWorkTargetTypes: seedDto.AllowedWorkTargetTypes,
+                createdBy: SeedUser,
+                visibilityScope: seedDto.VisibilityScope);
+
+        relationResolver.ApplyRelations(
+            movement,
+            seedDto,
+            catalogs,
+            SeedUser,
+            options,
+            includeVariant: false);
+
+        return new SeedItem<Movement>(
+            SeedKeyGenerator.GenerateMovementKey(movement),
+            movement,
+            options.ResolveAction(seedDto.Action));
+    }
+
     public IReadOnlyList<SeedRelationItem<MovementId>> CreateVariantInitialData(
+        SeedExecutionOptions options,
         MovementSeedCatalog movementCatalog)
     {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(movementCatalog);
+
         var seedDtos = LoadSeedDtos();
 
         var relations = new List<SeedRelationItem<MovementId>>();
@@ -154,10 +149,12 @@ public sealed class JsonMovementSeedFactory(
             }
 
             var sourceMovement = ResolveMovementFromSeedDto(
+                options,
                 seedDto,
                 movementCatalog);
 
             var parentMovement = ResolveMovementReference(
+                options,
                 seedDto.VariantOf,
                 movementCatalog);
 
@@ -172,10 +169,11 @@ public sealed class JsonMovementSeedFactory(
     }
 
     private static Movement ResolveMovementFromSeedDto(
+        SeedExecutionOptions options,
         MovementSeedJsonDto seedDto,
         MovementSeedCatalog movementCatalog)
     {
-        if (seedDto.Id.HasValue)
+        if (seedDto.Id.HasValue && !options.IgnoreTopLevelIds)
         {
             return movementCatalog.GetRequiredById(
                 MovementId.FromGuid(seedDto.Id.Value));
@@ -186,14 +184,21 @@ public sealed class JsonMovementSeedFactory(
             return movementCatalog.GetRequiredByNameKey(seedDto.NameKey);
         }
 
-        return movementCatalog.GetRequiredByName(seedDto.Name);
+        if (!string.IsNullOrWhiteSpace(seedDto.Name))
+        {
+            return movementCatalog.GetRequiredByName(seedDto.Name);
+        }
+
+        throw new InvalidOperationException(
+            "Movement seed must provide Id, NameKey, or Name.");
     }
 
     private static Movement ResolveMovementReference(
+        SeedExecutionOptions options,
         SeedEntityReferenceJsonDto reference,
         MovementSeedCatalog movementCatalog)
     {
-        if (reference.Id.HasValue)
+        if (reference.Id.HasValue && !options.IgnoreReferenceIds)
         {
             return movementCatalog.GetRequiredById(
                 MovementId.FromGuid(reference.Id.Value));

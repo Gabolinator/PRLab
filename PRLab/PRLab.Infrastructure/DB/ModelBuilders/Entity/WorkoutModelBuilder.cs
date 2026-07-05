@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Access;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
 using PRLab.Domain.Model.Value.Prescription.Common;
@@ -13,6 +14,7 @@ using PRLab.Domain.Model.Value.Prescription.Rest;
 using PRLab.Domain.Model.Value.Prescription.Time;
 using PRLab.Domain.Model.Value.Prescription.Work;
 using PRLab.Domain.Model.Value.Prescription.Workout;
+using PRLab.Domain.Model.Value.WorkoutStructure;
 using PRLab.Domain.Model.Value.WorkoutValue;
 
 namespace PRLab.Infrastructure.DB.ModelBuilders.Entity;
@@ -68,6 +70,11 @@ public static class WorkoutModelBuilder
             MapOwnership(
                 workout,
                 workout => workout.Ownership,
+                "Workout");
+            
+            MapVisibility(
+                workout,
+                workout => workout.Visibility,
                 "Workout");
 
             workout.HasMany(workout => workout.Blocks)
@@ -177,6 +184,11 @@ public static class WorkoutModelBuilder
             MapOwnership(
                 workoutBlock,
                 workoutBlock => workoutBlock.Ownership,
+                "WorkoutBlock");
+            
+            MapVisibility(
+                workoutBlock,
+                workoutBlock => workoutBlock.Visibility,
                 "WorkoutBlock");
 
             workoutBlock.HasMany(workoutBlock => workoutBlock.Segments)
@@ -660,6 +672,25 @@ public static class WorkoutModelBuilder
         });
     }
 
+    private static void MapVisibility<TEntity>(
+        EntityTypeBuilder<TEntity> builder,
+        Expression<Func<TEntity, VisibilityInfo>> navigation,
+        string indexPrefix)
+        where TEntity : class
+    {
+        builder.OwnsOne(navigation, visibility =>
+        {
+            visibility.Property(visibilityInfo => visibilityInfo.Scope)
+                .HasColumnName("VisibilityScope")
+                .HasConversion<string>()
+                .HasMaxLength(50)
+                .IsRequired();
+
+            visibility.HasIndex(visibilityInfo => visibilityInfo.Scope)
+                .HasDatabaseName($"IX_{indexPrefix}_VisibilityScope");
+        });
+    }
+    
     private static void MapOwnership<TEntity>(
         EntityTypeBuilder<TEntity> builder,
         Expression<Func<TEntity, OwnershipInfo>> navigation,

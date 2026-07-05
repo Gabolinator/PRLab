@@ -11,5 +11,6 @@ public interface IMovementSeedRelationResolver
         MovementSeedJsonDto seedDto,
         MovementSeedCatalogs catalogs,
         User seedUser,
+        SeedExecutionOptions options,
         bool includeVariant = false);
 }

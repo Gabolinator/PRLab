@@ -21,11 +21,13 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
         Exercise exercise,
         ExerciseSeedJsonDto seedDto,
         MovementSeedCatalog catalog,
+        SeedExecutionOptions options,
         User seedUser)
     {
         ArgumentNullException.ThrowIfNull(exercise);
         ArgumentNullException.ThrowIfNull(seedDto);
         ArgumentNullException.ThrowIfNull(catalog);
+        ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(seedUser);
 
         if (seedDto.Steps.Count == 0)
@@ -36,38 +38,39 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
 
         ValidateStepSequences(seedDto);
 
-        foreach (var StepDto in seedDto.Steps.OrderBy(Step => Step.Sequence))
+        foreach (var stepDto in seedDto.Steps.OrderBy(step => step.Sequence))
         {
             var movement = ResolveMovement(
-                StepDto.Movement,
+                options,
+                stepDto.Movement,
                 catalog,
                 seedDto.Name,
-                StepDto.Sequence);
+                stepDto.Sequence);
 
             var target = ToWorkTarget(
-                StepDto.Target,
+                stepDto.Target,
                 seedDto.Name,
-                StepDto.Sequence);
+                stepDto.Sequence);
 
             var loadTarget = ToLoadTarget(
-                StepDto.LoadTarget,
+                stepDto.LoadTarget,
                 seedDto.Name,
-                StepDto.Sequence);
+                stepDto.Sequence);
 
             var restBetweenReps = ToRestTarget(
-                StepDto.RestBetweenReps,
+                stepDto.RestBetweenReps,
                 seedDto.Name,
-                StepDto.Sequence,
-                nameof(StepDto.RestBetweenReps));
+                stepDto.Sequence,
+                nameof(stepDto.RestBetweenReps));
 
             var transitionAfterStep = ToRestTarget(
-                StepDto.TransitionAfterStep,
+                stepDto.TransitionAfterStep,
                 seedDto.Name,
-                StepDto.Sequence,
-                nameof(StepDto.TransitionAfterStep));
+                stepDto.Sequence,
+                nameof(stepDto.TransitionAfterStep));
 
             var executionDetails = ToRepExecutionDetails(
-                StepDto.ExecutionDetails);
+                stepDto.ExecutionDetails);
 
             exercise.AddStep(
                 movementId: movement.Id,
@@ -77,24 +80,23 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
                 transitionAfterStep: transitionAfterStep,
                 executionDetails: executionDetails,
                 changedBy: seedUser,
-                atSequence: StepDto.Sequence);
+                atSequence: stepDto.Sequence);
         }
     }
-
     private static void ValidateStepSequences(
         ExerciseSeedJsonDto seedDto)
     {
-        foreach (var StepDto in seedDto.Steps)
+        foreach (var stepDto in seedDto.Steps)
         {
-            if (StepDto.Sequence < 1)
+            if (stepDto.Sequence < 1)
             {
                 throw new InvalidOperationException(
-                    $"Exercise seed '{seedDto.Name}' has Step with invalid sequence '{StepDto.Sequence}'. Sequence must be greater than zero.");
+                    $"Exercise seed '{seedDto.Name}' has Step with invalid sequence '{stepDto.Sequence}'. Sequence must be greater than zero.");
             }
         }
-
+        
         var duplicateSequences = seedDto.Steps
-            .GroupBy(Step => Step.Sequence)
+            .GroupBy(step => step.Sequence)
             .Where(group => group.Count() > 1)
             .Select(group => group.Key)
             .ToList();
@@ -107,12 +109,13 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
     }
 
     private static Movement ResolveMovement(
+        SeedExecutionOptions options,
         SeedEntityReferenceJsonDto reference,
         MovementSeedCatalog movementCatalog,
         string exerciseName,
-        int StepSequence)
+        int stepSequence)
     {
-        if (reference.Id.HasValue)
+        if (reference.Id.HasValue && !options.IgnoreReferenceIds)
         {
             return movementCatalog.GetRequiredById(
                 MovementId.FromGuid(reference.Id.Value));
@@ -129,7 +132,7 @@ public sealed class ExerciseSeedRelationResolver : IExerciseSeedRelationResolver
         }
 
         throw new InvalidOperationException(
-            $"Exercise seed '{exerciseName}' Step '{StepSequence}' movement reference must provide Id, NameKey, or Name.");
+            $"Exercise seed '{exerciseName}' Step '{stepSequence}' movement reference must provide Id, NameKey, or Name.");
     }
 
     private static WorkTarget ToWorkTarget(

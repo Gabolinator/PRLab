@@ -13,8 +13,10 @@ public sealed class DevelopmentMovementCategorySeedFactory(IUserService userServ
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    public IReadOnlyList<SeedItem<MovementCategory>> CreateInitialData()
+    public IReadOnlyList<SeedItem<MovementCategory>> CreateInitialData(SeedExecutionOptions options)
     {
+        
+        // ignore options here 
         var movementCategories = new List<MovementCategory>();
 
         var bodyweightCategory = MovementCategory.NewBuiltIn(

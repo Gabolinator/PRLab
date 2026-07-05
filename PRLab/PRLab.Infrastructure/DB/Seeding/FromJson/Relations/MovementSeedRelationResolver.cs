@@ -17,6 +17,7 @@ public sealed class MovementSeedRelationResolver : IMovementSeedRelationResolver
         MovementSeedJsonDto seedDto,
         MovementSeedCatalogs catalogs,
         User seedUser,
+        SeedExecutionOptions options,
         bool includeVariant = false)
     {
         foreach (var requirement in seedDto.EquipmentRequirements)
@@ -36,6 +37,7 @@ public sealed class MovementSeedRelationResolver : IMovementSeedRelationResolver
             foreach (var equipmentRef in requirement.Options)
             {
                 var equipment = ResolveEquipment(
+                    options,
                     equipmentRef,
                     catalogs.Equipment);
 
@@ -59,6 +61,7 @@ public sealed class MovementSeedRelationResolver : IMovementSeedRelationResolver
         foreach (var muscleRef in seedDto.Muscles)
         {
             var muscle = ResolveMuscle(
+                options,
                 muscleRef,
                 catalogs.Muscle);
 
@@ -95,6 +98,7 @@ public sealed class MovementSeedRelationResolver : IMovementSeedRelationResolver
             }
 
             var parentMovement = ResolveMovement(
+                options,
                 seedDto.VariantOf,
                 catalogs.Movement);
 
@@ -105,74 +109,77 @@ public sealed class MovementSeedRelationResolver : IMovementSeedRelationResolver
     }
 
     private static Equipment ResolveEquipment(
-        SeedEntityReferenceJsonDto reference,
-        EquipmentSeedCatalog equipmentCatalog)
+    SeedExecutionOptions options,
+    SeedEntityReferenceJsonDto reference,
+    EquipmentSeedCatalog equipmentCatalog)
+{
+    if (reference.Id.HasValue && !options.IgnoreReferenceIds)
     {
-        if (reference.Id.HasValue)
-        {
-            return equipmentCatalog.GetRequiredById(
-                EquipmentId.FromGuid(reference.Id.Value));
-        }
-
-        if (!string.IsNullOrWhiteSpace(reference.NameKey))
-        {
-            return equipmentCatalog.GetRequiredByNameKey(reference.NameKey);
-        }
-
-        if (!string.IsNullOrWhiteSpace(reference.Name))
-        {
-            return equipmentCatalog.GetRequiredByName(reference.Name);
-        }
-
-        throw new InvalidOperationException(
-            "Movement equipment reference must provide Id, NameKey, or Name.");
+        return equipmentCatalog.GetRequiredById(
+            EquipmentId.FromGuid(reference.Id.Value));
     }
 
-    private static Muscle ResolveMuscle(
-        MovementMuscleSeedJsonDto reference,
-        MuscleSeedCatalog muscleCatalog)
+    if (!string.IsNullOrWhiteSpace(reference.NameKey))
     {
-        if (reference.Id.HasValue)
-        {
-            return muscleCatalog.GetRequiredById(
-                MuscleId.FromGuid(reference.Id.Value));
-        }
-
-        if (!string.IsNullOrWhiteSpace(reference.NameKey))
-        {
-            return muscleCatalog.GetRequiredByNameKey(reference.NameKey);
-        }
-
-        if (!string.IsNullOrWhiteSpace(reference.Name))
-        {
-            return muscleCatalog.GetRequiredByName(reference.Name);
-        }
-
-        throw new InvalidOperationException(
-            "Movement muscle reference must provide Id, NameKey, or Name.");
+        return equipmentCatalog.GetRequiredByNameKey(reference.NameKey);
     }
 
-    private static Movement ResolveMovement(
-        SeedEntityReferenceJsonDto reference,
-        MovementSeedCatalog movementCatalog)
+    if (!string.IsNullOrWhiteSpace(reference.Name))
     {
-        if (reference.Id.HasValue)
-        {
-            return movementCatalog.GetRequiredById(
-                MovementId.FromGuid(reference.Id.Value));
-        }
-
-        if (!string.IsNullOrWhiteSpace(reference.NameKey))
-        {
-            return movementCatalog.GetRequiredByNameKey(reference.NameKey);
-        }
-
-        if (!string.IsNullOrWhiteSpace(reference.Name))
-        {
-            return movementCatalog.GetRequiredByName(reference.Name);
-        }
-
-        throw new InvalidOperationException(
-            "Movement variant reference must provide Id, NameKey, or Name.");
+        return equipmentCatalog.GetRequiredByName(reference.Name);
     }
+
+    throw new InvalidOperationException(
+        "Movement equipment reference must provide Id, NameKey, or Name.");
+}
+
+private static Muscle ResolveMuscle(
+    SeedExecutionOptions options,
+    MovementMuscleSeedJsonDto reference,
+    MuscleSeedCatalog muscleCatalog)
+{
+    if (reference.Id.HasValue && !options.IgnoreReferenceIds)
+    {
+        return muscleCatalog.GetRequiredById(
+            MuscleId.FromGuid(reference.Id.Value));
+    }
+
+    if (!string.IsNullOrWhiteSpace(reference.NameKey))
+    {
+        return muscleCatalog.GetRequiredByNameKey(reference.NameKey);
+    }
+
+    if (!string.IsNullOrWhiteSpace(reference.Name))
+    {
+        return muscleCatalog.GetRequiredByName(reference.Name);
+    }
+
+    throw new InvalidOperationException(
+        "Movement muscle reference must provide Id, NameKey, or Name.");
+}
+
+private static Movement ResolveMovement(
+    SeedExecutionOptions options,
+    SeedEntityReferenceJsonDto reference,
+    MovementSeedCatalog movementCatalog)
+{
+    if (reference.Id.HasValue && !options.IgnoreReferenceIds)
+    {
+        return movementCatalog.GetRequiredById(
+            MovementId.FromGuid(reference.Id.Value));
+    }
+
+    if (!string.IsNullOrWhiteSpace(reference.NameKey))
+    {
+        return movementCatalog.GetRequiredByNameKey(reference.NameKey);
+    }
+
+    if (!string.IsNullOrWhiteSpace(reference.Name))
+    {
+        return movementCatalog.GetRequiredByName(reference.Name);
+    }
+
+    throw new InvalidOperationException(
+        "Movement variant reference must provide Id, NameKey, or Name.");
+}
 }

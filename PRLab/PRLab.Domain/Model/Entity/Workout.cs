@@ -1,16 +1,18 @@
 ﻿using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Access;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
-using PRLab.Domain.Model.Value.Prescription;
 using PRLab.Domain.Model.Value.Prescription.Common;
 using PRLab.Domain.Model.Value.Update;
+using PRLab.Domain.Policies;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Entity;
 
-public sealed record Workout : IAudited, IDescribed, IOwnedData
+public sealed record Workout : IAudited, IDescribed, IOwnedData, IVisibilityScoped
 {
     public WorkoutId Id { get; init; }
 
@@ -25,6 +27,8 @@ public sealed record Workout : IAudited, IDescribed, IOwnedData
     public OwnershipInfo Ownership { get; private set; } = null!;
 
     public AuditInfo Audit { get; private set; } = null!;
+    
+    public VisibilityInfo Visibility { get; private set; } = null!;
 
     private readonly List<WorkoutBlockAssignment> blocks = [];
 
@@ -42,107 +46,192 @@ public sealed record Workout : IAudited, IDescribed, IOwnedData
         string name,
         Description description,
         AuditInfo audit,
-        OwnershipInfo ownership)
+        OwnershipInfo ownership,
+        VisibilityInfo visibility)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Workout id cannot be empty.", nameof(id));
-        }
+        DomainGuard.NotEmptyId(
+            id.Value,
+            nameof(id));
+
+        DomainGuard.NotEmptyName(
+            name,
+            nameof(name));
 
         ArgumentNullException.ThrowIfNull(description);
         ArgumentNullException.ThrowIfNull(audit);
         ArgumentNullException.ThrowIfNull(ownership);
+        ArgumentNullException.ThrowIfNull(visibility);
+
+        DataAccessPolicy.ValidateOwnership(
+            ownership.Origin,
+            ownership.OwnerUserId);
+
+        DataAccessPolicy.ValidateVisibility(
+            ownership.Origin,
+            visibility.Scope);
 
         Id = id;
         SetName(name);
         Description = description;
         Audit = audit;
         Ownership = ownership;
+        Visibility = visibility;
     }
 
     public static Workout NewBuiltIn(
         string name,
         string? description,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new Workout(
             WorkoutId.New(),
             name,
             Description.New(description),
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn());
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+        );
     }
 
     public static Workout NewBuiltIn(
         string name,
         Description description,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new Workout(
             WorkoutId.New(),
             name,
             description,
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn());
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+        );
     }
-    
+
     public static Workout NewBuiltInWithId(
         WorkoutId id,
         string name,
         Description description,
-        User createdBy)
+        User createdBy,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new Workout(
             id,
             name,
             description,
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn());
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+        );
     }
 
     public static Workout NewUserCreated(
         string name,
         string? description,
-        User owner)
+        User owner,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.UserCreated(owner);
 
         return new Workout(
             WorkoutId.New(),
             name,
             Description.New(description),
             AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner));
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+        );
     }
 
     public static Workout NewUserCreated(
         string name,
         Description description,
-        User owner)
+        User owner,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.UserCreated(owner);
 
         return new Workout(
             WorkoutId.New(),
             name,
             description,
             AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner));
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+        );
+    }
+
+    public static Workout NewCoachCreated(
+        string name,
+        Description description,
+        User coach,
+        VisibilityScope? visibilityScope = null)
+    {
+        ArgumentNullException.ThrowIfNull(coach);
+
+        var ownership = OwnershipInfo.CoachCreated(coach);
+
+        return new Workout(
+            WorkoutId.New(),
+            name,
+            description,
+            AuditInfo.New(coach),
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+        );
     }
 
     public static Workout NewImported(
         string name,
         Description description,
-        User owner)
+        User owner,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.Imported(owner);
 
         return new Workout(
             WorkoutId.New(),
             name,
             description,
             AuditInfo.New(owner),
-            OwnershipInfo.Imported(owner));
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+        );
+    }
+
+    public bool UpdateVisibility(
+        VisibilityInfo visibility,
+        User? changedBy = null)
+    {
+        ArgumentNullException.ThrowIfNull(visibility);
+
+        if (Visibility == visibility)
+        {
+            return false;
+        }
+
+        DataAccessPolicy.ValidateVisibility(
+            Ownership.Origin,
+            visibility.Scope);
+
+        Visibility = visibility;
+        MarkUpdated(changedBy);
+
+        return true;
     }
 
     public void Rename(string name, User? changedBy = null)
@@ -423,7 +512,6 @@ public sealed record Workout : IAudited, IDescribed, IOwnedData
         return hasChanged;
     }
     
-
     private void ReplaceBlocks(
         IReadOnlyCollection<WorkoutBlockAssignmentUpdate> updates)
     {

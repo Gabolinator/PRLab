@@ -10,8 +10,10 @@ public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMu
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");
     
-  public IReadOnlyList<SeedItem<Domain.Model.Entity.Muscle>> CreateInitialData()
+  public IReadOnlyList<SeedItem<Domain.Model.Entity.Muscle>> CreateInitialData(SeedExecutionOptions options)
 {
+    //ignore option here
+    
     var chest = Domain.Model.Entity.Muscle.New(
         "Chest",
         latinName: "Musculus pectoralis major",

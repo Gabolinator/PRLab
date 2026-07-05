@@ -5,5 +5,5 @@ namespace PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 
 public interface IMovementCategorySeedFactory
 {
-    public IReadOnlyList<SeedItem<MovementCategory>> CreateInitialData();
+    public IReadOnlyList<SeedItem<MovementCategory>> CreateInitialData(SeedExecutionOptions options);
 }

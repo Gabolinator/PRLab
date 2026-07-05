@@ -1,6 +1,7 @@
 ﻿using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Prescription;
 using PRLab.Domain.Model.Value.Prescription.Common;
+using PRLab.Domain.Model.Value.WorkoutStructure;
 using PRLab.Domain.Model.Value.WorkoutValue;
 
 namespace PRLab.Domain.Utilities;

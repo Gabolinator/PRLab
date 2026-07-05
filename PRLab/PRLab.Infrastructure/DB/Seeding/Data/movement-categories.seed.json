@@ -1,6 +1,6 @@
 [
   {
-    "Id": "4cf80344-c533-4c93-b3cd-2040895c0a41",
+    "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
     "Name": "Bodyweight",
     "NameKey": "bodyweight",
     "BaseMovementCategory": "BodyWeight",
@@ -9,10 +9,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "f567ed15-77b2-4fb4-a8d7-4ab2bbe4fbbf",
+    "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
     "Name": "Calisthenics",
     "NameKey": "calisthenics",
     "BaseMovementCategory": "BodyWeight",
@@ -21,10 +22,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "e5a3b0dc-fc62-4edf-9411-015b332030f6",
+    "Id": "52921f7f-a1ee-4bc4-a79d-cf7e468c2f6f",
     "Name": "Cardio",
     "NameKey": "cardio",
     "BaseMovementCategory": "Cardio",
@@ -33,10 +35,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "6dac43db-54a0-47e9-9858-ab7ffba564fb",
+    "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
     "Name": "CrossFit",
     "NameKey": "crossfit",
     "BaseMovementCategory": "Hybrid",
@@ -45,10 +48,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "729ebab4-168e-4c3e-959e-dcdb205ea9f3",
+    "Id": "58f7306e-9fb0-4d91-910e-d89c15900727",
     "Name": "Hybrid Conditioning",
     "NameKey": "hybridconditioning",
     "BaseMovementCategory": "Hybrid",
@@ -57,10 +61,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "e83690f3-51ff-4060-896f-2a2926ff9134",
+    "Id": "bd4a56bd-d759-42ee-8493-92d5826881d2",
     "Name": "Hyrox",
     "NameKey": "hyrox",
     "BaseMovementCategory": "Hybrid",
@@ -69,10 +74,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "e84379d8-37f6-4524-99ef-c3812e9bb6b3",
+    "Id": "bb07a7d4-846a-402e-ac6d-8a37fec8b78e",
     "Name": "Mobility",
     "NameKey": "mobility",
     "BaseMovementCategory": "Mobility",
@@ -81,10 +87,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "12799eee-5aa5-4219-989e-3438d711c933",
+    "Id": "a689d28b-d1fc-4bfa-b695-6005fb43e7ce",
     "Name": "Olympic Weightlifting",
     "NameKey": "olympicweightlifting",
     "BaseMovementCategory": "Resistance",
@@ -93,10 +100,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "cc17e46a-9388-4dfc-9fd5-e79bc6b7c791",
+    "Id": "40732a19-c543-41c4-91ec-a42cb8619177",
     "Name": "Plyometrics",
     "NameKey": "plyometrics",
     "BaseMovementCategory": "Hybrid",
@@ -105,10 +113,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "c334102b-f652-43c9-b6a1-9fd0ce726532",
+    "Id": "5f924600-1838-4084-838e-45e6a8457d0c",
     "Name": "Powerlifting",
     "NameKey": "powerlifting",
     "BaseMovementCategory": "Resistance",
@@ -117,10 +126,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "a1f2f629-0bbc-4c60-850f-b36da0d65d90",
+    "Id": "3d08a932-8de7-4fc7-bc85-2f93f9ed16e4",
     "Name": "Running",
     "NameKey": "running",
     "BaseMovementCategory": "Cardio",
@@ -129,10 +139,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "dfecdf9d-e21f-409a-9970-ae6df6aa5d3d",
+    "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
     "Name": "Strength Training",
     "NameKey": "strengthtraining",
     "BaseMovementCategory": "Resistance",
@@ -141,10 +152,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "d8232bd1-6cc5-4453-92f3-b6344d0c7781",
+    "Id": "dbbc1cd0-2de0-4cbd-910e-5da272e62f90",
     "Name": "Stretching",
     "NameKey": "stretching",
     "BaseMovementCategory": "Mobility",
@@ -153,10 +165,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "066dfa75-3e0c-4a5d-a9f1-1d71f1d7e5b9",
+    "Id": "b53d177e-bd72-4d2e-948e-ad8ef1fcff08",
     "Name": "Weightlifting",
     "NameKey": "weightlifting",
     "BaseMovementCategory": "Resistance",
@@ -165,10 +178,11 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "f9fc0430-af7f-4954-9a27-03b52a29de5f",
+    "Id": "a027f4c1-3777-4fdd-8882-045a86ee3ee6",
     "Name": "Yoga",
     "NameKey": "yoga",
     "BaseMovementCategory": "Mobility",
@@ -177,6 +191,7 @@
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   }
 ]

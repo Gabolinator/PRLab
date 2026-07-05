@@ -1,6 +1,6 @@
 [
   {
-    "Id": "c00e9e44-fa88-4e25-bfe2-6e265fe21f72",
+    "Id": "4b441b31-cc9f-48a2-90b8-c6736d831a0d",
     "Name": "Assault Bike",
     "NameKey": "assaultbike",
     "Description": {
@@ -8,10 +8,10 @@
     },
     "Steps": [
       {
-        "Id": "5a984247-b5ff-4991-aee2-5d6238b9dbcc",
+        "Id": "342d4139-967e-46c0-98e0-c4d8a110fe05",
         "Sequence": 1,
         "Movement": {
-          "Id": "f820b42a-59eb-426a-8c17-e86c8b2cb3ad",
+          "Id": "3a8f2d12-cb1a-4dcb-95bc-0fdbf27986e2",
           "Name": "Assault Bike",
           "NameKey": "assaultbike"
         },
@@ -27,10 +27,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "97246881-cc67-44e4-914b-ef79c1d6d60a",
+    "Id": "33ba89e9-6ed7-48ff-9376-a917a44b846a",
     "Name": "Back Squat",
     "NameKey": "backsquat",
     "Description": {
@@ -38,10 +39,10 @@
     },
     "Steps": [
       {
-        "Id": "43686ac1-33f8-4a96-a9af-cbb3c6b2395d",
+        "Id": "32c324ef-e4e4-40e1-b734-9c89135b2cf8",
         "Sequence": 1,
         "Movement": {
-          "Id": "98da7eaa-e1bf-4f8b-98c2-dcc3f3174a62",
+          "Id": "486661cf-963a-4b86-8a55-517f47ec2169",
           "Name": "Back Squat",
           "NameKey": "backsquat"
         },
@@ -57,10 +58,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "f389c322-86f6-408e-8164-f3c0972b0655",
+    "Id": "d95b573f-659b-495e-b518-ba4a31c26a53",
     "Name": "Bodyweight Squat",
     "NameKey": "bodyweightsquat",
     "Description": {
@@ -68,10 +70,10 @@
     },
     "Steps": [
       {
-        "Id": "80ef2cd4-7ff8-42ed-9dc9-06f01da9d5e3",
+        "Id": "d79fa033-ce8a-4fbf-bac2-11f17c951353",
         "Sequence": 1,
         "Movement": {
-          "Id": "03b6b428-1156-4c1a-be02-033e850c97b3",
+          "Id": "38b43fe0-b408-431a-be99-619446d599fe",
           "Name": "Bodyweight Squat",
           "NameKey": "bodyweightsquat"
         },
@@ -91,10 +93,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "69b9b19b-046f-4421-a87c-61fb303bc2a3",
+    "Id": "e429fc00-b10b-441d-b363-3bf88c49bf48",
     "Name": "Burpee",
     "NameKey": "burpee",
     "Description": {
@@ -102,10 +105,10 @@
     },
     "Steps": [
       {
-        "Id": "75771652-cff6-46f4-9ca4-c860eeea4fc3",
+        "Id": "057d72c7-9fff-482d-b4a2-64f73bbdda44",
         "Sequence": 1,
         "Movement": {
-          "Id": "2e896c7a-b168-4f5f-bd81-bae7f3b4b8a8",
+          "Id": "37e57f66-b2d1-4770-8815-c790e0325459",
           "Name": "Burpee",
           "NameKey": "burpee"
         },
@@ -125,10 +128,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "2fb60ef8-55d2-4e1b-961c-42e42b362b5b",
+    "Id": "e6b47a1d-c232-47db-9265-6f6420099341",
     "Name": "Burpee Pull-Up",
     "NameKey": "burpeepullup",
     "Description": {
@@ -136,10 +140,10 @@
     },
     "Steps": [
       {
-        "Id": "bffe59ae-e8ca-4a8c-9b02-6f2a4be90ab6",
+        "Id": "a1393226-219c-495b-b08f-a46c63ecc66b",
         "Sequence": 1,
         "Movement": {
-          "Id": "2e896c7a-b168-4f5f-bd81-bae7f3b4b8a8",
+          "Id": "37e57f66-b2d1-4770-8815-c790e0325459",
           "Name": "Burpee",
           "NameKey": "burpee"
         },
@@ -157,10 +161,10 @@
         "ExecutionDetails": null
       },
       {
-        "Id": "1b87a8cf-db23-43a8-8dbe-9bc0a05a52a5",
+        "Id": "65841452-53f7-45f2-a701-f0be8d16a1ff",
         "Sequence": 2,
         "Movement": {
-          "Id": "5a173188-169d-4cdf-ba3b-f98c80dbe408",
+          "Id": "02b62c46-dfc8-442f-9276-db9acf93953c",
           "Name": "Pull Up",
           "NameKey": "pullup"
         },
@@ -180,10 +184,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "b392e025-edaf-416a-9b1c-541d69c34ed2",
+    "Id": "5566ce27-7ac6-4362-879d-655a9fe57bef",
     "Name": "Deadlift",
     "NameKey": "deadlift",
     "Description": {
@@ -191,10 +196,10 @@
     },
     "Steps": [
       {
-        "Id": "38420c4b-4045-4245-8114-e401f23ddb48",
+        "Id": "46ba024e-389e-45eb-a2a8-2cd5c0d97b32",
         "Sequence": 1,
         "Movement": {
-          "Id": "dc23a078-b81d-4a44-83bd-de67510d1f72",
+          "Id": "4316dd12-67a5-4969-b8fe-78c1eeafa41f",
           "Name": "Deadlift",
           "NameKey": "deadlift"
         },
@@ -210,10 +215,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "9388465e-1beb-49f2-988c-4d9aba81d886",
+    "Id": "854744f4-8695-43b7-8253-f6082bbb8af3",
     "Name": "Double Dumbbell Hang Power Clean",
     "NameKey": "doubledumbbellhangpowerclean",
     "Description": {
@@ -221,10 +227,10 @@
     },
     "Steps": [
       {
-        "Id": "6e7d437d-b553-4e85-b4a7-f3fd992a4c61",
+        "Id": "16f5722f-b800-48b6-a559-eba1f72d898f",
         "Sequence": 1,
         "Movement": {
-          "Id": "a19089ff-ddfc-4346-b8d1-0cb8cbb37b8d",
+          "Id": "c5c039a1-2f0e-4d71-94fa-eda8b4211406",
           "Name": "Double Dumbbell Hang Power Clean",
           "NameKey": "doubledumbbellhangpowerclean"
         },
@@ -240,10 +246,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "70724d21-5ed5-4f4b-886c-661b82681e6f",
+    "Id": "4c7dde9e-304f-43f2-93a6-284856f4ae93",
     "Name": "Double Under",
     "NameKey": "doubleunder",
     "Description": {
@@ -251,10 +258,10 @@
     },
     "Steps": [
       {
-        "Id": "6b238ab1-0141-42c0-8c19-01aeb57657e2",
+        "Id": "c9d66765-53b5-416c-aab9-07dc473f601f",
         "Sequence": 1,
         "Movement": {
-          "Id": "967aff04-8ef5-4971-8391-2002b511d3c3",
+          "Id": "1250af3d-2419-491b-ad17-4f2d6e5b3f49",
           "Name": "Double Under",
           "NameKey": "doubleunder"
         },
@@ -274,10 +281,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "1ec986f1-2b85-40a1-9c16-cd5a11b1214c",
+    "Id": "fc8c20c0-7b22-4a76-af3d-658e9e1dee0c",
     "Name": "Goblet Squat",
     "NameKey": "gobletsquat",
     "Description": {
@@ -285,10 +293,10 @@
     },
     "Steps": [
       {
-        "Id": "fc09f7de-cb2b-4e1c-bc1d-25126e30d31b",
+        "Id": "9c826db0-dc94-49b9-87bd-6241cdc7fa69",
         "Sequence": 1,
         "Movement": {
-          "Id": "e6331313-c506-4933-8aa3-6179d2975cb4",
+          "Id": "377eee1c-9cdf-44e5-adbd-4ede91d68ca1",
           "Name": "Goblet Squat",
           "NameKey": "gobletsquat"
         },
@@ -304,10 +312,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "73cefaad-3efb-42c4-90f1-bee25903b860",
+    "Id": "972a8030-f343-4bc1-a5a6-68b9fdcb2e14",
     "Name": "Lateral Burpee Over Barbell",
     "NameKey": "lateralburpeeoverbarbell",
     "Description": {
@@ -315,10 +324,10 @@
     },
     "Steps": [
       {
-        "Id": "c1e2e1a6-4ab2-4c40-916b-7ffdd20e8df6",
+        "Id": "2a7d1100-11c7-4e4d-a460-222478c38a7a",
         "Sequence": 1,
         "Movement": {
-          "Id": "11f91f64-764a-4b29-9350-d18dc746eb02",
+          "Id": "cbfecdd0-cce9-43bd-bde5-09c12398b301",
           "Name": "Lateral Burpee Over Barbell",
           "NameKey": "lateralburpeeoverbarbell"
         },
@@ -338,10 +347,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "ff49e93b-13af-4948-a96e-126e0f259a84",
+    "Id": "557e36be-5924-461f-b148-cd7d4cb38716",
     "Name": "Pull Up",
     "NameKey": "pullup",
     "Description": {
@@ -349,10 +359,10 @@
     },
     "Steps": [
       {
-        "Id": "434ac3fb-ec06-4ed6-bbfa-7ae1394a98b8",
+        "Id": "5b0cbf8f-d762-40f9-81ba-9dec40ad0299",
         "Sequence": 1,
         "Movement": {
-          "Id": "5a173188-169d-4cdf-ba3b-f98c80dbe408",
+          "Id": "02b62c46-dfc8-442f-9276-db9acf93953c",
           "Name": "Pull Up",
           "NameKey": "pullup"
         },
@@ -372,10 +382,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "d57809c0-e1c7-4015-b090-60e7765b4f0d",
+    "Id": "4937591b-97ac-4971-8f54-11ae9647db39",
     "Name": "Push Up",
     "NameKey": "pushup",
     "Description": {
@@ -383,10 +394,10 @@
     },
     "Steps": [
       {
-        "Id": "72307578-6e8f-4531-9c96-755b20374c4e",
+        "Id": "33ca4562-4988-42ee-9a7e-0704aadab70e",
         "Sequence": 1,
         "Movement": {
-          "Id": "ed0e0af8-ee8b-4a0f-a304-0e842ed80b41",
+          "Id": "e6078848-2e2b-433d-b4e6-7b4591ea6a80",
           "Name": "Push Up",
           "NameKey": "pushup"
         },
@@ -406,10 +417,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "edc9d136-5df0-4d12-a81a-53c61525b80c",
+    "Id": "5d583994-354f-4faa-9306-a2e1df38fcf1",
     "Name": "Row",
     "NameKey": "row",
     "Description": {
@@ -417,10 +429,10 @@
     },
     "Steps": [
       {
-        "Id": "509d33ec-3adc-49f3-8038-39a4abc45323",
+        "Id": "735cf949-7af1-4aaf-8414-99768f40ba9e",
         "Sequence": 1,
         "Movement": {
-          "Id": "80f9b665-e34d-422b-806b-6625f52d3f48",
+          "Id": "6e23e8f1-7c85-499c-89b1-3ac04c6c759b",
           "Name": "Row",
           "NameKey": "row"
         },
@@ -436,10 +448,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "cf3529ec-fa1b-4605-98a9-55cee6b87621",
+    "Id": "97d1747b-28b7-4102-8b22-561fdbb9525a",
     "Name": "Running",
     "NameKey": "running",
     "Description": {
@@ -447,10 +460,10 @@
     },
     "Steps": [
       {
-        "Id": "0dcbf4da-6074-4030-9185-9b283a80978c",
+        "Id": "d6e73334-6729-4e97-858f-a5a0ecf2cf36",
         "Sequence": 1,
         "Movement": {
-          "Id": "b992e2ce-f92b-42ae-ba34-66d514bbf4bc",
+          "Id": "60a34045-072a-40bc-969d-a32531d1766a",
           "Name": "Running",
           "NameKey": "running"
         },
@@ -466,10 +479,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "ab156891-31dd-4eb8-8d24-4dd7d0e5ec72",
+    "Id": "13b9c6f3-f46a-4e8f-8567-035f4c9f2a9d",
     "Name": "Ski Erg",
     "NameKey": "skierg",
     "Description": {
@@ -477,10 +491,10 @@
     },
     "Steps": [
       {
-        "Id": "cea58e68-8e0d-4b24-8bfc-16a2ea940b38",
+        "Id": "ca141f6d-ea5e-40d8-9b1e-a0e59500195e",
         "Sequence": 1,
         "Movement": {
-          "Id": "c8f1acc9-35bc-4f15-85a8-8662faafc9f6",
+          "Id": "1908c201-719c-4914-8c90-3a261e1f589d",
           "Name": "Ski Erg",
           "NameKey": "skierg"
         },
@@ -496,10 +510,11 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   },
   {
-    "Id": "347b5ed6-8e8d-430e-82a7-9bb76c72a988",
+    "Id": "fe464d08-fdd6-4ab9-a37b-49f4a8cf846f",
     "Name": "Wall Ball",
     "NameKey": "wallball",
     "Description": {
@@ -507,10 +522,10 @@
     },
     "Steps": [
       {
-        "Id": "4825e5b0-e5fe-472e-99c6-70d481440333",
+        "Id": "84c03c28-e478-49ee-acb7-8884c6c503e5",
         "Sequence": 1,
         "Movement": {
-          "Id": "d69b1f24-024b-4715-aac5-b5ba332cdc30",
+          "Id": "37376bd7-25b7-42ea-8d8b-b4977330f7a1",
           "Name": "Wall Ball",
           "NameKey": "wallball"
         },
@@ -526,6 +541,7 @@
     ],
     "Origin": "BuiltIn",
     "OwnerUserId": null,
+    "VisibilityScope": "Public",
     "Action": "Ignore"
   }
 ]

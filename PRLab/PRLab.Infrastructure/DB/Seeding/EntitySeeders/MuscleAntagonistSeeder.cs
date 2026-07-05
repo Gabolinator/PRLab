@@ -28,11 +28,11 @@ public sealed class MuscleAntagonistSeeder(
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
 
-    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(CancellationToken ct)
+    protected override async Task<IReadOnlyList<SeedChange>> SeedEntityAsync(SeedExecutionOptions options, CancellationToken ct)
     {
         var muscleCatalog = await SeedCatalogBuilder.CreateMuscleCatalog(db, ct);
 
-        var muscleAntagonistSeedItems = seedFactory.CreateInitialData(muscleCatalog);
+        var muscleAntagonistSeedItems = seedFactory.CreateInitialData(options, muscleCatalog);
 
         var changes = new List<SeedChange>();
 

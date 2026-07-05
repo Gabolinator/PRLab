@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Domain.Model.Value.WorkoutStructure;
 using PRLab.Domain.Model.Value.WorkoutValue;
 
 namespace PRLab.Domain.Model.Join;

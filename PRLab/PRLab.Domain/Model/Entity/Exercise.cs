@@ -1,19 +1,20 @@
 ﻿using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Model.Value;
-using PRLab.Domain.Model.Value.Enum.Prescription;
+using PRLab.Domain.Model.Value.Access;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
-using PRLab.Domain.Model.Value.Prescription;
 using PRLab.Domain.Model.Value.Prescription.Load;
 using PRLab.Domain.Model.Value.Prescription.Rest;
 using PRLab.Domain.Model.Value.Prescription.Work;
 using PRLab.Domain.Model.Value.Update;
+using PRLab.Domain.Policies;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Entity;
 
-public sealed record Exercise : IAudited, IDescribed, IOwnedData
+public sealed record Exercise : IAudited, IDescribed, IOwnedData, IVisibilityScoped
 {
     public ExerciseId Id { get; init; }
 
@@ -26,6 +27,8 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
     public OwnershipInfo Ownership { get; private set; } = null!;
 
     public AuditInfo Audit { get; private set; } = null!;
+    
+    public VisibilityInfo Visibility { get; private set; } = null!;
 
     private readonly List<ExerciseSteps> steps = [];
 
@@ -39,118 +42,197 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
     }
 
     private Exercise(
-        ExerciseId id,
-        string name,
-        Description description,
-        AuditInfo audit,
-        OwnershipInfo ownership)
+    ExerciseId id,
+    string name,
+    Description description,
+    AuditInfo audit,
+    OwnershipInfo ownership,
+    VisibilityInfo visibility)
+{
+    DomainGuard.NotEmptyId(
+        id.Value,
+        nameof(id));
+
+    DomainGuard.NotEmptyName(
+        name,
+        nameof(name));
+
+    ArgumentNullException.ThrowIfNull(description);
+    ArgumentNullException.ThrowIfNull(audit);
+    ArgumentNullException.ThrowIfNull(ownership);
+    ArgumentNullException.ThrowIfNull(visibility);
+
+    DataAccessPolicy.ValidateOwnership(
+        ownership.Origin,
+        ownership.OwnerUserId);
+
+    DataAccessPolicy.ValidateVisibility(
+        ownership.Origin,
+        visibility.Scope);
+
+    Id = id;
+    SetName(name);
+    Description = description;
+    Audit = audit;
+    Ownership = ownership;
+    Visibility = visibility;
+}
+
+public static Exercise NewBuiltInWithId(
+    ExerciseId id,
+    string name,
+    Description description,
+    User? createdBy = null,
+    VisibilityScope? visibilityScope = null)
+{
+    var ownership = OwnershipInfo.BuiltIn();
+
+    return new Exercise(
+        id,
+        name,
+        description,
+        AuditInfo.New(createdBy),
+        ownership,
+        VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+    );
+}
+
+public static Exercise NewBuiltIn(
+    string name,
+    string? description,
+    User? createdBy = null,
+    VisibilityScope? visibilityScope = null)
+{
+    var ownership = OwnershipInfo.BuiltIn();
+
+    return new Exercise(
+        ExerciseId.New(),
+        name,
+        Description.New(description),
+        AuditInfo.New(createdBy),
+        ownership,
+        VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+    );
+}
+
+public static Exercise NewBuiltIn(
+    string name,
+    Description description,
+    User? createdBy = null,
+    VisibilityScope? visibilityScope = null)
+{
+    var ownership = OwnershipInfo.BuiltIn();
+
+    return new Exercise(
+        ExerciseId.New(),
+        name,
+        description,
+        AuditInfo.New(createdBy),
+        ownership,
+        VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+    );
+}
+
+public static Exercise NewUserCreated(
+    string name,
+    string? description,
+    User owner,
+    VisibilityScope? visibilityScope = null)
+{
+    ArgumentNullException.ThrowIfNull(owner);
+
+    var ownership = OwnershipInfo.UserCreated(owner);
+
+    return new Exercise(
+        ExerciseId.New(),
+        name,
+        Description.New(description),
+        AuditInfo.New(owner),
+        ownership,
+        VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+    );
+}
+
+public static Exercise NewUserCreated(
+    string name,
+    Description description,
+    User owner,
+    VisibilityScope? visibilityScope = null)
+{
+    ArgumentNullException.ThrowIfNull(owner);
+
+    var ownership = OwnershipInfo.UserCreated(owner);
+
+    return new Exercise(
+        ExerciseId.New(),
+        name,
+        description,
+        AuditInfo.New(owner),
+        ownership,
+        VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+    );
+}
+
+public static Exercise NewCoachCreated(
+    string name,
+    Description description,
+    User coach,
+    VisibilityScope? visibilityScope = null)
+{
+    ArgumentNullException.ThrowIfNull(coach);
+
+    var ownership = OwnershipInfo.CoachCreated(coach);
+
+    return new Exercise(
+        ExerciseId.New(),
+        name,
+        description,
+        AuditInfo.New(coach),
+        ownership,
+        VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+    );
+}
+
+public static Exercise NewImported(
+    string name,
+    Description description,
+    User owner,
+    VisibilityScope? visibilityScope = null)
+{
+    ArgumentNullException.ThrowIfNull(owner);
+
+    var ownership = OwnershipInfo.Imported(owner);
+
+    return new Exercise(
+        ExerciseId.New(),
+        name,
+        description,
+        AuditInfo.New(owner),
+        ownership,
+        VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
+    );
+}
+
+public bool UpdateVisibility(
+    VisibilityInfo visibility,
+    User? changedBy = null)
+{
+    ArgumentNullException.ThrowIfNull(visibility);
+
+    if (Visibility == visibility)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Exercise id cannot be empty.", nameof(id));
-        }
-
-        ArgumentNullException.ThrowIfNull(description);
-        ArgumentNullException.ThrowIfNull(audit);
-        ArgumentNullException.ThrowIfNull(ownership);
-
-        Id = id;
-        SetName(name);
-        Description = description;
-        Audit = audit;
-        Ownership = ownership;
+        return false;
     }
 
-    public static Exercise NewBuiltInWithId(
-        ExerciseId id,
-        string name,
-        Description description,
-        User? createdBy = null)
-    {
-        return new Exercise(
-            id,
-            name,
-            description,
-            AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn()
-        );
-    }
-    
-    public static Exercise NewBuiltIn(
-        string name,
-        string? description,
-        User? createdBy = null)
-    {
-        return new Exercise(
-            ExerciseId.New(),
-            name,
-            Description.New(description),
-            AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn()
-        );
-    }
+    DataAccessPolicy.ValidateVisibility(
+        Ownership.Origin,
+        visibility.Scope);
 
-    public static Exercise NewBuiltIn(
-        string name,
-        Description description,
-        User? createdBy = null)
-    {
-        return new Exercise(
-            ExerciseId.New(),
-            name,
-            description,
-            AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn()
-        );
-    }
+    Visibility = visibility;
+    MarkUpdated(changedBy);
 
-    public static Exercise NewUserCreated(
-        string name,
-        string? description,
-        User owner)
-    {
-        ArgumentNullException.ThrowIfNull(owner);
-
-        return new Exercise(
-            ExerciseId.New(),
-            name,
-            Description.New(description),
-            AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner)
-        );
-    }
-
-    public static Exercise NewUserCreated(
-        string name,
-        Description description,
-        User owner)
-    {
-        ArgumentNullException.ThrowIfNull(owner);
-
-        return new Exercise(
-            ExerciseId.New(),
-            name,
-            description,
-            AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner)
-        );
-    }
-
-    public static Exercise NewImported(
-        string name,
-        Description description,
-        User owner)
-    {
-        ArgumentNullException.ThrowIfNull(owner);
-
-        return new Exercise(
-            ExerciseId.New(),
-            name,
-            description,
-            AuditInfo.New(owner),
-            OwnershipInfo.Imported(owner)
-        );
-    }
+    return true;
+}
 
     public static Exercise FromMovementUserCreated(
         Movement movement,
@@ -168,7 +250,8 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
         var exercise = NewUserCreated(
             name: movement.Name,
             description: movement.Description.Copy(),
-            owner: owner);
+            owner: owner,
+            visibilityScope: movement.Visibility.Scope);
 
         exercise.AddStep(
             movementId: movement.Id,
@@ -294,7 +377,7 @@ public sealed record Exercise : IAudited, IDescribed, IOwnedData
 
         return hasChanged;
     }
-
+    
     private void ReplaceSteps(IReadOnlyCollection<ExerciseStepUpdate> updatedSteps)
     {
         steps.Clear();

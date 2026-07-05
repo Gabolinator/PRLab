@@ -6,5 +6,6 @@ namespace PRLab.Application.Interface.DB.Seeding.Factory.Entity.Exercise;
 public interface IExerciseSeedFactory
 {
     IReadOnlyList<SeedItem<Domain.Model.Entity.Exercise>> CreateInitialData(
+        SeedExecutionOptions options,
         MovementSeedCatalog catalog);
 }

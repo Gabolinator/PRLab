@@ -1,13 +1,16 @@
 ﻿using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Access;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
 using PRLab.Domain.Model.Value.Update;
+using PRLab.Domain.Policies;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Entity;
 
-public sealed record Equipment : IAudited, IDescribed, IOwnedData
+public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilityScoped
 {
     public EquipmentId Id { get; init; }
 
@@ -21,6 +24,8 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData
 
     public OwnershipInfo Ownership { get; private set; } = null!;
 
+    public VisibilityInfo Visibility { get; private set; } = null!;
+
     private Equipment()
     {
         // EF Core
@@ -31,49 +36,71 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData
         string name,
         Description description,
         AuditInfo audit,
-        OwnershipInfo ownership)
+        OwnershipInfo ownership,
+        VisibilityInfo visibility)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Equipment id cannot be empty.", nameof(id));
-        }
+        DomainGuard.NotEmptyId(
+            id.Value,
+            nameof(id));
+
+        DomainGuard.NotEmptyName(
+            name,
+            nameof(name));
 
         ArgumentNullException.ThrowIfNull(description);
         ArgumentNullException.ThrowIfNull(audit);
         ArgumentNullException.ThrowIfNull(ownership);
+        ArgumentNullException.ThrowIfNull(visibility);
+
+        DataAccessPolicy.ValidateOwnership(
+            ownership.Origin,
+            ownership.OwnerUserId);
+
+        DataAccessPolicy.ValidateVisibility(
+            ownership.Origin,
+            visibility.Scope);
 
         Id = id;
         SetName(name);
         Description = description;
         Audit = audit;
         Ownership = ownership;
+        Visibility = visibility;
     }
 
     public static Equipment NewBuiltIn(
         string name,
         string? description,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new Equipment(
             EquipmentId.New(),
             name,
             Description.New(description),
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn()
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
     public static Equipment NewBuiltIn(
         string name,
         Description description,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new Equipment(
             EquipmentId.New(),
             name,
             description,
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn()
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
@@ -81,78 +108,98 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData
         EquipmentId id,
         string name,
         Description description,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new Equipment(
             id,
             name,
             description,
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn()
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
     public static Equipment NewUserCreated(
         string name,
         string? description,
-        User owner)
+        User owner,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
+        var ownership = OwnershipInfo.UserCreated(owner);
+        
         return new Equipment(
             EquipmentId.New(),
             name,
             Description.New(description),
             AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner)
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
     public static Equipment NewUserCreated(
         string name,
         Description description,
-        User owner)
+        User owner,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
+        var ownership = OwnershipInfo.UserCreated(owner);
+        
         return new Equipment(
             EquipmentId.New(),
             name,
             description,
             AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner)
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
     public static Equipment NewCoachCreated(
         string name,
         Description description,
-        User coach)
+        User coach,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(coach);
 
+        var ownership = OwnershipInfo.CoachCreated(coach);
+        
         return new Equipment(
             EquipmentId.New(),
             name,
             description,
             AuditInfo.New(coach),
-            OwnershipInfo.CoachCreated(coach)
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
     public static Equipment NewImported(
         string name,
         Description description,
-        User owner)
+        User owner,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
+        var ownership = OwnershipInfo.Imported(owner);
+        
         return new Equipment(
             EquipmentId.New(),
             name,
             description,
             AuditInfo.New(owner),
-            OwnershipInfo.Imported(owner)
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
@@ -212,6 +259,27 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData
         MarkUpdated(changedBy);
     }
 
+    public bool UpdateVisibility(
+        VisibilityInfo visibility,
+        User? changedBy = null)
+    {
+        ArgumentNullException.ThrowIfNull(visibility);
+
+        if (Visibility == visibility)
+        {
+            return false;
+        }
+
+        VisibilityPolicy.ValidateVisibilityForOwnership(
+            Ownership,
+            visibility);
+
+        Visibility = visibility;
+        MarkUpdated(changedBy);
+
+        return true;
+    }
+    
     private void SetName(string name)
     {
         Name = FormatingUtilities.NormalizeName(name);

@@ -23,6 +23,8 @@ public sealed record WorkoutSeedJsonDto
     public DataOrigin Origin { get; init; } = DataOrigin.BuiltIn;
 
     public Guid? OwnerUserId { get; init; }
+    
+    public VisibilityScope? VisibilityScope { get; init; }
 
     public SeedAction Action { get; init; } = SeedAction.Ignore;
 
@@ -46,7 +48,8 @@ public sealed record WorkoutSeedJsonDto
                 .ToList(),
             Origin = workout.Ownership.Origin,
             OwnerUserId = workout.Ownership.OwnerUserId?.Value,
-            Action = SeedAction.Ignore
+            Action = SeedAction.Ignore,
+            VisibilityScope = workout.Visibility.Scope
         };
     }
 }

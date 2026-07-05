@@ -10,5 +10,6 @@ public interface IExerciseSeedRelationResolver
         Exercise exercise,
         ExerciseSeedJsonDto seedDto,
         MovementSeedCatalog catalog,
+        SeedExecutionOptions options,
         User seedUser);
 }

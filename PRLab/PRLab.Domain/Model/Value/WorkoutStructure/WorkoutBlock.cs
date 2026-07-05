@@ -1,15 +1,18 @@
 ﻿using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Interface;
+using PRLab.Domain.Model.Value.Access;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Enum.Workout;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
-using PRLab.Domain.Model.Value.Prescription;
 using PRLab.Domain.Model.Value.Prescription.Workout;
+using PRLab.Domain.Model.Value.WorkoutValue;
+using PRLab.Domain.Policies;
 using PRLab.Domain.Utilities;
 
-namespace PRLab.Domain.Model.Value.WorkoutValue;
+namespace PRLab.Domain.Model.Value.WorkoutStructure;
 
-public sealed record WorkoutBlock : IAudited, IOwnedData
+public sealed record WorkoutBlock : IAudited, IOwnedData, IVisibilityScoped
 {
     public WorkoutBlockId Id { get; init; }
 
@@ -26,6 +29,8 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
 
     public OwnershipInfo Ownership { get; private set; } = null!;
 
+    public VisibilityInfo Visibility  { get; private set; } = null!;
+    
     private readonly List<WorkoutBlockSegment> segments = [];
 
     public IReadOnlyCollection<WorkoutBlockSegment> Segments => segments
@@ -43,16 +48,29 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
         WorkoutBlockType blockType,
         BlockRepeatPrescription blockRepeatPrescription,
         AuditInfo audit,
-        OwnershipInfo ownership)
+        OwnershipInfo ownership,
+        VisibilityInfo visibility)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Workout block id cannot be empty.", nameof(id));
-        }
+        DomainGuard.NotEmptyId(
+            id.Value,
+            nameof(id));
+
+        DomainGuard.NotEmptyName(
+            name,
+            nameof(name));
 
         ArgumentNullException.ThrowIfNull(blockRepeatPrescription);
         ArgumentNullException.ThrowIfNull(audit);
         ArgumentNullException.ThrowIfNull(ownership);
+        ArgumentNullException.ThrowIfNull(visibility);
+
+        DataAccessPolicy.ValidateOwnership(
+            ownership.Origin,
+            ownership.OwnerUserId);
+
+        DataAccessPolicy.ValidateVisibility(
+            ownership.Origin,
+            visibility.Scope);
 
         Id = id;
         SetName(name);
@@ -60,46 +78,58 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
         BlockRepeatPrescription = blockRepeatPrescription;
         Audit = audit;
         Ownership = ownership;
+        Visibility = visibility;
     }
 
     public static WorkoutBlock NewBuiltIn(
         string name,
         WorkoutBlockType blockType,
         BlockRepeatPrescription? repeatPrescription = null,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new WorkoutBlock(
             WorkoutBlockId.New(),
             name,
             blockType,
             repeatPrescription ?? BlockRepeatPrescription.Once(),
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn());
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope));
     }
 
-    public static WorkoutBlock  NewBuiltInWithId(
+    public static WorkoutBlock NewBuiltInWithId(
         WorkoutBlockId id,
         string name,
         WorkoutBlockType blockType,
         BlockRepeatPrescription? repeatPrescription = null,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new WorkoutBlock(
             id,
             name,
             blockType,
             repeatPrescription ?? BlockRepeatPrescription.Once(),
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn());
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope));
     }
-    
+
     public static WorkoutBlock NewUserCreated(
         string name,
         WorkoutBlockType blockType,
         User owner,
-        BlockRepeatPrescription? repeatPrescription = null)
+        BlockRepeatPrescription? repeatPrescription = null,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.UserCreated(owner);
 
         return new WorkoutBlock(
             WorkoutBlockId.New(),
@@ -107,16 +137,41 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
             blockType,
             repeatPrescription ?? BlockRepeatPrescription.Once(),
             AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner));
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope));
+    }
+
+    public static WorkoutBlock NewCoachCreated(
+        string name,
+        WorkoutBlockType blockType,
+        User coach,
+        BlockRepeatPrescription? repeatPrescription = null,
+        VisibilityScope? visibilityScope = null)
+    {
+        ArgumentNullException.ThrowIfNull(coach);
+
+        var ownership = OwnershipInfo.CoachCreated(coach);
+
+        return new WorkoutBlock(
+            WorkoutBlockId.New(),
+            name,
+            blockType,
+            repeatPrescription ?? BlockRepeatPrescription.Once(),
+            AuditInfo.New(coach),
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope));
     }
 
     public static WorkoutBlock NewImported(
         string name,
         WorkoutBlockType blockType,
         User owner,
-        BlockRepeatPrescription? repeatPrescription = null)
+        BlockRepeatPrescription? repeatPrescription = null,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.Imported(owner);
 
         return new WorkoutBlock(
             WorkoutBlockId.New(),
@@ -124,7 +179,29 @@ public sealed record WorkoutBlock : IAudited, IOwnedData
             blockType,
             repeatPrescription ?? BlockRepeatPrescription.Once(),
             AuditInfo.New(owner),
-            OwnershipInfo.Imported(owner));
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope));
+    }
+    
+    public bool UpdateVisibility(
+        VisibilityInfo visibility,
+        User? changedBy = null)
+    {
+        ArgumentNullException.ThrowIfNull(visibility);
+
+        if (Visibility == visibility)
+        {
+            return false;
+        }
+
+        DataAccessPolicy.ValidateVisibility(
+            Ownership.Origin,
+            visibility.Scope);
+
+        Visibility = visibility;
+        MarkUpdated(changedBy);
+
+        return true;
     }
 
     public void Rename(string name, User? changedBy = null)

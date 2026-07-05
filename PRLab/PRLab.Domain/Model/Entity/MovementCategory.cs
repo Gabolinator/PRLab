@@ -1,14 +1,17 @@
 ﻿using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Model.Value;
+using PRLab.Domain.Model.Value.Access;
 using PRLab.Domain.Model.Value.Enum.Movement;
+using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
 using PRLab.Domain.Model.Value.Update;
+using PRLab.Domain.Policies;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Entity;
 
-public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
+public sealed record MovementCategory : IAudited, IDescribed, IOwnedData, IVisibilityScoped
 {
     public MovementCategoryId Id { get; init; }
 
@@ -23,6 +26,8 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
     public AuditInfo Audit { get; private set; } = null!;
 
     public OwnershipInfo Ownership { get; private set; } = null!;
+    
+    public VisibilityInfo Visibility { get; private set; } = null!;
 
     private MovementCategory()
     {
@@ -35,16 +40,29 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
         BaseMovementCategory baseMovementCategory,
         Description description,
         AuditInfo audit,
-        OwnershipInfo ownership)
+        OwnershipInfo ownership,
+        VisibilityInfo visibility)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Movement category id cannot be empty.", nameof(id));
-        }
+        DomainGuard.NotEmptyId(
+            id.Value,
+            nameof(id));
+
+        DomainGuard.NotEmptyName(
+            name,
+            nameof(name));
 
         ArgumentNullException.ThrowIfNull(description);
         ArgumentNullException.ThrowIfNull(audit);
         ArgumentNullException.ThrowIfNull(ownership);
+        ArgumentNullException.ThrowIfNull(visibility);
+        
+        DataAccessPolicy.ValidateOwnership(
+            ownership.Origin,
+            ownership.OwnerUserId);
+
+        DataAccessPolicy.ValidateVisibility(
+            ownership.Origin,
+            visibility.Scope);
 
         Id = id;
         SetName(name);
@@ -52,21 +70,26 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
         Description = description;
         Audit = audit;
         Ownership = ownership;
+        Visibility =  visibility;
     }
 
     public static MovementCategory NewBuiltIn(
         string name,
         string? description,
         BaseMovementCategory baseMovementCategory,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new MovementCategory(
             MovementCategoryId.New(),
             name,
             baseMovementCategory,
             Description.New(description),
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn()
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
@@ -74,15 +97,19 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
         string name,
         BaseMovementCategory baseMovementCategory,
         Description description,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new MovementCategory(
             MovementCategoryId.New(),
             name,
             baseMovementCategory,
             description,
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn()
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
@@ -91,15 +118,19 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
         string name,
         BaseMovementCategory baseMovementCategory,
         Description description,
-        User? createdBy = null)
+        User? createdBy = null,
+        VisibilityScope? visibilityScope = null)
     {
+        var ownership = OwnershipInfo.BuiltIn();
+
         return new MovementCategory(
             id,
             name,
             baseMovementCategory,
             description,
             AuditInfo.New(createdBy),
-            OwnershipInfo.BuiltIn()
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
@@ -107,9 +138,12 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
         string name,
         string? description,
         BaseMovementCategory baseMovementCategory,
-        User owner)
+        User owner,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.UserCreated(owner);
 
         return new MovementCategory(
             MovementCategoryId.New(),
@@ -117,7 +151,8 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
             baseMovementCategory,
             Description.New(description),
             AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner)
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
@@ -125,9 +160,12 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
         string name,
         BaseMovementCategory baseMovementCategory,
         Description description,
-        User owner)
+        User owner,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.UserCreated(owner);
 
         return new MovementCategory(
             MovementCategoryId.New(),
@@ -135,7 +173,8 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
             baseMovementCategory,
             description,
             AuditInfo.New(owner),
-            OwnershipInfo.UserCreated(owner)
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
@@ -143,9 +182,12 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
         string name,
         BaseMovementCategory baseMovementCategory,
         Description description,
-        User coach)
+        User coach,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(coach);
+
+        var ownership = OwnershipInfo.CoachCreated(coach);
 
         return new MovementCategory(
             MovementCategoryId.New(),
@@ -153,7 +195,8 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
             baseMovementCategory,
             description,
             AuditInfo.New(coach),
-            OwnershipInfo.CoachCreated(coach)
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
     }
 
@@ -161,9 +204,12 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
         string name,
         BaseMovementCategory baseMovementCategory,
         Description description,
-        User owner)
+        User owner,
+        VisibilityScope? visibilityScope = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
+
+        var ownership = OwnershipInfo.Imported(owner);
 
         return new MovementCategory(
             MovementCategoryId.New(),
@@ -171,8 +217,30 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
             baseMovementCategory,
             description,
             AuditInfo.New(owner),
-            OwnershipInfo.Imported(owner)
+            ownership,
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
         );
+    }
+
+    public bool UpdateVisibility(
+        VisibilityInfo visibility,
+        User? changedBy = null)
+    {
+        ArgumentNullException.ThrowIfNull(visibility);
+
+        if (Visibility == visibility)
+        {
+            return false;
+        }
+
+        DataAccessPolicy.ValidateVisibility(
+            Ownership.Origin,
+            visibility.Scope);
+
+        Visibility = visibility;
+        MarkUpdated(changedBy);
+
+        return true;
     }
 
     public bool Update(MovementCategoryUpdate update)
@@ -250,6 +318,7 @@ public sealed record MovementCategory : IAudited, IDescribed, IOwnedData
         Description = Description.RemoveContent(languageCode);
         MarkUpdated(changedBy);
     }
+    
 
     private void SetName(string name)
     {
