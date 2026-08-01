@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PRLab.API.DTO.Workout;
-using PRLab.API.DTO.WorkoutBlock;
-using PRLab.API.Mapper;
+using PRLab.API.DTO.Workout.WorkoutBlock;
+using PRLab.API.DTO.Workout.WorkoutBlockAssignment;
 using PRLab.API.Mapper.UpdateMapper;
+using PRLab.API.Mapper.WorkoutMappers;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Repositories.Entity;
+using PRLab.Application.Interface.UserService;
+using PRLab.Domain.Model.Join;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
@@ -17,13 +20,13 @@ public class WorkoutController : ControllerBase
 {
     private readonly IWorkoutRepository repo;
     private readonly IAppLogger logger;
-    private readonly IUserService userService;
+    private readonly ICurrentUserService userService;
     private readonly IWorkoutBlockRepository blockRepo;
 
     public WorkoutController(
         IWorkoutRepository repo,
         IWorkoutBlockRepository blockRepo,
-        IUserService userService,
+        ICurrentUserService userService,
         IAppLogger logger)
     {
         this.repo = repo;
@@ -97,9 +100,8 @@ public class WorkoutController : ControllerBase
         try
         {
             // based on account type , get workout from this user , from their coach , or other public workout 
-            // maybe add a public flag to workout ? so they can be shared or kept public ? 
-
-            var currentUser = await userService.GetActiveUserAsync(ct);
+           
+            var currentUser = await userService.GetCurrentUserAsync(ct);
             if (currentUser == null)
             {
                 logger.Log(
@@ -146,7 +148,7 @@ public class WorkoutController : ControllerBase
                 return Conflict("An Workout with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
 
             if (activeUser is null)
             {
@@ -206,7 +208,7 @@ public class WorkoutController : ControllerBase
                 return Conflict("Another Workout with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
             var update = WorkoutUpdateMapper.ToUpdate(workout, payload, activeUser);
 
             workout.Update(update);
@@ -248,7 +250,7 @@ public class WorkoutController : ControllerBase
                 return NotFound();
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
 
             if (activeUser is null)
             {
@@ -297,7 +299,7 @@ public class WorkoutController : ControllerBase
 
         try
         {
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
 
             if (activeUser is null)
             {
@@ -313,11 +315,22 @@ public class WorkoutController : ControllerBase
                 return NotFound();
             }
 
-            var workoutBlock = await blockRepo.GetTrackedByIdAsync(
+            WorkoutBlockAssignment? workoutBlockAssignment = null;
+            if (payload.Block is not null)
+            {
+                var workoutBlock = WorkoutBlockMapper.ToEntity(payload.Block, activeUser);
+                workoutBlockAssignment = WorkoutBlockMapper.ToAssignment(workoutId,  workoutBlock, payload.Sequence);
+            }
+            
+            else {  
+                
+                workoutBlockAssignment = await blockRepo.GetTrackedByIdAsync(
                 payload.WorkoutBlockId,
                 ct);
+                
+            }
 
-            if (workoutBlock is null)
+            if (workoutBlockAssignment is null)
             {
                 return NotFound("Workout block was not found.");
             }
@@ -325,7 +338,7 @@ public class WorkoutController : ControllerBase
             var sequence = payload.Sequence ?? workout.Blocks.Count + 1;
 
             workout.AddBlock(
-                workoutBlock,
+                workoutBlockAssignment,
                 activeUser,
                 sequence);
 
@@ -364,7 +377,7 @@ public class WorkoutController : ControllerBase
 
         try
         {
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
 
             if (activeUser is null)
             {
@@ -456,7 +469,7 @@ public class WorkoutController : ControllerBase
 
         try
         {
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
 
             if (activeUser is null)
             {

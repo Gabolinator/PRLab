@@ -3,6 +3,7 @@ using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
+using PRLab.Application.Interface.UserService;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
@@ -10,12 +11,13 @@ using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 
 public sealed class EquipmentSeeder(
     PRLabPgDBContext db,
-    IUserService userService, 
+    ISystemUserProvider userService, 
     IEquipmentSeedFactory seedFactory,
     IAppLogger logger) : EntitySeederBase(db, logger)
 {
@@ -65,8 +67,7 @@ public sealed class EquipmentSeeder(
         var seedEquipment = equipmentSeedItem.Entity;
 
         var existingEquipment = await db.Equipments
-            .Include(equipment => equipment.Description)
-            .ThenInclude(description => description.Translations)
+           .ForFullWrite()
             .FirstOrDefaultAsync(
                 equipment => equipment.NameKey == seedEquipment.NameKey,
                 ct);

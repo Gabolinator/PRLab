@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PRLab.API.DTO.Muscle;
+using PRLab.API.DTO.Muscle.Query;
 using PRLab.API.DTO.Muscle.Relation;
 using PRLab.API.Mapper;
 using PRLab.API.Mapper.UpdateMapper;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Repositories;
 using PRLab.Application.Interface.DB.Repositories.Entity;
+using PRLab.Application.Interface.UserService;
+using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
@@ -18,11 +21,11 @@ public sealed class MuscleController : ControllerBase
 {
     private readonly IMuscleRepository repo;
     private readonly IAppLogger logger;
-    private readonly IUserService userService;
+    private readonly ICurrentUserService userService;
 
     public MuscleController(
         IMuscleRepository repo,
-        IUserService userService,
+        ICurrentUserService userService,
         IAppLogger logger)
     {
         this.repo = repo;
@@ -87,6 +90,85 @@ public sealed class MuscleController : ControllerBase
         }
     }
 
+    [HttpGet("by-functions")]
+public async Task<IActionResult> GetMusclesByFunctions(
+    [FromQuery] MuscleFunctionQueryDTO query,
+    CancellationToken ct = default)
+{
+    ArgumentNullException.ThrowIfNull(query);
+
+    if (!Enum.IsDefined(query.MatchMode))
+    {
+        return BadRequest(
+            $"Unsupported function match mode '{query.MatchMode}'.");
+    }
+
+    var invalidFunction = query.Functions
+        .FirstOrDefault(function => !Enum.IsDefined(function));
+
+    if (query.Functions.Any(function => !Enum.IsDefined(function)))
+    {
+        return BadRequest(
+            $"Unsupported muscle function '{invalidFunction}'.");
+    }
+
+    var invalidRole = query.Roles
+        .FirstOrDefault(role => !Enum.IsDefined(role));
+
+    if (query.Roles.Any(role => !Enum.IsDefined(role)))
+    {
+        return BadRequest(
+            $"Unsupported muscle function role '{invalidRole}'.");
+    }
+
+    try
+    {
+        var distinctFunctions = query.Functions
+            .Distinct()
+            .ToList();
+
+        var distinctRoles = query.Roles
+            .Distinct()
+            .ToList();
+
+        IReadOnlyList<Muscle> muscles = query.MatchMode switch
+        {
+            MuscleFunctionMatchMode.Any =>
+                await repo.ListByAnyFunctionsAsync(
+                    distinctFunctions,
+                    distinctRoles,
+                    ct),
+
+            MuscleFunctionMatchMode.All =>
+                await repo.ListByAllFunctionsAsync(
+                    distinctFunctions,
+                    distinctRoles,
+                    ct),
+
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(query.MatchMode),
+                query.MatchMode,
+                "Unsupported function match mode.")
+        };
+
+        return Ok(
+            MuscleMapper.ToGetDTOs(
+                muscles,
+                query.Language));
+    }
+    catch (Exception exception)
+    {
+        logger.Log(
+            nameof(MuscleController),
+            $"Failed to get muscles by functions: " +
+            $"{exception.Message}");
+
+        return StatusCode(
+            StatusCodes.Status500InternalServerError,
+            "An unexpected error occurred.");
+    }
+}
+    
     [HttpPost]
     public async Task<IActionResult> CreateMuscle(
         MusclePostDTO payload,
@@ -104,7 +186,7 @@ public sealed class MuscleController : ControllerBase
                 return Conflict("A muscle with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
             var muscle = MuscleMapper.ToEntity(payload, activeUser);
 
             var createdMuscle = await repo.CreateAsync(muscle, ct);
@@ -141,7 +223,7 @@ public sealed class MuscleController : ControllerBase
         {
             var muscleId = MuscleId.FromGuid(id);
 
-            var muscle = await repo.GetByIdAsync(muscleId, ct);
+            var muscle = await repo.GetTrackedByIdAsync(muscleId, ct);
 
             if (muscle is null)
             {
@@ -158,7 +240,7 @@ public sealed class MuscleController : ControllerBase
                 return Conflict("Another muscle with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
             var update = MuscleUpdateMapper.ToUpdate(payload, activeUser);
 
             muscle.Update(update);

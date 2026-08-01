@@ -19,6 +19,10 @@ public sealed record Muscle : IAudited, IDescribed
     public string? LatinName { get; private set; }
 
     public BodySection BodySection { get; private set; }
+    
+    private readonly List<MuscleFunctionAssignment> functions = [];
+
+    public IReadOnlyCollection<MuscleFunctionAssignment> Functions => functions;
 
     public Description Description { get; private set; } = null!;
 
@@ -169,6 +173,209 @@ public sealed record Muscle : IAudited, IDescribed
         return hasChanged;
     }
     
+    public bool AddFunction(
+        MuscleFunction function,
+        MuscleFunctionRole role,
+        User? changedBy = null)
+    {
+        if (!Enum.IsDefined(function))
+        {
+            throw new ArgumentOutOfRangeException(nameof(function));
+        }
+
+        if (!Enum.IsDefined(role))
+        {
+            throw new ArgumentOutOfRangeException(nameof(role));
+        }
+
+        var existingAssignment = functions.FirstOrDefault(
+            assignment => assignment.Function == function);
+
+        if (existingAssignment is not null)
+        {
+            return false;
+        }
+
+        functions.Add(
+            MuscleFunctionAssignment.New(
+                Id,
+                function,
+                role));
+
+        MarkUpdated(changedBy);
+
+        return true;
+    }
+    
+    public bool ReplaceFunctions(
+    IReadOnlyCollection<MuscleFunctionDefinition> requestedFunctions,
+    User? changedBy = null)
+{
+    ArgumentNullException.ThrowIfNull(requestedFunctions);
+
+    foreach (var requestedFunction in requestedFunctions)
+    {
+        if (!Enum.IsDefined(requestedFunction.Function))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(requestedFunctions),
+                requestedFunction.Function,
+                "Unsupported muscle function.");
+        }
+
+        if (!Enum.IsDefined(requestedFunction.Role))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(requestedFunctions),
+                requestedFunction.Role,
+                "Unsupported muscle function role.");
+        }
+    }
+
+    var duplicateFunctions = requestedFunctions
+        .GroupBy(requestedFunction => requestedFunction.Function)
+        .Where(group => group.Count() > 1)
+        .Select(group => group.Key)
+        .ToList();
+
+    if (duplicateFunctions.Count > 0)
+    {
+        throw new ArgumentException(
+            $"Duplicate muscle functions are not allowed: " +
+            $"{string.Join(", ", duplicateFunctions)}.",
+            nameof(requestedFunctions));
+    }
+
+    var requestedFunctionsByType = requestedFunctions
+        .ToDictionary(
+            requestedFunction => requestedFunction.Function,
+            requestedFunction => requestedFunction.Role);
+
+    var hasChanged = false;
+
+    foreach (var existingFunction in functions.ToList())
+    {
+        if (!requestedFunctionsByType.TryGetValue(
+                existingFunction.Function,
+                out var requestedRole))
+        {
+            functions.Remove(existingFunction);
+            hasChanged = true;
+
+            continue;
+        }
+
+        hasChanged =
+            existingFunction.ChangeRole(requestedRole) ||
+            hasChanged;
+    }
+
+    var existingFunctionTypes = functions
+        .Select(functionAssignment => functionAssignment.Function)
+        .ToHashSet();
+
+    foreach (var requestedFunction in requestedFunctions)
+    {
+        if (existingFunctionTypes.Contains(requestedFunction.Function))
+        {
+            continue;
+        }
+
+        functions.Add(
+            MuscleFunctionAssignment.New(
+                Id,
+                requestedFunction.Function,
+                requestedFunction.Role));
+
+        hasChanged = true;
+    }
+
+    if (hasChanged)
+    {
+        MarkUpdated(changedBy);
+    }
+
+    return hasChanged;
+}
+    
+    public bool HasAnyFunctions(
+        IReadOnlyCollection<MuscleFunction> muscleFunctions,
+        params MuscleFunctionRole[] functionRoles)
+    {
+        ArgumentNullException.ThrowIfNull(muscleFunctions);
+        ArgumentNullException.ThrowIfNull(functionRoles);
+
+        if (muscleFunctions.Count == 0 ||
+            Functions.Count == 0)
+        {
+            return false;
+        }
+
+        var requestedFunctions = muscleFunctions.ToHashSet();
+
+        if (functionRoles.Length == 0)
+        {
+            return Functions.Any(
+                functionAssignment =>
+                    requestedFunctions.Contains(
+                        functionAssignment.Function));
+        }
+
+        var acceptedRoles = functionRoles.ToHashSet();
+
+        return Functions.Any(
+            functionAssignment =>
+                requestedFunctions.Contains(
+                    functionAssignment.Function) &&
+                acceptedRoles.Contains(
+                    functionAssignment.Role));
+    }
+    
+    public bool HasAllFunctions(
+        IReadOnlyCollection<MuscleFunction> muscleFunctions,
+        params MuscleFunctionRole[] functionRoles)
+    {
+        ArgumentNullException.ThrowIfNull(muscleFunctions);
+        ArgumentNullException.ThrowIfNull(functionRoles);
+
+        var requestedFunctions = muscleFunctions
+            .ToHashSet();
+
+        if (requestedFunctions.Count == 0)
+        {
+            return true;
+        }
+
+        if (Functions.Count == 0)
+        {
+            return false;
+        }
+
+        if (functionRoles.Length == 0)
+        {
+            var availableFunctions = Functions
+                .Select(functionAssignment =>
+                    functionAssignment.Function)
+                .ToHashSet();
+
+            return requestedFunctions.IsSubsetOf(
+                availableFunctions);
+        }
+
+        var acceptedRoles = functionRoles
+            .ToHashSet();
+
+        var availableFunctionsForRoles = Functions
+            .Where(functionAssignment =>
+                acceptedRoles.Contains(functionAssignment.Role))
+            .Select(functionAssignment =>
+                functionAssignment.Function)
+            .ToHashSet();
+
+        return requestedFunctions.IsSubsetOf(
+            availableFunctionsForRoles);
+    }
+    
     private void SetName(string name)
     {
         Name = FormatingUtilities.NormalizeName(name);
@@ -313,5 +520,4 @@ public sealed record Muscle : IAudited, IDescribed
     {
         Audit = Audit.MarkDeleted(deletedBy);
     }
-    
 }

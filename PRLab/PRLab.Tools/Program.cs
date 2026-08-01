@@ -16,7 +16,7 @@ var clock = new Clock();
 
 builder.PRLabToolConfiguration(args);
 
-builder.Services.AddPRLabToolServices(builder.Configuration, clock, logger);
+builder.Services.AddPRLabToolServices(builder.Configuration, builder.Environment.IsDevelopment() ,clock, logger);
 
 using var host = builder.Build();
 

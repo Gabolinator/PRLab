@@ -3,6 +3,7 @@ using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Muscle;
+using PRLab.Application.Interface.UserService;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
@@ -10,12 +11,13 @@ using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 
 public sealed class MuscleSeeder(
     PRLabPgDBContext db,
-    IUserService userService,
+    ISystemUserProvider userService,
     IMuscleSeedFactory seedFactory,
     IAppLogger logger) : EntitySeederBase(db, logger)
 {
@@ -50,6 +52,8 @@ public sealed class MuscleSeeder(
         SeedItem<Muscle> muscleSeedItem,
         CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(muscleSeedItem);
+
         if (muscleSeedItem.Action == SeedAction.Ignore)
         {
             return (null, null);
@@ -58,17 +62,23 @@ public sealed class MuscleSeeder(
         var seedMuscle = muscleSeedItem.Entity;
 
         var existingMuscle = await db.Muscles
-            .Include(muscle => muscle.Description)
-                .ThenInclude(description => description.Translations)
+            .ForFullWrite()
             .FirstOrDefaultAsync(
                 muscle => muscle.NameKey == seedMuscle.NameKey,
                 ct);
 
         if (existingMuscle is null)
         {
-            await db.Muscles.AddAsync(seedMuscle, ct);
+            /*
+             * seedMuscle already contains its MuscleFunctionAssignment rows,
+             * so EF will insert them with the new muscle.
+             */
+            await db.Muscles.AddAsync(
+                seedMuscle,
+                ct);
 
-            logger.Log($"Seeded - {EntityType} : {seedMuscle.NameKey}");
+            logger.Log(
+                $"Seeded - {EntityType} : {seedMuscle.NameKey}");
 
             return (
                 seedMuscle,
@@ -82,13 +92,29 @@ public sealed class MuscleSeeder(
             return (existingMuscle, null);
         }
 
-        logger.Log($"Seeder Updating - {EntityType} : {seedMuscle.NameKey}");
+        logger.Log(
+            $"Seeder Updating - {EntityType} : {seedMuscle.NameKey}");
 
-        var hasChanged = existingMuscle.Update(
+        var muscleChanged = existingMuscle.Update(
             MuscleUpdate.FromMuscle(
                 seedMuscle,
-                null,
+                language: null,
                 SeedUser));
+
+        var requestedFunctions = seedMuscle.Functions
+            .Select(functionAssignment =>
+                new MuscleFunctionDefinition(
+                    functionAssignment.Function,
+                    functionAssignment.Role))
+            .ToList();
+
+        var functionsChanged = existingMuscle.ReplaceFunctions(
+            requestedFunctions,
+            SeedUser);
+
+        var hasChanged =
+            muscleChanged ||
+            functionsChanged;
 
         return hasChanged
             ? (

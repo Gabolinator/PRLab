@@ -2,18 +2,20 @@
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
+using PRLab.Application.Interface.UserService;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 
 public sealed class MovementCategorySeeder(
     PRLabPgDBContext db,
-    IUserService userService,
+    ISystemUserProvider userService,
     IMovementCategorySeedFactory seedFactory,
     IAppLogger logger) : EntitySeederBase(db, logger)
 {
@@ -56,8 +58,7 @@ public sealed class MovementCategorySeeder(
         var seedMovementCategory = movementCategorySeedItem.Entity;
 
         var existingMovementCategory = await db.MovementCategories
-            .Include(movementCategory => movementCategory.Description)
-                .ThenInclude(description => description.Translations)
+          .ForFullWrite()
             .FirstOrDefaultAsync(
                 movementCategory => movementCategory.NameKey == seedMovementCategory.NameKey,
                 ct);

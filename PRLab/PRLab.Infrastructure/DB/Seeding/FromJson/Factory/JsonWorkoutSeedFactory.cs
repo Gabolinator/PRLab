@@ -1,6 +1,7 @@
 ﻿using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Workout;
+using PRLab.Application.Interface.UserService;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Domain.Model.Entity;
@@ -14,7 +15,7 @@ using PRLab.Infrastructure.DB.Seeding.Validation;
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 
 public sealed class JsonWorkoutSeedFactory(
-    IUserService userService,
+    ISystemUserProvider userService,
     ISeedingConfig config,
     IWorkoutSeedRelationResolver relationResolver)
     : BaseJsonSeedFactory<Workout, WorkoutSeedJsonDto>(userService, config), IWorkoutSeedFactory

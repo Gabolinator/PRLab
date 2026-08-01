@@ -1,60 +1,73 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Repositories.Entity;
+using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Repositories.Entity;
 
-public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipmentRepository
+public sealed class EquipmentRepository(
+    PRLabPgDBContext db) : IEquipmentRepository
 {
-    public async Task<Equipment?> GetByIdAsync(EquipmentId id, CancellationToken ct)
+    public async Task<Equipment?> GetByIdAsync(
+        EquipmentId id,
+        CancellationToken ct)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Equipment id cannot be empty.", nameof(id));
-        }
+        ValidateId(id);
 
-        return await BaseEquipmentQuery()
+        return await BaseEquipmentReadQuery()
             .FirstOrDefaultAsync(
                 equipment => equipment.Id == id,
                 ct);
     }
 
-    public async Task<Equipment?> GetByNameAsync(string name, CancellationToken ct)
+    public async Task<Equipment?> GetTrackedByIdAsync(
+        EquipmentId id,
+        CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Equipment name cannot be empty.", nameof(name));
-        }
+        ValidateId(id);
+
+        return await BaseEquipmentWriteQuery()
+            .FirstOrDefaultAsync(
+                equipment => equipment.Id == id,
+                ct);
+    }
+
+    public async Task<Equipment?> GetByNameAsync(
+        string name,
+        CancellationToken ct)
+    {
+        ValidateName(name);
 
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
 
-        return await BaseEquipmentQuery()
+        return await BaseEquipmentReadQuery()
             .FirstOrDefaultAsync(
                 equipment => equipment.NameKey == nameKey,
                 ct);
     }
 
-    public async Task<IReadOnlyCollection<Equipment>> ListAsync(CancellationToken ct)
+    public async Task<IReadOnlyCollection<Equipment>> ListAsync(
+        CancellationToken ct)
     {
-        return await BaseEquipmentQuery()
+        return await BaseEquipmentReadQuery()
             .OrderBy(equipment => equipment.Name)
             .ToListAsync(ct);
     }
 
-    public async Task<int> CountAsync(CancellationToken ct)
+    public async Task<int> CountAsync(
+        CancellationToken ct)
     {
-        return await db.Equipments
-            .AsNoTracking()
-            .CountAsync(
-                equipment => !equipment.Audit.IsDeleted,
-                ct);
+        return await BaseEquipmentLookupQuery()
+            .CountAsync(ct);
     }
 
-    public async Task<Equipment> CreateAsync(Equipment equipment, CancellationToken ct)
+    public async Task<Equipment> CreateAsync(
+        Equipment equipment,
+        CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(equipment);
 
@@ -64,33 +77,34 @@ public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipment
         return equipment;
     }
 
-    public async Task<Equipment> UpdateAsync(Equipment equipment, CancellationToken ct)
+    public async Task<Equipment> UpdateAsync(
+        Equipment equipment,
+        CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(equipment);
+        ValidateId(equipment.Id);
 
-        if (equipment.Id.Value == Guid.Empty)
+        if (db.Entry(equipment).State == EntityState.Detached)
         {
-            throw new ArgumentException("Equipment id cannot be empty.", nameof(equipment));
+            throw new InvalidOperationException(
+                "Equipment must be loaded with GetByIdForUpdateAsync " +
+                "before it can be updated.");
         }
 
-        db.Equipments.Update(equipment);
         await db.SaveChangesAsync(ct);
 
         return equipment;
     }
 
-    public async Task<bool> ExistsAsync(EquipmentId id, CancellationToken ct)
+    public async Task<bool> ExistsAsync(
+        EquipmentId id,
+        CancellationToken ct)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Equipment id cannot be empty.", nameof(id));
-        }
+        ValidateId(id);
 
-        return await db.Equipments
-            .AsNoTracking()
+        return await BaseEquipmentLookupQuery()
             .AnyAsync(
-                equipment => equipment.Id == id &&
-                             !equipment.Audit.IsDeleted,
+                equipment => equipment.Id == id,
                 ct);
     }
 
@@ -99,29 +113,47 @@ public class EquipmentRepository(PRLabPgDBContext db, IClock clock) : IEquipment
         EquipmentId? excludedEquipmentId,
         CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        ValidateName(name);
+
+        if (excludedEquipmentId.HasValue)
         {
-            throw new ArgumentException("Equipment name cannot be empty.", nameof(name));
+            ValidateId(excludedEquipmentId.Value);
         }
 
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
 
-        return await db.Equipments
-            .AsNoTracking()
+        return await BaseEquipmentLookupQuery()
             .AnyAsync(
                 equipment =>
                     equipment.NameKey == nameKey &&
-                    !equipment.Audit.IsDeleted &&
-                    (!excludedEquipmentId.HasValue || equipment.Id != excludedEquipmentId.Value),
+                    (!excludedEquipmentId.HasValue ||
+                     equipment.Id != excludedEquipmentId.Value),
                 ct);
     }
 
-    private IQueryable<Equipment> BaseEquipmentQuery()
+    private IQueryable<Equipment> BaseEquipmentReadQuery()
     {
         return db.Equipments
-            .AsNoTracking()
-            .Include(equipment => equipment.Description)
-            .ThenInclude(description => description.Translations)
-            .Where(equipment => !equipment.Audit.IsDeleted);
+            .ForFullRead();
     }
+
+    private IQueryable<Equipment> BaseEquipmentWriteQuery()
+    {
+        return db.Equipments
+            .ForFullWrite();
+    }
+
+    private IQueryable<Equipment> BaseEquipmentLookupQuery()
+    {
+        return db.Equipments
+            .ActiveOnly()
+            .AsNoTracking();
+    }
+
+    private static void ValidateId(EquipmentId id)
+        => DomainGuard.ValidRequiredId(id, nameof(id));
+    
+
+    private static void ValidateName(string name)
+        => DomainGuard.NotEmptyName(name, nameof(name));
 }

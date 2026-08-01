@@ -15,6 +15,8 @@ public sealed record MuscleSeedJsonDto
     public string? LatinName { get; init; }
 
     public BodySection BodySection { get; init; }
+    
+    public IReadOnlyList<MuscleFunctionSeedJsonDto> Functions { get; init; } = [];
 
     public DescriptionSeedJsonDto? Description { get; init; }
 
@@ -33,6 +35,11 @@ public sealed record MuscleSeedJsonDto
             NameKey = muscle.NameKey,
             LatinName = muscle.LatinName,
             BodySection = muscle.BodySection,
+            Functions = muscle.Functions
+                .OrderBy(muscleFunction => muscleFunction.Role)
+                .ThenBy(muscleFunction => muscleFunction.Function)
+                .Select(MuscleFunctionSeedJsonDto.FromMuscleFunction)
+                .ToList(),
             Description = muscle.Description is null
                 ? null
                 : DescriptionSeedJsonDto.FromDescription(muscle.Description),

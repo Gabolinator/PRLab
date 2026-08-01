@@ -1,15 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PRLab.Application.Interface.DB;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Join;
 using PRLab.Domain.Model.Value.WorkoutStructure;
 using PRLab.Domain.Model.Value.WorkoutValue;
-using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.ModelBuilders;
 using PRLab.Infrastructure.DB.ModelBuilders.Entity;
-using PRLab.Infrastructure.DB.Seeding;
 
 namespace PRLab.Infrastructure.DB.Context;
 

@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.Anatomy;
 using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.Application.Interface.DB.Repositories.Entity;
@@ -7,6 +8,16 @@ public interface IMuscleRepository
 {
     Task<IReadOnlyList<Muscle>> ListAsync(CancellationToken ct);
 
+    Task<IReadOnlyList<Muscle>> ListByAnyFunctionsAsync(
+        IReadOnlyList<MuscleFunction> functions,
+        IReadOnlyList<MuscleFunctionRole>? muscleFunctionRoles,
+        CancellationToken ct);
+    
+    Task<IReadOnlyList<Muscle>> ListByAllFunctionsAsync(
+        IReadOnlyList<MuscleFunction> functions,
+        IReadOnlyList<MuscleFunctionRole>? muscleFunctionRoles,
+        CancellationToken ct);
+    
     Task<Muscle?> GetByIdAsync(MuscleId id, CancellationToken ct);
 
     Task<Muscle> CreateAsync(Muscle muscle, CancellationToken ct);
@@ -22,6 +33,10 @@ public interface IMuscleRepository
     Task<Muscle> UpdateAntagonistsAsync(
         MuscleId id,
         IReadOnlyCollection<MuscleId> antagonistIds,
+        CancellationToken ct);
+    
+    Task<Muscle?> GetTrackedByIdAsync(
+        MuscleId id,
         CancellationToken ct);
     
     Task<bool> NameExistsAsync(

@@ -12,14 +12,17 @@ public static class InfrastructureModularity
             .AddSingleton<IClock>(clock);
     }
 
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration,
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        bool isDevelopment,
         IAppLogger logger)
 
     {
         var updatedServices = services
             .AddDBContextConfiguration(configuration, logger)
             .AddRepositories()
-            .AddUserService()
+            .AddUserServices(isDevelopment, configuration)
             .AddDataSeeding(configuration, logger);
         
         return updatedServices;

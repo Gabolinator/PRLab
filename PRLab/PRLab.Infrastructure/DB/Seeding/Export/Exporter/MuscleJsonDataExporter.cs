@@ -24,19 +24,5 @@ public class MuscleJsonDataExporter(PRLabPgDBContext db, ISeedingConfig config)
             .OrderBy(muscle => muscle.Name)
             .Select(MuscleSeedJsonDto.FromMuscle)
             .ToList();
-            
-        // var muscles = await db.Muscles
-        //     .AsNoTracking()
-        //     .AsSplitQuery()
-        //     .Include(muscle => muscle.Description)
-        //         .ThenInclude(description => description.Translations)
-        //     .Include(muscle => muscle.Antagonists)
-        //         .ThenInclude(antagonist => antagonist.AntagonistMuscle)
-        //     .OrderBy(muscle => muscle.Name)
-        //     .ToListAsync(ct);
-        //
-        // return muscles
-        //     .Select(MuscleSeedJsonDto.FromMuscle)
-        //     .ToList();
     }
 }

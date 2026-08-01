@@ -10,6 +10,7 @@ public static class MuscleModelBuilder
     public static void AddMuscleTableModels(this ModelBuilder modelBuilder)
     {
         modelBuilder.CreateMuscleTableModel();
+        modelBuilder.CreateMuscleFunctionTableModel();
         modelBuilder.CreateMuscleAntagonistTableModel();
     }
 
@@ -30,7 +31,7 @@ public static class MuscleModelBuilder
             muscle.Property(muscle => muscle.Name)
                 .HasMaxLength(150)
                 .IsRequired();
-            
+
             muscle.Property(muscle => muscle.NameKey)
                 .HasMaxLength(150)
                 .IsRequired();
@@ -63,8 +64,12 @@ public static class MuscleModelBuilder
 
                 audit.Property(auditInfo => auditInfo.UpdatedBy)
                     .HasConversion<Guid?>(
-                        userId => userId.HasValue ? userId.Value.Value : null,
-                        value => value.HasValue ? UserId.FromGuid(value.Value) : null);
+                        userId => userId.HasValue
+                            ? userId.Value.Value
+                            : null,
+                        value => value.HasValue
+                            ? UserId.FromGuid(value.Value)
+                            : null);
 
                 audit.Property(auditInfo => auditInfo.IsDeleted)
                     .HasColumnName("IsDeleted")
@@ -76,13 +81,61 @@ public static class MuscleModelBuilder
 
                 audit.Property(auditInfo => auditInfo.DeletedBy)
                     .HasConversion<Guid?>(
-                        userId => userId.HasValue ? userId.Value.Value : null,
-                        value => value.HasValue ? UserId.FromGuid(value.Value) : null);
+                        userId => userId.HasValue
+                            ? userId.Value.Value
+                            : null,
+                        value => value.HasValue
+                            ? UserId.FromGuid(value.Value)
+                            : null);
             });
         });
     }
 
-    public static void CreateMuscleAntagonistTableModel(this ModelBuilder modelBuilder)
+    public static void CreateMuscleFunctionTableModel(
+        this ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<MuscleFunctionAssignment>(muscleFunction =>
+        {
+            muscleFunction.ToTable("MuscleFunction");
+
+            muscleFunction.HasKey(muscleFunction => new
+            {
+                muscleFunction.MuscleId,
+                muscleFunction.Function
+            });
+
+            muscleFunction.Property(muscleFunction => muscleFunction.MuscleId)
+                .HasConversion(
+                    muscleId => muscleId.Value,
+                    value => MuscleId.FromGuid(value))
+                .ValueGeneratedNever()
+                .IsRequired();
+
+            muscleFunction.Property(muscleFunction => muscleFunction.Function)
+                .HasConversion<string>()
+                .HasMaxLength(80)
+                .IsRequired();
+
+            muscleFunction.Property(muscleFunction => muscleFunction.Role)
+                .HasConversion<string>()
+                .HasMaxLength(50)
+                .IsRequired();
+
+            muscleFunction.HasOne(muscleFunction => muscleFunction.Muscle)
+                .WithMany(muscle => muscle.Functions)
+                .HasForeignKey(muscleFunction => muscleFunction.MuscleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Muscle>(muscle =>
+        {
+            muscle.Navigation(muscle => muscle.Functions)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+        });
+    }
+
+    public static void CreateMuscleAntagonistTableModel(
+        this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<MuscleAntagonist>(muscleAntagonist =>
         {
@@ -94,28 +147,35 @@ public static class MuscleModelBuilder
                 muscleAntagonist.AntagonistMuscleId
             });
 
-            muscleAntagonist.Property(muscleAntagonist => muscleAntagonist.MuscleId)
+            muscleAntagonist.Property(
+                    muscleAntagonist => muscleAntagonist.MuscleId)
                 .HasConversion(
                     muscleId => muscleId.Value,
                     value => MuscleId.FromGuid(value))
                 .ValueGeneratedNever()
                 .IsRequired();
 
-            muscleAntagonist.Property(muscleAntagonist => muscleAntagonist.AntagonistMuscleId)
+            muscleAntagonist.Property(
+                    muscleAntagonist => muscleAntagonist.AntagonistMuscleId)
                 .HasConversion(
                     muscleId => muscleId.Value,
                     value => MuscleId.FromGuid(value))
                 .ValueGeneratedNever()
                 .IsRequired();
 
-            muscleAntagonist.HasOne(muscleAntagonist => muscleAntagonist.Muscle)
+            muscleAntagonist.HasOne(
+                    muscleAntagonist => muscleAntagonist.Muscle)
                 .WithMany(muscle => muscle.Antagonists)
-                .HasForeignKey(muscleAntagonist => muscleAntagonist.MuscleId)
+                .HasForeignKey(
+                    muscleAntagonist => muscleAntagonist.MuscleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            muscleAntagonist.HasOne(muscleAntagonist => muscleAntagonist.AntagonistMuscle)
+            muscleAntagonist.HasOne(
+                    muscleAntagonist => muscleAntagonist.AntagonistMuscle)
                 .WithMany()
-                .HasForeignKey(muscleAntagonist => muscleAntagonist.AntagonistMuscleId)
+                .HasForeignKey(
+                    muscleAntagonist =>
+                        muscleAntagonist.AntagonistMuscleId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
@@ -133,7 +193,7 @@ public static class MuscleModelBuilder
             muscle.HasIndex(muscle => muscle.Name)
                 .IsUnique()
                 .HasFilter("\"IsDeleted\" = false");
-            
+
             muscle.HasIndex(muscle => muscle.NameKey)
                 .IsUnique()
                 .HasFilter("\"IsDeleted\" = false");
@@ -145,9 +205,20 @@ public static class MuscleModelBuilder
             muscle.HasIndex("DescriptionId");
         });
 
+        modelBuilder.Entity<MuscleFunctionAssignment>(muscleFunction =>
+        {
+            muscleFunction.HasIndex(muscleFunction => new
+            {
+                muscleFunction.Function,
+                muscleFunction.Role
+            });
+        });
+
         modelBuilder.Entity<MuscleAntagonist>(muscleAntagonist =>
         {
-            muscleAntagonist.HasIndex(muscleAntagonist => muscleAntagonist.AntagonistMuscleId);
+            muscleAntagonist.HasIndex(
+                muscleAntagonist =>
+                    muscleAntagonist.AntagonistMuscleId);
         });
     }
 }

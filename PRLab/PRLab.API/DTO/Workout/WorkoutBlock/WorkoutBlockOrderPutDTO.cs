@@ -1,4 +1,6 @@
-﻿namespace PRLab.API.DTO.WorkoutBlock;
+﻿using PRLab.API.DTO.Workout.WorkoutBlockAssignment;
+
+namespace PRLab.API.DTO.Workout.WorkoutBlock;
 
 public sealed record WorkoutBlockOrderPutDTO
 {

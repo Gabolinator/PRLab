@@ -5,6 +5,7 @@ using PRLab.API.Mapper.UpdateMapper;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Repositories;
 using PRLab.Application.Interface.DB.Repositories.Entity;
+using PRLab.Application.Interface.UserService;
 using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.Movement;
 using PRLab.Domain.Model.Value.Identifier;
@@ -19,11 +20,11 @@ public sealed class MovementCategoryController : ControllerBase
 {
     private readonly IMovementCategoryRepository repo;
     private readonly IAppLogger logger;
-    private readonly IUserService userService;
+    private readonly ICurrentUserService userService;
 
     public MovementCategoryController(
         IMovementCategoryRepository repo,
-        IUserService userService,
+        ICurrentUserService userService,
         IAppLogger logger)
     {
         this.repo = repo;
@@ -44,7 +45,7 @@ public sealed class MovementCategoryController : ControllerBase
 
         try
         {
-            var movementCategory = await repo.GetByIdAsync(
+            var movementCategory = await repo.GetTrackedByIdAsync(
                 MovementCategoryId.FromGuid(id),
                 ct);
 
@@ -144,7 +145,7 @@ public sealed class MovementCategoryController : ControllerBase
                 return Conflict("A movement category with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
 
             if (activeUser is null)
             {
@@ -207,7 +208,7 @@ public sealed class MovementCategoryController : ControllerBase
                 }
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
             var update = MovementCategoryUpdateMapper.ToUpdate(payload, activeUser);
 
             movementCategory.Update(update);

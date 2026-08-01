@@ -1,12 +1,13 @@
 ﻿using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Muscle;
+using PRLab.Application.Interface.UserService;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.Anatomy;
 
 namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.MuscleFactory;
 
-public sealed class DevelopmentMuscleSeedFactory(IUserService userService) : IMuscleSeedFactory
+public sealed class DevelopmentMuscleSeedFactory(ISystemUserProvider userService) : IMuscleSeedFactory
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");
     

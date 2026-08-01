@@ -19,6 +19,10 @@ public interface IMovementCategoryRepository
         BaseMovementCategory baseMovementCategory,
         CancellationToken ct);
 
+    Task<MovementCategory?> GetTrackedByIdAsync(
+        MovementCategoryId id,
+        CancellationToken ct);
+    
     Task<MovementCategory> CreateAsync(
         MovementCategory movementCategory,
         CancellationToken ct);

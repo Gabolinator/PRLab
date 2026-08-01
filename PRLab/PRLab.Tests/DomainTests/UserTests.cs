@@ -2,6 +2,7 @@
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Interface;
+using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Utilities;
 
@@ -40,7 +41,7 @@ public sealed class UserTests
     {
         var name = "  Admin user  ";
 
-        var user = User.NewAdmin(name);
+        var user = User.Admin(name);
 
         user.Name.Should().Be(FormatingUtilities.NormalizeName(name));
         user.Role.Should().Be(UserRole.Admin);
@@ -53,8 +54,8 @@ public sealed class UserTests
     {
         var user = User.Admin();
 
-        user.Id.Should().Be(User.SystemUser.Id);
-        user.Name.Should().Be(FormatingUtilities.NormalizeName(User.SystemUser.Name));
+        user.Id.Should().Be(PredefinedUsers.System.Id);
+        user.Name.Should().Be(FormatingUtilities.NormalizeName(PredefinedUsers.System.Name));
         user.Role.Should().Be(UserRole.Admin);
         user.Audit.Should().NotBeNull();
         user.Audit.IsDeleted.Should().BeFalse();

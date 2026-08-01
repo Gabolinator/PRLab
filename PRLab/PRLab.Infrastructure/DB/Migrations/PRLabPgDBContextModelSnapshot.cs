@@ -453,6 +453,27 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.ToTable("MuscleAntagonist", "public");
                 });
 
+            modelBuilder.Entity("PRLab.Domain.Model.Join.MuscleFunctionAssignment", b =>
+                {
+                    b.Property<Guid>("MuscleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Function")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("MuscleId", "Function");
+
+                    b.HasIndex("Function", "Role");
+
+                    b.ToTable("MuscleFunction", "public");
+                });
+
             modelBuilder.Entity("PRLab.Domain.Model.Join.WorkoutBlockAssignment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1365,6 +1386,17 @@ namespace PRLab.Infrastructure.DB.Migrations
                         .IsRequired();
 
                     b.Navigation("AntagonistMuscle");
+
+                    b.Navigation("Muscle");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Join.MuscleFunctionAssignment", b =>
+                {
+                    b.HasOne("PRLab.Domain.Model.Entity.Muscle", "Muscle")
+                        .WithMany("Functions")
+                        .HasForeignKey("MuscleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Muscle");
                 });
@@ -2700,6 +2732,8 @@ namespace PRLab.Infrastructure.DB.Migrations
             modelBuilder.Entity("PRLab.Domain.Model.Entity.Muscle", b =>
                 {
                     b.Navigation("Antagonists");
+
+                    b.Navigation("Functions");
                 });
 
             modelBuilder.Entity("PRLab.Domain.Model.Entity.Workout", b =>

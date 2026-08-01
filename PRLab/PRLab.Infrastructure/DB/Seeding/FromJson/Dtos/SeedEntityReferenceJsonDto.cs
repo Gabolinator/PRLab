@@ -10,7 +10,7 @@ public sealed record SeedEntityReferenceJsonDto
     public string? Name { get; init; }
 
     public string? NameKey { get; init; }
-
+    
     public static SeedEntityReferenceJsonDto FromCategory(MovementCategory entity) =>
         new()
         {

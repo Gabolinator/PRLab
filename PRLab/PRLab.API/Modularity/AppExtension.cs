@@ -5,11 +5,35 @@ using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
 using PRLab.Infrastructure.DB.Seeding.Config;
+using PRLab.Infrastructure.UserServices;
 
 namespace PRLab.API.Modularity;
 
 public static class AppExtension
 {
+    public static async Task Initialize(this WebApplication app, IAppLogger logger)
+    {
+        //do common initialization here
+        
+        if (app.Environment.IsDevelopment())
+        {
+           await app.InitializeForDevelopment(logger);
+        }
+    }
+    
+    public static async Task InitializeForDevelopment(this WebApplication app, IAppLogger logger)
+    {
+        logger.Log(nameof(InitializeForDevelopment), "Initializing...");
+        
+        await using var scope = app.Services.CreateAsyncScope();
+
+        var userInitializer = scope.ServiceProvider
+            .GetRequiredService<DevelopmentUserInitializer>();
+
+        await userInitializer.EnsureCreatedAsync();
+        logger.Log(nameof(InitializeForDevelopment),  $"Initialized {nameof(DevelopmentUserInitializer)}");
+    }
+    
     public static void ConfigureRequestPipeline(this WebApplication app)
     {
         if (app.Environment.IsDevelopment())
@@ -22,7 +46,7 @@ public static class AppExtension
         app.UseAuthorization();
         // app.UseCors();
     }
-
+    
     public static void MapEndpoints(this WebApplication app)
     {
         app.MapControllers();

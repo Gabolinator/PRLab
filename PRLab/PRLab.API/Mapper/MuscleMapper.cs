@@ -1,5 +1,8 @@
 ﻿using PRLab.API.DTO.Muscle;
+using PRLab.API.DTO.Muscle.Relation;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Join;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.API.Mapper;
@@ -26,12 +29,41 @@ public static class MuscleMapper
                 muscle.LatinName,
                 muscle.BodySection,
                 DescriptionMapper.ToGetDTO(muscle.Description, language),
+                ToGetDTOs(muscle.Functions),
                 muscle.Antagonists
                     .Where(antagonist => antagonist.AntagonistMuscle is not null)
                     .Select(antagonist => ToSummaryDTO(antagonist.AntagonistMuscle))
                     .ToList()
             );
         
+    }
+    
+    public static IReadOnlyList<MuscleFunctionAssignment> ToAssignments(
+        IReadOnlyCollection<MuscleFunctionInputDTO> functions,
+        MuscleId muscleId)
+    {
+        ArgumentNullException.ThrowIfNull(functions);
+
+        return functions
+            .Select(function => MuscleFunctionAssignment.New(
+                muscleId,
+                function.Function,
+                function.Role))
+            .ToList();
+    }
+    
+    public static IReadOnlyList<MuscleFunctionGetDTO> ToGetDTOs(
+        IReadOnlyCollection<MuscleFunctionAssignment> functions)
+    {
+        ArgumentNullException.ThrowIfNull(functions);
+
+        return functions
+            .OrderBy(muscleFunction => muscleFunction.Role)
+            .ThenBy(muscleFunction => muscleFunction.Function)
+            .Select(muscleFunction => new MuscleFunctionGetDTO(
+                muscleFunction.Function,
+                muscleFunction.Role))
+            .ToList();
     }
 
     public static IReadOnlyCollection<MuscleGetDTO> ToGetDTOs(

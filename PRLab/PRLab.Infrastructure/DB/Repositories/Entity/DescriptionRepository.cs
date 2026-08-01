@@ -3,18 +3,19 @@ using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
-using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Repositories.Entity;
 
-public class DescriptionRepository(PRLabPgDBContext db, IClock clock) : IDescriptionRepository
+public sealed class DescriptionRepository(
+    PRLabPgDBContext db) : IDescriptionRepository
 {
-    public async Task<IReadOnlyCollection<Description>> ListAsync(CancellationToken ct)
+    public async Task<IReadOnlyCollection<Description>> ListAsync(
+        CancellationToken ct)
     {
-        return await db.Description
-            .AsNoTracking()
-            .Include(description => description.Translations)
+        return await BaseDescriptionReadQuery()
+            .OrderBy(description => description.Id)
             .ToListAsync(ct);
     }
 
@@ -22,70 +23,86 @@ public class DescriptionRepository(PRLabPgDBContext db, IClock clock) : IDescrip
         DescriptionId id,
         CancellationToken ct)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Description id cannot be empty.", nameof(id));
-        }
+        ValidateId(id);
 
-        return await db.Description
-            .AsNoTracking()
-            .Include(description => description.Translations)
-            .FirstOrDefaultAsync(description => description.Id == id, ct);
+        return await BaseDescriptionReadQuery()
+            .FirstOrDefaultAsync(
+                description => description.Id == id,
+                ct);
     }
 
-    public async Task<int> GetCountAsync(CancellationToken ct)
+    public async Task<Description?> GetByIdForUpdateAsync(
+        DescriptionId id,
+        CancellationToken ct)
     {
-        return await db.Description
-            .AsNoTracking()
+        ValidateId(id);
+
+        return await BaseDescriptionWriteQuery()
+            .FirstOrDefaultAsync(
+                description => description.Id == id,
+                ct);
+    }
+
+    public async Task<int> GetCountAsync(
+        CancellationToken ct)
+    {
+        return await BaseDescriptionLookupQuery()
             .CountAsync(ct);
     }
 
-    public async Task<Description> CreateAsync(Description description, CancellationToken ct)
+    public async Task<Description> CreateAsync(
+        Description description,
+        CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(description);
 
-        var exists = await ExistsByIdAsync(description.Id, ct);
+        ValidateId(description.Id);
 
-        if (exists)
+        if (await ExistsByIdAsync(description.Id, ct))
         {
             throw new ArgumentException(
-                $"Description with id '{description.Id}' already exist found.");
+                $"Description with id '{description.Id}' already exists.",
+                nameof(description));
         }
-        
+
         await db.Description.AddAsync(description, ct);
         await db.SaveChangesAsync(ct);
 
         return description;
     }
 
-    public async Task<Description> UpdateAsync(Description description, CancellationToken ct)
+    public async Task<Description> UpdateAsync(
+        Description description,
+        CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(description);
 
-        if (description.Id.Value == Guid.Empty)
+        ValidateId(description.Id);
+
+        if (db.Entry(description).State == EntityState.Detached)
         {
-            throw new ArgumentException("Description id cannot be empty.", nameof(description));
+            throw new InvalidOperationException(
+                "Description must be loaded with GetByIdForUpdateAsync " +
+                "before it can be updated.");
         }
 
-        var exists = await ExistsByIdAsync(description.Id, ct);
-
-        if (!exists)
-        {
-            throw new KeyNotFoundException(
-                $"Description with id '{description.Id}' was not found.");
-        }
-
-        db.Description.Update(description);
         await db.SaveChangesAsync(ct);
 
         return description;
     }
 
-    public async Task<Description> GetOrCreateAsync(Description description, CancellationToken ct)
+    public async Task<Description> GetOrCreateAsync(
+        Description description,
+        CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(description);
-        
-        var existingDescription = await GetByIdAsync(description.Id,ct);
+
+        ValidateId(description.Id);
+
+        var existingDescription = await BaseDescriptionWriteQuery()
+            .FirstOrDefaultAsync(
+                existing => existing.Id == description.Id,
+                ct);
 
         if (existingDescription is not null)
         {
@@ -98,18 +115,18 @@ public class DescriptionRepository(PRLabPgDBContext db, IClock clock) : IDescrip
         return description;
     }
 
-    public async Task<bool> ExistsByIdAsync(DescriptionId id, CancellationToken ct)
+    public async Task<bool> ExistsByIdAsync(
+        DescriptionId id,
+        CancellationToken ct)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Description id cannot be empty.", nameof(id));
-        }
+        ValidateId(id);
 
-        return await db.Description
-            .AsNoTracking()
-            .AnyAsync(description => description.Id == id.Value, ct);
+        return await BaseDescriptionLookupQuery()
+            .AnyAsync(
+                description => description.Id == id,
+                ct);
     }
-    
+
     public async Task<bool> ExistsByContentAsync(
         string? content,
         CancellationToken ct,
@@ -117,17 +134,51 @@ public class DescriptionRepository(PRLabPgDBContext db, IClock clock) : IDescrip
     {
         if (string.IsNullOrWhiteSpace(content))
         {
-            throw new ArgumentException("Description content cannot be empty.", nameof(content));
+            throw new ArgumentException(
+                "Description content cannot be empty.",
+                nameof(content));
         }
 
-        var normalizedContent = FormatingUtilities.NormalizeDescriptionContent(content);
-        var normalizedLanguageCode = LocalizationHelper.ToLanguageCodeOrDefault(languageCode);
+        var normalizedContent =
+            FormatingUtilities.NormalizeDescriptionContent(content);
+
+        var normalizedLanguageCode =
+            LocalizationHelper.ToLanguageCodeOrDefault(languageCode);
 
         return await db.DescriptionTranslations
             .AsNoTracking()
-            .AnyAsync(translation =>
+            .AnyAsync(
+                translation =>
                     translation.LanguageCode == normalizedLanguageCode &&
                     translation.Content == normalizedContent,
                 ct);
+    }
+
+    private IQueryable<Description> BaseDescriptionReadQuery()
+    {
+        return db.Description
+            .ForFullRead();
+    }
+
+    private IQueryable<Description> BaseDescriptionWriteQuery()
+    {
+        return db.Description
+            .ForFullWrite();
+    }
+
+    private IQueryable<Description> BaseDescriptionLookupQuery()
+    {
+        return db.Description
+            .AsNoTracking();
+    }
+
+    private static void ValidateId(DescriptionId id)
+    {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Description id cannot be empty.",
+                nameof(id));
+        }
     }
 }

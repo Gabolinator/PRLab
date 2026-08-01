@@ -5,6 +5,7 @@ using PRLab.API.Mapper.UpdateMapper;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Repositories;
 using PRLab.Application.Interface.DB.Repositories.Entity;
+using PRLab.Application.Interface.UserService;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
@@ -17,11 +18,11 @@ public sealed class MovementController : ControllerBase
 {
     private readonly IMovementRepository repo;
     private readonly IAppLogger logger;
-    private readonly IUserService userService;
+    private readonly ICurrentUserService userService;
 
     public MovementController(
         IMovementRepository repo,
-        IUserService userService,
+        ICurrentUserService userService,
         IAppLogger logger)
     {
         this.repo = repo;
@@ -103,7 +104,7 @@ public sealed class MovementController : ControllerBase
                 return Conflict("A movement with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
 
             if (activeUser is null)
             {
@@ -163,7 +164,7 @@ public sealed class MovementController : ControllerBase
                 return Conflict("Another movement with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
             var update = MovementUpdateMapper.ToUpdate(movement, payload, activeUser);
 
             movement.Update(update);

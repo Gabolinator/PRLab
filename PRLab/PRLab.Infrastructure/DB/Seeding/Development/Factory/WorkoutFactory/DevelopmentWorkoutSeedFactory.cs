@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Workout;
+using PRLab.Application.Interface.UserService;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Domain.Model.Entity;
@@ -22,7 +23,7 @@ using PRLab.Infrastructure.DB.Helpers;
 namespace PRLab.Infrastructure.DB.Seeding.Development.Factory.WorkoutFactory;
 
 public class DevelopmentWorkoutSeedFactory(
-    IUserService userService,
+    ISystemUserProvider userService,
     IAppLogger logger) : IWorkoutSeedFactory
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");

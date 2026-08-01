@@ -14,6 +14,8 @@ var app = builder.Build();
 app.ConfigureRequestPipeline();
 app.MapEndpoints();
 
+await app.Initialize(logger);
+
 await app.RunApplicationAsync(logger, clock);
 
 

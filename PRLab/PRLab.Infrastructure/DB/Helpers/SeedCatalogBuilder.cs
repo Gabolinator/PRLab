@@ -13,11 +13,12 @@ public static class SeedCatalogBuilder
 {
     public static async Task<EquipmentSeedCatalog> CreateEquipmentCatalog(
         PRLabPgDBContext db,
-        CancellationToken ct)
+        CancellationToken ct,
+        bool track = true)
     {
         var equipments = await db.Equipments
-            .Include(equipment => equipment.Description)
-                .ThenInclude(description => description.Translations)
+            .ForFullRead()
+            .OrderBy(equipment => equipment.Name)
             .ToListAsync(ct);
 
         return new EquipmentSeedCatalog(
@@ -29,12 +30,16 @@ public static class SeedCatalogBuilder
 
     public static async Task<MuscleSeedCatalog> CreateMuscleCatalog(
         PRLabPgDBContext db,
-        CancellationToken ct)
+        CancellationToken ct,
+        bool track = true)
     {
-        var muscles = await db.Muscles
-            .Include(muscle => muscle.Description)
-                .ThenInclude(description => description.Translations)
-            .Include(muscle => muscle.Antagonists)
+        var muscles = track ? await db.Muscles
+            .ForFullWrite()
+            .OrderBy(muscle => muscle.Name)
+            .ToListAsync(ct) 
+            : await db.Muscles
+            .ForFullRead()
+            .OrderBy(muscle => muscle.Name)
             .ToListAsync(ct);
 
         return new MuscleSeedCatalog(
@@ -49,8 +54,8 @@ public static class SeedCatalogBuilder
         CancellationToken ct)
     {
         var movementCategories = await db.MovementCategories
-            .Include(movementCategory => movementCategory.Description)
-                .ThenInclude(description => description.Translations)
+            .ForFullRead()
+            .OrderBy(movementCategory => movementCategory.Name)
             .ToListAsync(ct);
 
         return new MovementCategorySeedCatalog(

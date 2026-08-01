@@ -1,79 +1,204 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Repositories.Entity;
+using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.Anatomy;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Repositories.Entity;
 
-public sealed class MuscleRepository(PRLabPgDBContext db) : IMuscleRepository
+public sealed class MuscleRepository(
+    PRLabPgDBContext db) : IMuscleRepository
 {
-    public async Task<IReadOnlyList<Muscle>> ListAsync(CancellationToken ct)
+    public async Task<IReadOnlyList<Muscle>> ListAsync(
+        CancellationToken ct)
     {
-        return await db.Muscles
-            .AsNoTracking()
-            .Include(muscle => muscle.Description)
-            .ThenInclude(description => description.Translations)
-            .Include(muscle => muscle.Antagonists)
-            .ThenInclude(antagonist => antagonist.AntagonistMuscle)
-            .Where(muscle => !muscle.Audit.IsDeleted)
+        return await BaseMuscleReadQuery()
+            .OrderBy(muscle => muscle.Name)
             .ToListAsync(ct);
     }
 
-    public async Task<Muscle?> GetByIdAsync(MuscleId id, CancellationToken ct)
+    public async Task<IReadOnlyList<Muscle>> ListByAnyFunctionsAsync(
+        IReadOnlyList<MuscleFunction> functions,
+        IReadOnlyList<MuscleFunctionRole>? muscleFunctionRoles,
+        CancellationToken ct)
     {
-        if (id.Value == Guid.Empty)
+        ArgumentNullException.ThrowIfNull(functions);
+
+        var distinctFunctions = functions
+            .Distinct()
+            .ToList();
+
+        if (distinctFunctions.Count == 0)
         {
-            throw new ArgumentException("Muscle id cannot be empty.", nameof(id));
+            return await BaseMuscleReadQuery()
+                .OrderBy(muscle => muscle.Name)
+                .ToListAsync(ct);
         }
 
-        return await db.Muscles
-            .Include(muscle => muscle.Description)
-                .ThenInclude(description => description.Translations)
-            .Include(muscle => muscle.Antagonists)
-            .ThenInclude(antagonist => antagonist.AntagonistMuscle)
+        var query = BaseMuscleReadQuery();
+
+        if (muscleFunctionRoles is null ||
+            muscleFunctionRoles.Count == 0)
+        {
+            query = query.Where(
+                muscle => muscle.Functions.Any(
+                    functionAssignment =>
+                        distinctFunctions.Contains(
+                            functionAssignment.Function)));
+        }
+        else
+        {
+            var distinctRoles = muscleFunctionRoles
+                .Distinct()
+                .ToList();
+
+            query = query.Where(
+                muscle => muscle.Functions.Any(
+                    functionAssignment =>
+                        distinctFunctions.Contains(
+                            functionAssignment.Function) &&
+                        distinctRoles.Contains(
+                            functionAssignment.Role)));
+        }
+
+        return await query
+            .OrderBy(muscle => muscle.Name)
+            .ToListAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<Muscle>> ListByAllFunctionsAsync(
+        IReadOnlyList<MuscleFunction> functions,
+        IReadOnlyList<MuscleFunctionRole>? muscleFunctionRoles,
+        CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(functions);
+
+        var distinctFunctions = functions
+            .Distinct()
+            .ToList();
+
+        if (distinctFunctions.Count == 0)
+        {
+            return await BaseMuscleReadQuery()
+                .OrderBy(muscle => muscle.Name)
+                .ToListAsync(ct);
+        }
+
+        var query = BaseMuscleReadQuery();
+
+        if (muscleFunctionRoles is null ||
+            muscleFunctionRoles.Count == 0)
+        {
+            query = query.Where(
+                muscle =>
+                    muscle.Functions.Count(
+                        functionAssignment =>
+                            distinctFunctions.Contains(
+                                functionAssignment.Function))
+                    == distinctFunctions.Count);
+        }
+        else
+        {
+            var distinctRoles = muscleFunctionRoles
+                .Distinct()
+                .ToList();
+
+            query = query.Where(
+                muscle =>
+                    muscle.Functions.Count(
+                        functionAssignment =>
+                            distinctFunctions.Contains(
+                                functionAssignment.Function) &&
+                            distinctRoles.Contains(
+                                functionAssignment.Role))
+                    == distinctFunctions.Count);
+        }
+
+        return await query
+            .OrderBy(muscle => muscle.Name)
+            .ToListAsync(ct);
+    }
+    
+    public async Task<Muscle?> GetByIdAsync(
+        MuscleId id,
+        CancellationToken ct)
+    {
+        ValidateId(id);
+
+        return await BaseMuscleReadQuery()
             .FirstOrDefaultAsync(
-                muscle => muscle.Id == id && !muscle.Audit.IsDeleted,
+                muscle => muscle.Id == id,
                 ct);
     }
 
-    public async Task<Muscle> CreateAsync(Muscle muscle, CancellationToken ct)
+    public async Task<Muscle?> GetTrackedByIdAsync(
+        MuscleId id,
+        CancellationToken ct)
+    {
+        ValidateId(id);
+
+        return await BaseMuscleWriteQuery()
+            .FirstOrDefaultAsync(
+                muscle => muscle.Id == id,
+                ct);
+    }
+
+    public async Task<Muscle> CreateAsync(
+        Muscle muscle,
+        CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(muscle);
+
+        ValidateId(muscle.Id);
 
         await db.Muscles.AddAsync(muscle, ct);
         await db.SaveChangesAsync(ct);
 
-        return muscle;
+        /*
+         * Reload as a complete read aggregate.
+         *
+         * This is especially useful when antagonists were created using only
+         * their ids, because the AntagonistMuscle navigation may not yet be
+         * populated on the originally created object.
+         */
+        return await GetRequiredForReadAsync(
+            muscle.Id,
+            ct);
     }
 
-    public async Task<Muscle> UpdateAsync(Muscle muscle, CancellationToken ct)
+    public async Task<Muscle> UpdateAsync(
+        Muscle muscle,
+        CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(muscle);
 
-        if (muscle.Id.Value == Guid.Empty)
+        ValidateId(muscle.Id);
+
+        if (db.Entry(muscle).State == EntityState.Detached)
         {
-            throw new ArgumentException("Muscle id cannot be empty.", nameof(muscle));
+            throw new InvalidOperationException(
+                "Muscle must be loaded with GetByIdForUpdateAsync " +
+                "before it can be updated.");
         }
 
-        db.Muscles.Update(muscle);
         await db.SaveChangesAsync(ct);
 
         return muscle;
     }
 
-    public async Task<bool> ExistsAsync(MuscleId id, CancellationToken ct)
+    public async Task<bool> ExistsAsync(
+        MuscleId id,
+        CancellationToken ct)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Muscle id cannot be empty.", nameof(id));
-        }
+        ValidateId(id);
 
-        return await db.Muscles
-            .AsNoTracking()
+        return await BaseMuscleLookupQuery()
             .AnyAsync(
-                muscle => muscle.Id == id && !muscle.Audit.IsDeleted,
+                muscle => muscle.Id == id,
                 ct);
     }
 
@@ -88,21 +213,41 @@ public sealed class MuscleRepository(PRLabPgDBContext db) : IMuscleRepository
             return true;
         }
 
-        if (ids.Any(id => id.Value == Guid.Empty))
-        {
-            throw new ArgumentException("Muscle ids cannot contain empty values.", nameof(ids));
-        }
+        ValidateIds(ids);
 
         var distinctIds = ids
             .Distinct()
             .ToList();
 
-        var existingCount = await db.Muscles
-            .AsNoTracking()
-            .Where(muscle => !muscle.Audit.IsDeleted)
-            .CountAsync(muscle => distinctIds.Contains(muscle.Id), ct);
+        var existingCount = await BaseMuscleLookupQuery()
+            .CountAsync(
+                muscle => distinctIds.Contains(muscle.Id),
+                ct);
 
         return existingCount == distinctIds.Count;
+    }
+
+    public async Task<bool> NameExistsAsync(
+        string name,
+        MuscleId? excludedMuscleId,
+        CancellationToken ct)
+    {
+        ValidateName(name);
+
+        if (excludedMuscleId.HasValue)
+        {
+            ValidateId(excludedMuscleId.Value);
+        }
+
+        var nameKey = FormatingUtilities.NormalizeNameKey(name);
+
+        return await BaseMuscleLookupQuery()
+            .AnyAsync(
+                muscle =>
+                    muscle.NameKey == nameKey &&
+                    (!excludedMuscleId.HasValue ||
+                     muscle.Id != excludedMuscleId.Value),
+                ct);
     }
 
     public async Task<Muscle> UpdateAntagonistsAsync(
@@ -110,45 +255,42 @@ public sealed class MuscleRepository(PRLabPgDBContext db) : IMuscleRepository
         IReadOnlyCollection<MuscleId> antagonistIds,
         CancellationToken ct)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Muscle id cannot be empty.", nameof(id));
-        }
+        ValidateId(id);
 
         ArgumentNullException.ThrowIfNull(antagonistIds);
 
-        if (antagonistIds.Any(antagonistId => antagonistId.Value == Guid.Empty))
-        {
-            throw new ArgumentException("Antagonist ids cannot contain empty values.", nameof(antagonistIds));
-        }
-
-        if (antagonistIds.Contains(id))
-        {
-            throw new ArgumentException("A muscle cannot be its own antagonist.", nameof(antagonistIds));
-        }
+        ValidateIds(antagonistIds);
 
         var distinctAntagonistIds = antagonistIds
             .Distinct()
             .ToList();
 
-        var muscle = await db.Muscles
-            .Include(muscle => muscle.Description)
-                .ThenInclude(description => description.Translations)
-            .Include(muscle => muscle.Antagonists)
+        if (distinctAntagonistIds.Contains(id))
+        {
+            throw new ArgumentException(
+                "A muscle cannot be its own antagonist.",
+                nameof(antagonistIds));
+        }
+
+        var muscle = await BaseMuscleWriteQuery()
             .FirstOrDefaultAsync(
-                muscle => muscle.Id == id && !muscle.Audit.IsDeleted,
+                muscle => muscle.Id == id,
                 ct);
 
         if (muscle is null)
         {
-            throw new InvalidOperationException("Muscle was not found.");
+            throw new KeyNotFoundException(
+                $"Muscle with id '{id}' was not found.");
         }
 
-        var allAntagonistsExist = await AllExistAsync(distinctAntagonistIds, ct);
+        var allAntagonistsExist = await AllExistAsync(
+            distinctAntagonistIds,
+            ct);
 
         if (!allAntagonistsExist)
         {
-            throw new InvalidOperationException("One or more antagonist muscles were not found.");
+            throw new KeyNotFoundException(
+                "One or more antagonist muscles were not found.");
         }
 
         var existingAntagonistIds = muscle.Antagonists
@@ -159,48 +301,87 @@ public sealed class MuscleRepository(PRLabPgDBContext db) : IMuscleRepository
             .ToHashSet();
 
         var antagonistIdsToRemove = existingAntagonistIds
-            .Where(existingAntagonistId => !requestedAntagonistIds.Contains(existingAntagonistId))
+            .Except(requestedAntagonistIds)
             .ToList();
 
         var antagonistIdsToAdd = requestedAntagonistIds
-            .Where(requestedAntagonistId => !existingAntagonistIds.Contains(requestedAntagonistId))
+            .Except(existingAntagonistIds)
             .ToList();
 
-        foreach (var antagonistIdToRemove in antagonistIdsToRemove)
+        foreach (var antagonistId in antagonistIdsToRemove)
         {
-            muscle.RemoveAntagonist(antagonistIdToRemove);
+            muscle.RemoveAntagonist(antagonistId);
         }
 
-        foreach (var antagonistIdToAdd in antagonistIdsToAdd)
+        foreach (var antagonistId in antagonistIdsToAdd)
         {
-            muscle.AddAntagonist(antagonistIdToAdd);
+            muscle.AddAntagonist(antagonistId);
         }
 
         await db.SaveChangesAsync(ct);
 
-        return muscle;
+        /*
+         * Newly added antagonist join rows may not have their
+         * AntagonistMuscle navigation populated. Return a refreshed,
+         * fully loaded read model.
+         */
+        return await GetRequiredForReadAsync(
+            id,
+            ct);
     }
-    
-    public async Task<bool> NameExistsAsync(
-        string name,
-        MuscleId? excludedMuscleId,
+
+    private IQueryable<Muscle> BaseMuscleReadQuery()
+    {
+        return db.Muscles
+            .ForFullRead();
+    }
+
+    private IQueryable<Muscle> BaseMuscleWriteQuery()
+    {
+        return db.Muscles
+            .ForFullWrite();
+    }
+
+    private IQueryable<Muscle> BaseMuscleLookupQuery()
+    {
+        return db.Muscles
+            .ActiveOnly()
+            .AsNoTracking();
+    }
+
+    private async Task<Muscle> GetRequiredForReadAsync(
+        MuscleId id,
         CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Muscle name cannot be empty.", nameof(name));
-        }
-
-        var nameKey = FormatingUtilities.NormalizeNameKey(name);
-
-        return await db.Muscles
-            .AsNoTracking()
-            .AnyAsync(
-                muscle =>
-                    muscle.NameKey == nameKey &&
-                    !muscle.Audit.IsDeleted &&
-                    (!excludedMuscleId.HasValue || muscle.Id != excludedMuscleId.Value),
+        var muscle = await BaseMuscleReadQuery()
+            .FirstOrDefaultAsync(
+                muscle => muscle.Id == id,
                 ct);
+
+        return muscle
+            ?? throw new KeyNotFoundException(
+                $"Muscle with id '{id}' was not found.");
     }
+
+    private static void ValidateId(MuscleId id)
+    {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Muscle id cannot be empty.",
+                nameof(id));
+        }
+    }
+
+    private static void ValidateIds(
+        IReadOnlyCollection<MuscleId> ids)
+        => DomainGuard.ValidRequiredIds(ids, nameof(ids));
     
+    
+    private static void ValidateId(EquipmentId id)
+        => DomainGuard.ValidRequiredId(id, nameof(id));
+    
+
+    private static void ValidateName(string name)
+        => DomainGuard.NotEmptyName(name, nameof(name));
 }

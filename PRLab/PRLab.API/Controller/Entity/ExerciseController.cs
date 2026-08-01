@@ -4,6 +4,7 @@ using PRLab.API.Mapper;
 using PRLab.API.Mapper.UpdateMapper;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Repositories.Entity;
+using PRLab.Application.Interface.UserService;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
@@ -16,11 +17,11 @@ public sealed class ExerciseController : ControllerBase
 {
     private readonly IExerciseRepository repo;
     private readonly IAppLogger logger;
-    private readonly IUserService userService;
+    private readonly ICurrentUserService userService;
 
     public ExerciseController(
         IExerciseRepository repo,
-        IUserService userService,
+        ICurrentUserService userService,
         IAppLogger logger)
     {
         this.repo = repo;
@@ -133,7 +134,7 @@ public sealed class ExerciseController : ControllerBase
                 return Conflict("An exercise with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
 
             if (activeUser is null)
             {
@@ -193,7 +194,7 @@ public sealed class ExerciseController : ControllerBase
                 return Conflict("Another exercise with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
             var update = ExerciseUpdateMapper.ToUpdate(exercise, payload, activeUser);
 
             exercise.Update(update);

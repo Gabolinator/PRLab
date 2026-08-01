@@ -17,11 +17,15 @@ public static class PRToolServicesExtensions
       
     }
 
-    public static IServiceCollection AddPRLabToolServices(this IServiceCollection services, IConfiguration configuration,
-        IClock clock, IAppLogger logger )
+    public static IServiceCollection AddPRLabToolServices(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        bool isDevelopment,
+        IClock clock,
+        IAppLogger logger )
     {
        return services.AddUtilities(clock, logger)
-            .AddInfrastructure(configuration, logger)
+            .AddInfrastructure(configuration, isDevelopment ,logger)
             .AddPRToolHandlers();
     }
 }

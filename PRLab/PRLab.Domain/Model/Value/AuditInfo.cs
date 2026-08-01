@@ -16,10 +16,23 @@ public sealed record AuditInfo(
 {
     private static UserId ResolveUserId(User? user)
     {
-        return user?.Id ?? User.SystemUser.Id;
+        return ResolveUserId(user?.Id);
+    }
+    
+    private static UserId ResolveUserId(UserId? userId)
+    {
+        return userId ?? PredefinedUsers.System.Id;
     }
 
     public static AuditInfo New(User? createdBy = null)
+    {
+        return new AuditInfo(
+            CreatedAt: CoreUtilities.Clock.UtcNow,
+            CreatedBy: ResolveUserId(createdBy)
+        );
+    }
+    
+    public static AuditInfo New(UserId? createdBy = null)
     {
         return new AuditInfo(
             CreatedAt: CoreUtilities.Clock.UtcNow,

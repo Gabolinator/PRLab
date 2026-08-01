@@ -16,4 +16,5 @@ public interface IUserRepository
     Task<User> UpdateAsync(User user, CancellationToken ct);
 
     Task<bool> ExistsAsync(UserId id, CancellationToken ct);
+    Task<User?> GetForUpdateAsync(UserId userId, CancellationToken ct);
 }

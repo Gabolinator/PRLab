@@ -2,12 +2,13 @@
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
+using PRLab.Application.Interface.UserService;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
 
 namespace PRLab.Infrastructure.DB.Seeding.Development.Factory;
 
-public sealed class DevelopmentEquipmentSeedFactory(IUserService userService) : IEquipmentSeedFactory
+public sealed class DevelopmentEquipmentSeedFactory(ISystemUserProvider userService) : IEquipmentSeedFactory
 {
     private User SeedUser => userService.GetSystemAdminUser("Seed");
 

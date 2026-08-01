@@ -6,21 +6,32 @@ using PRLab.Domain.Model.Value.Enum.Movement;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
 using PRLab.Infrastructure.DB.Context;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Repositories.Entity;
 
-public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementCategoryRepository
+public sealed class MovementCategoryRepository(
+    PRLabPgDBContext db) : IMovementCategoryRepository
 {
     public async Task<MovementCategory?> GetByIdAsync(
         MovementCategoryId id,
         CancellationToken ct)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Movement category id cannot be empty.", nameof(id));
-        }
+        ValidateId(id);
 
-        return await BaseMovementCategoryQuery()
+        return await BaseMovementCategoryReadQuery()
+            .FirstOrDefaultAsync(
+                movementCategory => movementCategory.Id == id,
+                ct);
+    }
+
+    public async Task<MovementCategory?> GetTrackedByIdAsync(
+        MovementCategoryId id,
+        CancellationToken ct)
+    {
+        ValidateId(id);
+
+        return await BaseMovementCategoryWriteQuery()
             .FirstOrDefaultAsync(
                 movementCategory => movementCategory.Id == id,
                 ct);
@@ -30,33 +41,36 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
         string name,
         CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Movement category name cannot be empty.", nameof(name));
-        }
+        ValidateName(name);
 
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
 
-        return await BaseMovementCategoryQuery()
+        return await BaseMovementCategoryReadQuery()
             .FirstOrDefaultAsync(
-                movementCategory => movementCategory.NameKey == nameKey,
+                movementCategory =>
+                    movementCategory.NameKey == nameKey,
                 ct);
     }
 
     public async Task<IReadOnlyCollection<MovementCategory>> ListAsync(
         CancellationToken ct)
     {
-        return await BaseMovementCategoryQuery()
+        return await BaseMovementCategoryReadQuery()
             .OrderBy(movementCategory => movementCategory.Name)
             .ToListAsync(ct);
     }
 
-    public async Task<IReadOnlyCollection<MovementCategory>> ListByBaseCategoryAsync(
-        BaseMovementCategory baseMovementCategory,
-        CancellationToken ct)
+    public async Task<IReadOnlyCollection<MovementCategory>>
+        ListByBaseCategoryAsync(
+            BaseMovementCategory baseMovementCategory,
+            CancellationToken ct)
     {
-        return await BaseMovementCategoryQuery()
-            .Where(movementCategory => movementCategory.BaseMovementCategory == baseMovementCategory)
+        ValidateBaseMovementCategory(baseMovementCategory);
+
+        return await BaseMovementCategoryReadQuery()
+            .Where(movementCategory =>
+                movementCategory.BaseMovementCategory ==
+                baseMovementCategory)
             .OrderBy(movementCategory => movementCategory.Name)
             .ToListAsync(ct);
     }
@@ -67,7 +81,12 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
     {
         ArgumentNullException.ThrowIfNull(movementCategory);
 
-        await db.MovementCategories.AddAsync(movementCategory, ct);
+        ValidateId(movementCategory.Id);
+
+        await db.MovementCategories.AddAsync(
+            movementCategory,
+            ct);
+
         await db.SaveChangesAsync(ct);
 
         return movementCategory;
@@ -79,14 +98,15 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
     {
         ArgumentNullException.ThrowIfNull(movementCategory);
 
-        if (movementCategory.Id.Value == Guid.Empty)
+        ValidateId(movementCategory.Id);
+
+        if (db.Entry(movementCategory).State == EntityState.Detached)
         {
-            throw new ArgumentException(
-                "Movement category id cannot be empty.",
-                nameof(movementCategory));
+            throw new InvalidOperationException(
+                "Movement category must be loaded with " +
+                "GetTrackedByIdAsync before it can be updated.");
         }
 
-        db.MovementCategories.Update(movementCategory);
         await db.SaveChangesAsync(ct);
 
         return movementCategory;
@@ -96,27 +116,21 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
         MovementCategoryId id,
         CancellationToken ct)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Movement category id cannot be empty.", nameof(id));
-        }
+        ValidateId(id);
 
-        return await db.MovementCategories
-            .AsNoTracking()
+        return await BaseMovementCategoryLookupQuery()
             .AnyAsync(
-                movementCategory =>
-                    movementCategory.Id == id &&
-                    !movementCategory.Audit.IsDeleted,
+                movementCategory => movementCategory.Id == id,
                 ct);
     }
 
-    public async Task<bool> NameExistsAsync(
+    public Task<bool> NameExistsAsync(
         string name,
         CancellationToken ct)
     {
-        return await NameExistsAsync(
+        return NameExistsAsync(
             name,
-            null,
+            excludedMovementCategoryId: null,
             ct);
     }
 
@@ -125,32 +139,70 @@ public sealed class MovementCategoryRepository(PRLabPgDBContext db) : IMovementC
         MovementCategoryId? excludedMovementCategoryId,
         CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        ValidateName(name);
+
+        if (excludedMovementCategoryId.HasValue)
         {
-            throw new ArgumentException("Movement category name cannot be empty.", nameof(name));
+            ValidateId(excludedMovementCategoryId.Value);
         }
 
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
 
-        return await db.MovementCategories
-            .AsNoTracking()
+        return await BaseMovementCategoryLookupQuery()
             .AnyAsync(
                 movementCategory =>
                     movementCategory.NameKey == nameKey &&
-                    !movementCategory.Audit.IsDeleted &&
-                    (
-                        !excludedMovementCategoryId.HasValue ||
-                        movementCategory.Id != excludedMovementCategoryId.Value
-                    ),
+                    (!excludedMovementCategoryId.HasValue ||
+                     movementCategory.Id !=
+                     excludedMovementCategoryId.Value),
                 ct);
     }
 
-    private IQueryable<MovementCategory> BaseMovementCategoryQuery()
+    private IQueryable<MovementCategory>
+        BaseMovementCategoryReadQuery()
     {
         return db.MovementCategories
-            .AsNoTracking()
-            .Include(movementCategory => movementCategory.Description)
-                .ThenInclude(description => description.Translations)
-            .Where(movementCategory => !movementCategory.Audit.IsDeleted);
+            .ForFullRead();
+    }
+
+    private IQueryable<MovementCategory>
+        BaseMovementCategoryWriteQuery()
+    {
+        return db.MovementCategories
+            .ForFullWrite();
+    }
+
+    private IQueryable<MovementCategory>
+        BaseMovementCategoryLookupQuery()
+    {
+        return db.MovementCategories
+            .ActiveOnly()
+            .AsNoTracking();
+    }
+
+    private static void ValidateId(
+        MovementCategoryId id)
+    {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Movement category id cannot be empty.",
+                nameof(id));
+        }
+    }
+    
+    private static void ValidateName(string name)
+        => DomainGuard.NotEmptyName(name, nameof(name));
+
+    private static void ValidateBaseMovementCategory(
+        BaseMovementCategory baseMovementCategory)
+    {
+        if (!Enum.IsDefined(baseMovementCategory))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(baseMovementCategory),
+                baseMovementCategory,
+                "Unsupported base movement category.");
+        }
     }
 }

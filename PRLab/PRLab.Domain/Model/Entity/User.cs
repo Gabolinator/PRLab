@@ -2,6 +2,7 @@
 using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Domain.Model.Value.Update;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Entity;
@@ -57,31 +58,16 @@ public sealed record User : IAudited
         );
     }
 
-    public static User NewAdmin(
-        string name,
-        User? createdBy = null)
+    public static User Admin(string? name = null, User? createdBy = null)
     {
-        return New(
-            name,
-            UserRole.Admin,
-            createdBy
-        );
-    }
-
-    public static User Admin(string? name = null)
-    {
-        return new User(
-            SystemUser.Id,
-            !string.IsNullOrWhiteSpace(name) ? name : SystemUser.Name,
-            UserRole.Admin,
-            AuditInfo.New(null)
-        );
+        return PredefinedUsers.System.Create(name, createdBy?.Id);
     }
     
     public static User Existing(
         UserId id,
         string name,
-        UserRole role)
+        UserRole role,
+        UserId? createdBy = null)
     {
         if (id.Value == Guid.Empty)
         {
@@ -97,35 +83,69 @@ public sealed record User : IAudited
             id,
             name,
             role,
-            AuditInfo.New(null)
+            AuditInfo.New(createdBy)
         );
     }
     
-    public static class SystemUser
+    public bool Update(
+        UserUpdate update,
+        User? changedBy = null)
     {
-        public static readonly UserId Id = UserId.FromGuid(
-            Guid.Parse("00000000-0000-0000-0000-000000000001")
-        );
+        ArgumentNullException.ThrowIfNull(update);
 
-        public const string Name = "Admin";
-    }
-    
-    public static class DevelopmentUser
-    {
-        public static readonly UserId Id = UserId.FromGuid(
-            Guid.Parse("00000000-0000-0000-0000-000000000002")
-        );
+        var hasChanged = false;
 
-        public const string Name = "Development User";
-
-        public static User Create()
+        if (!string.IsNullOrWhiteSpace(update.Name))
         {
-            return Existing(
-                Id,
-                Name,
-                UserRole.User
-            );
+            hasChanged = TryRename(update.Name) || hasChanged;
         }
+
+        if (update.Role.HasValue)
+        {
+            hasChanged = TryChangeRole(update.Role.Value) || hasChanged;
+        }
+
+        if (hasChanged)
+        {
+            MarkUpdated(changedBy);
+        }
+
+        return hasChanged;
+    }
+
+    private bool TryRename(string name)
+    {
+        var normalizedName =
+            FormatingUtilities.NormalizeName(name);
+
+        if (Name == normalizedName)
+        {
+            return false;
+        }
+
+        Name = normalizedName;
+
+        return true;
+    }
+
+    private bool TryChangeRole(UserRole role)
+    {
+        if (!Enum.IsDefined(role))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(role),
+                role,
+                "Unsupported user role.");
+        }
+
+        if (Role == role)
+        {
+            return false;
+        }
+
+        Role = role;
+
+        return true;
     }
 
     public void Rename(string name, User? changedBy = null)
@@ -162,7 +182,7 @@ public sealed record User : IAudited
         Audit = Audit.MarkUpdated(changedBy);
     }
 
-    private void MarkDeleted(User? deletedBy = null)
+    public void MarkDeleted(User? deletedBy = null)
     {
         Audit = Audit.MarkDeleted(deletedBy);
     }

@@ -1,4 +1,6 @@
-﻿namespace PRLab.Domain;
+﻿using PRLab.Domain.Model.Value.Identifier;
+
+namespace PRLab.Domain;
 
 public static class DomainGuard
 {
@@ -54,6 +56,16 @@ public static class DomainGuard
             throw new ArgumentException(
                 "Id cannot be empty.",
                 parameterName);
+        }
+    }
+
+    public static void ValidRequiredIds(IReadOnlyCollection<MuscleId> ids, string name)
+    {
+        if (ids.Any(id => id.Value == Guid.Empty))
+        {
+            throw new ArgumentException(
+                "{name} cannot contain empty or null values.",
+                nameof(ids));
         }
     }
 }

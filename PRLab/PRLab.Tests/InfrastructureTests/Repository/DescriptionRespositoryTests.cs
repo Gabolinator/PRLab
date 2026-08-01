@@ -15,8 +15,7 @@ public sealed class DescriptionRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new DescriptionRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var descriptionText = "Used for pulling exercises.";
@@ -43,8 +42,7 @@ public sealed class DescriptionRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new DescriptionRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         Description description = null!;
@@ -63,8 +61,7 @@ public sealed class DescriptionRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new DescriptionRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var englishContent = "English content.";
@@ -102,8 +99,7 @@ public sealed class DescriptionRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new DescriptionRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var id = new DescriptionId(Guid.Empty);
@@ -122,8 +118,7 @@ public sealed class DescriptionRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new DescriptionRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var firstDescription = Description.New("First description.");
@@ -156,9 +151,7 @@ public sealed class DescriptionRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new DescriptionRepository(
-            database.Db,
-            null!
-        );
+            database.Db);
 
         await repo.CreateAsync(
             Description.New("First description."),
@@ -181,8 +174,7 @@ public sealed class DescriptionRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new DescriptionRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var descriptionText = "Used for pulling exercises.";
@@ -206,9 +198,7 @@ public sealed class DescriptionRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new DescriptionRepository(
-            database.Db,
-            null!
-        );
+            database.Db);
 
         var content = "   ";
 
@@ -226,8 +216,7 @@ public sealed class DescriptionRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new DescriptionRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var description = Description.New("Original content.");

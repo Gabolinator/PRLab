@@ -75,4 +75,11 @@ public sealed record OwnershipInfo
 
         return OwnerUserId == user.Id;
     }
+    
+    public bool IsOwnedById(UserId userId)
+    {
+        DomainGuard.NotEmptyId(userId, nameof(userId));
+
+        return OwnerUserId == userId;
+    }
 }

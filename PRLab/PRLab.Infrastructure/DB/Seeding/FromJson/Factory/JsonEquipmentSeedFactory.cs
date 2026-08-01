@@ -1,6 +1,7 @@
 ﻿using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
+using PRLab.Application.Interface.UserService;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.System;
@@ -11,7 +12,7 @@ using PRLab.Infrastructure.DB.Seeding.Validation;
 namespace PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 
 public sealed class JsonEquipmentSeedFactory(
-    IUserService userService,
+    ISystemUserProvider userService,
     ISeedingConfig config)
     : BaseJsonSeedFactory<Equipment, EquipmentSeedJsonDto>(userService, config),
         IEquipmentSeedFactory

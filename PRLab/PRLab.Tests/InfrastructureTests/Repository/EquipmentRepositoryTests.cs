@@ -14,8 +14,7 @@ public sealed class EquipmentRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new EquipmentRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var name = "Pull-up Bar";
@@ -48,8 +47,7 @@ public sealed class EquipmentRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new EquipmentRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         Equipment equipment = null!;
@@ -68,8 +66,7 @@ public sealed class EquipmentRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new EquipmentRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var name = "Pull-up Bar";
@@ -112,8 +109,7 @@ public sealed class EquipmentRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new EquipmentRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var id = new EquipmentId(Guid.Empty);
@@ -132,8 +128,7 @@ public sealed class EquipmentRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new EquipmentRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var name = "Pull-up Bar";
@@ -164,8 +159,7 @@ public sealed class EquipmentRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new EquipmentRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var firstEquipment = Equipment.NewBuiltIn(
@@ -205,8 +199,7 @@ public sealed class EquipmentRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new EquipmentRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         await repo.CreateAsync(
@@ -236,8 +229,7 @@ public sealed class EquipmentRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new EquipmentRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var equipment = Equipment.NewBuiltIn(
@@ -265,8 +257,7 @@ public sealed class EquipmentRepositoryTests
         await using var database = await RepositoryTestDatabase.CreateAsync();
 
         var repo = new EquipmentRepository(
-            database.Db,
-            null!
+            database.Db
         );
 
         var equipment = Equipment.NewBuiltIn(

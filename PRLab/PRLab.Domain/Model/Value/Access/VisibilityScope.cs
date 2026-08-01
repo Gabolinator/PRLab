@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain.Model.Value.Enum.System;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
 using PRLab.Domain.Policies;
 
@@ -47,5 +48,11 @@ public sealed record VisibilityInfo
         VisibilityPolicy.ValidateScopeForOwnership(ownership, scopePreference.Value);
 
         return new VisibilityInfo(scopePreference.Value);
+    }
+
+    public bool IsVisibleToUser(UserId userId)
+    {
+        // todo implement shared eventually
+        return Scope == VisibilityScope.Public;
     }
 }

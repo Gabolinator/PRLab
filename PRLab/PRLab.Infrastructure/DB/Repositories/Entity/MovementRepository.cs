@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Repositories.Entity;
+using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.Anatomy;
 using PRLab.Domain.Model.Value.Enum.Movement;
@@ -18,7 +19,7 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
         {
             throw new ArgumentException("Movement id cannot be empty.", nameof(id));
         }
-
+    
         return await BaseMovementReadQuery()
             .FirstOrDefaultAsync(
                 movement => movement.Id == id,
@@ -180,10 +181,7 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
     {
         ArgumentNullException.ThrowIfNull(movement);
 
-        if (movement.Id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Movement id cannot be empty.", nameof(movement));
-        }
+        DomainGuard.ValidRequiredId(movement.Id, nameof(Movement));
 
         await db.SaveChangesAsync(ct);
 
@@ -192,10 +190,7 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
 
     public async Task<bool> ExistsAsync(MovementId id, CancellationToken ct)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Movement id cannot be empty.", nameof(id));
-        }
+        DomainGuard.NotEmptyId(id, nameof(MovementId));
 
         return await db.Movements
             .AsNoTracking()

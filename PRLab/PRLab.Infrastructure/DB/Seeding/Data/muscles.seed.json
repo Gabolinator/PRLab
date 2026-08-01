@@ -5,6 +5,12 @@
     "NameKey": "abductors",
     "LatinName": "Musculi abductores coxae",
     "BodySection": "LowerBody",
+    "Functions": [
+      {
+        "Function": "HipAbduction",
+        "Role": "Primary"
+      }
+    ],
     "Description": {
       "Content": "Outer hip muscle group involved in moving the leg away from the midline and stabilizing the pelvis during walking, running, squats, and single-leg movements."
     },
@@ -23,6 +29,12 @@
     "NameKey": "abs",
     "LatinName": "Musculus rectus abdominis",
     "BodySection": "MidSection",
+    "Functions": [
+      {
+        "Function": "SpinalFlexion",
+        "Role": "Primary"
+      }
+    ],
     "Description": {
       "Content": "Front core muscle involved in trunk flexion and abdominal bracing."
     },
@@ -41,6 +53,12 @@
     "NameKey": "adductors",
     "LatinName": "Musculi adductores femoris",
     "BodySection": "LowerBody",
+    "Functions": [
+      {
+        "Function": "HipAdduction",
+        "Role": "Primary"
+      }
+    ],
     "Description": {
       "Content": "Inner thigh muscle group involved in bringing the leg toward the midline and stabilizing the hips during lower-body movements."
     },
@@ -59,6 +77,16 @@
     "NameKey": "biceps",
     "LatinName": "Musculus biceps brachii",
     "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ElbowFlexion",
+        "Role": "Primary"
+      },
+      {
+        "Function": "ShoulderFlexion",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Upper arm muscle involved in elbow flexion and forearm supination."
     },
@@ -77,6 +105,16 @@
     "NameKey": "calves",
     "LatinName": "Musculus gastrocnemius",
     "BodySection": "LowerBody",
+    "Functions": [
+      {
+        "Function": "AnklePlantarFlexion",
+        "Role": "Primary"
+      },
+      {
+        "Function": "KneeFlexion",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Lower-leg muscle group involved in plantar flexion and jumping."
     },
@@ -95,6 +133,20 @@
     "NameKey": "chest",
     "LatinName": "Musculus pectoralis major",
     "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ShoulderAdduction",
+        "Role": "Primary"
+      },
+      {
+        "Function": "ShoulderInternalRotation",
+        "Role": "Primary"
+      },
+      {
+        "Function": "ShoulderFlexion",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Main chest muscle involved in pushing and shoulder adduction."
     },
@@ -113,6 +165,12 @@
     "NameKey": "forearmsextensors",
     "LatinName": "Musculi extensores antebrachii",
     "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "Grip",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Forearm muscle group involved in wrist extension, finger extension, grip stabilization, pressing support, and load control."
     },
@@ -131,6 +189,12 @@
     "NameKey": "forearmsflexors",
     "LatinName": "Musculi flexores antebrachii",
     "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "Grip",
+        "Role": "Primary"
+      }
+    ],
     "Description": {
       "Content": "Forearm muscle group involved in wrist flexion, finger flexion, gripping, pulling movements, and load control."
     },
@@ -149,6 +213,20 @@
     "NameKey": "frontdelts",
     "LatinName": "Musculus deltoideus pars clavicularis",
     "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ShoulderFlexion",
+        "Role": "Primary"
+      },
+      {
+        "Function": "ShoulderAbduction",
+        "Role": "Secondary"
+      },
+      {
+        "Function": "ShoulderInternalRotation",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Front shoulder muscle involved in shoulder flexion and pressing movements."
     },
@@ -167,6 +245,20 @@
     "NameKey": "glutes",
     "LatinName": "Musculus gluteus maximus",
     "BodySection": "LowerBody",
+    "Functions": [
+      {
+        "Function": "HipExtension",
+        "Role": "Primary"
+      },
+      {
+        "Function": "HipExternalRotation",
+        "Role": "Primary"
+      },
+      {
+        "Function": "HipAbduction",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Hip extensor muscle group involved in squats, hinges, running, and jumping."
     },
@@ -185,6 +277,16 @@
     "NameKey": "hamstrings",
     "LatinName": "Musculi ischiocrurales",
     "BodySection": "LowerBody",
+    "Functions": [
+      {
+        "Function": "HipExtension",
+        "Role": "Primary"
+      },
+      {
+        "Function": "KneeFlexion",
+        "Role": "Primary"
+      }
+    ],
     "Description": {
       "Content": "Back thigh muscle group involved in knee flexion and hip extension."
     },
@@ -203,6 +305,12 @@
     "NameKey": "hipflexors",
     "LatinName": "Musculus iliopsoas",
     "BodySection": "LowerBody",
+    "Functions": [
+      {
+        "Function": "HipFlexion",
+        "Role": "Primary"
+      }
+    ],
     "Description": {
       "Content": "Hip flexor muscle group involved in lifting the thigh and flexing the hip."
     },
@@ -221,6 +329,24 @@
     "NameKey": "lats",
     "LatinName": "Musculus latissimus dorsi",
     "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ShoulderExtension",
+        "Role": "Primary"
+      },
+      {
+        "Function": "ShoulderAdduction",
+        "Role": "Primary"
+      },
+      {
+        "Function": "ShoulderInternalRotation",
+        "Role": "Secondary"
+      },
+      {
+        "Function": "ScapularDepression",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Large back muscle involved in pulling, shoulder extension, and shoulder adduction."
     },
@@ -239,6 +365,7 @@
     "NameKey": "neckflexors",
     "LatinName": "Musculi flexores colli",
     "BodySection": "UpperBody",
+    "Functions": [],
     "Description": {
       "Content": "Front neck muscle group involved in neck flexion, head control, posture, and counterbalancing neck extension."
     },
@@ -257,6 +384,16 @@
     "NameKey": "quads",
     "LatinName": "Musculus quadriceps femoris",
     "BodySection": "LowerBody",
+    "Functions": [
+      {
+        "Function": "KneeExtension",
+        "Role": "Primary"
+      },
+      {
+        "Function": "HipFlexion",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Front thigh muscle group involved mainly in knee extension."
     },
@@ -275,6 +412,20 @@
     "NameKey": "reardelts",
     "LatinName": "Musculus deltoideus pars spinalis",
     "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ShoulderExtension",
+        "Role": "Primary"
+      },
+      {
+        "Function": "ShoulderAbduction",
+        "Role": "Secondary"
+      },
+      {
+        "Function": "ShoulderExternalRotation",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Rear shoulder muscle involved in shoulder extension and horizontal abduction."
     },
@@ -293,6 +444,12 @@
     "NameKey": "shins",
     "LatinName": "Musculus tibialis anterior",
     "BodySection": "LowerBody",
+    "Functions": [
+      {
+        "Function": "AnkleDorsiflexion",
+        "Role": "Primary"
+      }
+    ],
     "Description": {
       "Content": "Front lower-leg muscle involved in dorsiflexion of the foot."
     },
@@ -311,6 +468,16 @@
     "NameKey": "spinalerectors",
     "LatinName": "Musculus erector spinae",
     "BodySection": "MidSection",
+    "Functions": [
+      {
+        "Function": "SpinalExtension",
+        "Role": "Primary"
+      },
+      {
+        "Function": "SpinalRotation",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Back extensor muscle group involved in spinal extension and posture."
     },
@@ -329,6 +496,20 @@
     "NameKey": "traps",
     "LatinName": "Musculus trapezius",
     "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ScapularElevation",
+        "Role": "Primary"
+      },
+      {
+        "Function": "ScapularRetraction",
+        "Role": "Primary"
+      },
+      {
+        "Function": "ScapularDepression",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Upper back and neck muscle involved in scapular elevation, retraction, upward rotation, posture, and pulling movements."
     },
@@ -347,6 +528,16 @@
     "NameKey": "triceps",
     "LatinName": "Musculus triceps brachii",
     "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ElbowExtension",
+        "Role": "Primary"
+      },
+      {
+        "Function": "ShoulderExtension",
+        "Role": "Secondary"
+      }
+    ],
     "Description": {
       "Content": "Upper arm muscle responsible for elbow extension, pressing support, and stabilizing pushing movements."
     },

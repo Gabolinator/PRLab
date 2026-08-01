@@ -22,8 +22,6 @@ public interface IWorkoutRepository
     
     Task<IReadOnlyList<Workout>> ListAvailableToUserAsync(UserId userId, CancellationToken ct);
     
-    Task<IReadOnlyList<Workout>> ListByOwnerIdAsync(UserId userId, CancellationToken ct);
-    
     Task<IReadOnlyList<Workout>> ListByAuthorIdAsync(UserId userId, CancellationToken ct);
     Task<Workout> CreateAsync(Workout workout, CancellationToken ct);
 

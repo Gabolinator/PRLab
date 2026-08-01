@@ -2,6 +2,7 @@
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Exercise;
+using PRLab.Application.Interface.UserService;
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.System;
@@ -10,12 +11,13 @@ using PRLab.Domain.Utilities;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.DB.Context;
 using PRLab.Infrastructure.DB.Helpers;
+using PRLab.Infrastructure.DB.Query;
 
 namespace PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 
 public class ExerciseSeeder(
     PRLabPgDBContext db,
-    IUserService userService,
+    ISystemUserProvider userService,
     IExerciseSeedFactory seedFactory,
     IAppLogger logger) : EntitySeederBase(db, logger)
 {
@@ -62,11 +64,7 @@ public class ExerciseSeeder(
         var seedExercise = exerciseSeedItem.Entity;
 
         var existingExercise = await db.Exercises
-            .AsSplitQuery()
-            .Include(exercise => exercise.Description)
-                .ThenInclude(description => description.Translations)
-            .Include(exercise => exercise.Steps)
-                .ThenInclude(exerciseBlock => exerciseBlock.Movement)
+            .ForFullWrite()
             .FirstOrDefaultAsync(
                 exercise => exercise.NameKey == seedExercise.NameKey,
                 ct);

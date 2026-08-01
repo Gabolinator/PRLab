@@ -54,13 +54,23 @@ public sealed record WorkoutBlockAssignment
     public static WorkoutBlockAssignment New(
         WorkoutId workoutId,
         WorkoutBlock workoutBlock,
-        int sequence)
+        int? sequence)
     {
+        if (!sequence.HasValue)
+        {
+            throw new  ArgumentException("Sequence must have a value.", nameof(sequence));
+        }
+        
+        if (sequence.HasValue && sequence.Value < 1)
+        {
+            throw new  ArgumentException("Sequence must be greater than zero.", nameof(sequence));
+        }
+        
         return new WorkoutBlockAssignment(
             WorkoutBlockAssignmentId.New(),
             workoutId,
             workoutBlock,
-            sequence);
+            sequence.Value);
     }
     
     private WorkoutBlockAssignment(

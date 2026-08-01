@@ -5,6 +5,7 @@ using PRLab.API.Mapper.UpdateMapper;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Repositories;
 using PRLab.Application.Interface.DB.Repositories.Entity;
+using PRLab.Application.Interface.UserService;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities.Interface;
 
@@ -16,11 +17,11 @@ public sealed class EquipmentController : ControllerBase
 {
     private readonly IEquipmentRepository repo;
     private readonly IAppLogger logger;
-    private readonly IUserService userService;
+    private readonly ICurrentUserService userService;
     
     public EquipmentController(
         IEquipmentRepository repo,
-        IUserService userService,
+        ICurrentUserService userService,
         IAppLogger logger)
     {
         this.repo = repo;
@@ -102,7 +103,7 @@ public sealed class EquipmentController : ControllerBase
                 return Conflict("An equipment with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
 
             if (activeUser is null)
             {
@@ -157,8 +158,8 @@ public sealed class EquipmentController : ControllerBase
         {
             var equipmentId = EquipmentId.FromGuid(id);
 
-            var equipment = await repo.GetByIdAsync(
-                equipmentId,
+            var equipment = await repo.GetTrackedByIdAsync(
+                EquipmentId.FromGuid(id),
                 ct);
 
             if (equipment is null)
@@ -176,7 +177,7 @@ public sealed class EquipmentController : ControllerBase
                 return Conflict("Another equipment with this name already exists.");
             }
 
-            var activeUser = await userService.GetActiveUserAsync(ct);
+            var activeUser = await userService.GetCurrentUserAsync(ct);
 
             equipment.Update(
                 EquipmentUpdateMapper.ToUpdate(

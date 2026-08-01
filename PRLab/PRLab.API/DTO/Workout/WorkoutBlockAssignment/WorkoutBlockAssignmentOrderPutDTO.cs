@@ -1,6 +1,6 @@
 ﻿using PRLab.Domain.Model.Value.Identifier;
 
-namespace PRLab.API.DTO.WorkoutBlock;
+namespace PRLab.API.DTO.Workout.WorkoutBlockAssignment;
 
 public sealed record WorkoutBlockAssignmentOrderPutDTO
 {

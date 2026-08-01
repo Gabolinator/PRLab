@@ -1,5 +1,5 @@
 ﻿using PRLab.API.DTO.Description;
-using PRLab.Domain;
+using PRLab.API.DTO.Muscle.Relation;
 using PRLab.Domain.Model.Value.Enum.Anatomy;
 using PRLab.Domain.Model.Value.Identifier;
 
@@ -11,5 +11,5 @@ public sealed record MuscleGetDTO(
     string? LatinName,
     BodySection BodySection,
     DescriptionGetDTO? Description,
-    IReadOnlyList<MuscleSummaryDTO>? Antagonists);
-    
+    IReadOnlyList<MuscleFunctionGetDTO> Functions,
+    IReadOnlyList<MuscleSummaryDTO> Antagonists);
