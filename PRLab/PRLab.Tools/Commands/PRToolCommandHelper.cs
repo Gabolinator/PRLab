@@ -1,11 +1,12 @@
-﻿using PRLab.Tools.Config;
+﻿using PRLab.Tools.Model;
 
-namespace PRLab.Tools.Model;
+namespace PRLab.Tools.Commands;
 
 public enum ToolCommands
 {
     Seed,
     Export,
+    ImportWorkout
 }
 
 public static class PRToolCommandHelper
@@ -15,16 +16,20 @@ public static class PRToolCommandHelper
         {
             [ToolCommands.Seed] = "seed",
             [ToolCommands.Export] = "export-seed",
+            [ToolCommands.ImportWorkout] = "import-workout"
         };
 
     public static IReadOnlyDictionary<string, ToolCommands> GetCommandAliases(
         IReadOnlyCollection<ToolCommands> availableCommands)
     {
-        var aliases = new Dictionary<string, ToolCommands>(StringComparer.OrdinalIgnoreCase);
+        var aliases = new Dictionary<string, ToolCommands>(
+            StringComparer.OrdinalIgnoreCase);
 
         foreach (var command in availableCommands)
         {
-            if (!CommandAliases.TryGetValue(command, out var commandAlias))
+            if (!CommandAliases.TryGetValue(
+                    command,
+                    out var commandAlias))
             {
                 continue;
             }

@@ -13,8 +13,18 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Include="WorkoutImport\Profiles\**\*.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    
+    <ItemGroup>
         <None Update="appsettings.Development.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.23" />
     </ItemGroup>
 </Project>

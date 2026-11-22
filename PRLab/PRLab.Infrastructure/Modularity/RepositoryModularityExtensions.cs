@@ -60,7 +60,8 @@ public static class RepositoryModularityExtensions
     
     private static IServiceCollection AddProdUserServices(this IServiceCollection services)
     {
-        throw new NotImplementedException();
+        // todo
+        return services;
     }
     
 }

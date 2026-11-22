@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using System.Runtime.CompilerServices;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -9,12 +11,20 @@ using PRLab.Tools.Config;
 using PRLab.Tools.Model;
 using PRLab.Tools.Modularity;
 
-var builder = Host.CreateApplicationBuilder(args);
+var settings = new HostApplicationBuilderSettings
+{
+    Args = args,
+    EnvironmentName = Environments.Development
+};
+
+var builder = Host.CreateApplicationBuilder(settings);
 
 var logger = new PRLabLogger("PRTools", Color.Cyan);
 var clock = new Clock();
 
 builder.PRLabToolConfiguration(args);
+
+RegisterEncodingProvider();
 
 builder.Services.AddPRLabToolServices(builder.Configuration, builder.Environment.IsDevelopment() ,clock, logger);
 
@@ -32,3 +42,9 @@ var config = PRToolConfig.FromOptions(toolOptions);
 var inputData = PRToolCommandInputData.FromInput(args, config);
 
 await commandHandler.HandleAsync(inputData, config);
+
+void RegisterEncodingProvider()
+{
+    Encoding.RegisterProvider(
+        CodePagesEncodingProvider.Instance);
+}

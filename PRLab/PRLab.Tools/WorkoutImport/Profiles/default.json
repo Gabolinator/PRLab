@@ -1,0 +1,23 @@
+﻿{
+  "Name": "CrossfitCoach",
+
+  "ExerciseAliases": {
+    "AB": "Assault Bike",
+    "DB HPC": "Double Dumbbell Hang Power Clean",
+    "LBOB": "Lateral Burpee Over Barbell",
+    "TTB": "Toes To Bar"
+  },
+
+  "BlockMappings": {
+    "WOD": "Metcon",
+    "Strength": "Strength",
+    "Technique": "Skill",
+    "Mobility": "Mobility"
+  },
+
+  "IgnoredLabels": [
+    "anything hurting?"
+  ],
+
+  "InterpretationInstructions": "Programming comes from a CrossFit coach. Preserve original wording and notes. Do not invent missing prescriptions, loads, time caps or rest durations."
+}

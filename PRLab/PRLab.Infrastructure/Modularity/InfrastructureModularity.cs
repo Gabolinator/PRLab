@@ -1,6 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PRLab.Application.WorkoutImport;
+using PRLab.Application.WorkoutImport.Config;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Infrastructure.WorkoutImport;
+using PRLab.Infrastructure.WorkoutImport.Extractor;
 
 namespace PRLab.Infrastructure.Modularity;
 
@@ -23,9 +27,12 @@ public static class InfrastructureModularity
             .AddDBContextConfiguration(configuration, logger)
             .AddRepositories()
             .AddUserServices(isDevelopment, configuration)
-            .AddDataSeeding(configuration, logger);
+            .AddDataSeeding(configuration, logger)
+            .AddWorkoutImport(configuration);
         
         return updatedServices;
     }
+    
+  
 
 }

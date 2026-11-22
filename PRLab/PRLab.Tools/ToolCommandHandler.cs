@@ -1,5 +1,5 @@
 ﻿using PRLab.Domain.Utilities.Interface;
-using PRLab.Tools.Config;
+using PRLab.Tools.Commands;
 using PRLab.Tools.Model;
 
 namespace PRLab.Tools;
@@ -8,7 +8,8 @@ public sealed class ToolCommandHandler(
     IAppLogger logger,
     ToolCommandUsageLogger usageLogger,
     SeedToolCommandHandler seedToolCommandHandler,
-    ExportSeedToolCommandHandler exportSeedToolCommandHandler)
+    ExportSeedToolCommandHandler exportSeedToolCommandHandler,
+    ImportWorkoutCommandHandler importWorkoutCommandHandler)
 {
     public async Task HandleAsync(PRToolCommandInputData inputData, PRToolConfig config)
     {
@@ -34,6 +35,10 @@ public sealed class ToolCommandHandler(
 
             case ToolCommands.Export:
                 await exportSeedToolCommandHandler.HandleExportSeedAsync(inputData, config);
+                return;
+            case ToolCommands.ImportWorkout:
+                await importWorkoutCommandHandler.HandleAsync(
+                    inputData);
                 return;
 
             default:
