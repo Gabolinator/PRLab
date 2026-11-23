@@ -5,8 +5,54 @@ namespace PRLab.Application.WorkoutImport;
 
 public interface IWorkoutImportInterpreter
 {
+    bool CanHandle(IExtractedWorkoutSource source);
+
     Task<WorkoutImportDraft> InterpretAsync(
-        ExtractedWorkoutSource source,
+        IExtractedWorkoutSource source,
+        WorkoutImportContext context,
+        CancellationToken ct = default);
+}
+
+public interface IWorkoutImportInterpreter<in TExtractedSource>
+    where TExtractedSource : IExtractedWorkoutSource
+{
+    Task<WorkoutImportDraft> InterpretAsync(
+        TExtractedSource source,
+        WorkoutImportContext context,
+        CancellationToken ct = default);
+}
+
+public abstract class WorkoutImportInterpreter<TExtractedSource>
+    : IWorkoutImportInterpreter,
+        IWorkoutImportInterpreter<TExtractedSource>
+    where TExtractedSource : IExtractedWorkoutSource
+{
+    public bool CanHandle(IExtractedWorkoutSource source)
+    {
+        return source is TExtractedSource;
+    }
+
+    public async Task<WorkoutImportDraft> InterpretAsync(
+        IExtractedWorkoutSource source,
+        WorkoutImportContext context,
+        CancellationToken ct = default)
+    {
+        if (source is not TExtractedSource typedSource)
+        {
+            throw new ArgumentException(
+                $"Expected source of type '{typeof(TExtractedSource).Name}', " +
+                $"but received '{source.GetType().Name}'.",
+                nameof(source));
+        }
+
+        return await InterpretAsync(
+            typedSource,
+            context,
+            ct);
+    }
+
+    public abstract Task<WorkoutImportDraft> InterpretAsync(
+        TExtractedSource source,
         WorkoutImportContext context,
         CancellationToken ct = default);
 }

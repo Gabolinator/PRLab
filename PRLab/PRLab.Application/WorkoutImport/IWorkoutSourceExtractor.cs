@@ -6,7 +6,7 @@ public interface IWorkoutSourceExtractor
 {
     bool CanHandle(WorkoutImportSource source);
 
-    Task<ExtractedWorkoutSource> ExtractAsync(
+    Task<IExtractedWorkoutSource> ExtractAsync(
         WorkoutImportSource source,
         CancellationToken ct = default);
 }

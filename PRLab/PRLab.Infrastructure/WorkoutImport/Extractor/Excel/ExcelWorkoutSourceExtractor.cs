@@ -5,7 +5,7 @@ using PRLab.Application.WorkoutImport;
 using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Utilities.Interface;
 
-namespace PRLab.Infrastructure.WorkoutImport.Extractor;
+namespace PRLab.Infrastructure.WorkoutImport.Extractor.Excel;
 
 public sealed class ExcelWorkoutSourceExtractor(
     IAppLogger logger)
@@ -36,7 +36,7 @@ public sealed class ExcelWorkoutSourceExtractor(
             StringComparer.OrdinalIgnoreCase);
     }
 
-    public Task<ExtractedWorkoutSource> ExtractAsync(
+    public Task<IExtractedWorkoutSource> ExtractAsync(
         WorkoutImportSource source,
         CancellationToken ct = default)
     {
@@ -56,7 +56,7 @@ public sealed class ExcelWorkoutSourceExtractor(
         using var stream = new MemoryStream(source.Content!);
         using var reader = ExcelReaderFactory.CreateReader(stream);
 
-        var sections = new List<ExtractedWorkoutSection>();
+        var sections = new List<ExtractedWorkoutSheet>();
         var normalizedText = new StringBuilder();
 
         var sheetSequence = 1;
@@ -90,22 +90,23 @@ public sealed class ExcelWorkoutSourceExtractor(
         }
         while (reader.NextResult());
 
-        return Task.FromResult(
-            new ExtractedWorkoutSource
+        IExtractedWorkoutSource extractedWorkoutSource = new ExtractedExcelWorkoutSource
+        {
+            SourceType = WorkoutImportSourceType.File,
+            SourceName = source.SourceReference ?? source.FileName,
+            NormalizedText = normalizedText.ToString().Trim(),
+            Sheets = sections,
+            Metadata = new Dictionary<string, string>
             {
-                SourceType = WorkoutImportSourceType.File,
-                SourceName = source.SourceReference ?? source.FileName,
-                NormalizedText = normalizedText.ToString().Trim(),
-                Sections = sections,
-                Metadata = new Dictionary<string, string>
-                {
-                    ["FileName"] = source.FileName!,
-                    ["SheetCount"] = sections.Count.ToString()
-                }
-            });
+                ["FileName"] = source.FileName!,
+                ["SheetCount"] = sections.Count.ToString()
+            }
+        };
+        
+        return Task.FromResult(extractedWorkoutSource);
     }
 
-    private static ExtractedWorkoutSection? ExtractSheet(
+    private static ExtractedWorkoutSheet? ExtractSheet(
         IExcelDataReader reader,
         int sequence,
         CancellationToken ct)
@@ -150,7 +151,7 @@ public sealed class ExcelWorkoutSourceExtractor(
             return null;
         }
 
-        return new ExtractedWorkoutSection
+        return new ExtractedWorkoutSheet
         {
             Name = reader.Name,
             Sequence = sequence,

@@ -1,6 +1,8 @@
-﻿namespace PRLab.Application.WorkoutImport.Model;
+﻿using PRLab.Application.WorkoutImport.Model;
 
-public sealed record ExtractedWorkoutSource
+namespace PRLab.Infrastructure.WorkoutImport.Extractor.Excel;
+
+public sealed record ExtractedExcelWorkoutSource : IExtractedWorkoutSource
 {
     public required WorkoutImportSourceType SourceType { get; init; }
 
@@ -8,7 +10,7 @@ public sealed record ExtractedWorkoutSource
 
     public required string NormalizedText { get; init; }
 
-    public IReadOnlyList<ExtractedWorkoutSection> Sections { get; init; } = [];
+    public IReadOnlyList<ExtractedWorkoutSheet> Sheets { get; init; } = [];
 
     public IReadOnlyDictionary<string, string> Metadata { get; init; }
         = new Dictionary<string, string>();

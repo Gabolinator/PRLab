@@ -1,14 +1,13 @@
 ﻿using PRLab.Application.WorkoutImport;
 using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Utilities.Interface;
+using PRLab.Infrastructure.WorkoutImport.Extractor.Excel;
 using PRLab.Tools.Model;
 
 namespace PRLab.Tools.Commands;
 
 public sealed class ImportWorkoutCommandHandler(
-    IEnumerable<IWorkoutSourceExtractor> sourceExtractors,
-    IWorkoutImportInterpreter interpreter,
-    IWorkoutImportContextFactory contextFactory,
+    IWorkoutImportService importService,
     IAppLogger logger)
 {
     public async Task HandleAsync(
@@ -27,67 +26,41 @@ public sealed class ImportWorkoutCommandHandler(
 
         var filePath = inputData.FilePath!;
 
-        if (!File.Exists(filePath))
-        {
-            logger.LogWarning(
-                $"Workout import file does not exist: {filePath}");
-
-            return;
-        }
-
-        var content = await File.ReadAllBytesAsync(
-            filePath,
-            ct);
-
-        var source = WorkoutImportSource.FromFile(
-            Path.GetFileName(filePath),
-            content,
-            sourceReference: Path.GetFullPath(filePath));
-
-        var extractor = sourceExtractors
-            .FirstOrDefault(sourceExtractor =>
-                sourceExtractor.CanHandle(source));
-
-        if (extractor is null)
-        {
-            logger.LogWarning(
-                $"No workout source extractor supports file '{source.FileName}'.");
-
-            return;
-        }
-
-        logger.Log(
-            nameof(ImportWorkoutCommandHandler),
-            $"Using extractor: {extractor.GetType().Name}");
-
-        var extractedSource = await extractor.ExtractAsync(
-            source,
-            ct);
-        
-        logger.Log(
-            nameof(ImportWorkoutCommandHandler),
-            $"Workout source extracted successfully.");
-
-        var context = await contextFactory.CreateAsync(inputData.Profile, ct);
-        
-        var interpretation = await interpreter.InterpretAsync(extractedSource, context, ct);
-        
-        LogExtractedSource(extractedSource, false);
+        var draft = await importService.ExtractAndInterpretAsync(filePath, inputData.Profile, ct);
+        LogExtractedSource(draft.ExtractedSource, true);
     }
-    
-    private void LogExtractedSource(
-        ExtractedWorkoutSource extractedSource, bool verbose = true)
+
+    private void LogExtractedSource(IExtractedWorkoutSource extractedSource, bool verbose)
+    {
+        switch (extractedSource)
+        {
+            case ExtractedExcelWorkoutSource excelSource:
+                LogExtractedExcelSource(
+                    excelSource,
+                    verbose);
+                break;
+            
+            default:
+                logger.LogWarning(
+                    $"No logger implemented for extracted source type " +
+                    $"'{extractedSource.GetType().Name}'.");
+                break;
+        }
+    }
+
+    private void LogExtractedExcelSource(
+        ExtractedExcelWorkoutSource extractedExcelSource, bool verbose = true)
     {
         if(!verbose)
         {
             logger.Log(
                 nameof(ImportWorkoutCommandHandler),
-                extractedSource.NormalizedText);
+                extractedExcelSource.NormalizedText);
             
             return;
         }
 
-        foreach (var section in extractedSource.Sections)
+        foreach (var section in extractedExcelSource.Sheets)
         {
             logger.Log(
                 nameof(ImportWorkoutCommandHandler),
