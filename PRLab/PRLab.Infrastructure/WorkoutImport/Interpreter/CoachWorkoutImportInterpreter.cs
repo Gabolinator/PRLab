@@ -15,72 +15,87 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         WorkoutImportContext context,
         CancellationToken ct = default)
     {
-        logger.LogWarning(nameof(CoachExcelWorkoutImportInterpreter),"Method not yet implemented");
+        var excelProfile =
+            context.Profile.GetRequiredSourceProfile<
+                ExcelWorkoutImportSourceProfile>();
 
-        
+        var dateCell = excelProfile.GetRequiredCell(
+            WorkoutImportProperty.Date);
+
         // it doesnt mean one sheet is one draft 
         // there could be many workouts on one sheet
         // how to know if one is already imported ? we still draft it and wait for translation to model ? 
         
         // use date as separator
         //start by finding different dates
-        IReadOnlyList<DateTime> allDistinctDates = GetDistinctDates(context, source.Sheets);
-        logger.Log(nameof(CoachExcelWorkoutImportInterpreter), $"Found {allDistinctDates.Count} date distinct : {string.Join(", ",  allDistinctDates)}");
+        var dates = GetDistinctDates(
+            source.Sheets,
+            dateCell);
+        
+        logger.Log(
+            nameof(CoachExcelWorkoutImportInterpreter),
+            $"Found {dates.Count} distinct dates: " +
+            $"{string.Join(", ", dates)}");
           
         // we need that amount of drafts 
         // we pick all rows with those days 
         // and start try to figure out what is what
-        
-        
-        
-        var interpretation = new WorkoutImportDraft();
-        var drafts = new List<WorkoutImportDraft>(){interpretation};
+        var drafts = CreateDraftsFromDates(
+            dates,
+            source.Sheets,
+            excelProfile);
 
-        drafts = CreateDraftsFromDates(allDistinctDates, source.Sheets);
         
         return Task.FromResult<IReadOnlyList<WorkoutImportDraft>>(drafts);
     }
 
-    private List<WorkoutImportDraft> CreateDraftsFromDates(IReadOnlyList<DateTime> dates, IReadOnlyList<ExtractedWorkoutSheet> sourceSheets)
+    private IReadOnlyList<WorkoutImportDraft> CreateDraftsFromDates(IReadOnlyList<DateTime> dates, IReadOnlyList<ExtractedWorkoutSheet> sourceSheets, ExcelWorkoutImportSourceProfile excelProfile)
     {
         var allRow = sourceSheets.SelectMany(sheet => sheet.Rows).ToList();
+        var drafts = new List<WorkoutImportDraft>();
+        
+        //todo
         foreach (var date in dates)
         {
+            var draft = new WorkoutImportDraft
+            {
+                Date = date,
+            };
             
+            drafts.Add(draft);
         }
+        
+        return drafts;
     }
 
-    private IReadOnlyList<DateTime> GetDistinctDates(WorkoutImportContext context, IReadOnlyList<ExtractedWorkoutSheet> sheets)
+    private IReadOnlyList<DateTime> GetDistinctDates(
+        IReadOnlyList<ExtractedWorkoutSheet> sheets,
+        int dateCellIndex)
     {
-        var dateColumn = context.Profile.DateColumn;
-        var hasDateColumn = dateColumn >= 0;
+        var cells = sheets
+            .SelectMany(sheet => sheet.Rows)
+            .Where(row =>
+                row.Cells.Count > dateCellIndex)
+            .Select(row =>
+                row.Cells[dateCellIndex]);
 
-        var cells = hasDateColumn
-            ? sheets.SelectMany(sheet => sheet.Rows.Select(row => row.Cells[dateColumn!.Value]))
-            : sheets.SelectMany(sheet => sheet.Rows.SelectMany(row => row.Cells));
-        
         return GetDistinctDatesFromCells(cells);
     }
 
-    private IReadOnlyList<DateTime> GetDistinctDatesFromCells(IEnumerable<ExtractedWorkoutCell> cells)
+    private static IReadOnlyList<DateTime> GetDistinctDatesFromCells(
+        IEnumerable<ExtractedWorkoutCell> cells)
     {
-        if (!cells.Any())
-        {
-            return [];
-        }
-
-        var dates = new List<DateTime>();
-        
-        foreach (var cell in cells)
-        {
-            if (!DateTime.TryParse(cell.Value, out var date))
-            {
-                continue;
-            }
-            
-            dates.Add(date);
-        }
-
-        return dates.Distinct().ToList();
+        return cells
+            .Select(cell =>
+                DateTime.TryParse(
+                    cell.Value,
+                    out var date)
+                    ? date.Date
+                    : (DateTime?)null)
+            .Where(date => date.HasValue)
+            .Select(date => date!.Value)
+            .Distinct()
+            .OrderBy(date => date)
+            .ToList();
     }
 }

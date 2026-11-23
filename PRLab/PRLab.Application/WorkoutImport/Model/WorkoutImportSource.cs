@@ -6,6 +6,14 @@ public enum WorkoutImportSourceType
     Text = 2
 }
 
+public enum WorkoutImportSourceFormat
+{
+    Excel,
+    Text,
+    Csv,
+    Pdf
+}
+
 public sealed record WorkoutImportSource
 {
     public WorkoutImportSourceType Type { get; init; }

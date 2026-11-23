@@ -1,8 +1,35 @@
 ﻿{
   "Name": "CrossfitCoach",
 
-  "DateColumn" : 0,
-  
+  "SourceProfiles": [
+    {
+      "Type": "Excel",
+
+      "Columns": [
+        {
+          "CellIndex": 0,
+          "Property": "Date"
+        },
+        {
+          "CellIndex": 1,
+          "Property": "Order"
+        },
+        {
+          "CellIndex": 2,
+          "Property": "Exercise"
+        },
+        {
+          "CellIndex": 3,
+          "Property": "Details"
+        },
+        {
+          "CellIndex": 4,
+          "Property": "Notes"
+        }
+      ]
+    }
+  ],
+
   "ExerciseAliases": {
     "AB": "Assault Bike",
     "DB HPC": "Double Dumbbell Hang Power Clean",
