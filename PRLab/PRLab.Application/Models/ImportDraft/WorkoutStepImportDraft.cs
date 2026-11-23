@@ -29,4 +29,6 @@ public sealed record WorkoutStepImportDraft
     public string? Notes { get; init; }
 
     public decimal Confidence { get; init; }
+    
+    public int? Order { get; init; }
 }

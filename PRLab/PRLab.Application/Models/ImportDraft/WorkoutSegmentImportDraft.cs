@@ -23,4 +23,6 @@ public sealed record WorkoutSegmentImportDraft
     public int? RestAfterSegmentSeconds { get; init; }
 
     public IReadOnlyList<WorkoutStepImportDraft> Steps { get; init; } = [];
+    
+    public int? Order { get; init; }
 }

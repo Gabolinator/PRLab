@@ -13,4 +13,6 @@ public sealed record WorkoutBlockImportDraft
     public int? RestBetweenRepeatsSeconds { get; init; }
 
     public IReadOnlyList<WorkoutSegmentImportDraft> Segments { get; init; } = [];
+    
+    public int? Order { get; init; }
 }

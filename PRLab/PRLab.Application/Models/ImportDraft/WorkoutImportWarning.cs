@@ -9,4 +9,7 @@ public enum WorkoutImportIssueSeverity
 
 public class WorkoutImportWarning
 {
+    public required WorkoutImportIssueSeverity Severity { get; init; }
+    
+    public required string Message { get; init; }
 }

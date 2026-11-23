@@ -53,10 +53,26 @@ public sealed class CoachExcelWorkoutImportInterpreter(
     {
         var allRow = sourceSheets.SelectMany(sheet => sheet.Rows).ToList();
         var drafts = new List<WorkoutImportDraft>();
+        var dateCell = excelProfile.GetRequiredCell(
+            WorkoutImportProperty.Date);
         
         //todo
         foreach (var date in dates)
         {
+            //get all row with date
+            //this is the content of the training
+            var matchingRows = allRow.Where(row => IsDate(row.Cells[dateCell], date));
+           
+            //each row is either an exercise of a block (if many exercise)
+            // how do we know ? 
+            //try to get exercices 
+            var exercices = GetExercises(
+                matchingRows,
+                excelProfile.GetRequiredCell(
+                WorkoutImportProperty.Exercise), 
+                excelProfile.GetRequiredCell(
+                WorkoutImportProperty.Order));
+            
             var draft = new WorkoutImportDraft
             {
                 Date = date,
@@ -66,6 +82,23 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         }
         
         return drafts;
+    }
+
+    private IReadOnlyList<> GetExercises(IEnumerable<ExtractedWorkoutRow> rows, int exercisesCell, int orderCell)
+    {
+        // get the cell at cellIndex , than try to have a match to an exercices
+        // preserve order
+        
+    }
+
+    private bool IsDate(ExtractedWorkoutCell cell, DateTime date)
+    {
+        if (string.IsNullOrWhiteSpace(cell.Value))
+        {
+            return false;
+        }
+        
+        return DateTime.TryParse(cell.Value, out var cellDate) && cellDate.Date == date;
     }
 
     private IReadOnlyList<DateTime> GetDistinctDates(
