@@ -7,7 +7,7 @@ public interface IWorkoutImportInterpreter
 {
     bool CanHandle(IExtractedWorkoutSource source);
 
-    Task<WorkoutImportDraft> InterpretAsync(
+    Task<IReadOnlyList<WorkoutImportDraft>> InterpretAsync(
         IExtractedWorkoutSource source,
         WorkoutImportContext context,
         CancellationToken ct = default);
@@ -16,7 +16,7 @@ public interface IWorkoutImportInterpreter
 public interface IWorkoutImportInterpreter<in TExtractedSource>
     where TExtractedSource : IExtractedWorkoutSource
 {
-    Task<WorkoutImportDraft> InterpretAsync(
+    Task<IReadOnlyList<WorkoutImportDraft>> InterpretAsync(
         TExtractedSource source,
         WorkoutImportContext context,
         CancellationToken ct = default);
@@ -32,7 +32,7 @@ public abstract class WorkoutImportInterpreter<TExtractedSource>
         return source is TExtractedSource;
     }
 
-    public async Task<WorkoutImportDraft> InterpretAsync(
+    public async Task<IReadOnlyList<WorkoutImportDraft>> InterpretAsync(
         IExtractedWorkoutSource source,
         WorkoutImportContext context,
         CancellationToken ct = default)
@@ -51,7 +51,7 @@ public abstract class WorkoutImportInterpreter<TExtractedSource>
             ct);
     }
 
-    public abstract Task<WorkoutImportDraft> InterpretAsync(
+    public abstract Task<IReadOnlyList<WorkoutImportDraft>> InterpretAsync(
         TExtractedSource source,
         WorkoutImportContext context,
         CancellationToken ct = default);

@@ -5,6 +5,8 @@ public sealed record WorkoutImportDraft
     public string? Name { get; init; }
 
     public string? Description { get; init; }
+    
+    public DateTime Date { get; init; }
 
     public IReadOnlyList<WorkoutBlockImportDraft> Blocks { get; init; } = [];
 

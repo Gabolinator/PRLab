@@ -27,7 +27,7 @@ public sealed class ImportWorkoutCommandHandler(
         var filePath = inputData.FilePath!;
 
         var draft = await importService.ExtractAndInterpretAsync(filePath, inputData.Profile, ct);
-        LogExtractedSource(draft.ExtractedSource, true);
+        LogExtractedSource(draft.ExtractedSource, false);
     }
 
     private void LogExtractedSource(IExtractedWorkoutSource extractedSource, bool verbose)

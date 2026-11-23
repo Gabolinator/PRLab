@@ -8,7 +8,7 @@ public sealed class WorkoutImportInterpreterCoordinator(
     IEnumerable<IWorkoutImportInterpreter> interpreters)
     : IWorkoutImportInterpreterCoordinator
 {
-    public async Task<WorkoutImportDraft> InterpretAsync(
+    public async Task<IReadOnlyList<WorkoutImportDraft>> InterpretAsync(
         IExtractedWorkoutSource source,
         WorkoutImportContext context,
         CancellationToken ct = default)

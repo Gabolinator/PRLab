@@ -1,6 +1,8 @@
 ﻿{
   "Name": "CrossfitCoach",
 
+  "DateColumn" : 0,
+  
   "ExerciseAliases": {
     "AB": "Assault Bike",
     "DB HPC": "Double Dumbbell Hang Power Clean",

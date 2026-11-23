@@ -29,7 +29,7 @@ public sealed class WorkoutImportService(
             profile,
             ct);
 
-        var draft = await interpreter.InterpretAsync(
+        var drafts = await interpreter.InterpretAsync(
             extractedSource,
             context,
             ct);
@@ -41,7 +41,7 @@ public sealed class WorkoutImportService(
         return new WorkoutImportResult
         {
             ExtractedSource = extractedSource,
-            Draft = draft
+            Drafts = drafts
         };
     }
 }

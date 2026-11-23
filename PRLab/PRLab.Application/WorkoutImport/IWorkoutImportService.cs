@@ -7,7 +7,7 @@ public sealed record WorkoutImportResult
 {
     public required IExtractedWorkoutSource ExtractedSource { get; init; }
 
-    public required WorkoutImportDraft Draft { get; init; }
+    public required IReadOnlyList<WorkoutImportDraft> Drafts { get; init; }
 }
 
 public interface IWorkoutImportService
