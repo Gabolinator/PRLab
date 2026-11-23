@@ -64,6 +64,9 @@ public sealed class JsonWorkoutImportProfileProvider(
         serializerOptions.Converters.Add(
             new JsonStringEnumConverter());
 
+        serializerOptions.Converters.Add(
+            new WorkoutImportSourceProfileJsonConverter());
+
         var profile = JsonSerializer.Deserialize<WorkoutImportProfile>(
             json,
             serializerOptions);
