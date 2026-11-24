@@ -1,5 +1,100 @@
 [
   {
+    "Id": "933351fd-2dca-47ce-b8c4-c4d15744c6e8",
+    "Name": "Alternating Dumbbell Devil Press",
+    "NameKey": "alternatingdumbbelldevilpress",
+    "Category": {
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Perform a burpee with dumbbells, then take one dumbbell overhead, alternating arms."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "1b5ba8fc-7745-4eee-be44-f6c8a35048db",
+            "Name": "Dumbbell",
+            "NameKey": "dumbbell"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Primary"
+      },
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Alternating",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "3a8f2d12-cb1a-4dcb-95bc-0fdbf27986e2",
     "Name": "Assault Bike",
     "NameKey": "assaultbike",
@@ -172,6 +267,139 @@
     "Action": "Ignore"
   },
   {
+    "Id": "d2268e1a-b5e0-40c4-a70c-c290c7f9fb7c",
+    "Name": "Barbell Bench Press",
+    "NameKey": "barbellbenchpress",
+    "Category": {
+      "Id": "5f924600-1838-4084-838e-45e6a8457d0c",
+      "Name": "Powerlifting",
+      "NameKey": "powerlifting"
+    },
+    "Description": {
+      "Content": "Press a barbell from the chest while lying on a bench."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment-1",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "b4278276-3896-436d-a8bd-fc23c8945bc5",
+            "Name": "Barbell",
+            "NameKey": "barbell"
+          }
+        ]
+      },
+      {
+        "GroupKey": "equipment-2",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "a66c72c9-faf1-47c3-8af9-4a6121b5a8fc",
+            "Name": "Flat Bench",
+            "NameKey": "flatbench"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Primary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "868f2020-a893-412a-b925-4d22b67e6bfc",
+      "Name": "Bench Press",
+      "NameKey": "benchpress"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "868f2020-a893-412a-b925-4d22b67e6bfc",
+    "Name": "Bench Press",
+    "NameKey": "benchpress",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Press a load away from the chest while lying on a bench."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "a66c72c9-faf1-47c3-8af9-4a6121b5a8fc",
+            "Name": "Flat Bench",
+            "NameKey": "flatbench"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Primary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "38b43fe0-b408-431a-be99-619446d599fe",
     "Name": "Bodyweight Squat",
     "NameKey": "bodyweightsquat",
@@ -214,7 +442,303 @@
       "Squat"
     ],
     "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "6a1dddfa-2b8a-4492-9113-90edc6357003",
+      "Name": "Squat",
+      "NameKey": "squat"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "adba1c2a-e89f-465c-867f-f3c5cf9b7c08",
+    "Name": "Box Jump",
+    "NameKey": "boxjump",
+    "Category": {
+      "Id": "40732a19-c543-41c4-91ec-a42cb8619177",
+      "Name": "Plyometrics",
+      "NameKey": "plyometrics"
+    },
+    "Description": {
+      "Content": "Jump from the floor onto a box."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "88ca7081-d8f0-45b9-a6c1-927959dbbf5a",
+            "Name": "Plyometric Box",
+            "NameKey": "plyometricbox"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
     "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "6c721951-9272-47c0-a119-a43bfbfd0e0f",
+    "Name": "Box Jump Over",
+    "NameKey": "boxjumpover",
+    "Category": {
+      "Id": "40732a19-c543-41c4-91ec-a42cb8619177",
+      "Name": "Plyometrics",
+      "NameKey": "plyometrics"
+    },
+    "Description": {
+      "Content": "Jump onto or over a box and finish on the opposite side."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "88ca7081-d8f0-45b9-a6c1-927959dbbf5a",
+            "Name": "Plyometric Box",
+            "NameKey": "plyometricbox"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "adba1c2a-e89f-465c-867f-f3c5cf9b7c08",
+      "Name": "Box Jump",
+      "NameKey": "boxjump"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "11bab3f4-6781-4e69-a791-77433609f3cb",
+    "Name": "Box Step Over",
+    "NameKey": "boxstepover",
+    "Category": {
+      "Id": "40732a19-c543-41c4-91ec-a42cb8619177",
+      "Name": "Plyometrics",
+      "NameKey": "plyometrics"
+    },
+    "Description": {
+      "Content": "Step onto a box and descend on the opposite side."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "88ca7081-d8f0-45b9-a6c1-927959dbbf5a",
+            "Name": "Plyometric Box",
+            "NameKey": "plyometricbox"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Alternating",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "64daabad-88b9-410a-90b7-27c0820ee16a",
+    "Name": "Bulgarian Split Squat",
+    "NameKey": "bulgariansplitsquat",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Squat in a split stance with the rear foot elevated."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "a66c72c9-faf1-47c3-8af9-4a6121b5a8fc",
+            "Name": "Flat Bench",
+            "NameKey": "flatbench"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Unilateral",
+    "VariantOf": {
+      "Id": "6a1dddfa-2b8a-4492-9113-90edc6357003",
+      "Name": "Squat",
+      "NameKey": "squat"
+    },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
@@ -286,6 +810,141 @@
     ],
     "Laterality": "Bilateral",
     "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "cdce3717-4ce8-45e9-906a-36207ab610c8",
+    "Name": "C2 Bike",
+    "NameKey": "c2bike",
+    "Category": {
+      "Id": "52921f7f-a1ee-4bc4-a79d-cf7e468c2f6f",
+      "Name": "Cardio",
+      "NameKey": "cardio"
+    },
+    "Description": {
+      "Content": "Cycle on a C2 Bike for calories, distance, or time."
+    },
+    "DefaultWorkTargetType": "Calories",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "DistanceMeters",
+      "Calories"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "8a1775f4-35f1-48f3-82e3-5e96c1716fb3",
+            "Name": "C2 Bike",
+            "NameKey": "c2bike"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "6c9c00be-9fe2-47ea-ac75-c6730b1815ff",
+    "Name": "Dead Stop Strict Hand Stand Push Up",
+    "NameKey": "deadstopstricthandstandpushup",
+    "Category": {
+      "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
+      "Name": "Calisthenics",
+      "NameKey": "calisthenics"
+    },
+    "Description": {
+      "Content": "Press from a dead stop in the bottom position without kipping."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "e5f27c80-49f1-423b-9b38-dfa005f8b64c",
+        "Name": "Side Delts",
+        "NameKey": "sidedelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "dede233a-c224-40f3-9721-3b8021977513",
+        "Name": "Serratus Anterior",
+        "NameKey": "serratusanterior",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "ce25bd46-5cd2-4db9-9851-9c6acc1be636",
+      "Name": "Hand Stand Push Up",
+      "NameKey": "handstandpushup"
+    },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
@@ -371,6 +1030,81 @@
     ],
     "Laterality": "Bilateral",
     "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "e8ac3d51-028f-48b8-8296-0f20611380d3",
+    "Name": "Deep Lateral Box Step Up",
+    "NameKey": "deeplateralboxstepup",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Step sideways onto a box from a deep starting position."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "88ca7081-d8f0-45b9-a6c1-927959dbbf5a",
+            "Name": "Plyometric Box",
+            "NameKey": "plyometricbox"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "d44c29ed-e269-4c3f-bd32-7df22e6946c3",
+        "Name": "Abductors",
+        "NameKey": "abductors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "5a05604e-4a78-4675-8067-71c34fdcc6d9",
+        "Name": "Adductors",
+        "NameKey": "adductors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Unilateral",
+    "VariantOf": {
+      "Id": "f26d9779-ce8a-4743-b270-db638ef59d5d",
+      "Name": "Step Up",
+      "NameKey": "stepup"
+    },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
@@ -518,6 +1252,535 @@
     "Action": "Ignore"
   },
   {
+    "Id": "7527b0c9-3fb8-4d6b-a221-af33d9edc3ad",
+    "Name": "Dumbbell Deadlift",
+    "NameKey": "dumbbelldeadlift",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Lift dumbbells from the floor to standing."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "1b5ba8fc-7745-4eee-be44-f6c8a35048db",
+            "Name": "Dumbbell",
+            "NameKey": "dumbbell"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Primary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "4316dd12-67a5-4969-b8fe-78c1eeafa41f",
+      "Name": "Deadlift",
+      "NameKey": "deadlift"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "052d6c02-a05d-4893-bb85-58f6f2ae54b5",
+    "Name": "Dumbbell Shoulder Press",
+    "NameKey": "dumbbellshoulderpress",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Press dumbbells from shoulder height to overhead."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "1b5ba8fc-7745-4eee-be44-f6c8a35048db",
+            "Name": "Dumbbell",
+            "NameKey": "dumbbell"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "e5f27c80-49f1-423b-9b38-dfa005f8b64c",
+        "Name": "Side Delts",
+        "NameKey": "sidedelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "dede233a-c224-40f3-9721-3b8021977513",
+        "Name": "Serratus Anterior",
+        "NameKey": "serratusanterior",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "b2637a2b-9bfe-4086-96e2-8dac0906a993",
+      "Name": "Shoulder Press",
+      "NameKey": "shoulderpress"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "9faf5886-ada7-420a-8087-7ab740b89585",
+    "Name": "Front-Rack Lunge",
+    "NameKey": "frontracklunge",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Lunge while holding the load in the front rack."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Alternating",
+    "VariantOf": {
+      "Id": "f2529676-8163-48c1-bed7-c3f88a6821ec",
+      "Name": "Lunge",
+      "NameKey": "lunge"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "f3dd5ba5-a25e-4e0e-924c-1ae00d381715",
+    "Name": "Frontal Burpee Box Jump Over",
+    "NameKey": "frontalburpeeboxjumpover",
+    "Category": {
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Perform a burpee facing a box, then jump over to the opposite side."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "88ca7081-d8f0-45b9-a6c1-927959dbbf5a",
+            "Name": "Plyometric Box",
+            "NameKey": "plyometricbox"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "37e57f66-b2d1-4770-8815-c790e0325459",
+      "Name": "Burpee",
+      "NameKey": "burpee"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "c709ad67-96ea-435d-a126-10c8ad192b7e",
+    "Name": "Frontal Burpee Over Bar",
+    "NameKey": "frontalburpeeoverbar",
+    "Category": {
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Perform a burpee facing a barbell, then jump forward across it."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "b4278276-3896-436d-a8bd-fc23c8945bc5",
+            "Name": "Barbell",
+            "NameKey": "barbell"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "37e57f66-b2d1-4770-8815-c790e0325459",
+      "Name": "Burpee",
+      "NameKey": "burpee"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ec791ed2-df04-4736-a7b8-fb9511ef573f",
+    "Name": "GHD Hip Extension",
+    "NameKey": "ghdhipextension",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Extend the hips with the lower body supported on a glute ham developer."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "2c3115fc-b881-4227-9098-a3d9f0735953",
+            "Name": "Glute Ham Developer",
+            "NameKey": "glutehamdeveloper"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "2dffb413-b191-4081-8762-f949e3c2ec99",
+    "Name": "GHD Sit-Up",
+    "NameKey": "ghdsitup",
+    "Category": {
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Perform a sit-up on a glute ham developer."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "2c3115fc-b881-4227-9098-a3d9f0735953",
+            "Name": "Glute Ham Developer",
+            "NameKey": "glutehamdeveloper"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a4d8f4cb-6359-4000-b5ad-ee01cc9afaff",
+        "Name": "Hip Flexors",
+        "NameKey": "hipflexors",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "377eee1c-9cdf-44e5-adbd-4ede91d68ca1",
     "Name": "Goblet Squat",
     "NameKey": "gobletsquat",
@@ -587,6 +1850,426 @@
       "Id": "38b43fe0-b408-431a-be99-619446d599fe",
       "Name": "Bodyweight Squat",
       "NameKey": "bodyweightsquat"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ce25bd46-5cd2-4db9-9851-9c6acc1be636",
+    "Name": "Hand Stand Push Up",
+    "NameKey": "handstandpushup",
+    "Category": {
+      "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
+      "Name": "Calisthenics",
+      "NameKey": "calisthenics"
+    },
+    "Description": {
+      "Content": "Lower from a handstand and press back to elbow extension."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "e5f27c80-49f1-423b-9b38-dfa005f8b64c",
+        "Name": "Side Delts",
+        "NameKey": "sidedelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "dede233a-c224-40f3-9721-3b8021977513",
+        "Name": "Serratus Anterior",
+        "NameKey": "serratusanterior",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "b562870d-8d63-473e-8954-5d1e474548c3",
+    "Name": "Hanging Knee Raise",
+    "NameKey": "hangingkneeraise",
+    "Category": {
+      "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
+      "Name": "Calisthenics",
+      "NameKey": "calisthenics"
+    },
+    "Description": {
+      "Content": "Raise the knees from a hanging position."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "99d790ca-c308-4394-9f53-fb9d90267ad9",
+            "Name": "Pull-up Bar",
+            "NameKey": "pullupbar"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a4d8f4cb-6359-4000-b5ad-ee01cc9afaff",
+        "Name": "Hip Flexors",
+        "NameKey": "hipflexors",
+        "Role": "Primary"
+      },
+      {
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
+        "Name": "Lats",
+        "NameKey": "lats",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ea85f38b-13fc-4b79-8f12-52dc7d81cf14",
+    "Name": "Hip Thrust",
+    "NameKey": "hipthrust",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Extend the hips from a supported position."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "b65c0236-a03f-4058-af65-d14d2b4f1fc7",
+    "Name": "Kipping High Knees",
+    "NameKey": "kippinghighknees",
+    "Category": {
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Use a kip to raise the knees from a hanging position."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "99d790ca-c308-4394-9f53-fb9d90267ad9",
+            "Name": "Pull-up Bar",
+            "NameKey": "pullupbar"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a4d8f4cb-6359-4000-b5ad-ee01cc9afaff",
+        "Name": "Hip Flexors",
+        "NameKey": "hipflexors",
+        "Role": "Primary"
+      },
+      {
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
+        "Name": "Lats",
+        "NameKey": "lats",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "b562870d-8d63-473e-8954-5d1e474548c3",
+      "Name": "Hanging Knee Raise",
+      "NameKey": "hangingkneeraise"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "d3f22a7c-2676-4742-9e9e-60b828e681b7",
+    "Name": "Kipping Toes To Bar",
+    "NameKey": "kippingtoestobar",
+    "Category": {
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Use a kip to bring the toes to the bar."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "99d790ca-c308-4394-9f53-fb9d90267ad9",
+            "Name": "Pull-up Bar",
+            "NameKey": "pullupbar"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a4d8f4cb-6359-4000-b5ad-ee01cc9afaff",
+        "Name": "Hip Flexors",
+        "NameKey": "hipflexors",
+        "Role": "Primary"
+      },
+      {
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
+        "Name": "Lats",
+        "NameKey": "lats",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "9bb6b825-6996-4fa0-8601-18ef737e50b4",
+      "Name": "Toes To Bar",
+      "NameKey": "toestobar"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "82a6aec6-93e3-4fa9-8383-2c3083db23c3",
+    "Name": "Lateral Burpee",
+    "NameKey": "lateralburpee",
+    "Category": {
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Perform a burpee with a sideways jump or transition."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "d44c29ed-e269-4c3f-bd32-7df22e6946c3",
+        "Name": "Abductors",
+        "NameKey": "abductors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "5a05604e-4a78-4675-8067-71c34fdcc6d9",
+        "Name": "Adductors",
+        "NameKey": "adductors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "37e57f66-b2d1-4770-8815-c790e0325459",
+      "Name": "Burpee",
+      "NameKey": "burpee"
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
@@ -669,6 +2352,156 @@
       "GetUp"
     ],
     "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "82a6aec6-93e3-4fa9-8383-2c3083db23c3",
+      "Name": "Lateral Burpee",
+      "NameKey": "lateralburpee"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "c40b5711-98a4-4ffe-a6f0-2bf23b4e6da6",
+    "Name": "Lateral Burpee Over Line",
+    "NameKey": "lateralburpeeoverline",
+    "Category": {
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Perform a burpee followed by a sideways jump across a floor line."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "ba1fec32-72b0-45d3-ae5c-f8fa26260ee2",
+            "Name": "Floor Line",
+            "NameKey": "floorline"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "d44c29ed-e269-4c3f-bd32-7df22e6946c3",
+        "Name": "Abductors",
+        "NameKey": "abductors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "5a05604e-4a78-4675-8067-71c34fdcc6d9",
+        "Name": "Adductors",
+        "NameKey": "adductors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "82a6aec6-93e3-4fa9-8383-2c3083db23c3",
+      "Name": "Lateral Burpee",
+      "NameKey": "lateralburpee"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "24757a24-f7a5-44c4-bc5e-00396d69030e",
+    "Name": "Lie On Back On Bench Straight Arms To Side Stretch",
+    "NameKey": "lieonbackonbenchstraightarmstosidestretch",
+    "Category": {
+      "Id": "dbbc1cd0-2de0-4cbd-910e-5da272e62f90",
+      "Name": "Stretching",
+      "NameKey": "stretching"
+    },
+    "Description": {
+      "Content": "Lie face up on a bench and extend the straight arms to the sides."
+    },
+    "DefaultWorkTargetType": "DurationSeconds",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "TimeUnderTensionSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "a66c72c9-faf1-47c3-8af9-4a6121b5a8fc",
+            "Name": "Flat Bench",
+            "NameKey": "flatbench"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Primary"
+      },
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
@@ -724,6 +2557,600 @@
       "Lunge"
     ],
     "Laterality": "Unilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "915f8a73-1900-4654-b2cc-025905d50a38",
+    "Name": "Lying On Back Bent Legs To Side Stretch",
+    "NameKey": "lyingonbackbentlegstosidestretch",
+    "Category": {
+      "Id": "dbbc1cd0-2de0-4cbd-910e-5da272e62f90",
+      "Name": "Stretching",
+      "NameKey": "stretching"
+    },
+    "Description": {
+      "Content": "Lie face up and lower the bent legs to one side."
+    },
+    "DefaultWorkTargetType": "DurationSeconds",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "TimeUnderTensionSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Primary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Unilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "3bd736ef-dd9b-4c3a-81bf-f91abc4379a6",
+    "Name": "Lying On Back On Floor Bent Leg Butterfly Stretch",
+    "NameKey": "lyingonbackonfloorbentlegbutterflystretch",
+    "Category": {
+      "Id": "dbbc1cd0-2de0-4cbd-910e-5da272e62f90",
+      "Name": "Stretching",
+      "NameKey": "stretching"
+    },
+    "Description": {
+      "Content": "Lie face up on the floor with the knees bent outward in a butterfly position."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "5a05604e-4a78-4675-8067-71c34fdcc6d9",
+        "Name": "Adductors",
+        "NameKey": "adductors",
+        "Role": "Primary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "1010be0e-7ee8-4d37-a042-aba22add7b0e",
+    "Name": "Lying On Back On Floor Straight Leg Rotation",
+    "NameKey": "lyingonbackonfloorstraightlegrotation",
+    "Category": {
+      "Id": "bb07a7d4-846a-402e-ac6d-8a37fec8b78e",
+      "Name": "Mobility",
+      "NameKey": "mobility"
+    },
+    "Description": {
+      "Content": "Rotate a straight leg across the body while lying face up on the floor."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Unilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "b60c5e22-aab9-4526-adb7-35ffedb7774f",
+    "Name": "Lying On Belly On Floor Snatch Grip Overhead Hold",
+    "NameKey": "lyingonbellyonfloorsnatchgripoverheadhold",
+    "Category": {
+      "Id": "bb07a7d4-846a-402e-ac6d-8a37fec8b78e",
+      "Name": "Mobility",
+      "NameKey": "mobility"
+    },
+    "Description": {
+      "Content": "Lie face down and hold the arms overhead in a wide snatch-grip position."
+    },
+    "DefaultWorkTargetType": "DurationSeconds",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "TimeUnderTensionSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dede233a-c224-40f3-9721-3b8021977513",
+        "Name": "Serratus Anterior",
+        "NameKey": "serratusanterior",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "e5f27c80-49f1-423b-9b38-dfa005f8b64c",
+        "Name": "Side Delts",
+        "NameKey": "sidedelts",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "a11ffd8a-1992-48ce-8b59-d04e227d3e54",
+    "Name": "Lying On Belly On Floor Straight Arms Sideway Hold",
+    "NameKey": "lyingonbellyonfloorstraightarmssidewayhold",
+    "Category": {
+      "Id": "bb07a7d4-846a-402e-ac6d-8a37fec8b78e",
+      "Name": "Mobility",
+      "NameKey": "mobility"
+    },
+    "Description": {
+      "Content": "Lie face down and hold the straight arms out to the sides."
+    },
+    "DefaultWorkTargetType": "DurationSeconds",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "TimeUnderTensionSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "7ab150ce-7324-4f03-a470-8bb50afb4e2c",
+        "Name": "Rear Delts",
+        "NameKey": "reardelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "03b75182-7055-4298-91dc-64fc4db5bf4d",
+        "Name": "Rhomboids",
+        "NameKey": "rhomboids",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "b7f7e8d6-cf20-4eb3-87ee-df1871d04393",
+    "Name": "Lying On Floor On Side Bent Arm External Rotation",
+    "NameKey": "lyingonflooronsidebentarmexternalrotation",
+    "Category": {
+      "Id": "bb07a7d4-846a-402e-ac6d-8a37fec8b78e",
+      "Name": "Mobility",
+      "NameKey": "mobility"
+    },
+    "Description": {
+      "Content": "Lie on one side and externally rotate the shoulder with the elbow bent."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "59cc9aae-fc6b-4091-92af-7f7c58ac93b2",
+        "Name": "Infraspinatus",
+        "NameKey": "infraspinatus",
+        "Role": "Primary"
+      },
+      {
+        "Id": "0269eef0-cf25-45fd-8dda-a97592e1e2d0",
+        "Name": "Teres Minor",
+        "NameKey": "teresminor",
+        "Role": "Primary"
+      },
+      {
+        "Id": "7ab150ce-7324-4f03-a470-8bb50afb4e2c",
+        "Name": "Rear Delts",
+        "NameKey": "reardelts",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Unilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "919a29c7-53fe-441e-985f-6cda54e8cb33",
+    "Name": "Overhead Squat",
+    "NameKey": "overheadsquat",
+    "Category": {
+      "Id": "a689d28b-d1fc-4bfa-b695-6005fb43e7ce",
+      "Name": "Olympic Weightlifting",
+      "NameKey": "olympicweightlifting"
+    },
+    "Description": {
+      "Content": "Squat while supporting a load overhead."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "dede233a-c224-40f3-9721-3b8021977513",
+        "Name": "Serratus Anterior",
+        "NameKey": "serratusanterior",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "e5f27c80-49f1-423b-9b38-dfa005f8b64c",
+        "Name": "Side Delts",
+        "NameKey": "sidedelts",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": {
+      "Id": "6a1dddfa-2b8a-4492-9113-90edc6357003",
+      "Name": "Squat",
+      "NameKey": "squat"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "92eac3f6-1b08-4c87-ba39-b3e40f141466",
+    "Name": "Parallel Bar Dip",
+    "NameKey": "parallelbardip",
+    "Category": {
+      "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
+      "Name": "Calisthenics",
+      "NameKey": "calisthenics"
+    },
+    "Description": {
+      "Content": "Lower and press the body between parallel bars."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "c8e19aa9-cef1-4a94-a89e-357ec476c665",
+            "Name": "Parallel Bars",
+            "NameKey": "parallelbars"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
+        "Name": "Chest",
+        "NameKey": "chest",
+        "Role": "Primary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "bbb4e80a-8908-4a6f-af2c-759bbd8d3e4e",
+    "Name": "Power Clean",
+    "NameKey": "powerclean",
+    "Category": {
+      "Id": "a689d28b-d1fc-4bfa-b695-6005fb43e7ce",
+      "Name": "Olympic Weightlifting",
+      "NameKey": "olympicweightlifting"
+    },
+    "Description": {
+      "Content": "Lift a barbell from the floor to the front rack and receive it above a full squat."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "b4278276-3896-436d-a8bd-fc23c8945bc5",
+            "Name": "Barbell",
+            "NameKey": "barbell"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "54edc0d0-cf57-4509-a1a4-58ca107e06d4",
+    "Name": "Power Snatch",
+    "NameKey": "powersnatch",
+    "Category": {
+      "Id": "a689d28b-d1fc-4bfa-b695-6005fb43e7ce",
+      "Name": "Olympic Weightlifting",
+      "NameKey": "olympicweightlifting"
+    },
+    "Description": {
+      "Content": "Lift a barbell from the floor overhead and receive it above a full squat."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "b4278276-3896-436d-a8bd-fc23c8945bc5",
+            "Name": "Barbell",
+            "NameKey": "barbell"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "e5f27c80-49f1-423b-9b38-dfa005f8b64c",
+        "Name": "Side Delts",
+        "NameKey": "sidedelts",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
     "VariantOf": null,
     "Origin": "BuiltIn",
     "OwnerUserId": null,
@@ -839,6 +3266,89 @@
     "Patterns": [
       "Push"
     ],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "55aa2584-63c5-4bd7-97ef-f3de3c7b6fc8",
+    "Name": "Ring Row",
+    "NameKey": "ringrow",
+    "Category": {
+      "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
+      "Name": "Calisthenics",
+      "NameKey": "calisthenics"
+    },
+    "Description": {
+      "Content": "Pull the body toward suspended rings from an inclined position."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "13c4948b-7376-4d0f-8219-5de49f8925e0",
+            "Name": "Gymnastic Rings",
+            "NameKey": "gymnasticrings"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
+        "Name": "Lats",
+        "NameKey": "lats",
+        "Role": "Primary"
+      },
+      {
+        "Id": "03b75182-7055-4298-91dc-64fc4db5bf4d",
+        "Name": "Rhomboids",
+        "NameKey": "rhomboids",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "e691e48b-8e41-4282-9d73-fcb73f7fb446",
+        "Name": "Biceps",
+        "NameKey": "biceps",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "7ab150ce-7324-4f03-a470-8bb50afb4e2c",
+        "Name": "Rear Delts",
+        "NameKey": "reardelts",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
     "Laterality": "Bilateral",
     "VariantOf": null,
     "Origin": "BuiltIn",
@@ -987,6 +3497,252 @@
     "Action": "Ignore"
   },
   {
+    "Id": "31eaae56-1179-4c03-9f6b-3be12cdbbf83",
+    "Name": "Sandbag Carry",
+    "NameKey": "sandbagcarry",
+    "Category": {
+      "Id": "58f7306e-9fb0-4d91-910e-d89c15900727",
+      "Name": "Hybrid Conditioning",
+      "NameKey": "hybridconditioning"
+    },
+    "Description": {
+      "Content": "Carry a sandbag for distance or time."
+    },
+    "DefaultWorkTargetType": "DistanceMeters",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "DistanceMeters"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "16104c66-6a0c-433f-af84-6f5718bd4856",
+            "Name": "Sandbag",
+            "NameKey": "sandbag"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "b2637a2b-9bfe-4086-96e2-8dac0906a993",
+    "Name": "Shoulder Press",
+    "NameKey": "shoulderpress",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Press from shoulder height to overhead."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "e5f27c80-49f1-423b-9b38-dfa005f8b64c",
+        "Name": "Side Delts",
+        "NameKey": "sidedelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "dede233a-c224-40f3-9721-3b8021977513",
+        "Name": "Serratus Anterior",
+        "NameKey": "serratusanterior",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "274cb4e9-7c92-4075-86dd-bf17565c0968",
+    "Name": "Side Lying Single Leg Crunches On Floor",
+    "NameKey": "sidelyingsinglelegcrunchesonfloor",
+    "Category": {
+      "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
+      "Name": "Bodyweight",
+      "NameKey": "bodyweight"
+    },
+    "Description": {
+      "Content": "Lie on one side and bring the upper knee and trunk toward each other."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a4d8f4cb-6359-4000-b5ad-ee01cc9afaff",
+        "Name": "Hip Flexors",
+        "NameKey": "hipflexors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Unilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "bd739018-cd9e-4553-a4b7-c79d1a33a402",
+    "Name": "Single Leg Hip Thrust",
+    "NameKey": "singleleghipthrust",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Extend the hips using one working leg."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Unilateral",
+    "VariantOf": {
+      "Id": "ea85f38b-13fc-4b79-8f12-52dc7d81cf14",
+      "Name": "Hip Thrust",
+      "NameKey": "hipthrust"
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "1908c201-719c-4914-8c90-3a261e1f589d",
     "Name": "Ski Erg",
     "NameKey": "skierg",
@@ -1059,6 +3815,330 @@
     "Patterns": [
       "Pull"
     ],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "6a1dddfa-2b8a-4492-9113-90edc6357003",
+    "Name": "Squat",
+    "NameKey": "squat",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Bend at the hips and knees, then stand."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "4ac73017-cc43-477a-95d1-5b6b9df23bfb",
+    "Name": "Standing Back Twist",
+    "NameKey": "standingbacktwist",
+    "Category": {
+      "Id": "bb07a7d4-846a-402e-ac6d-8a37fec8b78e",
+      "Name": "Mobility",
+      "NameKey": "mobility"
+    },
+    "Description": {
+      "Content": "Rotate the torso from side to side while standing."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Primary"
+      },
+      {
+        "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
+        "Name": "Spinal Erectors",
+        "NameKey": "spinalerectors",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Alternating",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "9b03fdfd-4b9b-446d-a133-71a703199740",
+    "Name": "Standing Bent Over Hamstring Stretch",
+    "NameKey": "standingbentoverhamstringstretch",
+    "Category": {
+      "Id": "dbbc1cd0-2de0-4cbd-910e-5da272e62f90",
+      "Name": "Stretching",
+      "NameKey": "stretching"
+    },
+    "Description": {
+      "Content": "Hinge forward while standing to stretch the hamstrings."
+    },
+    "DefaultWorkTargetType": "DurationSeconds",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds",
+      "TimeUnderTensionSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Primary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "f26d9779-ce8a-4743-b270-db638ef59d5d",
+    "Name": "Step Up",
+    "NameKey": "stepup",
+    "Category": {
+      "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
+      "Name": "Strength Training",
+      "NameKey": "strengthtraining"
+    },
+    "Description": {
+      "Content": "Step onto an elevated surface and stand."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "88ca7081-d8f0-45b9-a6c1-927959dbbf5a",
+            "Name": "Plyometric Box",
+            "NameKey": "plyometricbox"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
+        "Name": "Glutes",
+        "NameKey": "glutes",
+        "Role": "Primary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
+        "Name": "Calves",
+        "NameKey": "calves",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
+        "Name": "Hamstrings",
+        "NameKey": "hamstrings",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Unilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "9bb6b825-6996-4fa0-8601-18ef737e50b4",
+    "Name": "Toes To Bar",
+    "NameKey": "toestobar",
+    "Category": {
+      "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
+      "Name": "Calisthenics",
+      "NameKey": "calisthenics"
+    },
+    "Description": {
+      "Content": "Raise the feet from a hang until the toes reach the bar."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "99d790ca-c308-4394-9f53-fb9d90267ad9",
+            "Name": "Pull-up Bar",
+            "NameKey": "pullupbar"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a4d8f4cb-6359-4000-b5ad-ee01cc9afaff",
+        "Name": "Hip Flexors",
+        "NameKey": "hipflexors",
+        "Role": "Primary"
+      },
+      {
+        "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
+        "Name": "Forearms Flexors",
+        "NameKey": "forearmsflexors",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
+        "Name": "Lats",
+        "NameKey": "lats",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "45bb6641-6559-4f00-be6c-8072992e6d97",
+    "Name": "V-Up",
+    "NameKey": "vup",
+    "Category": {
+      "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
+      "Name": "Bodyweight",
+      "NameKey": "bodyweight"
+    },
+    "Description": {
+      "Content": "Raise the torso and legs together from a face-up position."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Primary"
+      },
+      {
+        "Id": "a4d8f4cb-6359-4000-b5ad-ee01cc9afaff",
+        "Name": "Hip Flexors",
+        "NameKey": "hipflexors",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+        "Name": "Obliques",
+        "NameKey": "obliques",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
     "Laterality": "Bilateral",
     "VariantOf": null,
     "Origin": "BuiltIn",
@@ -1152,5 +4232,126 @@
     "OwnerUserId": null,
     "VisibilityScope": "Public",
     "Action": "Ignore"
+  },
+  {
+    "Id": "ba2856cd-da28-463d-bcd2-f480a18c76c8",
+    "Name": "Wall Walk",
+    "NameKey": "wallwalk",
+    "Category": {
+      "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
+      "Name": "CrossFit",
+      "NameKey": "crossfit"
+    },
+    "Description": {
+      "Content": "Walk the feet up a wall and the hands toward it from a prone position."
+    },
+    "DefaultWorkTargetType": "Repetitions",
+    "AllowedWorkTargetTypes": [
+      "Repetitions",
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [
+      {
+        "GroupKey": "equipment",
+        "Kind": "RequiredGroup",
+        "Options": [
+          {
+            "Id": "9172ae24-2213-4c88-8938-9a04d74417b7",
+            "Name": "Wall",
+            "NameKey": "wall"
+          }
+        ]
+      }
+    ],
+    "Muscles": [
+      {
+        "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
+        "Name": "Front Delts",
+        "NameKey": "frontdelts",
+        "Role": "Primary"
+      },
+      {
+        "Id": "dede233a-c224-40f3-9721-3b8021977513",
+        "Name": "Serratus Anterior",
+        "NameKey": "serratusanterior",
+        "Role": "Primary"
+      },
+      {
+        "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
+        "Name": "Triceps",
+        "NameKey": "triceps",
+        "Role": "Primary"
+      },
+      {
+        "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
+        "Name": "Abs",
+        "NameKey": "abs",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "e5f27c80-49f1-423b-9b38-dfa005f8b64c",
+        "Name": "Side Delts",
+        "NameKey": "sidedelts",
+        "Role": "Secondary"
+      },
+      {
+        "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
+        "Name": "Traps",
+        "NameKey": "traps",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Bilateral",
+    "VariantOf": null,
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Name": "Lunge Stretch",
+    "NameKey": "lungestretch",
+    "Category": {
+      "Name": "Stretching",
+      "NameKey": "stretching"
+    },
+    "Description": {
+      "Content": "Hold a lunge position to stretch the hip flexors of the rear leg."
+    },
+    "DefaultWorkTargetType": "DurationSeconds",
+    "AllowedWorkTargetTypes": [
+      "DurationSeconds"
+    ],
+    "EquipmentRequirements": [],
+    "Muscles": [
+      {
+        "Name": "Hip Flexors",
+        "NameKey": "hipflexors",
+        "Role": "Primary"
+      },
+      {
+        "Name": "Quads",
+        "NameKey": "quads",
+        "Role": "Secondary"
+      }
+    ],
+    "PrimaryPattern": null,
+    "Patterns": [],
+    "Laterality": "Unilateral",
+    "VariantOf": {
+      "Name": "Lunge",
+      "NameKey": "lunge"
+    },
+    "Origin": "BuiltIn",
+    "VisibilityScope": "Public",
+    "Action": "CreateIfMissing"
   }
 ]

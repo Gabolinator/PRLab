@@ -1,4 +1,4 @@
-using System.Text.Json;
+using System.Text;
 using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport;
 using PRLab.Application.WorkoutImport.Model;
@@ -61,8 +61,7 @@ public sealed class CoachExcelWorkoutImportInterpreter(
             rows.Add(rowDraft);
             if (logger.Enabled)
             {
-                logger.Log(nameof(CoachExcelWorkoutImportInterpreter),
-                    $"Interpreted workout row for {date:yyyy-MM-dd}: {JsonSerializer.Serialize(rowDraft)}");
+                logger.Log(nameof(CoachExcelWorkoutImportInterpreter), FormatRowLog(date, rowDraft));
             }
         }
 
@@ -95,4 +94,45 @@ public sealed class CoachExcelWorkoutImportInterpreter(
 
     private static ExtractedWorkoutCell? GetCell(ExtractedWorkoutRow row, int cellIndex) =>
         cellIndex >= 0 && cellIndex < row.Cells.Count ? row.Cells[cellIndex] : null;
+
+    private static string FormatRowLog(DateTime date, WorkoutImportRowDraft row)
+    {
+        var message = new StringBuilder($"Interpreted workout row · {date:yyyy-MM-dd} · {row.SourceReference}");
+        if (row.Order is int order)
+        {
+            message.Append($" · order {order}");
+        }
+
+        AppendField("Exercise cell", row.SourceText, "  ");
+        AppendField("Details", row.Details, "  ");
+        AppendField("Notes", row.Notes, "  ");
+
+        if (row.ExerciseParts.Count == 0)
+        {
+            message.AppendLine().Append("  No exercise parts");
+        }
+
+        foreach (var part in row.ExerciseParts)
+        {
+            message.AppendLine().Append(part.ExerciseName is null
+                ? "  - Unresolved exercise"
+                : $"  - {part.ExerciseName} ({part.ExerciseId})");
+
+            AppendField(part.MatchedText is null ? "Source" : "Matched",
+                part.MatchedText ?? part.SourceText, "    ");
+            AppendField("Remaining text", part.RemainingText, "    ");
+            AppendField("Warning", part.Warning, "    ");
+        }
+
+        return message.ToString();
+
+        void AppendField(string label, string? value, string indent)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                message.AppendLine().Append(indent).Append(label).Append(": ")
+                    .Append(value.ReplaceLineEndings(Environment.NewLine + indent + "  "));
+            }
+        }
+    }
 }

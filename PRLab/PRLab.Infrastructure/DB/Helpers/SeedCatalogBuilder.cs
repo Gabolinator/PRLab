@@ -51,10 +51,14 @@ public static class SeedCatalogBuilder
 
     public static async Task<MovementCategorySeedCatalog> CreateMovementCategoryCatalog(
         PRLabPgDBContext db,
-        CancellationToken ct)
+        CancellationToken ct,
+        bool track = false)
     {
-        var movementCategories = await db.MovementCategories
-            .ForFullRead()
+        var query = track
+            ? db.MovementCategories.ForFullWrite().AsTracking()
+            : db.MovementCategories.ForFullRead();
+
+        var movementCategories = await query
             .OrderBy(movementCategory => movementCategory.Name)
             .ToListAsync(ct);
 

@@ -1,5 +1,67 @@
 [
   {
+    "Id": "5682a14b-ca3a-4574-841b-e5d9b4aae3b3",
+    "Name": "Air Squat",
+    "NameKey": "airsquat",
+    "Description": {
+      "Content": "Perform a squat using bodyweight."
+    },
+    "Steps": [
+      {
+        "Id": "e45f5245-6bfb-4937-ab17-f2aac60be4fa",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "38b43fe0-b408-431a-be99-619446d599fe",
+          "Name": "Bodyweight Squat",
+          "NameKey": "bodyweightsquat"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "a6f3c775-29e2-4102-b79c-566338eb0323",
+    "Name": "Alternating Dumbbell Devil Press",
+    "NameKey": "alternatingdumbbelldevilpress",
+    "Description": {
+      "Content": "Perform a burpee with dumbbells, then take one dumbbell overhead, alternating arms."
+    },
+    "Steps": [
+      {
+        "Id": "1e6efe09-536e-45f5-ac58-57cf44572b4b",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "933351fd-2dca-47ce-b8c4-c4d15744c6e8",
+          "Name": "Alternating Dumbbell Devil Press",
+          "NameKey": "alternatingdumbbelldevilpress"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "4b441b31-cc9f-48a2-90b8-c6736d831a0d",
     "Name": "Assault Bike",
     "NameKey": "assaultbike",
@@ -8,7 +70,7 @@
     },
     "Steps": [
       {
-        "Id": "342d4139-967e-46c0-98e0-c4d8a110fe05",
+        "Id": "d4a5457d-e046-49c5-85b6-c8f1350ed429",
         "Sequence": 1,
         "Movement": {
           "Id": "3a8f2d12-cb1a-4dcb-95bc-0fdbf27986e2",
@@ -39,12 +101,43 @@
     },
     "Steps": [
       {
-        "Id": "32c324ef-e4e4-40e1-b734-9c89135b2cf8",
+        "Id": "858238a5-0a2a-4983-96f6-88a132bcddfe",
         "Sequence": 1,
         "Movement": {
           "Id": "486661cf-963a-4b86-8a55-517f47ec2169",
           "Name": "Back Squat",
           "NameKey": "backsquat"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "1c804cef-8cf2-49e7-b8af-5af2a5fb8bd9",
+    "Name": "Barbell Bench Press",
+    "NameKey": "barbellbenchpress",
+    "Description": {
+      "Content": "Press a barbell from the chest while lying on a bench."
+    },
+    "Steps": [
+      {
+        "Id": "3c427eee-b98e-4524-89a2-1a2248fac342",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "d2268e1a-b5e0-40c4-a70c-c290c7f9fb7c",
+          "Name": "Barbell Bench Press",
+          "NameKey": "barbellbenchpress"
         },
         "Target": {
           "Value": 1.00,
@@ -70,7 +163,7 @@
     },
     "Steps": [
       {
-        "Id": "d79fa033-ce8a-4fbf-bac2-11f17c951353",
+        "Id": "5c899bdd-a06b-4131-b89c-6617c8ac2ed9",
         "Sequence": 1,
         "Movement": {
           "Id": "38b43fe0-b408-431a-be99-619446d599fe",
@@ -97,6 +190,130 @@
     "Action": "Ignore"
   },
   {
+    "Id": "ad3e98a4-dfa0-4427-8cdb-b3fa37c5cc8d",
+    "Name": "Box Jump",
+    "NameKey": "boxjump",
+    "Description": {
+      "Content": "Jump from the floor onto a box."
+    },
+    "Steps": [
+      {
+        "Id": "546e2d9d-f3ad-40c7-8a36-6f87bdcf1961",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "adba1c2a-e89f-465c-867f-f3c5cf9b7c08",
+          "Name": "Box Jump",
+          "NameKey": "boxjump"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "1e5f7843-7082-4822-9aab-bbc016b33131",
+    "Name": "Box Jump Over",
+    "NameKey": "boxjumpover",
+    "Description": {
+      "Content": "Jump onto or over a box and finish on the opposite side."
+    },
+    "Steps": [
+      {
+        "Id": "05438db9-6d56-49fe-a268-c907cf00a5dd",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "6c721951-9272-47c0-a119-a43bfbfd0e0f",
+          "Name": "Box Jump Over",
+          "NameKey": "boxjumpover"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "b59042bd-9911-4243-83df-2e99588bc883",
+    "Name": "Box Step Over",
+    "NameKey": "boxstepover",
+    "Description": {
+      "Content": "Step onto a box and descend on the opposite side."
+    },
+    "Steps": [
+      {
+        "Id": "a9df32ac-5815-4339-907e-f31e35b2580d",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "11bab3f4-6781-4e69-a791-77433609f3cb",
+          "Name": "Box Step Over",
+          "NameKey": "boxstepover"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "c9d953f3-7b87-47b6-b519-0ac85c1296e5",
+    "Name": "Bulgarian Split Squat",
+    "NameKey": "bulgariansplitsquat",
+    "Description": {
+      "Content": "Squat in a split stance with the rear foot elevated."
+    },
+    "Steps": [
+      {
+        "Id": "617426b1-ea18-4289-9830-16aff566ae57",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "64daabad-88b9-410a-90b7-27c0820ee16a",
+          "Name": "Bulgarian Split Squat",
+          "NameKey": "bulgariansplitsquat"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "e429fc00-b10b-441d-b363-3bf88c49bf48",
     "Name": "Burpee",
     "NameKey": "burpee",
@@ -105,7 +322,7 @@
     },
     "Steps": [
       {
-        "Id": "057d72c7-9fff-482d-b4a2-64f73bbdda44",
+        "Id": "e05d3963-fb89-4fcc-b448-9c792665740b",
         "Sequence": 1,
         "Movement": {
           "Id": "37e57f66-b2d1-4770-8815-c790e0325459",
@@ -140,7 +357,7 @@
     },
     "Steps": [
       {
-        "Id": "a1393226-219c-495b-b08f-a46c63ecc66b",
+        "Id": "bf1f57cc-bb37-4578-9e5d-e0187d463a61",
         "Sequence": 1,
         "Movement": {
           "Id": "37e57f66-b2d1-4770-8815-c790e0325459",
@@ -161,7 +378,7 @@
         "ExecutionDetails": null
       },
       {
-        "Id": "65841452-53f7-45f2-a701-f0be8d16a1ff",
+        "Id": "872ce3f3-c387-4e51-bbac-1e208ff0521e",
         "Sequence": 2,
         "Movement": {
           "Id": "02b62c46-dfc8-442f-9276-db9acf93953c",
@@ -188,6 +405,78 @@
     "Action": "Ignore"
   },
   {
+    "Id": "2e47d893-6f7e-4a2b-920f-680c7910b0e5",
+    "Name": "C2 Bike",
+    "NameKey": "c2bike",
+    "Description": {
+      "Content": "Cycle on a C2 Bike for calories, distance, or time."
+    },
+    "Steps": [
+      {
+        "Id": "c3a844d1-ba8d-4f90-a85e-a438d530c475",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "cdce3717-4ce8-45e9-906a-36207ab610c8",
+          "Name": "C2 Bike",
+          "NameKey": "c2bike"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Calories"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "289098f4-5258-4549-9d67-ee8df21b5ec4",
+    "Name": "Dead Stop Strict Hand Stand Push Up",
+    "NameKey": "deadstopstricthandstandpushup",
+    "Description": {
+      "Content": "Press from a dead stop in the bottom position without kipping."
+    },
+    "Steps": [
+      {
+        "Id": "e64fde3e-5d74-4aca-ae41-7b259f8f5036",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "6c9c00be-9fe2-47ea-ac75-c6730b1815ff",
+          "Name": "Dead Stop Strict Hand Stand Push Up",
+          "NameKey": "deadstopstricthandstandpushup"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": {
+          "EccentricSeconds": null,
+          "BottomPauseSeconds": null,
+          "ConcentricSeconds": null,
+          "TopPauseSeconds": null,
+          "EccentricIntent": null,
+          "BottomIntent": null,
+          "ConcentricIntent": null,
+          "TopIntent": null,
+          "Intent": "Dead stop, strict"
+        }
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "5566ce27-7ac6-4362-879d-655a9fe57bef",
     "Name": "Deadlift",
     "NameKey": "deadlift",
@@ -196,12 +485,43 @@
     },
     "Steps": [
       {
-        "Id": "46ba024e-389e-45eb-a2a8-2cd5c0d97b32",
+        "Id": "786dd766-bc19-4615-b6cc-ca467fd96b24",
         "Sequence": 1,
         "Movement": {
           "Id": "4316dd12-67a5-4969-b8fe-78c1eeafa41f",
           "Name": "Deadlift",
           "NameKey": "deadlift"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "43d8c950-4586-480c-a4d6-88c0d439c7e2",
+    "Name": "Deep Lateral Box Step Up",
+    "NameKey": "deeplateralboxstepup",
+    "Description": {
+      "Content": "Step sideways onto a box from a deep starting position."
+    },
+    "Steps": [
+      {
+        "Id": "f1b2a13f-f849-41b9-804d-a7755581030a",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "e8ac3d51-028f-48b8-8296-0f20611380d3",
+          "Name": "Deep Lateral Box Step Up",
+          "NameKey": "deeplateralboxstepup"
         },
         "Target": {
           "Value": 1.00,
@@ -227,12 +547,43 @@
     },
     "Steps": [
       {
-        "Id": "16f5722f-b800-48b6-a559-eba1f72d898f",
+        "Id": "87a84b2f-541b-47a6-add9-961d55039a70",
         "Sequence": 1,
         "Movement": {
           "Id": "c5c039a1-2f0e-4d71-94fa-eda8b4211406",
           "Name": "Double Dumbbell Hang Power Clean",
           "NameKey": "doubledumbbellhangpowerclean"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "1967d2ed-be5a-4cdc-a9ac-dac97615de97",
+    "Name": "Double Dumbbell Shoulder Press",
+    "NameKey": "doubledumbbellshoulderpress",
+    "Description": {
+      "Content": "Press two dumbbells overhead, one in each hand."
+    },
+    "Steps": [
+      {
+        "Id": "6bc7634f-95d9-4596-ac42-435ae8442631",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "052d6c02-a05d-4893-bb85-58f6f2ae54b5",
+          "Name": "Dumbbell Shoulder Press",
+          "NameKey": "dumbbellshoulderpress"
         },
         "Target": {
           "Value": 1.00,
@@ -258,7 +609,7 @@
     },
     "Steps": [
       {
-        "Id": "c9d66765-53b5-416c-aab9-07dc473f601f",
+        "Id": "f09d20f6-2814-4111-9e29-f5178572e4cc",
         "Sequence": 1,
         "Movement": {
           "Id": "1250af3d-2419-491b-ad17-4f2d6e5b3f49",
@@ -285,6 +636,192 @@
     "Action": "Ignore"
   },
   {
+    "Id": "b3457b41-26a0-4252-994e-7a299daa4b09",
+    "Name": "Dumbbell Deadlift",
+    "NameKey": "dumbbelldeadlift",
+    "Description": {
+      "Content": "Lift dumbbells from the floor to standing."
+    },
+    "Steps": [
+      {
+        "Id": "5d9bcebf-1d44-4af5-9206-248dc25957ef",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "7527b0c9-3fb8-4d6b-a221-af33d9edc3ad",
+          "Name": "Dumbbell Deadlift",
+          "NameKey": "dumbbelldeadlift"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "3d69a04f-be86-4f87-8575-59a1f3de0018",
+    "Name": "Front-Rack Lunge",
+    "NameKey": "frontracklunge",
+    "Description": {
+      "Content": "Lunge while holding the load in the front rack."
+    },
+    "Steps": [
+      {
+        "Id": "031a2f33-474b-4d10-89f1-dc79c20feda1",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "9faf5886-ada7-420a-8087-7ab740b89585",
+          "Name": "Front-Rack Lunge",
+          "NameKey": "frontracklunge"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "8aabf572-fcdf-4dc7-9c20-e15034400f82",
+    "Name": "Frontal Burpee Box Jump Over",
+    "NameKey": "frontalburpeeboxjumpover",
+    "Description": {
+      "Content": "Perform a burpee facing a box, then jump over to the opposite side."
+    },
+    "Steps": [
+      {
+        "Id": "a0b04832-944e-4bf8-a5b0-c1844c231bc2",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "f3dd5ba5-a25e-4e0e-924c-1ae00d381715",
+          "Name": "Frontal Burpee Box Jump Over",
+          "NameKey": "frontalburpeeboxjumpover"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "6717f658-0af9-40eb-a1c4-e54d3c085e89",
+    "Name": "Frontal Burpee Over Bar",
+    "NameKey": "frontalburpeeoverbar",
+    "Description": {
+      "Content": "Perform a burpee facing a barbell, then jump forward across it."
+    },
+    "Steps": [
+      {
+        "Id": "5edc040f-32e0-40f7-b9ee-5a249a609c0e",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "c709ad67-96ea-435d-a126-10c8ad192b7e",
+          "Name": "Frontal Burpee Over Bar",
+          "NameKey": "frontalburpeeoverbar"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "7606a909-4e90-47af-bda4-d03e08856594",
+    "Name": "GHD Hip Extension",
+    "NameKey": "ghdhipextension",
+    "Description": {
+      "Content": "Extend the hips with the lower body supported on a glute ham developer."
+    },
+    "Steps": [
+      {
+        "Id": "d028ad24-0834-44ee-bbb6-513e50c5dfa4",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "ec791ed2-df04-4736-a7b8-fb9511ef573f",
+          "Name": "GHD Hip Extension",
+          "NameKey": "ghdhipextension"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "c600f432-3f87-4f3b-8aa1-624baf6e9cad",
+    "Name": "GHD Sit-Up",
+    "NameKey": "ghdsitup",
+    "Description": {
+      "Content": "Perform a sit-up on a glute ham developer."
+    },
+    "Steps": [
+      {
+        "Id": "e5496bb5-67a9-4c6f-9424-5ecb63368e25",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "2dffb413-b191-4081-8762-f949e3c2ec99",
+          "Name": "GHD Sit-Up",
+          "NameKey": "ghdsitup"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "fc8c20c0-7b22-4a76-af3d-658e9e1dee0c",
     "Name": "Goblet Squat",
     "NameKey": "gobletsquat",
@@ -293,12 +830,105 @@
     },
     "Steps": [
       {
-        "Id": "9c826db0-dc94-49b9-87bd-6241cdc7fa69",
+        "Id": "f37ff9d2-fbad-4fa2-bf54-fdc727169200",
         "Sequence": 1,
         "Movement": {
           "Id": "377eee1c-9cdf-44e5-adbd-4ede91d68ca1",
           "Name": "Goblet Squat",
           "NameKey": "gobletsquat"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ed99dc00-eb5b-4604-81a9-b3155e64b54e",
+    "Name": "Kipping High Knees",
+    "NameKey": "kippinghighknees",
+    "Description": {
+      "Content": "Use a kip to raise the knees from a hanging position."
+    },
+    "Steps": [
+      {
+        "Id": "d30e348d-0a6a-414f-ba18-745797592401",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "b65c0236-a03f-4058-af65-d14d2b4f1fc7",
+          "Name": "Kipping High Knees",
+          "NameKey": "kippinghighknees"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ce09fb65-6195-4928-8e86-4c5aa1b09290",
+    "Name": "Kipping Toes To Bar",
+    "NameKey": "kippingtoestobar",
+    "Description": {
+      "Content": "Use a kip to bring the toes to the bar."
+    },
+    "Steps": [
+      {
+        "Id": "647da490-b7c5-4f53-94bf-4060980539d8",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "d3f22a7c-2676-4742-9e9e-60b828e681b7",
+          "Name": "Kipping Toes To Bar",
+          "NameKey": "kippingtoestobar"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "89bf1a8f-5667-4e3f-920f-03006d56a6e5",
+    "Name": "Lateral Burpee",
+    "NameKey": "lateralburpee",
+    "Description": {
+      "Content": "Perform a burpee with a sideways jump or transition."
+    },
+    "Steps": [
+      {
+        "Id": "6c68127c-3b56-4024-b275-98a23940f131",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "82a6aec6-93e3-4fa9-8383-2c3083db23c3",
+          "Name": "Lateral Burpee",
+          "NameKey": "lateralburpee"
         },
         "Target": {
           "Value": 1.00,
@@ -324,7 +954,7 @@
     },
     "Steps": [
       {
-        "Id": "2a7d1100-11c7-4e4d-a460-222478c38a7a",
+        "Id": "0843bc7f-48e5-47af-a899-3a2ebb86c83c",
         "Sequence": 1,
         "Movement": {
           "Id": "cbfecdd0-cce9-43bd-bde5-09c12398b301",
@@ -351,6 +981,378 @@
     "Action": "Ignore"
   },
   {
+    "Id": "3d3135b4-35ba-49f8-888f-60bdc1c387a6",
+    "Name": "Lateral Burpee Over Line",
+    "NameKey": "lateralburpeeoverline",
+    "Description": {
+      "Content": "Perform a burpee followed by a sideways jump across a floor line."
+    },
+    "Steps": [
+      {
+        "Id": "be83546d-2d07-4d0c-8187-a49061ee145b",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "c40b5711-98a4-4ffe-a6f0-2bf23b4e6da6",
+          "Name": "Lateral Burpee Over Line",
+          "NameKey": "lateralburpeeoverline"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ff5a36a7-a729-4a6e-8be6-aa4cbe55fc74",
+    "Name": "Lie On Back On Bench Straight Arms To Side Stretch",
+    "NameKey": "lieonbackonbenchstraightarmstosidestretch",
+    "Description": {
+      "Content": "Lie face up on a bench and extend the straight arms to the sides."
+    },
+    "Steps": [
+      {
+        "Id": "82078568-2974-4b80-b5ea-005f79a093ba",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "24757a24-f7a5-44c4-bc5e-00396d69030e",
+          "Name": "Lie On Back On Bench Straight Arms To Side Stretch",
+          "NameKey": "lieonbackonbenchstraightarmstosidestretch"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "DurationSeconds"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "961478ba-8df5-4ef3-b7a2-3b616093300f",
+    "Name": "Lunge",
+    "NameKey": "lunge",
+    "Description": {
+      "Content": "Unilateral lower-body movement performed by stepping into a lunge position."
+    },
+    "Steps": [
+      {
+        "Id": "644bb019-4e91-4493-a479-94a0e0d99147",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "f2529676-8163-48c1-bed7-c3f88a6821ec",
+          "Name": "Lunge",
+          "NameKey": "lunge"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ccc5ecb5-db64-4346-9825-cfb45cb11d27",
+    "Name": "Lying On Back Bent Legs To Side Stretch",
+    "NameKey": "lyingonbackbentlegstosidestretch",
+    "Description": {
+      "Content": "Lie face up and lower the bent legs to one side."
+    },
+    "Steps": [
+      {
+        "Id": "fd60af4d-9b09-406f-89d5-ca59cddce7a3",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "915f8a73-1900-4654-b2cc-025905d50a38",
+          "Name": "Lying On Back Bent Legs To Side Stretch",
+          "NameKey": "lyingonbackbentlegstosidestretch"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "DurationSeconds"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "119701d4-e537-4a36-b611-4a446b325ea8",
+    "Name": "Lying On Back On Floor Bent Leg Butterfly Stretch",
+    "NameKey": "lyingonbackonfloorbentlegbutterflystretch",
+    "Description": {
+      "Content": "Lie face up on the floor with the knees bent outward in a butterfly position."
+    },
+    "Steps": [
+      {
+        "Id": "b18e253d-dea1-4c3f-b35f-0d1675ce051a",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "3bd736ef-dd9b-4c3a-81bf-f91abc4379a6",
+          "Name": "Lying On Back On Floor Bent Leg Butterfly Stretch",
+          "NameKey": "lyingonbackonfloorbentlegbutterflystretch"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "3a391966-4695-4547-a494-9fbdf14c2a25",
+    "Name": "Lying On Back On Floor Straight Leg Rotation",
+    "NameKey": "lyingonbackonfloorstraightlegrotation",
+    "Description": {
+      "Content": "Rotate a straight leg across the body while lying face up on the floor."
+    },
+    "Steps": [
+      {
+        "Id": "e6c729ec-dfe6-4f73-acc0-60d0e3b265cc",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "1010be0e-7ee8-4d37-a042-aba22add7b0e",
+          "Name": "Lying On Back On Floor Straight Leg Rotation",
+          "NameKey": "lyingonbackonfloorstraightlegrotation"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "f9087b26-61bf-4709-ae0d-972c7d92c072",
+    "Name": "Lying On Belly On Floor Snatch Grip Overhead Hold",
+    "NameKey": "lyingonbellyonfloorsnatchgripoverheadhold",
+    "Description": {
+      "Content": "Lie face down and hold the arms overhead in a wide snatch-grip position."
+    },
+    "Steps": [
+      {
+        "Id": "18bc9011-1a25-418c-bf70-a580db230aad",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "b60c5e22-aab9-4526-adb7-35ffedb7774f",
+          "Name": "Lying On Belly On Floor Snatch Grip Overhead Hold",
+          "NameKey": "lyingonbellyonfloorsnatchgripoverheadhold"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "DurationSeconds"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "fe1471fb-2599-4fd5-91fc-123bfb30e461",
+    "Name": "Lying On Belly On Floor Straight Arms Sideway Hold",
+    "NameKey": "lyingonbellyonfloorstraightarmssidewayhold",
+    "Description": {
+      "Content": "Lie face down and hold the straight arms out to the sides."
+    },
+    "Steps": [
+      {
+        "Id": "a5a75bba-b39d-4120-bc0f-2afc244b022f",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "a11ffd8a-1992-48ce-8b59-d04e227d3e54",
+          "Name": "Lying On Belly On Floor Straight Arms Sideway Hold",
+          "NameKey": "lyingonbellyonfloorstraightarmssidewayhold"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "DurationSeconds"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "a111a68b-740d-4d98-b054-4fa09622d354",
+    "Name": "Lying On Floor On Side Bent Arm External Rotation",
+    "NameKey": "lyingonflooronsidebentarmexternalrotation",
+    "Description": {
+      "Content": "Lie on one side and externally rotate the shoulder with the elbow bent."
+    },
+    "Steps": [
+      {
+        "Id": "c615e341-3702-460a-be4c-06f820dfa5ca",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "b7f7e8d6-cf20-4eb3-87ee-df1871d04393",
+          "Name": "Lying On Floor On Side Bent Arm External Rotation",
+          "NameKey": "lyingonflooronsidebentarmexternalrotation"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "78b42cf8-3d6f-4bec-b585-b69bcf6d2416",
+    "Name": "Overhead Squat",
+    "NameKey": "overheadsquat",
+    "Description": {
+      "Content": "Squat while supporting a load overhead."
+    },
+    "Steps": [
+      {
+        "Id": "e0783364-f5b0-48f0-b342-64029fff654c",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "919a29c7-53fe-441e-985f-6cda54e8cb33",
+          "Name": "Overhead Squat",
+          "NameKey": "overheadsquat"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "1ac34347-7493-4e91-856a-19f08d1c0562",
+    "Name": "Power Clean",
+    "NameKey": "powerclean",
+    "Description": {
+      "Content": "Lift a barbell from the floor to the front rack and receive it above a full squat."
+    },
+    "Steps": [
+      {
+        "Id": "98d71f12-2e69-455a-9cbc-34e40f84dc68",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "bbb4e80a-8908-4a6f-af2c-759bbd8d3e4e",
+          "Name": "Power Clean",
+          "NameKey": "powerclean"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "f510abe9-6d38-4b17-934a-0332157a8d7c",
+    "Name": "Power Snatch",
+    "NameKey": "powersnatch",
+    "Description": {
+      "Content": "Lift a barbell from the floor overhead and receive it above a full squat."
+    },
+    "Steps": [
+      {
+        "Id": "4cf6ec7a-2aff-4219-9312-c9f973f8977e",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "54edc0d0-cf57-4509-a1a4-58ca107e06d4",
+          "Name": "Power Snatch",
+          "NameKey": "powersnatch"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "557e36be-5924-461f-b148-cd7d4cb38716",
     "Name": "Pull Up",
     "NameKey": "pullup",
@@ -359,7 +1361,7 @@
     },
     "Steps": [
       {
-        "Id": "5b0cbf8f-d762-40f9-81ba-9dec40ad0299",
+        "Id": "a4e37e6d-ffc9-4384-a987-210b8c5a67d0",
         "Sequence": 1,
         "Movement": {
           "Id": "02b62c46-dfc8-442f-9276-db9acf93953c",
@@ -394,7 +1396,7 @@
     },
     "Steps": [
       {
-        "Id": "33ca4562-4988-42ee-9a7e-0704aadab70e",
+        "Id": "0440d00d-9b47-437c-9e55-b50c68966cb8",
         "Sequence": 1,
         "Movement": {
           "Id": "e6078848-2e2b-433d-b4e6-7b4591ea6a80",
@@ -421,6 +1423,37 @@
     "Action": "Ignore"
   },
   {
+    "Id": "fafc81fd-309a-40e3-b6cd-701874319bc6",
+    "Name": "Ring Row",
+    "NameKey": "ringrow",
+    "Description": {
+      "Content": "Pull the body toward suspended rings from an inclined position."
+    },
+    "Steps": [
+      {
+        "Id": "09bd4059-7b0a-4ebc-b8c1-4275009581ea",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "55aa2584-63c5-4bd7-97ef-f3de3c7b6fc8",
+          "Name": "Ring Row",
+          "NameKey": "ringrow"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "5d583994-354f-4faa-9306-a2e1df38fcf1",
     "Name": "Row",
     "NameKey": "row",
@@ -429,7 +1462,7 @@
     },
     "Steps": [
       {
-        "Id": "735cf949-7af1-4aaf-8414-99768f40ba9e",
+        "Id": "a4a4f209-baf3-459a-9642-72d594b4f937",
         "Sequence": 1,
         "Movement": {
           "Id": "6e23e8f1-7c85-499c-89b1-3ac04c6c759b",
@@ -460,7 +1493,7 @@
     },
     "Steps": [
       {
-        "Id": "d6e73334-6729-4e97-858f-a5a0ecf2cf36",
+        "Id": "86c175f2-6698-4e13-85e8-e830d8516a4d",
         "Sequence": 1,
         "Movement": {
           "Id": "60a34045-072a-40bc-969d-a32531d1766a",
@@ -483,6 +1516,99 @@
     "Action": "Ignore"
   },
   {
+    "Id": "338a40fa-a927-49bd-a308-d2694b85c695",
+    "Name": "Sandbag Carry",
+    "NameKey": "sandbagcarry",
+    "Description": {
+      "Content": "Carry a sandbag for distance or time."
+    },
+    "Steps": [
+      {
+        "Id": "6cfabd6e-56e1-4b0f-ba51-69ff3089a5fd",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "31eaae56-1179-4c03-9f6b-3be12cdbbf83",
+          "Name": "Sandbag Carry",
+          "NameKey": "sandbagcarry"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "DistanceMeters"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "37fc0309-8cdd-4e07-ae9e-4602d496d971",
+    "Name": "Side Lying Single Leg Crunches On Floor",
+    "NameKey": "sidelyingsinglelegcrunchesonfloor",
+    "Description": {
+      "Content": "Lie on one side and bring the upper knee and trunk toward each other."
+    },
+    "Steps": [
+      {
+        "Id": "1265e958-449b-4347-828e-46cac2ac4b06",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "274cb4e9-7c92-4075-86dd-bf17565c0968",
+          "Name": "Side Lying Single Leg Crunches On Floor",
+          "NameKey": "sidelyingsinglelegcrunchesonfloor"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "c733aaae-3f7f-45a4-8042-90a901c1191a",
+    "Name": "Single Leg Hip Thrust",
+    "NameKey": "singleleghipthrust",
+    "Description": {
+      "Content": "Extend the hips using one working leg."
+    },
+    "Steps": [
+      {
+        "Id": "10c99ae7-558a-4b61-a5a3-564ea61840c5",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "bd739018-cd9e-4553-a4b7-c79d1a33a402",
+          "Name": "Single Leg Hip Thrust",
+          "NameKey": "singleleghipthrust"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "13b9c6f3-f46a-4e8f-8567-035f4c9f2a9d",
     "Name": "Ski Erg",
     "NameKey": "skierg",
@@ -491,7 +1617,7 @@
     },
     "Steps": [
       {
-        "Id": "ca141f6d-ea5e-40d8-9b1e-a0e59500195e",
+        "Id": "f3ede555-fdfd-4a51-b454-02bc66db8a37",
         "Sequence": 1,
         "Movement": {
           "Id": "1908c201-719c-4914-8c90-3a261e1f589d",
@@ -514,6 +1640,202 @@
     "Action": "Ignore"
   },
   {
+    "Id": "990249c5-2cb7-41f8-bdd3-afa90115915c",
+    "Name": "Squat",
+    "NameKey": "squat",
+    "Description": {
+      "Content": "Bend at the hips and knees, then stand."
+    },
+    "Steps": [
+      {
+        "Id": "ca456fbf-f142-41bc-b004-3b994febc935",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "6a1dddfa-2b8a-4492-9113-90edc6357003",
+          "Name": "Squat",
+          "NameKey": "squat"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "d57cafcf-e47f-496e-8fa8-6860339cd2a8",
+    "Name": "Standing Back Twist",
+    "NameKey": "standingbacktwist",
+    "Description": {
+      "Content": "Rotate the torso from side to side while standing."
+    },
+    "Steps": [
+      {
+        "Id": "f7994f42-2d85-451f-9432-3be2af925e5d",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "4ac73017-cc43-477a-95d1-5b6b9df23bfb",
+          "Name": "Standing Back Twist",
+          "NameKey": "standingbacktwist"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "c83a80ac-d3ce-4d9d-b8c0-d1483a2c4977",
+    "Name": "Standing Bent Over Hamstring Stretch",
+    "NameKey": "standingbentoverhamstringstretch",
+    "Description": {
+      "Content": "Hinge forward while standing to stretch the hamstrings."
+    },
+    "Steps": [
+      {
+        "Id": "7d458c17-88c7-4fd4-94d2-17a4787c2a07",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "9b03fdfd-4b9b-446d-a133-71a703199740",
+          "Name": "Standing Bent Over Hamstring Stretch",
+          "NameKey": "standingbentoverhamstringstretch"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "DurationSeconds"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "f7905e4d-5873-438d-bc03-ed958ee7f5b4",
+    "Name": "Strict P-Bar Dip",
+    "NameKey": "strictpbardip",
+    "Description": {
+      "Content": "Perform parallel bar dips without kipping."
+    },
+    "Steps": [
+      {
+        "Id": "39b9d7a9-6390-41b6-bb3f-65eb477f9557",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "92eac3f6-1b08-4c87-ba39-b3e40f141466",
+          "Name": "Parallel Bar Dip",
+          "NameKey": "parallelbardip"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": {
+          "EccentricSeconds": null,
+          "BottomPauseSeconds": null,
+          "ConcentricSeconds": null,
+          "TopPauseSeconds": null,
+          "EccentricIntent": null,
+          "BottomIntent": null,
+          "ConcentricIntent": null,
+          "TopIntent": null,
+          "Intent": "Strict"
+        }
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "076dbaeb-582d-4974-84c5-ac0e9f96c6bb",
+    "Name": "Toes To Bar",
+    "NameKey": "toestobar",
+    "Description": {
+      "Content": "Raise the feet from a hang until the toes reach the bar."
+    },
+    "Steps": [
+      {
+        "Id": "10af5e94-a15d-478d-a473-158c674fdf2c",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "9bb6b825-6996-4fa0-8601-18ef737e50b4",
+          "Name": "Toes To Bar",
+          "NameKey": "toestobar"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "7d6811d6-2978-4e8b-b57e-0f5662af7ea3",
+    "Name": "V-Up",
+    "NameKey": "vup",
+    "Description": {
+      "Content": "Raise the torso and legs together from a face-up position."
+    },
+    "Steps": [
+      {
+        "Id": "2f428aed-b1af-4b0d-8cca-23f5a850668b",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "45bb6641-6559-4f00-be6c-8072992e6d97",
+          "Name": "V-Up",
+          "NameKey": "vup"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "fe464d08-fdd6-4ab9-a37b-49f4a8cf846f",
     "Name": "Wall Ball",
     "NameKey": "wallball",
@@ -522,7 +1844,7 @@
     },
     "Steps": [
       {
-        "Id": "84c03c28-e478-49ee-acb7-8884c6c503e5",
+        "Id": "1c22a883-7aed-45fc-87ea-ce0604430c1e",
         "Sequence": 1,
         "Movement": {
           "Id": "37376bd7-25b7-42ea-8d8b-b4977330f7a1",
@@ -543,5 +1865,90 @@
     "OwnerUserId": null,
     "VisibilityScope": "Public",
     "Action": "Ignore"
+  },
+  {
+    "Id": "191df80e-ed03-4bd8-8929-a8388b87634c",
+    "Name": "Wall Walk",
+    "NameKey": "wallwalk",
+    "Description": {
+      "Content": "Walk the feet up a wall and the hands toward it from a prone position."
+    },
+    "Steps": [
+      {
+        "Id": "3c6d13c8-6f31-45e9-b153-a4de7ec01edd",
+        "Sequence": 1,
+        "Movement": {
+          "Id": "ba2856cd-da28-463d-bcd2-f480a18c76c8",
+          "Name": "Wall Walk",
+          "NameKey": "wallwalk"
+        },
+        "Target": {
+          "Value": 1.00,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Name": "Lunge Stretch",
+    "NameKey": "lungestretch",
+    "Description": {
+      "Content": "Hold a lunge position to stretch the hip flexors of the rear leg."
+    },
+    "Steps": [
+      {
+        "Sequence": 1,
+        "Movement": {
+          "Name": "Lunge Stretch",
+          "NameKey": "lungestretch"
+        },
+        "Target": {
+          "Value": 1,
+          "TargetType": "DurationSeconds"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "VisibilityScope": "Public",
+    "Action": "CreateIfMissing"
+  },
+  {
+    "Name": "Bench Press",
+    "NameKey": "benchpress",
+    "Description": {
+      "Content": "Press a load away from the chest while lying on a bench."
+    },
+    "Steps": [
+      {
+        "Sequence": 1,
+        "Movement": {
+          "Name": "Bench Press",
+          "NameKey": "benchpress"
+        },
+        "Target": {
+          "Value": 1,
+          "TargetType": "Repetitions"
+        },
+        "LoadTarget": null,
+        "RestBetweenReps": null,
+        "TransitionAfterStep": null,
+        "ExecutionDetails": null
+      }
+    ],
+    "Origin": "BuiltIn",
+    "VisibilityScope": "Public",
+    "Action": "CreateIfMissing"
   }
 ]

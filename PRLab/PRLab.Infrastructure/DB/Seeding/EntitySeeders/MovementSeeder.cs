@@ -36,7 +36,7 @@ public class MovementSeeder(
     {
         var equipmentCatalog = await SeedCatalogBuilder.CreateEquipmentCatalog(db, ct);
         var muscleCatalog = await SeedCatalogBuilder.CreateMuscleCatalog(db, ct);
-        var movementCategoryCatalog = await SeedCatalogBuilder.CreateMovementCategoryCatalog(db, ct);
+        var movementCategoryCatalog = await SeedCatalogBuilder.CreateMovementCategoryCatalog(db, ct, track: true);
         var movementCatalog = await SeedCatalogBuilder.CreateMovementCatalog(db, ct);
 
         var movementSeedItems = seedFactory.CreateInitialData(

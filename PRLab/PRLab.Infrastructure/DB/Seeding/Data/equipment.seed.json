@@ -24,11 +24,71 @@
     "Action": "Ignore"
   },
   {
+    "Id": "8a1775f4-35f1-48f3-82e3-5e96c1716fb3",
+    "Name": "C2 Bike",
+    "NameKey": "c2bike",
+    "Description": {
+      "Content": "Stationary cycle ergometer used for calorie, distance, and time work."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "1b5ba8fc-7745-4eee-be44-f6c8a35048db",
     "Name": "Dumbbell",
     "NameKey": "dumbbell",
     "Description": {
       "Content": "Short handheld weight used for unilateral exercises, bilateral strength work, presses, rows, curls, and accessory training."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "a66c72c9-faf1-47c3-8af9-4a6121b5a8fc",
+    "Name": "Flat Bench",
+    "NameKey": "flatbench",
+    "Description": {
+      "Content": "Flat support for presses and supported floor-height or elevated positions."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ba1fec32-72b0-45d3-ae5c-f8fa26260ee2",
+    "Name": "Floor Line",
+    "NameKey": "floorline",
+    "Description": {
+      "Content": "Marked line used as a crossing reference."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "2c3115fc-b881-4227-9098-a3d9f0735953",
+    "Name": "Glute Ham Developer",
+    "NameKey": "glutehamdeveloper",
+    "Description": {
+      "Content": "Adjustable support for GHD sit-ups and hip extensions."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "13c4948b-7376-4d0f-8219-5de49f8925e0",
+    "Name": "Gymnastic Rings",
+    "NameKey": "gymnasticrings",
+    "Description": {
+      "Content": "Pair of suspended rings for bodyweight movements."
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
@@ -53,6 +113,30 @@
     "NameKey": "kettlebell",
     "Description": {
       "Content": "A kettlebell is a compact cast-iron or steel weight with a handle, used for strength, power, conditioning, and dynamic full-body movements such as swings, cleans, presses, squats, and carries."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "c8e19aa9-cef1-4a94-a89e-357ec476c665",
+    "Name": "Parallel Bars",
+    "NameKey": "parallelbars",
+    "Description": {
+      "Content": "Parallel supports for dips and other bodyweight movements."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "88ca7081-d8f0-45b9-a6c1-927959dbbf5a",
+    "Name": "Plyometric Box",
+    "NameKey": "plyometricbox",
+    "Description": {
+      "Content": "Stable elevated platform for jumps and step-ups."
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,
@@ -96,6 +180,18 @@
     "Action": "Ignore"
   },
   {
+    "Id": "16104c66-6a0c-433f-af84-6f5718bd4856",
+    "Name": "Sandbag",
+    "NameKey": "sandbag",
+    "Description": {
+      "Content": "Flexible weighted bag used for loaded carries."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
     "Id": "74832798-63e1-4acd-bda3-65d2c287e415",
     "Name": "Ski Erg",
     "NameKey": "skierg",
@@ -113,6 +209,18 @@
     "NameKey": "squatrack",
     "Description": {
       "Content": "Rack used to support a loaded barbell for squats and other strength movements."
+    },
+    "Origin": "BuiltIn",
+    "OwnerUserId": null,
+    "VisibilityScope": "Public",
+    "Action": "Ignore"
+  },
+  {
+    "Id": "9172ae24-2213-4c88-8938-9a04d74417b7",
+    "Name": "Wall",
+    "NameKey": "wall",
+    "Description": {
+      "Content": "Vertical surface used for supported movements."
     },
     "Origin": "BuiltIn",
     "OwnerUserId": null,

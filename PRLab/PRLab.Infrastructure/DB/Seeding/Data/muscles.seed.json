@@ -324,6 +324,24 @@
     "Action": "Ignore"
   },
   {
+    "Id": "59cc9aae-fc6b-4091-92af-7f7c58ac93b2",
+    "Name": "Infraspinatus",
+    "NameKey": "infraspinatus",
+    "LatinName": "Musculus infraspinatus",
+    "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ShoulderExternalRotation",
+        "Role": "Primary"
+      }
+    ],
+    "Description": {
+      "Content": "Rotator cuff muscle that externally rotates the arm and stabilizes the shoulder joint."
+    },
+    "Antagonists": [],
+    "Action": "Ignore"
+  },
+  {
     "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
     "Name": "Lats",
     "NameKey": "lats",
@@ -376,6 +394,24 @@
         "NameKey": "traps"
       }
     ],
+    "Action": "Ignore"
+  },
+  {
+    "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
+    "Name": "Obliques",
+    "NameKey": "obliques",
+    "LatinName": "Musculi obliqui abdominis",
+    "BodySection": "MidSection",
+    "Functions": [
+      {
+        "Function": "SpinalRotation",
+        "Role": "Primary"
+      }
+    ],
+    "Description": {
+      "Content": "Abdominal muscles that rotate and laterally flex the trunk and assist abdominal bracing."
+    },
+    "Antagonists": [],
     "Action": "Ignore"
   },
   {
@@ -439,6 +475,42 @@
     "Action": "Ignore"
   },
   {
+    "Id": "03b75182-7055-4298-91dc-64fc4db5bf4d",
+    "Name": "Rhomboids",
+    "NameKey": "rhomboids",
+    "LatinName": "Musculi rhomboidei",
+    "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ScapularRetraction",
+        "Role": "Primary"
+      }
+    ],
+    "Description": {
+      "Content": "Upper back muscles that retract and stabilize the shoulder blades."
+    },
+    "Antagonists": [],
+    "Action": "Ignore"
+  },
+  {
+    "Id": "dede233a-c224-40f3-9721-3b8021977513",
+    "Name": "Serratus Anterior",
+    "NameKey": "serratusanterior",
+    "LatinName": "Musculus serratus anterior",
+    "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ScapularProtraction",
+        "Role": "Primary"
+      }
+    ],
+    "Description": {
+      "Content": "Scapular muscle that protracts the shoulder blade and assists upward rotation during overhead reach."
+    },
+    "Antagonists": [],
+    "Action": "Ignore"
+  },
+  {
     "Id": "ec495028-a114-4d55-aa1c-c6c49881028f",
     "Name": "Shins",
     "NameKey": "shins",
@@ -460,6 +532,24 @@
         "NameKey": "calves"
       }
     ],
+    "Action": "Ignore"
+  },
+  {
+    "Id": "e5f27c80-49f1-423b-9b38-dfa005f8b64c",
+    "Name": "Side Delts",
+    "NameKey": "sidedelts",
+    "LatinName": "Musculus deltoideus pars acromialis",
+    "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ShoulderAbduction",
+        "Role": "Primary"
+      }
+    ],
+    "Description": {
+      "Content": "Lateral deltoid fibers that abduct the arm at the shoulder."
+    },
+    "Antagonists": [],
     "Action": "Ignore"
   },
   {
@@ -488,6 +578,24 @@
         "NameKey": "abs"
       }
     ],
+    "Action": "Ignore"
+  },
+  {
+    "Id": "0269eef0-cf25-45fd-8dda-a97592e1e2d0",
+    "Name": "Teres Minor",
+    "NameKey": "teresminor",
+    "LatinName": "Musculus teres minor",
+    "BodySection": "UpperBody",
+    "Functions": [
+      {
+        "Function": "ShoulderExternalRotation",
+        "Role": "Primary"
+      }
+    ],
+    "Description": {
+      "Content": "Rotator cuff muscle that assists shoulder external rotation and stabilization."
+    },
+    "Antagonists": [],
     "Action": "Ignore"
   },
   {

@@ -9,10 +9,10 @@
     "EstimatedDuration": null,
     "Blocks": [
       {
-        "Id": "c99f3aa1-c376-46f3-9f7f-bf388d709aca",
+        "Id": "7c69efd2-1f76-4aea-b833-8c1914558dd9",
         "Sequence": 1,
         "Block": {
-          "Id": "31e4c07b-eb8d-482c-af80-c0124da996da",
+          "Id": "3230951c-100a-4fd4-9045-d6332a8b1532",
           "Name": "Ausdauer",
           "NameKey": "ausdauer",
           "BlockType": "Endurance",
@@ -29,7 +29,7 @@
           },
           "Segments": [
             {
-              "Id": "77c8d6ad-7e45-4489-b257-33eb94c140ed",
+              "Id": "1f98ae01-3ea6-4065-a3e4-10956f786ca6",
               "Name": "Every 1:30 Rotation",
               "Sequence": 1,
               "WorkMode": "Intervals",
@@ -49,7 +49,7 @@
               "RestAfterSegment": null,
               "Steps": [
                 {
-                  "Id": "da21e2b0-eda0-40d4-81ee-6beaa6951e9e",
+                  "Id": "b0c2de42-5524-4590-90f1-2d7b00012695",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
@@ -76,7 +76,7 @@
                   "Notes": null
                 },
                 {
-                  "Id": "e05e7bee-c970-4ba5-af18-e44f2f95088d",
+                  "Id": "19132ea6-ff72-4c76-943a-61d5ddce99c0",
                   "Sequence": 2,
                   "StepKind": "Exercise",
                   "Exercise": {
@@ -103,7 +103,7 @@
                   "Notes": null
                 },
                 {
-                  "Id": "0bb3a308-5d17-47d5-9082-2d78b764272c",
+                  "Id": "c9d25a93-6009-46d4-bc89-586b44002a6e",
                   "Sequence": 3,
                   "StepKind": "Exercise",
                   "Exercise": {
@@ -130,7 +130,7 @@
                   "Notes": null
                 },
                 {
-                  "Id": "cbb6cd4d-8182-469d-929c-2361d04333ba",
+                  "Id": "f941db6d-a38c-4445-877e-ca827ffaedba",
                   "Sequence": 4,
                   "StepKind": "Rest",
                   "Exercise": null,
@@ -144,7 +144,7 @@
                   "Notes": null
                 },
                 {
-                  "Id": "124f145d-997f-4a12-b148-77e39d84cb22",
+                  "Id": "3b372c51-e26a-48b9-9e9b-41e4df326b3d",
                   "Sequence": 5,
                   "StepKind": "Rest",
                   "Exercise": null,
@@ -181,10 +181,10 @@
     "EstimatedDuration": null,
     "Blocks": [
       {
-        "Id": "2f2f2dfb-94cd-4540-b702-e34be22cdef5",
+        "Id": "250779da-0c4f-4bb6-b8ad-0ce1659d4054",
         "Sequence": 1,
         "Block": {
-          "Id": "f2e228b6-3a16-43ba-8684-86d5d837ddfe",
+          "Id": "00be3e2e-862b-421e-a5d1-55a6bf262f2a",
           "Name": "Back Squat",
           "NameKey": "backsquat",
           "BlockType": "Strength",
@@ -206,7 +206,7 @@
           },
           "Segments": [
             {
-              "Id": "1133f0fa-8366-4367-8d89-7c873ff485bd",
+              "Id": "2189e15e-3536-4b6e-aec5-f3b3f1df10e5",
               "Name": "Back Squat 1x1",
               "Sequence": 1,
               "WorkMode": "FixedWork",
@@ -226,7 +226,7 @@
               "RestAfterSegment": null,
               "Steps": [
                 {
-                  "Id": "9eab3488-b195-4807-a1ec-ca7482eea62a",
+                  "Id": "9b768b3c-bec0-44b7-8748-acbd94fcac13",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
@@ -267,10 +267,10 @@
         }
       },
       {
-        "Id": "ce1c0a07-29b2-4143-88e0-46557e385d32",
+        "Id": "a52a8171-6d56-475d-a749-9338600de456",
         "Sequence": 2,
         "Block": {
-          "Id": "6bca72c9-77af-456f-b43b-fc0e039c4f08",
+          "Id": "9fc896b6-0c5f-48d3-9e68-9b5b21c1309f",
           "Name": "Metcon",
           "NameKey": "metcon",
           "BlockType": "Metcon",
@@ -287,7 +287,7 @@
           },
           "Segments": [
             {
-              "Id": "fc88b49b-4143-42b3-8ba3-9b2552d988e6",
+              "Id": "0107394b-6664-4c74-a29d-e76d5713ccec",
               "Name": "Bike \u002B Dumbbell Hang Power Cleans",
               "Sequence": 1,
               "WorkMode": "ForTimeWithCap",
@@ -311,7 +311,7 @@
               },
               "Steps": [
                 {
-                  "Id": "4b3e4179-eac9-4a7f-850f-5aada37a1591",
+                  "Id": "08d933e6-9c1b-4218-b3ff-f4552d04cac2",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
@@ -338,7 +338,7 @@
                   "Notes": null
                 },
                 {
-                  "Id": "df568bfb-a50a-48c4-b086-0f6fa9359d47",
+                  "Id": "4b03451b-ae13-4ea3-99a9-81a6387fb197",
                   "Sequence": 2,
                   "StepKind": "Exercise",
                   "Exercise": {
@@ -394,10 +394,10 @@
     "EstimatedDuration": null,
     "Blocks": [
       {
-        "Id": "26030810-8600-46cc-835f-6341ca1d4f59",
+        "Id": "e740ae3e-21a9-4eb1-bdd8-fd66cc5b9eaf",
         "Sequence": 1,
         "Block": {
-          "Id": "ec16701b-1e4e-420a-88cb-51282c6e65d1",
+          "Id": "33476e84-43dd-40f4-a93a-71fd68d627ee",
           "Name": "Block 1",
           "NameKey": "block1",
           "BlockType": "Metcon",
@@ -415,7 +415,7 @@
           },
           "Segments": [
             {
-              "Id": "4725e850-71a0-4633-a7d9-d31d2143cce4",
+              "Id": "f6fd35dc-c3e1-491a-a035-e027c14a1075",
               "Name": "Run \u002B Burpee Pull-Up",
               "Sequence": 1,
               "WorkMode": "ForTime",
@@ -440,7 +440,7 @@
               },
               "Steps": [
                 {
-                  "Id": "204ff241-35a4-4e5b-a3e1-f9d9c2b98a8d",
+                  "Id": "3fe7816e-dda1-43b5-a300-d93baf9f1f5a",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
@@ -470,7 +470,7 @@
                   "Notes": null
                 },
                 {
-                  "Id": "60198fb9-14da-431a-8374-288b5a09784f",
+                  "Id": "6d5e00e8-33cf-4bd7-81dd-52df462ab5ab",
                   "Sequence": 2,
                   "StepKind": "Exercise",
                   "Exercise": {
@@ -499,7 +499,7 @@
               ]
             },
             {
-              "Id": "5cbff918-c38a-4264-b79d-627b4cbe2502",
+              "Id": "8e3a1d5c-f162-4b31-8905-728463f4fa2a",
               "Name": "Wall Ball \u002B Row",
               "Sequence": 2,
               "WorkMode": "ForTime",
@@ -520,7 +520,7 @@
               },
               "Steps": [
                 {
-                  "Id": "3a9a5648-cd15-431c-bc78-f1038e5d92a0",
+                  "Id": "5775e4e0-b88a-4d3b-9a7d-ecb378351164",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
@@ -560,7 +560,7 @@
                   "Notes": null
                 },
                 {
-                  "Id": "db4cda14-8c1c-49d7-94fd-dc7e6bbaa2d0",
+                  "Id": "9e09dea9-9588-4e66-baaa-b11a42a23a3f",
                   "Sequence": 2,
                   "StepKind": "Exercise",
                   "Exercise": {
@@ -593,7 +593,7 @@
               ]
             },
             {
-              "Id": "0741fa43-b2a6-4eb5-af6a-f6de347e8ea3",
+              "Id": "19a87e5f-4328-4c5e-bc6b-7f38ed7c07bc",
               "Name": "Deadlift 2RM",
               "Sequence": 3,
               "WorkMode": "FixedWork",
@@ -609,7 +609,7 @@
               "RestAfterSegment": null,
               "Steps": [
                 {
-                  "Id": "a04149d3-fe34-4853-a570-f85a4cb94e2e",
+                  "Id": "801ec1da-0601-4532-badf-24d3959578f3",
                   "Sequence": 1,
                   "StepKind": "Exercise",
                   "Exercise": {
