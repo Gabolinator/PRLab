@@ -47,6 +47,10 @@
   "IgnoredLabels": [
     "anything hurting?"
   ],
+  
+  "Separators": [
+    "|"
+  ],
 
   "InterpretationInstructions": "Programming comes from a CrossFit coach. Preserve original wording and notes. Do not invent missing prescriptions, loads, time caps or rest durations."
 }

@@ -16,7 +16,9 @@ public sealed class WorkoutImportProfile
 
     public IReadOnlyList<string> IgnoredLabels { get; init; } = [];
 
-    public string? InterpretationInstructions { get; init; }
+    public IReadOnlyList<string> Separators { get; init; } = [];
+    
+    public string? InterpretationInstructions { get; init; } //todo would belong in llm sourceproile
 
     public TProfile GetRequiredSourceProfile<TProfile>()
         where TProfile : WorkoutImportSourceProfile

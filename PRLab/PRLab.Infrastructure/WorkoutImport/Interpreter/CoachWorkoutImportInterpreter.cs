@@ -1,6 +1,7 @@
 ﻿using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport;
 using PRLab.Application.WorkoutImport.Model;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.WorkoutImport.Extractor.Excel;
 
@@ -43,35 +44,40 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         var drafts = CreateDraftsFromDates(
             dates,
             source.Sheets,
+            context.Exercises,
+            context.Profile,
             excelProfile);
-
         
         return Task.FromResult<IReadOnlyList<WorkoutImportDraft>>(drafts);
     }
 
-    private IReadOnlyList<WorkoutImportDraft> CreateDraftsFromDates(IReadOnlyList<DateTime> dates, IReadOnlyList<ExtractedWorkoutSheet> sourceSheets, ExcelWorkoutImportSourceProfile excelProfile)
+    private IReadOnlyList<WorkoutImportDraft> CreateDraftsFromDates(
+        IReadOnlyList<DateTime> dates,
+        IReadOnlyList<ExtractedWorkoutSheet> sourceSheets,
+        IReadOnlyList<WorkoutImportExerciseReference> exerciseReferences,
+        WorkoutImportProfile profile,
+        ExcelWorkoutImportSourceProfile excelProfile)
     {
         var allRow = sourceSheets.SelectMany(sheet => sheet.Rows).ToList();
+        var dateCell = excelProfile.GetRequiredCell(WorkoutImportProperty.Date);
+        
         var drafts = new List<WorkoutImportDraft>();
-        var dateCell = excelProfile.GetRequiredCell(
-            WorkoutImportProperty.Date);
         
         //todo
         foreach (var date in dates)
         {
             //get all row with date
             //this is the content of the training
-            var matchingRows = allRow.Where(row => IsDate(row.Cells[dateCell], date));
+            var matchingRows = allRow.Where(row => WorkoutInterpreterHelper.IsSameDate(row.Cells[dateCell].Value, date));
            
             //each row is either an exercise of a block (if many exercise)
             // how do we know ? 
             //try to get exercices 
-            var exercices = GetExercises(
+            var items = InterpretRows(
                 matchingRows,
-                excelProfile.GetRequiredCell(
-                WorkoutImportProperty.Exercise), 
-                excelProfile.GetRequiredCell(
-                WorkoutImportProperty.Order));
+                exerciseReferences,
+                profile,
+                excelProfile);
             
             var draft = new WorkoutImportDraft
             {
@@ -84,22 +90,51 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         return drafts;
     }
 
-    private IReadOnlyList<> GetExercises(IEnumerable<ExtractedWorkoutRow> rows, int exercisesCell, int orderCell)
+    private IReadOnlyList<DraftItem> InterpretRows(
+        IEnumerable<ExtractedWorkoutRow> rows,
+        IReadOnlyList<WorkoutImportExerciseReference> exerciseReferences,
+        WorkoutImportProfile profile,
+        ExcelWorkoutImportSourceProfile excelProfile)
     {
         // get the cell at cellIndex , than try to have a match to an exercices
         // preserve order
+        return rows
+            .Select(row => InterpretRow(
+                row,
+                exerciseReferences,
+                profile,
+                excelProfile))
+            .ToList();
+    }
+    
+    private DraftItem InterpretRow(
+        ExtractedWorkoutRow row,
+        IReadOnlyList<WorkoutImportExerciseReference> exerciseReferences,
+        WorkoutImportProfile profile,
+        ExcelWorkoutImportSourceProfile excelProfile
+        )
+    {
+        // get the cell at cellIndex , than try to have a match to an exercices
+        // preserve order
+        var dateCell = excelProfile.GetRequiredCell(
+            WorkoutImportProperty.Date);
+
+        var exercisesCell = excelProfile.GetRequiredCell(
+            WorkoutImportProperty.Exercise);
+        var orderCell = excelProfile.GetRequiredCell(
+            WorkoutImportProperty.Order);
         
+        var exerciseCellValue = row.Cells[exercisesCell].Value;
+
+        // we get all parts of the string
+        // then analyse each part to extract what type of dratfitem it is
+        // get all present exercises names etc
+        
+        var allParts = WorkoutInterpreterHelper.GetAllParts(exerciseCellValue, profile.Separators);
+        var exerciseNames = WorkoutInterpreterHelper.GetExercisesNames(profile.ExerciseAliases, allParts);
     }
 
-    private bool IsDate(ExtractedWorkoutCell cell, DateTime date)
-    {
-        if (string.IsNullOrWhiteSpace(cell.Value))
-        {
-            return false;
-        }
-        
-        return DateTime.TryParse(cell.Value, out var cellDate) && cellDate.Date == date;
-    }
+   
 
     private IReadOnlyList<DateTime> GetDistinctDates(
         IReadOnlyList<ExtractedWorkoutSheet> sheets,
@@ -116,19 +151,33 @@ public sealed class CoachExcelWorkoutImportInterpreter(
     }
 
     private static IReadOnlyList<DateTime> GetDistinctDatesFromCells(
-        IEnumerable<ExtractedWorkoutCell> cells)
-    {
-        return cells
-            .Select(cell =>
-                DateTime.TryParse(
-                    cell.Value,
-                    out var date)
-                    ? date.Date
-                    : (DateTime?)null)
-            .Where(date => date.HasValue)
-            .Select(date => date!.Value)
-            .Distinct()
-            .OrderBy(date => date)
-            .ToList();
-    }
+        IEnumerable<ExtractedWorkoutCell> cells) =>
+        WorkoutInterpreterHelper
+            .GetDistinctDatesFromStrings(cells
+            .Select(cell => cell.Value));
+    
+}
+
+public abstract class DraftItem
+{
+    public required string SourceText { get; init; }
+    
+    public float Confidence { get; init; }
+}
+
+public class ExerciseMatch : DraftItem
+{
+    public string? ExerciseName { get; init; }
+    
+    public ExerciseId? ExerciseIdMatch { get; init; }
+}
+
+//make other draft item
+
+// is the row a block a sequence etc ? 
+public class RowDraft
+{
+    public required string SourceText { get; init; }
+    
+    public DraftItem? DraftItem { get; init; }
 }
