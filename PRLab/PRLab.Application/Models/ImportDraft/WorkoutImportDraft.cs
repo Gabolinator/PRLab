@@ -10,6 +10,8 @@ public sealed record WorkoutImportDraft
 
     public IReadOnlyList<WorkoutBlockImportDraft> Blocks { get; init; } = [];
 
+    public IReadOnlyList<WorkoutImportRowDraft> Rows { get; init; } = [];
+
     public IReadOnlyList<WorkoutImportWarning> Warnings { get; init; } = [];
 
     public string? SourceReference { get; init; }

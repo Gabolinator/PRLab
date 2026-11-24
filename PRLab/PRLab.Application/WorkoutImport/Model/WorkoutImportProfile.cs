@@ -8,8 +8,8 @@ public sealed class WorkoutImportProfile
 
     public IReadOnlyList<WorkoutImportSourceProfile> SourceProfiles { get; init; } = [];
 
-    public IReadOnlyDictionary<string, string> ExerciseAliases { get; init; }
-        = new Dictionary<string, string>();
+    public IReadOnlyDictionary<string, IReadOnlyList<string>> ExerciseAliases { get; init; }
+        = new Dictionary<string, IReadOnlyList<string>>();
 
     public IReadOnlyDictionary<string, WorkoutBlockType> BlockMappings { get; init; }
         = new Dictionary<string, WorkoutBlockType>();

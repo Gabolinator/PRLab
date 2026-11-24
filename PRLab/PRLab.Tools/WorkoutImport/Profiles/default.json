@@ -1,13 +1,40 @@
-﻿{
+{
   "Name": "CrossfitCoach",
 
-  "DateColumn" : 0,
+  "SourceProfiles": [
+    {
+      "Type": "Excel",
+
+      "Columns": [
+        {
+          "CellIndex": 0,
+          "Property": "Date"
+        },
+        {
+          "CellIndex": 1,
+          "Property": "Order"
+        },
+        {
+          "CellIndex": 2,
+          "Property": "Exercise"
+        },
+        {
+          "CellIndex": 3,
+          "Property": "Details"
+        },
+        {
+          "CellIndex": 4,
+          "Property": "Notes"
+        }
+      ]
+    }
+  ],
   
   "ExerciseAliases": {
-    "AB": "Assault Bike",
-    "DB HPC": "Double Dumbbell Hang Power Clean",
-    "LBOB": "Lateral Burpee Over Barbell",
-    "TTB": "Toes To Bar"
+    "Assault Bike": ["AB"],
+    "Double Dumbbell Hang Power Clean": ["DB HPC"],
+    "Lateral Burpee Over Barbell": ["LBOB"],
+    "Toes To Bar": ["TTB", "Toes-to-Bar"]
   },
 
   "BlockMappings": {
@@ -20,6 +47,8 @@
   "IgnoredLabels": [
     "anything hurting?"
   ],
+
+  "Separators": ["|"],
 
   "InterpretationInstructions": "Programming comes from a CrossFit coach. Preserve original wording and notes. Do not invent missing prescriptions, loads, time caps or rest durations."
 }

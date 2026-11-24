@@ -1,4 +1,4 @@
-﻿{
+{
   "Name": "CrossfitCoach",
 
   "SourceProfiles": [
@@ -31,10 +31,68 @@
   ],
 
   "ExerciseAliases": {
-    "AB": "Assault Bike",
-    "DB HPC": "Double Dumbbell Hang Power Clean",
-    "LBOB": "Lateral Burpee Over Barbell",
-    "TTB": "Toes To Bar"
+    "Alternating Dumbbell Devil Press": ["alternating dumbbell devil presses"],
+    "Assault Bike": ["AB", "calab", "cal assault bike"],
+    "Back Squat": ["bbs", "barbel back squat", "barbell back squat"],
+    "Barbell Bench Press": [],
+    "Box Jump": ["bj61cm"],
+    "Box Jump Over": ["box jump overs"],
+    "Box Step Over": ["step overs"],
+    "Bulgarian Split Squat": [],
+    "C2 Bike": ["calc2bike", "cal c2 bike"],
+    "Dead Stop Strict Hand Stand Push Up": [],
+    "Deep Lateral Box Step Up": [],
+    "Double Dumbbell Hang Power Clean": ["DB HPC"],
+    "Double Dumbbell Shoulder Press": ["DB shoulder presses"],
+    "Double Under": ["double unders"],
+    "Dumbbell Deadlift": ["DB deadlifts"],
+    "Frontal Burpee Box Jump Over": ["frontal burpee box jump overs"],
+    "Frontal Burpee Over Bar": ["FBOB", "frontal burpees over bar"],
+    "Front-Rack Lunge": ["front-rack lunges"],
+    "GHD Hip Extension": [],
+    "GHD Sit-Up": ["ghdsu", "GHD sit-ups"],
+    "Kipping High Knees": [],
+    "Kipping Toes To Bar": ["kt2b"],
+    "Lateral Burpee": ["lateral burpees"],
+    "Lateral Burpee Over Barbell": ["LBOB"],
+    "Lateral Burpee Over Line": ["lateral burpees over line"],
+    "Lie On Back On Bench Straight Arms To Side Stretch": [],
+    "Lunge": ["mlunges"],
+    "Lying On Back Bent Legs To Side Stretch": [],
+    "Lying On Back On Floor Bent Leg Butterfly Stretch": [],
+    "Lying On Back On Floor Straight Leg Rotation": [],
+    "Lying On Belly On Floor Snatch Grip Overhead Hold": [],
+    "Lying On Belly On Floor Straight Arms Sideway Hold": [],
+    "Lying On Floor On Side Bent Arm External Rotation": [],
+    "Overhead Squat": ["paused overhead squat"],
+    "Power Clean": ["power cleans"],
+    "Power Snatch": [],
+    "Ring Row": ["ring rows"],
+    "Row": ["calrow", "cal row"],
+    "Running": ["run", "mrun"],
+    "Sandbag Carry": [],
+    "Side Lying Single Leg Crunches On Floor": [],
+    "Single Leg Hip Thrust": [],
+    "SkiErg": ["ski erg", "calskierg", "cal ski erg"],
+    "Squat": ["speed squat"],
+    "Standing Back Twist": [],
+    "Standing Bent Over Hamstring Stretch": [],
+    "Strict P-Bar Dip": ["strict p-bar dip weight"],
+    "Toes To Bar": ["TTB", "Toes-to-Bar"],
+    "V-Up": ["vups"],
+    "Wall Ball": ["wall balls", "kraftausdauer wall ball"],
+    "Air Squat": ["kraftausdauer air squat"],
+    "Wall Walk": ["ww", "wall walks"]
+  },
+
+  "PreferredWeightUnit": "kg",
+
+  "ExerciseAliasAttributes": {
+    "speed squat": { "MovementQuality": "Speed" },
+    "paused overhead squat": { "MovementQuality": "Paused" },
+    "strict p-bar dip weight": { "AddedLoad": true },
+    "mlunges": { "DistanceUnit": "m" },
+    "bj61cm": { "BoxHeight": { "Value": 61, "Unit": "cm" } }
   },
 
   "BlockMappings": {

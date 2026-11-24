@@ -1,7 +1,7 @@
-﻿using PRLab.Application.Models.ImportDraft;
+using System.Text.Json;
+using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport;
 using PRLab.Application.WorkoutImport.Model;
-using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.WorkoutImport.Extractor.Excel;
 
@@ -16,168 +16,83 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         WorkoutImportContext context,
         CancellationToken ct = default)
     {
-        var excelProfile =
-            context.Profile.GetRequiredSourceProfile<
-                ExcelWorkoutImportSourceProfile>();
+        var profile = context.Profile;
+        var excelProfile = profile.GetRequiredSourceProfile<ExcelWorkoutImportSourceProfile>();
+        var dateIndex = excelProfile.GetRequiredCell(WorkoutImportProperty.Date);
+        var exerciseIndex = excelProfile.GetRequiredCell(WorkoutImportProperty.Exercise);
+        var orderIndex = GetOptionalCell(WorkoutImportProperty.Order);
+        var detailsIndex = GetOptionalCell(WorkoutImportProperty.Details);
+        var notesIndex = GetOptionalCell(WorkoutImportProperty.Notes);
 
-        var dateCell = excelProfile.GetRequiredCell(
-            WorkoutImportProperty.Date);
+        var matcher = new WorkoutInterpreterHelper(profile, context.Exercises);
+        var rowsByDate = new SortedDictionary<DateTime, List<WorkoutImportRowDraft>>();
 
-        // it doesnt mean one sheet is one draft 
-        // there could be many workouts on one sheet
-        // how to know if one is already imported ? we still draft it and wait for translation to model ? 
-        
-        // use date as separator
-        //start by finding different dates
-        var dates = GetDistinctDates(
-            source.Sheets,
-            dateCell);
-        
-        logger.Log(
-            nameof(CoachExcelWorkoutImportInterpreter),
-            $"Found {dates.Count} distinct dates: " +
-            $"{string.Join(", ", dates)}");
-          
-        // we need that amount of drafts 
-        // we pick all rows with those days 
-        // and start try to figure out what is what
-        var drafts = CreateDraftsFromDates(
-            dates,
-            source.Sheets,
-            context.Exercises,
-            context.Profile,
-            excelProfile);
-        
-        return Task.FromResult<IReadOnlyList<WorkoutImportDraft>>(drafts);
-    }
-
-    private IReadOnlyList<WorkoutImportDraft> CreateDraftsFromDates(
-        IReadOnlyList<DateTime> dates,
-        IReadOnlyList<ExtractedWorkoutSheet> sourceSheets,
-        IReadOnlyList<WorkoutImportExerciseReference> exerciseReferences,
-        WorkoutImportProfile profile,
-        ExcelWorkoutImportSourceProfile excelProfile)
-    {
-        var allRow = sourceSheets.SelectMany(sheet => sheet.Rows).ToList();
-        var dateCell = excelProfile.GetRequiredCell(WorkoutImportProperty.Date);
-        
-        var drafts = new List<WorkoutImportDraft>();
-        
-        //todo
-        foreach (var date in dates)
+        foreach (var row in source.Sheets.SelectMany(sheet => sheet.Rows))
         {
-            //get all row with date
-            //this is the content of the training
-            var matchingRows = allRow.Where(row => WorkoutInterpreterHelper.IsSameDate(row.Cells[dateCell].Value, date));
-           
-            //each row is either an exercise of a block (if many exercise)
-            // how do we know ? 
-            //try to get exercices 
-            var items = InterpretRows(
-                matchingRows,
-                exerciseReferences,
-                profile,
-                excelProfile);
-            
-            var draft = new WorkoutImportDraft
+            ct.ThrowIfCancellationRequested();
+
+            if (!WorkoutInterpreterHelper.TryReadDate(GetCell(row, dateIndex)?.Value, out var date))
             {
-                Date = date,
+                continue;
+            }
+
+            if (!rowsByDate.TryGetValue(date, out var rows))
+            {
+                rows = [];
+                rowsByDate.Add(date, rows);
+            }
+
+            var exerciseCell = GetCell(row, exerciseIndex);
+            if (exerciseCell is null || matcher.IsIgnored(exerciseCell.Value))
+            {
+                continue;
+            }
+
+            var rowDraft = new WorkoutImportRowDraft
+            {
+                SourceText = exerciseCell.Value,
+                SourceReference = exerciseCell.SourceReference,
+                Order = int.TryParse(GetCell(row, orderIndex)?.Value, out var order) ? order : null,
+                Details = GetCell(row, detailsIndex)?.Value,
+                Notes = GetCell(row, notesIndex)?.Value,
+                ExerciseParts = matcher.InterpretExerciseCell(exerciseCell.Value)
             };
-            
-            drafts.Add(draft);
+
+            rows.Add(rowDraft);
+            if (logger.Enabled)
+            {
+                logger.Log(nameof(CoachExcelWorkoutImportInterpreter),
+                    $"Interpreted workout row for {date:yyyy-MM-dd}: {JsonSerializer.Serialize(rowDraft)}");
+            }
         }
-        
-        return drafts;
-    }
 
-    private IReadOnlyList<DraftItem> InterpretRows(
-        IEnumerable<ExtractedWorkoutRow> rows,
-        IReadOnlyList<WorkoutImportExerciseReference> exerciseReferences,
-        WorkoutImportProfile profile,
-        ExcelWorkoutImportSourceProfile excelProfile)
-    {
-        // get the cell at cellIndex , than try to have a match to an exercices
-        // preserve order
-        return rows
-            .Select(row => InterpretRow(
-                row,
-                exerciseReferences,
-                profile,
-                excelProfile))
+        logger.Log(nameof(CoachExcelWorkoutImportInterpreter),
+            $"Found {rowsByDate.Count} distinct workout dates.");
+
+        IReadOnlyList<WorkoutImportDraft> drafts = rowsByDate
+            .Select(entry => new WorkoutImportDraft
+            {
+                Date = entry.Key,
+                SourceReference = source.SourceName,
+                Rows = entry.Value,
+                Warnings = entry.Value
+                    .SelectMany(row => row.ExerciseParts
+                        .Where(part => part.Warning is not null)
+                        .Select(part => new WorkoutImportWarning
+                        {
+                            Severity = WorkoutImportIssueSeverity.Warning,
+                            Message = $"{row.SourceReference}: {part.Warning}"
+                        }))
+                    .ToList()
+            })
             .ToList();
-    }
-    
-    private DraftItem InterpretRow(
-        ExtractedWorkoutRow row,
-        IReadOnlyList<WorkoutImportExerciseReference> exerciseReferences,
-        WorkoutImportProfile profile,
-        ExcelWorkoutImportSourceProfile excelProfile
-        )
-    {
-        // get the cell at cellIndex , than try to have a match to an exercices
-        // preserve order
-        var dateCell = excelProfile.GetRequiredCell(
-            WorkoutImportProperty.Date);
 
-        var exercisesCell = excelProfile.GetRequiredCell(
-            WorkoutImportProperty.Exercise);
-        var orderCell = excelProfile.GetRequiredCell(
-            WorkoutImportProperty.Order);
-        
-        var exerciseCellValue = row.Cells[exercisesCell].Value;
+        return Task.FromResult(drafts);
 
-        // we get all parts of the string
-        // then analyse each part to extract what type of dratfitem it is
-        // get all present exercises names etc
-        
-        var allParts = WorkoutInterpreterHelper.GetAllParts(exerciseCellValue, profile.Separators);
-        var exerciseNames = WorkoutInterpreterHelper.GetExercisesNames(profile.ExerciseAliases, allParts);
+        int GetOptionalCell(WorkoutImportProperty property) =>
+            excelProfile.TryGetColumn(property, out var index) ? index : -1;
     }
 
-   
-
-    private IReadOnlyList<DateTime> GetDistinctDates(
-        IReadOnlyList<ExtractedWorkoutSheet> sheets,
-        int dateCellIndex)
-    {
-        var cells = sheets
-            .SelectMany(sheet => sheet.Rows)
-            .Where(row =>
-                row.Cells.Count > dateCellIndex)
-            .Select(row =>
-                row.Cells[dateCellIndex]);
-
-        return GetDistinctDatesFromCells(cells);
-    }
-
-    private static IReadOnlyList<DateTime> GetDistinctDatesFromCells(
-        IEnumerable<ExtractedWorkoutCell> cells) =>
-        WorkoutInterpreterHelper
-            .GetDistinctDatesFromStrings(cells
-            .Select(cell => cell.Value));
-    
-}
-
-public abstract class DraftItem
-{
-    public required string SourceText { get; init; }
-    
-    public float Confidence { get; init; }
-}
-
-public class ExerciseMatch : DraftItem
-{
-    public string? ExerciseName { get; init; }
-    
-    public ExerciseId? ExerciseIdMatch { get; init; }
-}
-
-//make other draft item
-
-// is the row a block a sequence etc ? 
-public class RowDraft
-{
-    public required string SourceText { get; init; }
-    
-    public DraftItem? DraftItem { get; init; }
+    private static ExtractedWorkoutCell? GetCell(ExtractedWorkoutRow row, int cellIndex) =>
+        cellIndex >= 0 && cellIndex < row.Cells.Count ? row.Cells[cellIndex] : null;
 }
