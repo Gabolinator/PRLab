@@ -1,10 +1,9 @@
 {
   "Name": "CrossfitCoach",
-
+  "PreferredMeasurementSystem": "Metric",
   "SourceProfiles": [
     {
       "Type": "Excel",
-
       "Columns": [
         {
           "CellIndex": 0,
@@ -29,26 +28,40 @@
       ]
     }
   ],
-  
-  "ExerciseAliases": {
-    "Assault Bike": ["AB"],
-    "Double Dumbbell Hang Power Clean": ["DB HPC"],
-    "Lateral Burpee Over Barbell": ["LBOB"],
-    "Toes To Bar": ["TTB", "Toes-to-Bar"]
+  "Aliases": {
+    "Exercises": {
+      "Assault Bike": ["AB"],
+      "Double Dumbbell Hang Power Clean": ["DB HPC"],
+      "Lateral Burpee Over Barbell": ["LBOB"],
+      "Toes To Bar": ["TTB", "Toes-to-Bar"]
+    },
+    "Attributes": {
+      "strict": {
+        "MatchMode": "LeadingQualifier",
+        "Assignments": [
+          {
+            "Type": "Technique",
+            "Value": "Strict"
+          }
+        ]
+      }
+    }
   },
-
-  "BlockMappings": {
-    "WOD": "Metcon",
-    "Strength": "Strength",
-    "Technique": "Skill",
-    "Mobility": "Mobility"
+  "Parsing": {
+    "Separators": [
+      "|"
+    ],
+    "IgnoredLabels": [
+      "anything hurting?"
+    ]
   },
-
-  "IgnoredLabels": [
-    "anything hurting?"
-  ],
-
-  "Separators": ["|"],
-
+  "Mappings": {
+    "BlockTypes": {
+      "WOD": "Metcon",
+      "Strength": "Strength",
+      "Technique": "Skill",
+      "Mobility": "Mobility"
+    }
+  },
   "InterpretationInstructions": "Programming comes from a CrossFit coach. Preserve original wording and notes. Do not invent missing prescriptions, loads, time caps or rest durations."
 }

@@ -1,4 +1,5 @@
 using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Application.WorkoutImport.Model;
 
 namespace PRLab.Application.Models.ImportDraft;
 
@@ -28,6 +29,8 @@ public sealed record WorkoutImportExercisePart
     public string? ExerciseName { get; init; }
 
     public ExerciseId? ExerciseId { get; init; }
+
+    public IReadOnlyList<WorkoutImportAttributeAssignment> Attributes { get; init; } = [];
 
     public string? Warning { get; init; }
 }

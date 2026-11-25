@@ -11,20 +11,24 @@ internal sealed class WorkoutInterpreterHelper
     private readonly string[] separators;
     private readonly Regex[] ignoredLabels;
     private readonly IReadOnlyList<ExerciseCandidate> candidates;
+    private readonly IReadOnlyList<Qualifier> leadingQualifiers;
+    private readonly IReadOnlyList<Qualifier> trailingQualifiers;
+    private readonly ILookup<string, WorkoutImportAttributeAssignment> aliasAttributes;
+    private const string WordBoundary = @"(?![\p{L}\p{M}\p{N}_])";
 
     public WorkoutInterpreterHelper(
         WorkoutImportProfile profile,
         IReadOnlyList<WorkoutImportExerciseReference> exercises)
     {
-        separators = profile.Separators.Where(separator => !string.IsNullOrEmpty(separator)).ToArray();
-        ignoredLabels = profile.IgnoredLabels
+        separators = profile.Parsing.Separators.Where(separator => !string.IsNullOrEmpty(separator)).ToArray();
+        ignoredLabels = profile.Parsing.IgnoredLabels
             .Where(label => !string.IsNullOrWhiteSpace(label))
             .Select(label => CreatePrefixPattern(label, @"(?=[^\S\r\n]*(?:$|\r|\n))"))
             .ToArray();
 
         var exercisesByKey = exercises.ToLookup(exercise => exercise.NameKey);
         var names = exercises.Select(exercise => (Text: exercise.Name, Key: exercise.NameKey));
-        var aliases = profile.ExerciseAliases
+        var aliases = profile.Aliases.Exercises
             .SelectMany(entry => entry.Value.Select(alias =>
                 (Text: alias, Key: FormatingUtilities.NormalizeNameKey(entry.Key))));
 
@@ -37,11 +41,27 @@ internal sealed class WorkoutInterpreterHelper
                 var matches = keys.SelectMany(key => exercisesByKey[key]).ToList();
                 var ambiguous = keys.Count > 1 || matches.Count > 1;
                 return new ExerciseCandidate(
-                    CreatePrefixPattern(group.Key, @"(?![\p{L}\p{M}\p{N}_])"),
+                    CreatePrefixPattern(group.Key, WordBoundary),
                     ambiguous ? null : matches.SingleOrDefault(),
                     ambiguous);
             })
             .ToList();
+
+        leadingQualifiers = BuildQualifiers(WorkoutImportAttributeMatchMode.LeadingQualifier, @"(?=[^\S\r\n]|$)");
+        trailingQualifiers = BuildQualifiers(WorkoutImportAttributeMatchMode.TrailingQualifier, WordBoundary);
+
+        aliasAttributes = profile.Aliases.Attributes
+            .Where(entry => entry.Value.MatchMode == WorkoutImportAttributeMatchMode.MatchedAlias
+                && !string.IsNullOrWhiteSpace(entry.Key))
+            .SelectMany(entry => entry.Value.Assignments.Select(attribute =>
+                (Key: FormatingUtilities.NormalizeNonNullString(entry.Key), Attribute: attribute)))
+            .ToLookup(entry => entry.Key, entry => entry.Attribute);
+
+        IReadOnlyList<Qualifier> BuildQualifiers(WorkoutImportAttributeMatchMode mode, string boundary) =>
+            profile.Aliases.Attributes
+                .Where(entry => entry.Value.MatchMode == mode && !string.IsNullOrWhiteSpace(entry.Key))
+                .Select(entry => new Qualifier(CreatePrefixPattern(entry.Key, boundary), entry.Value.Assignments))
+                .ToList();
     }
 
     public bool IsIgnored(string text) =>
@@ -62,16 +82,34 @@ internal sealed class WorkoutInterpreterHelper
     private WorkoutImportExercisePart InterpretPart(string sourceText)
     {
         var text = sourceText.TrimStart();
-        ExerciseCandidate? bestCandidate = null;
-        var matchLength = 0;
-
-        foreach (var candidate in candidates)
+        var (bestCandidate, matchLength) = FindExercise(text);
+        var qualifierAttributes = new List<WorkoutImportAttributeAssignment>();
+        var exerciseOffset = 0;
+        var qualifierLimit = bestCandidate is null ? text.Length : matchLength;
+        
+        while (exerciseOffset < qualifierLimit)
         {
-            var match = candidate.Pattern.Match(text);
-            if (match.Length > matchLength)
+            var prefix = text[exerciseOffset..qualifierLimit];
+            var qualifierMatch = FindQualifier(leadingQualifiers, prefix);
+
+            if (qualifierMatch.Length == 0)
             {
-                bestCandidate = candidate;
-                matchLength = match.Length;
+                break;
+            }
+
+            qualifierAttributes.AddRange(qualifierMatch.Qualifier!.Attributes);
+            var remainder = prefix[qualifierMatch.Length..].TrimStart();
+            exerciseOffset = qualifierLimit - remainder.Length;
+
+            if (bestCandidate is null)
+            {
+                var (candidate, length) = FindExercise(remainder);
+                if (candidate is not null)
+                {
+                    bestCandidate = candidate;
+                    matchLength = exerciseOffset + length;
+                    break;
+                }
             }
         }
 
@@ -80,12 +118,36 @@ internal sealed class WorkoutInterpreterHelper
             return new WorkoutImportExercisePart
             {
                 SourceText = sourceText,
+                Attributes = qualifierAttributes,
                 Warning = $"No catalog exercise matches '{text.TrimEnd()}'."
             };
         }
 
         var matchedText = text[..matchLength];
-        var remainingText = text[matchLength..].Trim();
+        var remainingText = text[matchLength..];
+        while (remainingText.Length > 0 &&
+               char.IsWhiteSpace(remainingText[0]) &&
+               remainingText[0] is not ('\r' or '\n'))
+        {
+            var suffix = remainingText.TrimStart(' ', '\t');
+            var qualifierMatch = FindQualifier(trailingQualifiers, suffix);
+            if (qualifierMatch.Length == 0)
+            {
+                break;
+            }
+
+            qualifierAttributes.AddRange(qualifierMatch.Qualifier!.Attributes);
+            remainingText = suffix[qualifierMatch.Length..];
+        }
+
+        remainingText = remainingText.Trim();
+        
+        var attributes = qualifierAttributes
+            .Concat(aliasAttributes[FormatingUtilities.NormalizeNonNullString(matchedText)])
+            .Concat(aliasAttributes[FormatingUtilities.NormalizeNullableString(text[exerciseOffset..matchLength])])
+            .DistinctBy(attribute => (attribute.Type, attribute.Value))
+            .ToList();
+        
         var exercise = bestCandidate.Exercise;
         var warning = bestCandidate.Ambiguous
             ? $"Exercise name or alias '{matchedText}' is ambiguous."
@@ -100,8 +162,25 @@ internal sealed class WorkoutInterpreterHelper
             RemainingText = remainingText.Length == 0 ? null : remainingText,
             ExerciseName = exercise?.Name,
             ExerciseId = exercise?.Id,
+            Attributes = attributes,
             Warning = warning
         };
+    }
+
+    private static (Qualifier? Qualifier, int Length) FindQualifier(
+        IReadOnlyList<Qualifier> qualifiers, string text) =>
+        qualifiers
+            .Select(qualifier => (Qualifier: qualifier, Length: qualifier.Pattern.Match(text).Length))
+            .DefaultIfEmpty()
+            .MaxBy(match => match.Length);
+
+    private (ExerciseCandidate? Candidate, int Length) FindExercise(string text)
+    {
+        var match = candidates
+            .Select(candidate => (Candidate: candidate, Length: candidate.Pattern.Match(text).Length))
+            .DefaultIfEmpty()
+            .MaxBy(match => match.Length);
+        return match.Length > 0 ? match : default;
     }
 
     internal static bool TryReadDate(string? text, out DateTime date)
@@ -125,4 +204,6 @@ internal sealed class WorkoutInterpreterHelper
         Regex Pattern,
         WorkoutImportExerciseReference? Exercise,
         bool Ambiguous);
+
+    private sealed record Qualifier(Regex Pattern, IReadOnlyList<WorkoutImportAttributeAssignment> Attributes);
 }

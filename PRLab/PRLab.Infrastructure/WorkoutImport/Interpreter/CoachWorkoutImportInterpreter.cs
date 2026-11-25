@@ -27,7 +27,9 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         var matcher = new WorkoutInterpreterHelper(profile, context.Exercises);
         var rowsByDate = new SortedDictionary<DateTime, List<WorkoutImportRowDraft>>();
 
-        foreach (var row in source.Sheets.SelectMany(sheet => sheet.Rows))
+        var allRows = source.Sheets.SelectMany(sheet => sheet.Rows);
+        
+        foreach (var row in allRows)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -121,6 +123,8 @@ public sealed class CoachExcelWorkoutImportInterpreter(
             AppendField(part.MatchedText is null ? "Source" : "Matched",
                 part.MatchedText ?? part.SourceText, "    ");
             AppendField("Remaining text", part.RemainingText, "    ");
+            AppendField("Attributes", string.Join(", ", part.Attributes.Select(
+                attribute => $"{attribute.Type} = {attribute.Value}")), "    ");
             AppendField("Warning", part.Warning, "    ");
         }
 

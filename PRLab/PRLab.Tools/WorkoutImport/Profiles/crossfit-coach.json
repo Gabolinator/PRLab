@@ -1,10 +1,9 @@
 {
   "Name": "CrossfitCoach",
-
+  "PreferredMeasurementSystem": "Metric",
   "SourceProfiles": [
     {
       "Type": "Excel",
-
       "Columns": [
         {
           "CellIndex": 0,
@@ -29,92 +28,165 @@
       ]
     }
   ],
-
-  "ExerciseAliases": {
-    "Alternating Dumbbell Devil Press": ["alternating dumbbell devil presses"],
-    "Assault Bike": ["AB", "calab", "cal assault bike"],
-    "Back Squat": ["bbs", "barbel back squat", "barbell back squat"],
-    "Barbell Bench Press": [],
-    "Bench Press": ["double dumbbell bench press"],
-    "Box Jump": ["bj61cm"],
-    "Box Jump Over": ["box jump overs"],
-    "Box Step Over": ["step overs"],
-    "Bulgarian Split Squat": [],
-    "C2 Bike": ["calc2bike", "cal c2 bike"],
-    "Dead Stop Strict Hand Stand Push Up": [],
-    "Deep Lateral Box Step Up": [],
-    "Double Dumbbell Hang Power Clean": ["DB HPC"],
-    "Double Dumbbell Shoulder Press": ["DB shoulder presses"],
-    "Double Under": ["double unders"],
-    "Dumbbell Deadlift": ["DB deadlifts"],
-    "Frontal Burpee Box Jump Over": ["frontal burpee box jump overs"],
-    "Frontal Burpee Over Bar": ["FBOB", "frontal burpees over bar"],
-    "Front-Rack Lunge": ["front-rack lunges"],
-    "GHD Hip Extension": [],
-    "GHD Sit-Up": ["ghdsu", "GHD sit-ups"],
-    "Kipping High Knees": [],
-    "Kipping Toes To Bar": ["kt2b"],
-    "Lateral Burpee": ["lateral burpees"],
-    "Lateral Burpee Over Barbell": ["LBOB"],
-    "Lateral Burpee Over Line": ["lateral burpees over line"],
-    "Lie On Back On Bench Straight Arms To Side Stretch": [],
-    "Lunge": ["mlunges"],
-    "Lunge Stretch": [],
-    "Lying On Back Bent Legs To Side Stretch": [],
-    "Lying On Back On Floor Bent Leg Butterfly Stretch": [],
-    "Lying On Back On Floor Straight Leg Rotation": [],
-    "Lying On Belly On Floor Snatch Grip Overhead Hold": [],
-    "Lying On Belly On Floor Straight Arms Sideway Hold": [],
-    "Lying On Floor On Side Bent Arm External Rotation": [],
-    "Overhead Squat": ["paused overhead squat"],
-    "Power Clean": ["power cleans"],
-    "Power Snatch": [],
-    "Ring Row": ["ring rows"],
-    "Row": ["calrow", "cal row"],
-    "Running": ["run", "mrun"],
-    "Sandbag Carry": [],
-    "Side Lying Single Leg Crunches On Floor": [],
-    "Single Leg Hip Thrust": [],
-    "SkiErg": ["ski erg", "calskierg", "cal ski erg"],
-    "Pull Up": ["strict pull up"],
-    "Squat": ["speed squat", "self supported dragon squat"],
-    "Standing Back Twist": [],
-    "Standing Bent Over Hamstring Stretch": [],
-    "Strict P-Bar Dip": ["strict p-bar dip weight"],
-    "Toes To Bar": ["TTB", "Toes-to-Bar", "strict toes to bar"],
-    "V-Up": ["vups"],
-    "Wall Ball": ["wall balls", "kraftausdauer wall ball"],
-    "Air Squat": ["kraftausdauer air squat"],
-    "Wall Walk": ["ww", "wall walks"]
+  "Aliases": {
+    "Exercises": {
+      "Alternating Dumbbell Devil Press": ["alternating dumbbell devil presses"],
+      "Assault Bike": ["AB", "calab", "cal assault bike"],
+      "Back Squat": ["bbs", "barbel back squat", "barbell back squat"],
+      "Barbell Bench Press": [],
+      "Bench Press": [],
+      "Box Jump": ["bj61cm", "bj"],
+      "Box Jump Over": ["box jump overs"],
+      "Box Step Over": ["step overs"],
+      "Bulgarian Split Squat": [],
+      "C2 Bike": ["calc2bike", "cal c2 bike"],
+      "Dead Stop Strict Hand Stand Push Up": [],
+      "Deep Lateral Box Step Up": [],
+      "Double Dumbbell Hang Power Clean": ["DB HPC"],
+      "Double Dumbbell Shoulder Press": ["DB shoulder presses"],
+      "Double Under": ["double unders"],
+      "Dumbbell Deadlift": ["DB deadlifts"],
+      "Frontal Burpee Box Jump Over": ["frontal burpee box jump overs"],
+      "Frontal Burpee Over Bar": ["FBOB", "frontal burpees over bar"],
+      "Front-Rack Lunge": ["front-rack lunges"],
+      "GHD Hip Extension": [],
+      "GHD Sit-Up": ["ghdsu", "GHD sit-ups"],
+      "Kipping High Knees": [],
+      "Kipping Toes To Bar": ["kt2b"],
+      "Lateral Burpee": ["lateral burpees"],
+      "Lateral Burpee Over Barbell": ["LBOB"],
+      "Lateral Burpee Over Line": ["lateral burpees over line"],
+      "Lie On Back On Bench Straight Arms To Side Stretch": [],
+      "Lunge": ["mlunges"],
+      "Lunge Stretch": [],
+      "Lying On Back Bent Legs To Side Stretch": [],
+      "Lying On Back On Floor Bent Leg Butterfly Stretch": [],
+      "Lying On Back On Floor Straight Leg Rotation": [],
+      "Lying On Belly On Floor Snatch Grip Overhead Hold": [],
+      "Lying On Belly On Floor Straight Arms Sideway Hold": [],
+      "Lying On Floor On Side Bent Arm External Rotation": [],
+      "Overhead Squat": [],
+      "Power Clean": ["power cleans"],
+      "Power Snatch": [],
+      "Ring Row": ["ring rows"],
+      "Row": ["calrow", "cal row"],
+      "Running": ["run", "mrun"],
+      "Sandbag Carry": [],
+      "Side Lying Single Leg Crunches On Floor": [],
+      "Single Leg Hip Thrust": [],
+      "SkiErg": ["ski erg", "calskierg", "cal ski erg"],
+      "Pull Up": [],
+      "Squat": ["self supported dragon squat"],
+      "Standing Back Twist": [],
+      "Standing Bent Over Hamstring Stretch": [],
+      "Strict P-Bar Dip": [],
+      "Toes To Bar": ["TTB", "Toes-to-Bar"],
+      "V-Up": ["vups"],
+      "Wall Ball": ["wall balls", "kraftausdauer wall ball"],
+      "Air Squat": ["kraftausdauer air squat"],
+      "Wall Walk": ["ww", "wall walks"]
+    },
+    "Attributes": {
+      "strict": {
+        "MatchMode": "LeadingQualifier",
+        "Assignments": [
+          {
+            "Type": "Technique",
+            "Value": "Strict"
+          }
+        ]
+      },
+      "double dumbbell": {
+        "MatchMode": "LeadingQualifier",
+        "Assignments": [
+          {
+            "Type": "Equipment",
+            "Value": "Dumbbell"
+          },
+          {
+            "Type": "EquipmentQuantity",
+            "Value": "2"
+          }
+        ]
+      },
+      "speed": {
+        "MatchMode": "LeadingQualifier",
+        "Assignments": [
+          {
+            "Type": "MovementQuality",
+            "Value": "Speed"
+          }
+        ]
+      },
+      "paused": {
+        "MatchMode": "LeadingQualifier",
+        "Assignments": [
+          {
+            "Type": "MovementQuality",
+            "Value": "Paused"
+          }
+        ]
+      },
+      "weight": {
+        "MatchMode": "TrailingQualifier",
+        "Assignments": [
+          {
+            "Type": "AddedLoad",
+            "Value": "true"
+          }
+        ]
+      },
+      "mlunges": {
+        "MatchMode": "MatchedAlias",
+        "Assignments": [
+          {
+            "Type": "DistanceUnit",
+            "Value": "m"
+          }
+        ]
+      },
+      "mrun": {
+        "MatchMode": "MatchedAlias",
+        "Assignments": [
+          {
+            "Type": "DistanceUnit",
+            "Value": "m"
+          }
+        ]
+      },
+      "bj61cm": {
+        "MatchMode": "MatchedAlias",
+        "Assignments": [
+          {
+            "Type": "Equipment",
+            "Value": "Plyometric Box"
+          },
+          {
+            "Type": "EquipmentHeight",
+            "Value": "61"
+          },
+          {
+            "Type": "EquipmentUnit",
+            "Value": "cm"
+          }
+        ]
+      }
+    }
   },
-
-  "PreferredWeightUnit": "kg",
-
-  "ExerciseAliasAttributes": {
-    "double dumbbell bench press": { "Equipment": "Dumbbell", "EquipmentQuantity": 2 },
-    "strict pull up": { "Technique": "Strict" },
-    "strict toes to bar": { "Technique": "Strict" },
-    "speed squat": { "MovementQuality": "Speed" },
-    "paused overhead squat": { "MovementQuality": "Paused" },
-    "strict p-bar dip weight": { "AddedLoad": true },
-    "mlunges": { "DistanceUnit": "m" },
-    "bj61cm": { "BoxHeight": { "Value": 61, "Unit": "cm" } }
+  "Parsing": {
+    "Separators": [
+      "|"
+    ],
+    "IgnoredLabels": [
+      "anything hurting?"
+    ]
   },
-
-  "BlockMappings": {
-    "WOD": "Metcon",
-    "Strength": "Strength",
-    "Technique": "Skill",
-    "Mobility": "Mobility"
-  },
-
-  "IgnoredLabels": [
-    "anything hurting?"
-  ],
-  
-  "Separators": [
-    "|"
-  ],
-
-  "InterpretationInstructions": "Programming comes from a CrossFit coach. Preserve original wording and notes. Do not invent missing prescriptions, loads, time caps or rest durations."
+  "Mappings": {
+    "BlockTypes": {
+      "WOD": "Metcon",
+      "Strength": "Strength",
+      "Technique": "Skill",
+      "Mobility": "Mobility"
+    }
+  }
 }

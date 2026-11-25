@@ -1,4 +1,5 @@
-﻿using PRLab.Domain.Model.Value.Enum.Workout;
+﻿using PRLab.Domain.Model.Value.Enum;
+using PRLab.Domain.Model.Value.Enum.Workout;
 
 namespace PRLab.Application.WorkoutImport.Model;
 
@@ -6,19 +7,22 @@ public sealed class WorkoutImportProfile
 {
     public required string Name { get; init; }
 
-    public IReadOnlyList<WorkoutImportSourceProfile> SourceProfiles { get; init; } = [];
+    public MeasurementSystem PreferredMeasurementSystem { get; init; }
+        = MeasurementSystem.Metric;
 
-    public IReadOnlyDictionary<string, IReadOnlyList<string>> ExerciseAliases { get; init; }
-        = new Dictionary<string, IReadOnlyList<string>>();
+    public IReadOnlyList<WorkoutImportSourceProfile> SourceProfiles { get; init; }
+        = [];
 
-    public IReadOnlyDictionary<string, WorkoutBlockType> BlockMappings { get; init; }
-        = new Dictionary<string, WorkoutBlockType>();
+    public WorkoutImportAliases Aliases { get; init; }
+        = new();
 
-    public IReadOnlyList<string> IgnoredLabels { get; init; } = [];
+    public WorkoutImportParsing Parsing { get; init; }
+        = new();
 
-    public IReadOnlyList<string> Separators { get; init; } = [];
-    
-    public string? InterpretationInstructions { get; init; } //todo would belong in llm sourceproile
+    public WorkoutImportMappings Mappings { get; init; }
+        = new();
+
+    public string? InterpretationInstructions { get; init; }
 
     public TProfile GetRequiredSourceProfile<TProfile>()
         where TProfile : WorkoutImportSourceProfile
@@ -32,15 +36,61 @@ public sealed class WorkoutImportProfile
                    $"Workout import profile '{Name}' does not contain " +
                    $"a source profile of type '{typeof(TProfile).Name}'.");
     }
+}
 
-    public bool TryGetSourceProfile<TProfile>(
-        out TProfile? profile)
-        where TProfile : WorkoutImportSourceProfile
-    {
-        profile = SourceProfiles
-            .OfType<TProfile>()
-            .SingleOrDefault();
+public sealed class WorkoutImportParsing
+{
+    public IReadOnlyList<string> Separators { get; init; } = [];
 
-        return profile is not null;
-    }
+    public IReadOnlyList<string> IgnoredLabels { get; init; } = [];
+}
+
+public sealed class WorkoutImportMappings
+{
+    public IReadOnlyDictionary<string, WorkoutBlockType> BlockTypes { get; init; }
+        = new Dictionary<string, WorkoutBlockType>();
+}
+
+public sealed class WorkoutImportAliases
+{
+    public IReadOnlyDictionary<string, IReadOnlyList<string>> Exercises { get; init; }
+        = new Dictionary<string, IReadOnlyList<string>>();
+
+    public IReadOnlyDictionary<string, WorkoutImportAttributeRule> Attributes { get; init; }
+        = new Dictionary<string, WorkoutImportAttributeRule>();
+}
+
+public sealed class WorkoutImportAttributeRule
+{
+    public required WorkoutImportAttributeMatchMode MatchMode { get; init; }
+
+    public required IReadOnlyList<WorkoutImportAttributeAssignment> Assignments { get; init; }
+}
+
+public enum WorkoutImportAttributeMatchMode
+{
+    LeadingQualifier = 1,
+    MatchedAlias = 2,
+    TrailingQualifier = 3,
+}
+
+public sealed class WorkoutImportAttributeAssignment
+{
+    public WorkoutImportAttributeType Type { get; init; } = WorkoutImportAttributeType.None;
+
+    public required string Value { get; init; }
+}
+
+
+public enum WorkoutImportAttributeType
+{
+    Technique,
+    MovementQuality,
+    Equipment,
+    EquipmentQuantity,
+    EquipmentHeight,
+    EquipmentUnit,
+    AddedLoad,
+    DistanceUnit,
+    None,
 }
