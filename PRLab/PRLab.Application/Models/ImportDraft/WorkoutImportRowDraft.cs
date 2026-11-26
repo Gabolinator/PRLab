@@ -23,10 +23,19 @@ public sealed record WorkoutImportRowDraft
     public IReadOnlyList<WorkoutWorkWindowDraft> WorkWindows { get; init; } = [];
 
     public IReadOnlyList<WorkoutImportTextFragment> UnconsumedText { get; init; } = [];
+
+    public IReadOnlyList<WorkoutImportWarning> Warnings { get; init; } = [];
 }
 
 public sealed record WorkoutImportPrescriptionDraft(
-    string? SourceReference, WorkoutStepImportDraft Step, int? TimeCapSeconds = null);
+    string? SourceReference, WorkoutStepImportDraft Step, int? TimeCapSeconds = null)
+{
+    public ExerciseId? ExerciseId { get; init; }
+
+    public string? ExerciseSourceReference { get; init; }
+
+    public int? ExerciseSourceOffset { get; init; }
+}
 
 public sealed record WorkoutWorkWindowDraft(
     WorkMode Mode, int DurationSeconds, string SourceText, string? SourceReference);
@@ -37,6 +46,8 @@ public sealed record WorkoutImportExercisePart
 {
     public required string SourceText { get; init; }
 
+    public int? SourceOffset { get; init; }
+
     public string? MatchedText { get; init; }
 
     public string? RemainingText { get; init; }
@@ -46,6 +57,8 @@ public sealed record WorkoutImportExercisePart
     public ExerciseId? ExerciseId { get; init; }
 
     public IReadOnlyList<WorkoutImportAttributeAssignment> Attributes { get; init; } = [];
+
+    public IReadOnlyList<WorkoutImportAttributeAssignment> ExpectedAttributes { get; init; } = [];
 
     public string? Warning { get; init; }
 }

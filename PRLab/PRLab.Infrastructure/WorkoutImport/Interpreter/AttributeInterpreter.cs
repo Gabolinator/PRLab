@@ -11,6 +11,7 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
     private readonly IReadOnlyList<Qualifier> trailing = BuildQualifiers(
         profile, WorkoutImportAttributeMatchMode.TrailingQualifier, WorkoutTextMatching.WordEnd);
     private readonly ILookup<string, WorkoutImportAttributeAssignment> matchedAliases = BuildAliasLookup(profile);
+    private readonly IReadOnlyList<Qualifier> equipmentAliases = BuildEquipmentAliases(profile);
 
     public ExerciseAttributes Interpret(string text, TextSpan exerciseSpan, int nextExerciseStart, bool isFirstMatch)
     {
@@ -60,6 +61,33 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
 
         return new ExerciseAttributes(matchedText, remainingText, distinctAssignments, spans);
     }
+
+    public IEnumerable<(TextSpan Span, WorkoutImportAttributeAssignment Assignment)> FindEquipment(string text)
+    {
+        var matches = equipmentAliases.SelectMany(alias => alias.Pattern.Matches(text).Cast<Match>()
+            .Select(match => (Match: match, Assignment: alias.Assignments[0])));
+        var matchesInTextOrder = matches.OrderBy(entry => entry.Match.Index)
+            .ThenByDescending(entry => entry.Match.Length);
+        var end = 0;
+        foreach (var (match, assignment) in matchesInTextOrder)
+        {
+            if (match.Index >= end)
+            {
+                var span = new TextSpan(match.Index, match.Length);
+                yield return (span, assignment);
+                end = span.End;
+            }
+        }
+    }
+
+    private static IReadOnlyList<Qualifier> BuildEquipmentAliases(WorkoutImportProfile profile) =>
+        profile.Aliases.Equipment
+            .Where(alias => !string.IsNullOrWhiteSpace(alias.Key) && !string.IsNullOrWhiteSpace(alias.Value))
+            .Select(alias => new Qualifier(
+                WorkoutTextMatching.CreatePhrasePattern(
+                    alias.Key, WorkoutTextMatching.WordStart, WorkoutTextMatching.WordEnd),
+                [new WorkoutImportAttributeAssignment { Type = WorkoutImportAttributeType.Equipment, Value = alias.Value }]))
+            .ToList();
 
     private static IReadOnlyList<Qualifier> BuildQualifiers(
         WorkoutImportProfile profile, WorkoutImportAttributeMatchMode mode, string boundary) =>

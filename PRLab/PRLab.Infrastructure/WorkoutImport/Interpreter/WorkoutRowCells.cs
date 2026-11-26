@@ -142,7 +142,8 @@ internal enum ConsumptionKind
     Exercise,
     Attribute,
     Prescription,
-    WorkWindow
+    WorkWindow,
+    Ignored
 }
 
 internal sealed record CellConsumption(TextSpan Span, ConsumptionKind Kind);

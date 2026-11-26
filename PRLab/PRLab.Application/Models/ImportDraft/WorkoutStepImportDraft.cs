@@ -24,6 +24,8 @@ public sealed record WorkoutStepImportDraft
 
     public int? RestSeconds { get; init; }
 
+    public int? MinimumRestSeconds { get; init; }
+
     public int? SetCount { get; init; }
 
     public string? Notes { get; init; }

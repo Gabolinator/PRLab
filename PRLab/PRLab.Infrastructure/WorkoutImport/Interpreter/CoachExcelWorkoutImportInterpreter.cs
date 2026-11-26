@@ -1,6 +1,7 @@
 using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport;
 using PRLab.Application.WorkoutImport.Model;
+using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.Workout;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.WorkoutImport.Extractor.Excel;
@@ -56,13 +57,7 @@ public sealed class CoachExcelWorkoutImportInterpreter(
     {
         var workWindow = row.WorkWindows[0];
         var resolvedExercises = row.ExerciseParts.Where(part => part.ExerciseId.HasValue);
-        var steps = resolvedExercises.Select(part => new WorkoutStepImportDraft
-        {
-            SourceText = part.SourceText,
-            ExerciseName = part.ExerciseName,
-            StepKind = WorkoutStepKind.Exercise,
-            Confidence = 1
-        }).ToList();
+        var steps = resolvedExercises.Select(part => CreateWorkoutStep(row, part)).ToList();
         var segment = new WorkoutSegmentImportDraft
         {
             Name = workWindow.SourceText,
@@ -75,6 +70,32 @@ public sealed class CoachExcelWorkoutImportInterpreter(
             Name = workWindow.SourceText,
             Order = row.Order,
             Segments = [segment]
+        };
+    }
+
+    private static WorkoutStepImportDraft CreateWorkoutStep(WorkoutImportRowDraft row, WorkoutImportExercisePart part)
+    {
+        var prescriptions = row.Prescriptions.Where(prescription =>
+            prescription.ExerciseId == part.ExerciseId &&
+            prescription.ExerciseSourceReference == row.SourceReference &&
+            prescription.ExerciseSourceOffset == part.SourceOffset).ToList();
+        var workTargets = prescriptions.Where(prescription => prescription.Step.WorkTargetType.HasValue).ToList();
+        var loadTargets = prescriptions.Where(prescription => prescription.Step.LoadValue.HasValue).ToList();
+        var work = workTargets.Count == 1 ? workTargets[0].Step : null;
+        var load = loadTargets.Count == 1 ? loadTargets[0].Step : null;
+
+        return new WorkoutStepImportDraft
+        {
+            SourceText = part.SourceText,
+            ExerciseName = part.ExerciseName,
+            StepKind = WorkoutStepKind.Exercise,
+            WorkValue = work?.WorkValue,
+            WorkTargetType = work?.WorkTargetType,
+            Scope = work?.Scope ?? WorkTargetScope.Total,
+            SetCount = work?.SetCount,
+            LoadValue = load?.LoadValue,
+            LoadUnit = load?.LoadUnit,
+            Confidence = 1
         };
     }
 
@@ -94,7 +115,8 @@ public sealed class CoachExcelWorkoutImportInterpreter(
             Severity = WorkoutImportIssueSeverity.Warning,
             Message = $"{row.SourceReference}: Multiple work windows were found in one row. Exercise grouping needs review."
         });
-        return exerciseWarnings.Concat(blockWarnings).ToList();
+        var prescriptionWarnings = rows.SelectMany(row => row.Warnings);
+        return exerciseWarnings.Concat(prescriptionWarnings).Concat(blockWarnings).ToList();
     }
 
     private SortedDictionary<DateTime, List<WorkoutImportRowDraft>> InterpretRowsByDate(

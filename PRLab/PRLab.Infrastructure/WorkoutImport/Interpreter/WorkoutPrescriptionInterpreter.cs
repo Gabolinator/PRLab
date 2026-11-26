@@ -1,6 +1,6 @@
-using System.Globalization;
 using System.Text.RegularExpressions;
 using PRLab.Application.Models.ImportDraft;
+using PRLab.Domain.Model.Value.Enum;
 using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.Workout;
@@ -8,22 +8,12 @@ using PRLab.Domain.Utilities.Interface;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
 
-internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger)
+internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger, MeasurementSystem measurementSystem)
 {
-    private const string Duration = @"(?<duration>[1-9][0-9]*)\s*(?<unit>s|sec(?:ond)?s?|m|min(?:ute)?s?|['′])";
-    private const string Scope = @"(?<side>\s+each\s+side)?";
-    private const string AdjacentClock = @"\s+[0-9]+:[0-5][0-9](?![\p{L}\p{N}:.])";
-
-    private static readonly Regex workPattern = CreatePattern(
-        @"(?:(?<sets>[1-9][0-9]*)\s*[x×]\s*)?(?<work>[1-9][0-9]*)" +
-        @"(?:\s*(?<unit>reps?|s|sec(?:ond)?s?|min(?:ute)?s?|m|km|cal|['′]))?" + Scope,
-        AdjacentClock);
-    private static readonly Regex restPattern = CreatePattern(@"(?:rest\s+" + Duration + "|" + Duration + @"\s+rest)");
-    private static readonly Regex timeCapPattern = CreatePattern(@"(?:time\s+cap|cap)\s+" + Duration);
-    private static readonly Regex loadPattern = CreatePattern(@"(?:@\s*)?(?<load>[0-9]+(?:\.[0-9]+)?)\s*(?<unit>kg|lb|lbs)");
-    private static readonly Regex splitPattern = CreatePattern(@"split\s+anyhow");
+    private readonly LoadUnit preferredLoadUnit =
+        measurementSystem == MeasurementSystem.Imperial ? LoadUnit.Pound : LoadUnit.Kilogram;
     private static readonly Regex amrapPattern = new(
-        $@"{WorkoutTextMatching.WordStart}amrap\s*{Duration}{WorkoutTextMatching.WordEnd}",
+        $@"{WorkoutTextMatching.WordStart}amrap\s*{WorkoutPrescriptionSyntax.Duration}{WorkoutTextMatching.WordEnd}",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     public IEnumerable<(WorkoutWorkWindowDraft Draft, TextSpan Span)> InterpretWorkWindows(
@@ -32,9 +22,9 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger)
         var matches = amrapPattern.Matches(text);
         foreach (Match match in matches)
         {
-            if (!TryReadSeconds(match, out var durationSeconds))
+            if (!WorkoutPrescriptionSyntax.TryReadSeconds(match, out var durationSeconds))
             {
-                LogRejectedMatch(match, sourceReference, "AMRAP work window");
+                LogWarning(sourceReference, sourceOffset + match.Index, match.Value, "Invalid AMRAP work window duration.");
                 continue;
             }
 
@@ -52,122 +42,140 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger)
         }
     }
 
-    public IEnumerable<(WorkoutImportPrescriptionDraft Draft, TextSpan Span)> Interpret(
-        string text, string? sourceReference, int sourceOffset)
+    public PrescriptionResult InterpretToken(
+        RawPrescriptionToken token, string text, string? sourceReference, int sourceOffset,
+        ExercisePrescriptionContext? exerciseContext)
+    {
+        var tokenText = token.Span.Read(text);
+        var result = token switch
+        {
+            RawWorkToken work => ResolveWork(work, tokenText, sourceReference, exerciseContext),
+            RawRepLoadToken repLoad => ResolveRepLoad(repLoad, tokenText, sourceReference, exerciseContext, preferredLoadUnit),
+            RawLoadToken load => new PrescriptionResult([CreateDraft(sourceReference, new WorkoutStepImportDraft
+            {
+                SourceText = tokenText,
+                StepKind = WorkoutStepKind.Exercise,
+                ExerciseName = exerciseContext?.Exercise.Name,
+                LoadValue = load.Value,
+                LoadUnit = load.Unit.Equals("kg", StringComparison.OrdinalIgnoreCase) ? LoadUnit.Kilogram : LoadUnit.Pound,
+                Confidence = 1
+            }, exerciseContext)], null),
+            RawDurationToken duration => new PrescriptionResult([CreateDurationDraft(duration, tokenText, sourceReference)], null),
+            RawInstructionToken => new PrescriptionResult([CreateDraft(sourceReference, new WorkoutStepImportDraft
+            {
+                SourceText = tokenText,
+                StepKind = WorkoutStepKind.Instruction,
+                Notes = tokenText,
+                Confidence = 1
+            })], null),
+            _ => throw new ArgumentOutOfRangeException(nameof(token))
+        };
+
+        if (logger.Enabled)
+        {
+            var sourceSpan = token.Span.OffsetBy(sourceOffset);
+            foreach (var draft in result.Drafts)
+            {
+                LogMatch(draft, sourceSpan);
+            }
+
+            if (result.Warning is { } warning)
+            {
+                LogWarning(sourceReference, sourceSpan.Start, tokenText, warning);
+            }
+        }
+
+        return result;
+    }
+
+    public void LogFragment(string text, string? sourceReference, int sourceOffset)
     {
         if (logger.Enabled)
         {
             logger.Log(nameof(WorkoutPrescriptionInterpreter),
                 $"{sourceReference} · fragment at offset {sourceOffset} · {QuoteText(text)}");
         }
-
-        var offset = 0;
-        while (offset < text.Length)
-        {
-            var remainingText = text[offset..];
-            if (InterpretPrefix(remainingText, sourceReference) is not { } result)
-            {
-                if (logger.Enabled)
-                {
-                    var remainingOffset = sourceOffset + offset;
-                    logger.Log(nameof(WorkoutPrescriptionInterpreter),
-                        $"{sourceReference} · stopped at offset {remainingOffset} · no supported prescription at the start of {QuoteText(remainingText)}");
-                }
-
-                yield break;
-            }
-
-            var span = result.Span.OffsetBy(offset);
-            if (logger.Enabled)
-            {
-                var sourceSpan = span.OffsetBy(sourceOffset);
-                LogMatch(result.Draft, sourceSpan);
-            }
-
-            yield return (result.Draft, span);
-            offset = span.End;
-
-            var suffix = text[offset..];
-            var trimmedSuffix = suffix.TrimStart();
-            offset += suffix.Length - trimmedSuffix.Length;
-            if (trimmedSuffix.StartsWith(','))
-            {
-                offset++;
-            }
-        }
     }
 
     private static string QuoteText(string text) =>
         $"\"{text.ReplaceLineEndings("\\n")}\"";
 
-    private (WorkoutImportPrescriptionDraft Draft, TextSpan Span)? InterpretPrefix(string text, string? sourceReference)
+    private static WorkoutImportPrescriptionDraft CreateDraft(
+        string? sourceReference, WorkoutStepImportDraft step, ExercisePrescriptionContext? exerciseContext = null) =>
+        new(sourceReference, step)
+        {
+            ExerciseId = exerciseContext?.Exercise.Id,
+            ExerciseSourceReference = exerciseContext?.SourceReference,
+            ExerciseSourceOffset = exerciseContext?.SourceOffset
+        };
+
+    private static WorkoutImportPrescriptionDraft CreateDurationDraft(
+        RawDurationToken duration, string text, string? sourceReference)
     {
-        var rest = restPattern.Match(text);
-        if (TryReadSeconds(rest, out var restSeconds))
+        var isTimeCap = duration.Role == DurationRole.TimeCap;
+        var step = new WorkoutStepImportDraft
         {
-            var step = new WorkoutStepImportDraft
-            {
-                SourceText = rest.Value.Trim(),
-                StepKind = WorkoutStepKind.Rest,
-                RestSeconds = restSeconds,
-                Confidence = 1
-            };
-            return CreateResult(rest, sourceReference, step);
-        }
-        LogRejectedMatch(rest, sourceReference, "rest duration");
-
-        var timeCap = timeCapPattern.Match(text);
-        if (TryReadSeconds(timeCap, out var capSeconds))
-        {
-            var step = new WorkoutStepImportDraft
-            {
-                SourceText = timeCap.Value.Trim(),
-                StepKind = WorkoutStepKind.Instruction,
-                Confidence = 1
-            };
-            return CreateResult(timeCap, sourceReference, step, capSeconds);
-        }
-        LogRejectedMatch(timeCap, sourceReference, "time cap");
-
-        var work = workPattern.Match(text);
-        if (TryReadWork(work) is { } workStep)
-        {
-            return CreateResult(work, sourceReference, workStep);
-        }
-        LogRejectedMatch(work, sourceReference, "work target");
-
-        var load = loadPattern.Match(text);
-        var loadText = load.Groups["load"].Value;
-        if (decimal.TryParse(loadText, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var loadValue))
-        {
-            var unit = load.Groups["unit"].Value;
-            var step = new WorkoutStepImportDraft
-            {
-                SourceText = load.Value.Trim(),
-                StepKind = WorkoutStepKind.Exercise,
-                LoadValue = loadValue,
-                LoadUnit = unit.Equals("kg", StringComparison.OrdinalIgnoreCase) ? LoadUnit.Kilogram : LoadUnit.Pound,
-                Confidence = 1
-            };
-            return CreateResult(load, sourceReference, step);
-        }
-        LogRejectedMatch(load, sourceReference, "load");
-
-        var split = splitPattern.Match(text);
-        if (!split.Success)
-        {
-            return null;
-        }
-
-        var instruction = split.Value.Trim();
-        var splitStep = new WorkoutStepImportDraft
-        {
-            SourceText = instruction,
-            StepKind = WorkoutStepKind.Instruction,
-            Notes = instruction,
+            SourceText = text,
+            StepKind = isTimeCap ? WorkoutStepKind.Instruction : WorkoutStepKind.Rest,
+            RestSeconds = duration.Role == DurationRole.Rest ? duration.Seconds : null,
+            MinimumRestSeconds = duration.Role == DurationRole.MinimumRest ? duration.Seconds : null,
             Confidence = 1
         };
-        return CreateResult(split, sourceReference, splitStep);
+        return new WorkoutImportPrescriptionDraft(sourceReference, step, isTimeCap ? duration.Seconds : null);
+    }
+
+    private static PrescriptionResult ResolveWork(
+        RawWorkToken token, string text, string? sourceReference, ExercisePrescriptionContext? exerciseContext)
+    {
+        if (token.RequiresFollowingExercise && exerciseContext is null)
+        {
+            return new PrescriptionResult([], "The quantity is missing an adjacent resolved exercise.");
+        }
+
+        var (target, value, warning) = WorkoutWorkTargetResolver.Resolve(token.Work, exerciseContext);
+        if (target is null)
+        {
+            return new PrescriptionResult([], warning);
+        }
+
+        var step = new WorkoutStepImportDraft
+        {
+            SourceText = text,
+            ExerciseName = exerciseContext?.Exercise.Name,
+            StepKind = WorkoutStepKind.Exercise,
+            WorkTargetType = target,
+            WorkValue = value,
+            Scope = token.Work.Scope,
+            SetCount = token.Work.SetCount,
+            Confidence = 1
+        };
+        return new PrescriptionResult([CreateDraft(sourceReference, step, exerciseContext)], warning);
+    }
+
+    private static PrescriptionResult ResolveRepLoad(
+        RawRepLoadToken token, string text, string? sourceReference, ExercisePrescriptionContext? exerciseContext,
+        LoadUnit loadUnit)
+    {
+        var exercise = exerciseContext?.Exercise;
+        if (exercise is null || !exercise.SupportsExternalLoad ||
+            exercise.AllowedWorkTargetTypes?.Contains(WorkTargetType.Repetitions) != true)
+        {
+            return new PrescriptionResult([], "Compact rep/load notation requires an exercise that supports repetitions and external load.");
+        }
+
+        var drafts = token.Loads.Select(load => CreateDraft(sourceReference, new WorkoutStepImportDraft
+        {
+            SourceText = text,
+            ExerciseName = exercise.Name,
+            StepKind = WorkoutStepKind.Exercise,
+            WorkTargetType = WorkTargetType.Repetitions,
+            WorkValue = token.Reps,
+            SetCount = token.Sets,
+            LoadValue = load,
+            LoadUnit = loadUnit,
+            Confidence = 1
+        }, exerciseContext)).ToList();
+        return new PrescriptionResult(drafts, null);
     }
 
     private void LogMatch(WorkoutImportPrescriptionDraft draft, TextSpan span)
@@ -176,93 +184,18 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger)
         logger.Log(nameof(WorkoutPrescriptionInterpreter),
             $"{draft.SourceReference} · matched {QuoteText(step.SourceText)} at offset {span.Start}, length {span.Length} · " +
             $"kind={step.StepKind}, sets={step.SetCount}, work={step.WorkValue}, target={step.WorkTargetType}, scope={step.Scope}, " +
-            $"load={step.LoadValue}, load unit={step.LoadUnit}, rest seconds={step.RestSeconds}, time cap seconds={draft.TimeCapSeconds}, notes={step.Notes}");
+            $"load={step.LoadValue}, load unit={step.LoadUnit}, rest seconds={step.RestSeconds}, " +
+            $"minimum rest seconds={step.MinimumRestSeconds}, time cap seconds={draft.TimeCapSeconds}, notes={step.Notes}");
     }
 
-    private void LogRejectedMatch(Match match, string? sourceReference, string rule)
+    private void LogWarning(string? sourceReference, int offset, string text, string warning)
     {
-        if (logger.Enabled && match.Success)
+        if (logger.Enabled)
         {
             logger.Log(nameof(WorkoutPrescriptionInterpreter),
-                $"{sourceReference} · {rule} syntax matched {QuoteText(match.Value)} but did not produce a valid value");
+                $"{sourceReference} · offset {offset} · {QuoteText(text)} · {warning}");
         }
-    }
-
-    private static Regex CreatePattern(string expression, string? adjacentToken = null)
-    {
-        const string delimiter = @"\s*(?:$|[,(|@])";
-        var boundary = adjacentToken is null ? delimiter : $"{delimiter}|{adjacentToken}";
-        return new Regex($@"^\s*(?:{expression})(?={boundary})", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-    }
-
-    private static (WorkoutImportPrescriptionDraft Draft, TextSpan Span) CreateResult(
-        Match match, string? sourceReference, WorkoutStepImportDraft step, int? timeCapSeconds = null)
-    {
-        var start = match.Index + match.Length - match.Value.TrimStart().Length;
-        var span = new TextSpan(start, match.Index + match.Length - start);
-        return (new WorkoutImportPrescriptionDraft(sourceReference, step, timeCapSeconds), span);
-    }
-
-    private static bool TryReadSeconds(Match match, out int seconds)
-    {
-        seconds = default;
-        var durationText = match.Groups["duration"].Value;
-        var unit = match.Groups["unit"].Value;
-        var multiplier = unit.StartsWith("s", StringComparison.OrdinalIgnoreCase) ? 1 : 60;
-        if (!int.TryParse(durationText, out var duration) || duration > int.MaxValue / multiplier)
-        {
-            return false;
-        }
-
-        seconds = duration * multiplier;
-        return true;
-    }
-
-    private static WorkoutStepImportDraft? TryReadWork(Match match)
-    {
-        var setsText = match.Groups["sets"].Value;
-        var workText = match.Groups["work"].Value;
-        var unit = match.Groups["unit"].Value.ToLowerInvariant();
-        var perSide = match.Groups["side"].Success;
-        if ((setsText.Length == 0 && unit.Length == 0 && !perSide) || !int.TryParse(workText, out var value))
-        {
-            return null;
-        }
-
-        int? setCount = null;
-        if (setsText.Length > 0)
-        {
-            if (!int.TryParse(setsText, out var sets))
-            {
-                return null;
-            }
-
-            setCount = sets;
-        }
-
-        var target = unit switch
-        {
-            "m" or "km" => WorkTargetType.DistanceMeters,
-            "cal" => WorkTargetType.Calories,
-            "" or "rep" or "reps" => WorkTargetType.Repetitions,
-            _ => WorkTargetType.DurationSeconds
-        };
-        var multiplier = unit switch
-        {
-            "km" => 1000,
-            "'" or "′" => 60,
-            _ when unit.StartsWith("min", StringComparison.Ordinal) => 60,
-            _ => 1
-        };
-        return new WorkoutStepImportDraft
-        {
-            SourceText = match.Value.Trim(),
-            StepKind = WorkoutStepKind.Exercise,
-            WorkTargetType = target,
-            WorkValue = (decimal)value * multiplier,
-            Scope = perSide ? WorkTargetScope.PerSide : WorkTargetScope.Total,
-            SetCount = setCount,
-            Confidence = 1
-        };
     }
 }
+
+internal sealed record PrescriptionResult(IReadOnlyList<WorkoutImportPrescriptionDraft> Drafts, string? Warning);

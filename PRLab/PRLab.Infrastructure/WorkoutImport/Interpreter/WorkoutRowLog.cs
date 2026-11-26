@@ -1,5 +1,6 @@
 using System.Text;
 using PRLab.Application.Models.ImportDraft;
+using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
 
@@ -40,12 +41,16 @@ internal static class WorkoutRowLog
             var exerciseText = part.MatchedText ?? part.SourceText;
             var exerciseAttributes = part.Attributes.Select(attribute => $"{attribute.Type} = {attribute.Value}");
             var attributeText = string.Join(", ", exerciseAttributes);
+            var expectedAttributes = part.ExpectedAttributes.Select(attribute => $"{attribute.Type} = {attribute.Value}");
+            var expectedAttributeText = string.Join(", ", expectedAttributes);
             AppendField(exerciseTextLabel, exerciseText, "    ");
             AppendField("Remaining text", part.RemainingText, "    ");
             AppendField("Attributes", attributeText, "    ");
+            AppendField("Expected attributes", expectedAttributeText, "    ");
             AppendField("Warning", part.Warning, "    ");
         }
 
+        AppendResolvedPrescriptions(message, row);
         AppendCellConsumption(message, rowCells);
         return message.ToString();
 
@@ -54,6 +59,82 @@ internal static class WorkoutRowLog
             AppendLogField(message, label, value, indent);
         }
     }
+
+    private static void AppendResolvedPrescriptions(StringBuilder message, WorkoutImportRowDraft row)
+    {
+        if (row.WorkWindows.Count == 0 && row.Prescriptions.Count == 0)
+        {
+            return;
+        }
+
+        message.AppendLine().Append("  Resolved prescriptions");
+        foreach (var window in row.WorkWindows)
+        {
+            var mode = window.Mode == WorkMode.MaxWorkInTime ? "AMRAP (MaxWorkInTime)" : window.Mode.ToString();
+            var duration = FormatDuration(window.DurationSeconds);
+            var result = $"{window.SourceText} → {mode}, {duration} · {window.SourceReference}";
+            AppendLogField(message, "Work window", result, "    ");
+        }
+
+        foreach (var prescription in row.Prescriptions)
+        {
+            var step = prescription.Step;
+            var details = FormatPrescription(prescription);
+            var result = $"{step.SourceText} → {details} · {prescription.SourceReference}";
+            AppendLogField(message, "Prescription", result, "    ");
+        }
+    }
+
+    private static string FormatPrescription(WorkoutImportPrescriptionDraft prescription)
+    {
+        var step = prescription.Step;
+        var details = new List<string>();
+        if (step.ExerciseName is { } name)
+        {
+            details.Add(name);
+        }
+
+        if (step.WorkValue is { } value && step.WorkTargetType is { } target)
+        {
+            var work = target == WorkTargetType.DurationSeconds ? $"{value} seconds" : $"{value} {target}";
+            details.Add(step.Scope == WorkTargetScope.Total ? work : $"{work} ({step.Scope})");
+        }
+
+        if (step.SetCount is { } sets)
+        {
+            details.Add($"sets = {sets}");
+        }
+
+        if (step.LoadValue is { } load)
+        {
+            details.Add($"load = {load} {step.LoadUnit}");
+        }
+
+        if (step.RestSeconds is { } rest)
+        {
+            details.Add($"rest = {FormatDuration(rest)}");
+        }
+
+        if (step.MinimumRestSeconds is { } minimumRest)
+        {
+            details.Add($"minimum rest = {FormatDuration(minimumRest)}");
+        }
+
+        if (prescription.TimeCapSeconds is { } cap)
+        {
+            details.Add($"time cap = {FormatDuration(cap)}");
+        }
+
+        if (step.Notes is { } notes)
+        {
+            details.Add(notes);
+        }
+
+        return details.Count == 0 ? step.StepKind.ToString() : string.Join(", ", details);
+    }
+
+    private static string FormatDuration(int seconds) =>
+        seconds >= 60 && seconds % 60 == 0 ? $"{seconds / 60} min ({seconds} s)" : $"{seconds} s";
 
     private static void AppendCellConsumption(StringBuilder message, WorkoutRowCells row)
     {

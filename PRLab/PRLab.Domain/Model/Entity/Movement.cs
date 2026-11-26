@@ -60,7 +60,7 @@ public sealed record Movement : IAudited, IDescribed, IOwnedData, IVisibilitySco
 
     public IReadOnlyCollection<MovementAllowedWorkTarget> AllowedWorkTargets => allowedWorkTargets;
 
-    private HashSet<WorkTargetType> AllowedWorkTargetTypes => AllowedWorkTargets
+    public HashSet<WorkTargetType> AllowedWorkTargetTypes => AllowedWorkTargets
         .Select(allowedWorkTarget => allowedWorkTarget.TargetType)
         .ToHashSet();
     

@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Utilities;
@@ -38,8 +39,30 @@ internal sealed class ExerciseInterpreter(
             RemainingText = remainingText.Length == 0 ? null : remainingText,
             ExerciseName = candidate.Exercise?.Name,
             ExerciseId = candidate.Exercise?.Id,
+            ExpectedAttributes = GetExpectedAttributeForExercises(candidate.Exercise),
             Warning = GetExerciseMatchWarning(candidate, matchedText)
         };
+
+    private static IReadOnlyList<WorkoutImportAttributeAssignment> GetExpectedAttributeForExercises(WorkoutImportExerciseReference? exerciseRef)
+    {
+        if (exerciseRef == null || exerciseRef.AllowedWorkTargetTypes == null)
+        {
+            return [];
+        }
+
+        var list = new List<WorkoutImportAttributeAssignment>();
+        foreach (var type in exerciseRef.AllowedWorkTargetTypes)
+        {
+            list.Add(new WorkoutImportAttributeAssignment
+            {
+                Type   = WorkoutImportAttributeType.WorkType,
+                Value = type.ToString(),
+             });
+        }
+
+        return list;
+
+    }
 
     private static string? GetExerciseMatchWarning(ExerciseCandidate candidate, string matchedText) =>
         candidate.Ambiguous

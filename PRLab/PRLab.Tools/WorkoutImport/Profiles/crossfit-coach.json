@@ -75,7 +75,7 @@
       "Side Lying Single Leg Crunches On Floor": [],
       "Single Leg Hip Thrust": [],
       "SkiErg": ["ski erg", "calskierg", "cal ski erg"],
-      "Pull Up": [],
+      "Pull Up": ["pull ups"],
       "Squat": ["self supported dragon squat"],
       "Standing Back Twist": [],
       "Standing Bent Over Hamstring Stretch": [],
@@ -85,6 +85,21 @@
       "Wall Ball": ["wall balls", "kraftausdauer wall ball"],
       "Air Squat": ["kraftausdauer air squat"],
       "Wall Walk": ["ww", "wall walks"]
+    },
+    "PrescriptionHints": {
+      "calskierg": "Calories",
+      "cal ski erg": "Calories",
+      "calrow": "Calories",
+      "cal row": "Calories",
+      "calc2bike": "Calories",
+      "cal c2 bike": "Calories",
+      "calab": "Calories",
+      "cal assault bike": "Calories",
+      "mrun": "DistanceMeters",
+      "mlunges": "DistanceMeters"
+    },
+    "Equipment": {
+      "bb": "Barbell"
     },
     "Attributes": {
       "strict": {
@@ -136,24 +151,6 @@
           }
         ]
       },
-      "mlunges": {
-        "MatchMode": "MatchedAlias",
-        "Assignments": [
-          {
-            "Type": "DistanceUnit",
-            "Value": "m"
-          }
-        ]
-      },
-      "mrun": {
-        "MatchMode": "MatchedAlias",
-        "Assignments": [
-          {
-            "Type": "DistanceUnit",
-            "Value": "m"
-          }
-        ]
-      },
       "bj61cm": {
         "MatchMode": "MatchedAlias",
         "Assignments": [
@@ -174,6 +171,7 @@
     }
   },
   "Parsing": {
+    "UseCompactRepLoadSyntax": true,
     "Separators": [
       "|"
     ],

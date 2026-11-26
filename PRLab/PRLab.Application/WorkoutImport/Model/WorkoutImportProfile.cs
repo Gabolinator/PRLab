@@ -1,5 +1,6 @@
 ﻿using PRLab.Domain.Model.Value.Enum;
 using PRLab.Domain.Model.Value.Enum.Workout;
+using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 
 namespace PRLab.Application.WorkoutImport.Model;
 
@@ -40,6 +41,8 @@ public sealed class WorkoutImportProfile
 
 public sealed class WorkoutImportParsing
 {
+    public bool UseCompactRepLoadSyntax { get; init; }
+
     public IReadOnlyList<string> Separators { get; init; } = [];
 
     public IReadOnlyList<string> IgnoredLabels { get; init; } = [];
@@ -53,6 +56,12 @@ public sealed class WorkoutImportMappings
 
 public sealed class WorkoutImportAliases
 {
+    public IReadOnlyDictionary<string, string> Equipment { get; init; }
+        = new Dictionary<string, string>();
+
+    public IReadOnlyDictionary<string, WorkTargetType> PrescriptionHints { get; init; }
+        = new Dictionary<string, WorkTargetType>();
+
     public IReadOnlyDictionary<string, IReadOnlyList<string>> Exercises { get; init; }
         = new Dictionary<string, IReadOnlyList<string>>();
 
@@ -92,5 +101,6 @@ public enum WorkoutImportAttributeType
     EquipmentUnit,
     AddedLoad,
     DistanceUnit,
+    WorkType,
     None,
 }
