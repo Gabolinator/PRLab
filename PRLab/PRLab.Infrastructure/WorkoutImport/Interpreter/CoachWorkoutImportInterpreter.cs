@@ -104,15 +104,15 @@ public sealed class CoachExcelWorkoutImportInterpreter(
                 continue;
             }
 
-            var results = matcher.InterpretExerciseCell(inputText);
+            var results = matcher.InterpretExerciseText(inputText);
             var parts = results.Select(result => result.Part).ToList();
-            var hasResolvedExercise = results.Any(result => result.ConsumedSpan.HasValue);
+            var hasResolvedExercise = results.Any(result => result.ResolvedSpan.HasValue);
             if (hasResolvedExercise)
             {
                 var exerciseCell = input.Cell;
                 foreach (var result in results)
                 {
-                    if (result.ConsumedSpan is { } span)
+                    if (result.ResolvedSpan is { } span)
                     {
                         var exerciseSpan = new TextSpan(input.Span.Start + span.Start, span.Length);
                         exerciseCell.Consume(exerciseSpan, ConsumptionKind.Exercise);

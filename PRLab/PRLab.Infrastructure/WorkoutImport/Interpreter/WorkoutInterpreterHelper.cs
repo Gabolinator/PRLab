@@ -33,7 +33,8 @@ internal sealed class WorkoutInterpreterHelper
         return ignoredLabels.Any(pattern => pattern.IsMatch(trimmedText));
     }
 
-    public IReadOnlyList<(WorkoutImportExercisePart Part, TextSpan? ConsumedSpan)> InterpretExerciseCell(string text)
+    // Resolved spans are relative to the supplied text and include any matched qualifiers.
+    public IReadOnlyList<(WorkoutImportExercisePart Part, TextSpan? ResolvedSpan)> InterpretExerciseText(string text)
     {
         string[] parts = separators.Length == 0
             ? [text]
@@ -45,16 +46,16 @@ internal sealed class WorkoutInterpreterHelper
         {
             if (!string.IsNullOrWhiteSpace(part) && !IsIgnored(part))
             {
-                var result = InterpretExercisePart(part, out var consumedLength);
-                TextSpan? consumedSpan = null;
+                var result = InterpretExercisePart(part, out var resolvedLength);
+                TextSpan? resolvedSpan = null;
                 if (result.ExerciseId is not null)
                 {
                     var leadingWhitespaceLength = part.Length - part.TrimStart().Length;
-                    var consumedStart = offset + leadingWhitespaceLength;
-                    consumedSpan = new TextSpan(consumedStart, consumedLength);
+                    var resolvedStart = offset + leadingWhitespaceLength;
+                    resolvedSpan = new TextSpan(resolvedStart, resolvedLength);
                 }
 
-                results.Add((result, consumedSpan));
+                results.Add((result, resolvedSpan));
             }
 
             offset += part.Length;
@@ -151,9 +152,9 @@ internal sealed class WorkoutInterpreterHelper
         return new Regex($"^{pattern}{boundary}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
     }
 
-    private WorkoutImportExercisePart InterpretExercisePart(string sourceText, out int consumedLength)
+    private WorkoutImportExercisePart InterpretExercisePart(string sourceText, out int resolvedLength)
     {
-        consumedLength = 0;
+        resolvedLength = 0;
         var text = sourceText.TrimStart();
         var qualifierAttributes = new List<WorkoutImportAttributeAssignment>();
         var (candidate, exerciseOffset, matchEnd) = MatchExerciseWithLeadingQualifiers(text, qualifierAttributes);
@@ -173,9 +174,9 @@ internal sealed class WorkoutInterpreterHelper
 
         var matchedText = text[..matchEnd];
         var textAfterMatch = text[matchEnd..];
-        var unconsumedText = ConsumeTrailingQualifiers(textAfterMatch, qualifierAttributes);
-        consumedLength = text.Length - unconsumedText.Length;
-        var remainingText = unconsumedText.Trim();
+        var textAfterQualifiers = MatchTrailingQualifiers(textAfterMatch, qualifierAttributes);
+        resolvedLength = text.Length - textAfterQualifiers.Length;
+        var remainingText = textAfterQualifiers.Trim();
         var exerciseText = text[exerciseOffset..matchEnd];
         var attributes = CollectMatchedAttributes(qualifierAttributes, matchedText, exerciseText);
         var exercise = candidate.Exercise;
@@ -229,7 +230,7 @@ internal sealed class WorkoutInterpreterHelper
         return (bestCandidate, exerciseOffset, matchLength);
     }
 
-    private string ConsumeTrailingQualifiers(
+    private string MatchTrailingQualifiers(
         string remainingText, List<WorkoutImportAttributeAssignment> qualifierAttributes)
     {
         while (remainingText.Length > 0 &&

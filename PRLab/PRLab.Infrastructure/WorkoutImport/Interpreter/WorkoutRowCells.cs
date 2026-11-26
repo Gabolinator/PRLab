@@ -133,8 +133,6 @@ internal sealed class WorkoutRowCell(
     }
 }
 
-internal readonly record struct TextSpan(int Start, int Length);
-
 internal enum ConsumptionKind
 {
     Date,
