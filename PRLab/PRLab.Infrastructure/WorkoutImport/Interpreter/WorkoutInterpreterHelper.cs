@@ -84,23 +84,44 @@ internal sealed class WorkoutInterpreterHelper
     public bool IsIgnored(string text) =>
         ignoredLabels.Any(pattern => pattern.IsMatch(text.TrimStart()));
 
-    public IReadOnlyList<WorkoutImportExercisePart> InterpretExerciseCell(string text)
+    public IReadOnlyList<(WorkoutImportExercisePart Part, TextSpan? ConsumedSpan)> InterpretExerciseCell(string text)
     {
         string[] parts = separators.Length == 0
             ? [text]
-            : text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            : text.Split(separators, StringSplitOptions.None);
 
-        return parts
-            .Where(part => !string.IsNullOrWhiteSpace(part) && !IsIgnored(part))
-            .Select(InterpretExercisePart)
-            .ToList();
+        var results = new List<(WorkoutImportExercisePart, TextSpan?)>();
+        var offset = 0;
+        foreach (var part in parts)
+        {
+            if (!string.IsNullOrWhiteSpace(part) && !IsIgnored(part))
+            {
+                var result = InterpretExercisePart(part, out var consumedLength);
+                TextSpan? span = result.ExerciseId is null
+                    ? null
+                    : new TextSpan(offset + part.Length - part.TrimStart().Length, consumedLength);
+                results.Add((result, span));
+            }
+
+            offset += part.Length;
+            if (offset < text.Length)
+            {
+                offset += separators.First(separator =>
+                    text.AsSpan(offset).StartsWith(separator.AsSpan(), StringComparison.Ordinal)).Length;
+            }
+        }
+
+        return results;
     }
 
-    private WorkoutImportExercisePart InterpretExercisePart(string sourceText)
+    private WorkoutImportExercisePart InterpretExercisePart(string sourceText, out int consumedLength)
     {
+        consumedLength = 0;
         var text = sourceText.TrimStart();
         var qualifierAttributes = new List<WorkoutImportAttributeAssignment>();
         var (candidate, exerciseOffset, matchEnd) = MatchExerciseWithLeadingQualifiers(text, qualifierAttributes);
+
+        // if candidate is null we need to check if a combination of exercises
 
         if (candidate is null)
         {
@@ -113,7 +134,9 @@ internal sealed class WorkoutInterpreterHelper
         }
 
         var matchedText = text[..matchEnd];
-        var remainingText = ConsumeTrailingQualifiers(text[matchEnd..], qualifierAttributes);
+        var unconsumedText = ConsumeTrailingQualifiers(text[matchEnd..], qualifierAttributes);
+        consumedLength = text.Length - unconsumedText.Length;
+        var remainingText = unconsumedText.Trim();
         var attributes = CollectMatchedAttributes(qualifierAttributes, matchedText, text[exerciseOffset..matchEnd]);
         var exercise = candidate.Exercise;
 
@@ -181,7 +204,7 @@ internal sealed class WorkoutInterpreterHelper
             remainingText = suffix[qualifierMatch.Length..];
         }
 
-        return remainingText.Trim();
+        return remainingText;
     }
 
     private IReadOnlyList<WorkoutImportAttributeAssignment> CollectMatchedAttributes(
@@ -220,7 +243,8 @@ internal sealed class WorkoutInterpreterHelper
         text = text?.Trim();
         var parsed = DateTime.TryParseExact(text, "d.M.yyyy", CultureInfo.InvariantCulture,
                          DateTimeStyles.None, out date)
-                     || DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
+                     || DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out date)
+                     && date.Date != DateTime.MinValue;
         date = date.Date;
         return parsed;
     }

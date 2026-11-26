@@ -18,25 +18,56 @@ public sealed class CoachExcelWorkoutImportInterpreter(
     {
         var profile = context.Profile;
         var excelProfile = profile.GetRequiredSourceProfile<ExcelWorkoutImportSourceProfile>();
-        var dateIndex = excelProfile.GetRequiredCell(WorkoutImportProperty.Date);
-        var exerciseIndex = excelProfile.GetRequiredCell(WorkoutImportProperty.Exercise);
-        var orderIndex = GetOptionalCell(WorkoutImportProperty.Order);
-        var detailsIndex = GetOptionalCell(WorkoutImportProperty.Details);
-        var notesIndex = GetOptionalCell(WorkoutImportProperty.Notes);
-
+        var columns = ReadColumnMapping(excelProfile);
         var matcher = new WorkoutInterpreterHelper(profile, context.Exercises);
+        var rowsByDate = InterpretRowsByDate(source.Sheets.SelectMany(sheet => sheet.Rows), columns, matcher, ct);
+
+        logger.Log(nameof(CoachExcelWorkoutImportInterpreter),
+            $"Found {rowsByDate.Count} distinct workout dates.");
+
+        IReadOnlyList<WorkoutImportDraft> drafts = rowsByDate
+            .Select(entry => CreateWorkoutDraft(entry.Key, source.SourceName, entry.Value))
+            .ToList();
+
+        return Task.FromResult(drafts);
+    }
+
+    private static ILookup<int, WorkoutImportProperty> ReadColumnMapping(ExcelWorkoutImportSourceProfile profile)
+    {
+        (int Column, WorkoutImportProperty Property)[] columns =
+        [
+            (0, WorkoutImportProperty.Date),
+            (profile.GetRequiredCell(WorkoutImportProperty.Exercise), WorkoutImportProperty.Exercise),
+            (GetOptionalColumn(profile, WorkoutImportProperty.Order), WorkoutImportProperty.Order),
+            (GetOptionalColumn(profile, WorkoutImportProperty.Details), WorkoutImportProperty.Details),
+            (GetOptionalColumn(profile, WorkoutImportProperty.Notes), WorkoutImportProperty.Notes)
+        ];
+        return columns.Where(column => column.Column >= 0).ToLookup(column => column.Column, column => column.Property);
+    }
+
+    private static int GetOptionalColumn(ExcelWorkoutImportSourceProfile profile, WorkoutImportProperty property) =>
+        profile.TryGetColumn(property, out var index) ? index : -1;
+
+    private SortedDictionary<DateTime, List<WorkoutImportRowDraft>> InterpretRowsByDate(
+        IEnumerable<ExtractedWorkoutRow> sourceRows,
+        ILookup<int, WorkoutImportProperty> columns,
+        WorkoutInterpreterHelper matcher,
+        CancellationToken ct)
+    {
         var rowsByDate = new SortedDictionary<DateTime, List<WorkoutImportRowDraft>>();
 
-        var allRows = source.Sheets.SelectMany(sheet => sheet.Rows);
-        
-        foreach (var row in allRows)
+        foreach (var row in sourceRows)
         {
             ct.ThrowIfCancellationRequested();
 
-            if (!WorkoutInterpreterHelper.TryReadDate(GetCell(row, dateIndex)?.Value, out var date))
+            if (FindDateCell(row) is not { } dateMatch)
             {
                 continue;
             }
+
+            var (dateCell, date) = dateMatch;
+            var rowCells = new WorkoutRowCells(row, columns, dateCell.ColumnIndex);
+            rowCells.Cells[dateCell.ColumnIndex].Consume(new TextSpan(0, dateCell.Value.Length), ConsumptionKind.Date);
 
             if (!rowsByDate.TryGetValue(date, out var rows))
             {
@@ -44,21 +75,11 @@ public sealed class CoachExcelWorkoutImportInterpreter(
                 rowsByDate.Add(date, rows);
             }
 
-            var exerciseCell = GetCell(row, exerciseIndex);
-            if (exerciseCell is null || matcher.IsIgnored(exerciseCell.Value))
+            var rowDraft = InterpretRow(rowCells, matcher);
+            if (rowDraft is null)
             {
                 continue;
             }
-
-            var rowDraft = new WorkoutImportRowDraft
-            {
-                SourceText = exerciseCell.Value,
-                SourceReference = exerciseCell.SourceReference,
-                Order = int.TryParse(GetCell(row, orderIndex)?.Value, out var order) ? order : null,
-                Details = GetCell(row, detailsIndex)?.Value,
-                Notes = GetCell(row, notesIndex)?.Value,
-                ExerciseParts = matcher.InterpretExerciseCell(exerciseCell.Value)
-            };
 
             rows.Add(rowDraft);
             if (logger.Enabled)
@@ -67,35 +88,116 @@ public sealed class CoachExcelWorkoutImportInterpreter(
             }
         }
 
-        logger.Log(nameof(CoachExcelWorkoutImportInterpreter),
-            $"Found {rowsByDate.Count} distinct workout dates.");
-
-        IReadOnlyList<WorkoutImportDraft> drafts = rowsByDate
-            .Select(entry => new WorkoutImportDraft
-            {
-                Date = entry.Key,
-                SourceReference = source.SourceName,
-                Rows = entry.Value,
-                Warnings = entry.Value
-                    .SelectMany(row => row.ExerciseParts
-                        .Where(part => part.Warning is not null)
-                        .Select(part => new WorkoutImportWarning
-                        {
-                            Severity = WorkoutImportIssueSeverity.Warning,
-                            Message = $"{row.SourceReference}: {part.Warning}"
-                        }))
-                    .ToList()
-            })
-            .ToList();
-
-        return Task.FromResult(drafts);
-
-        int GetOptionalCell(WorkoutImportProperty property) =>
-            excelProfile.TryGetColumn(property, out var index) ? index : -1;
+        return rowsByDate;
     }
 
-    private static ExtractedWorkoutCell? GetCell(ExtractedWorkoutRow row, int cellIndex) =>
-        cellIndex >= 0 && cellIndex < row.Cells.Count ? row.Cells[cellIndex] : null;
+    private static (ExtractedWorkoutCell Cell, DateTime Date)? FindDateCell(ExtractedWorkoutRow row)
+    {
+        foreach (var cell in row.Cells.OrderBy(cell => cell.ColumnIndex))
+        {
+            if (WorkoutInterpreterHelper.TryReadDate(cell.Value, out var date))
+            {
+                return (cell, date);
+            }
+        }
+
+        return null;
+    }
+
+    private static WorkoutImportRowDraft? InterpretRow(WorkoutRowCells row, WorkoutInterpreterHelper matcher)
+    {
+        var order = ReadOrder(row.GetExpectedCell(WorkoutImportProperty.Order));
+        var exercise = FindRowExercise(row, matcher);
+        if (exercise is null)
+        {
+            return null;
+        }
+
+        var input = exercise.Value.Input;
+        return new WorkoutImportRowDraft
+        {
+            SourceText = input.Text,
+            SourceReference = input.Cell.SourceReference,
+            Order = order,
+            Details = GetCellText(row, WorkoutImportProperty.Details),
+            Notes = GetCellText(row, WorkoutImportProperty.Notes),
+            ExerciseParts = exercise.Value.Parts
+        };
+    }
+
+    private static int? ReadOrder(WorkoutRowCell? cell)
+    {
+        if (cell is null || cell.Consumption.Count > 0 || !int.TryParse(cell.Text, out var order))
+        {
+            return null;
+        }
+
+        cell.Consume(new TextSpan(0, cell.Text.Length), ConsumptionKind.Order);
+        return order;
+    }
+
+    private static (UnconsumedCellText Input, IReadOnlyList<WorkoutImportExercisePart> Parts)? FindRowExercise(
+        WorkoutRowCells row, WorkoutInterpreterHelper matcher)
+    {
+        var expectedCell = row.GetExpectedCell(WorkoutImportProperty.Exercise);
+        (UnconsumedCellText Input, IReadOnlyList<WorkoutImportExercisePart> Parts)? unresolved = null;
+        foreach (var input in row.GetUnconsumedText().OrderByDescending(input => input.Cell == expectedCell))
+        {
+            if (matcher.IsIgnored(input.Text))
+            {
+                continue;
+            }
+
+            var results = matcher.InterpretExerciseCell(input.Text);
+            var parts = results.Select(result => result.Part).ToList();
+            if (results.Any(result => result.ConsumedSpan.HasValue))
+            {
+                foreach (var result in results)
+                {
+                    if (result.ConsumedSpan is { } span)
+                    {
+                        input.Cell.Consume(new TextSpan(input.Span.Start + span.Start, span.Length), ConsumptionKind.Exercise);
+                    }
+                }
+
+                return (input, parts);
+            }
+
+            if (input.Cell == expectedCell)
+            {
+                unresolved = (input, parts);
+            }
+        }
+
+        return unresolved;
+    }
+
+    private static string? GetCellText(WorkoutRowCells row, WorkoutImportProperty property)
+    {
+        var cell = row.GetExpectedCell(property);
+        return string.IsNullOrWhiteSpace(cell?.Text) ? null : cell.Text;
+    }
+
+    private static WorkoutImportDraft CreateWorkoutDraft(
+        DateTime date, string? sourceName, IReadOnlyList<WorkoutImportRowDraft> rows) =>
+        new()
+        {
+            Date = date,
+            SourceReference = sourceName,
+            Rows = rows,
+            Warnings = CollectExerciseWarnings(rows)
+        };
+
+    private static IReadOnlyList<WorkoutImportWarning> CollectExerciseWarnings(
+        IReadOnlyList<WorkoutImportRowDraft> rows) =>
+        rows.SelectMany(row => row.ExerciseParts
+                .Where(part => part.Warning is not null)
+                .Select(part => new WorkoutImportWarning
+                {
+                    Severity = WorkoutImportIssueSeverity.Warning,
+                    Message = $"{row.SourceReference}: {part.Warning}"
+                }))
+            .ToList();
 
     private static string FormatRowLog(DateTime date, WorkoutImportRowDraft row)
     {
