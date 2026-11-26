@@ -19,7 +19,7 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         var profile = context.Profile;
         var excelProfile = profile.GetRequiredSourceProfile<ExcelWorkoutImportSourceProfile>();
         var columns = excelProfile.GetCoachColumnMapping();
-        var rowInterpreter = new WorkoutRowInterpreter(context);
+        var rowInterpreter = new WorkoutRowInterpreter(context, logger);
         var sourceRows = source.Sheets.SelectMany(sheet => sheet.Rows);
         var rowsByDate = InterpretRowsByDate(sourceRows, columns, rowInterpreter, ct);
 

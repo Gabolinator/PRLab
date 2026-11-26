@@ -4,35 +4,57 @@ using PRLab.Application.Models.ImportDraft;
 using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.Workout;
+using PRLab.Domain.Utilities.Interface;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
 
-internal sealed class WorkoutPrescriptionInterpreter
+internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger)
 {
     private const string Duration = @"(?<duration>[1-9][0-9]*)\s*(?<unit>s|sec(?:ond)?s?|m|min(?:ute)?s?|['′])";
     private const string Scope = @"(?<side>\s+each\s+side)?";
+    private const string AdjacentClock = @"\s+[0-9]+:[0-5][0-9](?![\p{L}\p{N}:.])";
 
     private static readonly Regex workPattern = CreatePattern(
         @"(?:(?<sets>[1-9][0-9]*)\s*[x×]\s*)?(?<work>[1-9][0-9]*)" +
-        @"(?:\s*(?<unit>reps?|s|sec(?:ond)?s?|min(?:ute)?s?|m|km|cal))?" + Scope);
+        @"(?:\s*(?<unit>reps?|s|sec(?:ond)?s?|min(?:ute)?s?|m|km|cal|['′]))?" + Scope,
+        AdjacentClock);
     private static readonly Regex restPattern = CreatePattern(@"(?:rest\s+" + Duration + "|" + Duration + @"\s+rest)");
     private static readonly Regex timeCapPattern = CreatePattern(@"(?:time\s+cap|cap)\s+" + Duration);
     private static readonly Regex loadPattern = CreatePattern(@"(?:@\s*)?(?<load>[0-9]+(?:\.[0-9]+)?)\s*(?<unit>kg|lb|lbs)");
     private static readonly Regex splitPattern = CreatePattern(@"split\s+anyhow");
 
     public IEnumerable<(WorkoutImportPrescriptionDraft Draft, TextSpan Span)> Interpret(
-        string text, string? sourceReference)
+        string text, string? sourceReference, int sourceOffset)
     {
+        if (logger.Enabled)
+        {
+            logger.Log(nameof(WorkoutPrescriptionInterpreter),
+                $"{sourceReference} · fragment at offset {sourceOffset} · {QuoteText(text)}");
+        }
+
         var offset = 0;
         while (offset < text.Length)
         {
             var remainingText = text[offset..];
             if (InterpretPrefix(remainingText, sourceReference) is not { } result)
             {
+                if (logger.Enabled)
+                {
+                    var remainingOffset = sourceOffset + offset;
+                    logger.Log(nameof(WorkoutPrescriptionInterpreter),
+                        $"{sourceReference} · stopped at offset {remainingOffset} · no supported prescription at the start of {QuoteText(remainingText)}");
+                }
+
                 yield break;
             }
 
             var span = result.Span.OffsetBy(offset);
+            if (logger.Enabled)
+            {
+                var sourceSpan = span.OffsetBy(sourceOffset);
+                LogMatch(result.Draft, sourceSpan);
+            }
+
             yield return (result.Draft, span);
             offset = span.End;
 
@@ -46,8 +68,10 @@ internal sealed class WorkoutPrescriptionInterpreter
         }
     }
 
-    private static (WorkoutImportPrescriptionDraft Draft, TextSpan Span)? InterpretPrefix(
-        string text, string? sourceReference)
+    private static string QuoteText(string text) =>
+        $"\"{text.ReplaceLineEndings("\\n")}\"";
+
+    private (WorkoutImportPrescriptionDraft Draft, TextSpan Span)? InterpretPrefix(string text, string? sourceReference)
     {
         var rest = restPattern.Match(text);
         if (TryReadSeconds(rest, out var restSeconds))
@@ -61,6 +85,7 @@ internal sealed class WorkoutPrescriptionInterpreter
             };
             return CreateResult(rest, sourceReference, step);
         }
+        LogRejectedMatch(rest, sourceReference, "rest duration");
 
         var timeCap = timeCapPattern.Match(text);
         if (TryReadSeconds(timeCap, out var capSeconds))
@@ -73,12 +98,14 @@ internal sealed class WorkoutPrescriptionInterpreter
             };
             return CreateResult(timeCap, sourceReference, step, capSeconds);
         }
+        LogRejectedMatch(timeCap, sourceReference, "time cap");
 
         var work = workPattern.Match(text);
         if (TryReadWork(work) is { } workStep)
         {
             return CreateResult(work, sourceReference, workStep);
         }
+        LogRejectedMatch(work, sourceReference, "work target");
 
         var load = loadPattern.Match(text);
         var loadText = load.Groups["load"].Value;
@@ -95,6 +122,7 @@ internal sealed class WorkoutPrescriptionInterpreter
             };
             return CreateResult(load, sourceReference, step);
         }
+        LogRejectedMatch(load, sourceReference, "load");
 
         var split = splitPattern.Match(text);
         if (!split.Success)
@@ -113,8 +141,30 @@ internal sealed class WorkoutPrescriptionInterpreter
         return CreateResult(split, sourceReference, splitStep);
     }
 
-    private static Regex CreatePattern(string expression) =>
-        new($@"^\s*(?:{expression})(?=\s*(?:$|[,(|@]))", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    private void LogMatch(WorkoutImportPrescriptionDraft draft, TextSpan span)
+    {
+        var step = draft.Step;
+        logger.Log(nameof(WorkoutPrescriptionInterpreter),
+            $"{draft.SourceReference} · matched {QuoteText(step.SourceText)} at offset {span.Start}, length {span.Length} · " +
+            $"kind={step.StepKind}, sets={step.SetCount}, work={step.WorkValue}, target={step.WorkTargetType}, scope={step.Scope}, " +
+            $"load={step.LoadValue}, load unit={step.LoadUnit}, rest seconds={step.RestSeconds}, time cap seconds={draft.TimeCapSeconds}, notes={step.Notes}");
+    }
+
+    private void LogRejectedMatch(Match match, string? sourceReference, string rule)
+    {
+        if (logger.Enabled && match.Success)
+        {
+            logger.Log(nameof(WorkoutPrescriptionInterpreter),
+                $"{sourceReference} · {rule} syntax matched {QuoteText(match.Value)} but did not produce a valid value");
+        }
+    }
+
+    private static Regex CreatePattern(string expression, string? adjacentToken = null)
+    {
+        const string delimiter = @"\s*(?:$|[,(|@])";
+        var boundary = adjacentToken is null ? delimiter : $"{delimiter}|{adjacentToken}";
+        return new Regex($@"^\s*(?:{expression})(?={boundary})", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    }
 
     private static (WorkoutImportPrescriptionDraft Draft, TextSpan Span) CreateResult(
         Match match, string? sourceReference, WorkoutStepImportDraft step, int? timeCapSeconds = null)
@@ -171,6 +221,7 @@ internal sealed class WorkoutPrescriptionInterpreter
         var multiplier = unit switch
         {
             "km" => 1000,
+            "'" or "′" => 60,
             _ when unit.StartsWith("min", StringComparison.Ordinal) => 60,
             _ => 1
         };

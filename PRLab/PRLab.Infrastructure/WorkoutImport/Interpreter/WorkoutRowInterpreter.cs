@@ -1,15 +1,16 @@
 using System.Text.RegularExpressions;
 using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport.Model;
+using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.WorkoutImport.Interpreter.Extensions;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
 
-internal sealed class WorkoutRowInterpreter(WorkoutImportContext context)
+internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLogger logger)
 {
     private readonly ExerciseInterpreter exercises = new(context.Profile, context.Exercises);
     private readonly AttributeInterpreter attributes = new(context.Profile);
-    private readonly WorkoutPrescriptionInterpreter prescriptions = new();
+    private readonly WorkoutPrescriptionInterpreter prescriptions = new(logger);
     private readonly string[] separators = context.Profile.Parsing.Separators
         .Where(separator => !string.IsNullOrEmpty(separator)).ToArray();
     private readonly Regex[] ignoredLabels = BuildIgnoredLabelPatterns(context.Profile);
@@ -175,7 +176,7 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context)
         var remainingInputs = row.GetUnconsumedText().SelectMany(SplitInput).ToList();
         foreach (var input in remainingInputs)
         {
-            var prescriptionResults = prescriptions.Interpret(input.Text, input.Cell.SourceReference);
+            var prescriptionResults = prescriptions.Interpret(input.Text, input.Cell.SourceReference, input.Span.Start);
             foreach (var (draft, span) in prescriptionResults)
             {
                 var prescriptionSpan = span.OffsetBy(input.Span.Start);
