@@ -3,6 +3,7 @@ using PRLab.Application.WorkoutImport;
 using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.WorkoutImport.Extractor.Excel;
+using PRLab.Infrastructure.WorkoutImport.Interpreter.Extensions;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
 
@@ -17,7 +18,7 @@ public sealed class CoachExcelWorkoutImportInterpreter(
     {
         var profile = context.Profile;
         var excelProfile = profile.GetRequiredSourceProfile<ExcelWorkoutImportSourceProfile>();
-        var columns = ReadColumnMapping(excelProfile);
+        var columns = excelProfile.GetCoachColumnMapping();
         var matcher = new WorkoutInterpreterHelper(profile, context.Exercises);
         var sourceRows = source.Sheets.SelectMany(sheet => sheet.Rows);
         var rowsByDate = InterpretRowsByDate(sourceRows, columns, matcher, ct);
@@ -32,31 +33,10 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         return Task.FromResult(drafts);
     }
 
-    private static ILookup<int, WorkoutImportProperty> ReadColumnMapping(ExcelWorkoutImportSourceProfile profile)
-    {
-        var exerciseColumn = profile.GetRequiredCell(WorkoutImportProperty.Exercise);
-        var orderColumn = GetOptionalColumn(profile, WorkoutImportProperty.Order);
-        var detailsColumn = GetOptionalColumn(profile, WorkoutImportProperty.Details);
-        var notesColumn = GetOptionalColumn(profile, WorkoutImportProperty.Notes);
-        (int Column, WorkoutImportProperty Property)[] columns =
-        [
-            (0, WorkoutImportProperty.Date),
-            (exerciseColumn, WorkoutImportProperty.Exercise),
-            (orderColumn, WorkoutImportProperty.Order),
-            (detailsColumn, WorkoutImportProperty.Details),
-            (notesColumn, WorkoutImportProperty.Notes)
-        ];
-        var configuredColumns = columns.Where(column => column.Column >= 0);
-        return configuredColumns.ToLookup(column => column.Column, column => column.Property);
-    }
-
-    private static int GetOptionalColumn(ExcelWorkoutImportSourceProfile profile, WorkoutImportProperty property) =>
-        profile.TryGetColumn(property, out var index) ? index : -1;
-
     private static WorkoutImportRowDraft? InterpretRow(WorkoutRowCells row, WorkoutInterpreterHelper matcher)
     {
         var orderCell = row.GetExpectedCell(WorkoutImportProperty.Order);
-        var order = ReadOrder(orderCell);
+        var hasOrder = orderCell.TryConsumeOrder(out var order);
         var exercise = FindRowExercise(row, matcher);
         if (exercise is null)
         {
@@ -70,65 +50,69 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         {
             SourceText = input.Text,
             SourceReference = input.Cell.SourceReference,
-            Order = order,
+            Order = hasOrder ? order : null,
             Details = details,
             Notes = notes,
             ExerciseParts = exerciseParts
         };
     }
 
-    private static int? ReadOrder(WorkoutRowCell? cell)
-    {
-        if (cell is null || cell.Consumption.Count > 0 || !int.TryParse(cell.Text, out var order))
-        {
-            return null;
-        }
-
-        var orderSpan = new TextSpan(0, cell.Text.Length);
-        cell.Consume(orderSpan, ConsumptionKind.Order);
-        return order;
-    }
-
     private static (UnconsumedCellText Input, IReadOnlyList<WorkoutImportExercisePart> Parts)? FindRowExercise(
         WorkoutRowCells row, WorkoutInterpreterHelper matcher)
     {
         var expectedExerciseCell = row.GetExpectedCell(WorkoutImportProperty.Exercise);
-        var exerciseInputs = row.GetUnconsumedText()
+        var exerciseInputsInPriorityOrder = row.GetUnconsumedText()
             .OrderByDescending(input => input.Cell == expectedExerciseCell);
         (UnconsumedCellText Input, IReadOnlyList<WorkoutImportExercisePart> Parts)? unresolved = null;
-        foreach (var input in exerciseInputs)
+
+        foreach (var input in exerciseInputsInPriorityOrder)
         {
-            var inputText = input.Text;
-            if (matcher.IsIgnored(inputText))
+            if (TryGetExercisePart(input, matcher, out var exerciseResult))
             {
-                continue;
+                return exerciseResult;
             }
 
-            var results = matcher.InterpretExerciseText(inputText);
-            var parts = results.Select(result => result.Part).ToList();
-            var hasResolvedExercise = results.Any(result => result.ResolvedSpan.HasValue);
-            if (hasResolvedExercise)
+            if (input.Cell == expectedExerciseCell && exerciseResult is not null)
             {
-                var exerciseCell = input.Cell;
-                foreach (var result in results)
-                {
-                    if (result.ResolvedSpan is { } span)
-                    {
-                        var exerciseSpan = new TextSpan(input.Span.Start + span.Start, span.Length);
-                        exerciseCell.Consume(exerciseSpan, ConsumptionKind.Exercise);
-                    }
-                }
-
-                return (input, parts);
-            }
-
-            if (input.Cell == expectedExerciseCell)
-            {
-                unresolved = (input, parts);
+                unresolved = exerciseResult;
             }
         }
 
         return unresolved;
+    }
+
+    private static bool TryGetExercisePart(
+        UnconsumedCellText input,
+        WorkoutInterpreterHelper matcher,
+        out (UnconsumedCellText Input, IReadOnlyList<WorkoutImportExercisePart> Parts)? exerciseResult)
+    {
+        exerciseResult = null;
+        var inputText = input.Text;
+        if (matcher.IsIgnored(inputText))
+        {
+            return false;
+        }
+
+        var results = matcher.InterpretExerciseText(inputText);
+        var parts = results.Select(result => result.Part).ToList();
+        exerciseResult = (input, parts);
+        var hasResolvedExercise = results.Any(result => result.ResolvedSpan.HasValue);
+        if (hasResolvedExercise)
+        {
+            var exerciseCell = input.Cell;
+            foreach (var result in results)
+            {
+                if (result.ResolvedSpan is { } span)
+                {
+                    var exerciseSpan = new TextSpan(input.Span.Start + span.Start, span.Length);
+                    exerciseCell.Consume(exerciseSpan, ConsumptionKind.Exercise);
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     private static string? GetCellText(WorkoutRowCells row, WorkoutImportProperty property)

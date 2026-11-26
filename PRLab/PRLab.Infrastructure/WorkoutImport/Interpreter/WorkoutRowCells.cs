@@ -18,6 +18,8 @@ internal sealed class WorkoutRowCells
     public int DateColumnIndex { get; }
 
     public int ColumnOffset => DateColumnIndex;
+    
+    public int LastColumnIndex => Cells.Count - 1;
 
     public IReadOnlyList<WorkoutRowCell> Cells { get; }
 

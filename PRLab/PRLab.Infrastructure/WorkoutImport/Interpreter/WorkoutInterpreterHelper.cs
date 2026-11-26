@@ -13,6 +13,7 @@ internal sealed class WorkoutInterpreterHelper
     private readonly IReadOnlyList<Qualifier> leadingQualifiers;
     private readonly IReadOnlyList<Qualifier> trailingQualifiers;
     private readonly ILookup<string, WorkoutImportAttributeAssignment> aliasAttributes;
+    private const string WordStart = @"(?<![\p{L}\p{M}\p{N}_])";
     private const string WordBoundary = @"(?![\p{L}\p{M}\p{N}_])";
 
     public WorkoutInterpreterHelper(
@@ -46,16 +47,8 @@ internal sealed class WorkoutInterpreterHelper
         {
             if (!string.IsNullOrWhiteSpace(part) && !IsIgnored(part))
             {
-                var result = InterpretExercisePart(part, out var resolvedLength);
-                TextSpan? resolvedSpan = null;
-                if (result.ExerciseId is not null)
-                {
-                    var leadingWhitespaceLength = part.Length - part.TrimStart().Length;
-                    var resolvedStart = offset + leadingWhitespaceLength;
-                    resolvedSpan = new TextSpan(resolvedStart, resolvedLength);
-                }
-
-                results.Add((result, resolvedSpan));
+                var partResults = InterpretExercisePart(part, offset);
+                results.AddRange(partResults);
             }
 
             offset += part.Length;
@@ -108,7 +101,7 @@ internal sealed class WorkoutInterpreterHelper
         var keys = targetKeys.Distinct().ToList();
         var matches = keys.SelectMany(key => exercisesByKey[key]).ToList();
         var ambiguous = keys.Count > 1 || matches.Count > 1;
-        var pattern = CreatePrefixPattern(matchText, WordBoundary);
+        var pattern = CreateTextPattern(matchText, WordStart, WordBoundary);
         var exercise = ambiguous ? null : matches.SingleOrDefault();
         return new ExerciseCandidate(pattern, exercise, ambiguous);
     }
@@ -143,41 +136,81 @@ internal sealed class WorkoutInterpreterHelper
             .DefaultIfEmpty()
             .MaxBy(match => match.Length);
 
-    private static Regex CreatePrefixPattern(string text, string boundary)
+    private static Regex CreatePrefixPattern(string text, string boundary) =>
+        CreateTextPattern(text, "^", boundary);
+
+    private static Regex CreateTextPattern(string text, string start, string end)
     {
         var normalizedText = FormatingUtilities.NormalizeNonNullString(text);
         var words = normalizedText.Split(' ');
         var escapedWords = words.Select(Regex.Escape);
         var pattern = string.Join(@"[^\S\r\n]+", escapedWords);
-        return new Regex($"^{pattern}{boundary}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        return new Regex($"{start}{pattern}{end}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
     }
 
-    private WorkoutImportExercisePart InterpretExercisePart(string sourceText, out int resolvedLength)
+    private IEnumerable<(WorkoutImportExercisePart Part, TextSpan? ResolvedSpan)> InterpretExercisePart(
+        string sourceText, int partOffset)
     {
-        resolvedLength = 0;
         var text = sourceText.TrimStart();
+        var textOffset = partOffset + sourceText.Length - text.Length;
         var qualifierAttributes = new List<WorkoutImportAttributeAssignment>();
         var (candidate, exerciseOffset, matchEnd) = MatchExerciseWithLeadingQualifiers(text, qualifierAttributes);
-
-        // if candidate is null we need to check if a combination of exercises
+        var matchStart = 0;
 
         if (candidate is null)
         {
-            var unmatchedText = text.TrimEnd();
-            return new WorkoutImportExercisePart
+            (candidate, exerciseOffset, matchEnd) = FindNextExercise(text, 0);
+            if (candidate is null)
             {
-                SourceText = sourceText,
-                Attributes = qualifierAttributes,
-                Warning = $"No catalog exercise matches '{unmatchedText}'."
-            };
+                var unmatchedText = text.TrimEnd();
+                var unresolvedPart = new WorkoutImportExercisePart
+                {
+                    SourceText = sourceText,
+                    Attributes = qualifierAttributes,
+                    Warning = $"No catalog exercise matches '{unmatchedText}'."
+                };
+                yield return (unresolvedPart, null);
+                yield break;
+            }
+
+            matchStart = exerciseOffset;
+            qualifierAttributes.Clear();
         }
 
-        var matchedText = text[..matchEnd];
-        var textAfterMatch = text[matchEnd..];
-        var textAfterQualifiers = MatchTrailingQualifiers(textAfterMatch, qualifierAttributes);
-        resolvedLength = text.Length - textAfterQualifiers.Length;
-        var remainingText = textAfterQualifiers.Trim();
-        var exerciseText = text[exerciseOffset..matchEnd];
+        while (candidate is not null)
+        {
+            var matchedText = text[matchStart..matchEnd];
+            var exerciseText = text[exerciseOffset..matchEnd];
+            var textAfterMatch = text[matchEnd..];
+            var textAfterQualifiers = MatchTrailingQualifiers(textAfterMatch, qualifierAttributes);
+            var resolvedEnd = text.Length - textAfterQualifiers.Length;
+            var (nextCandidate, nextStart, nextEnd) = FindNextExercise(text, resolvedEnd);
+            var remainingEnd = nextCandidate is null ? text.Length : nextStart;
+            var remainingText = text[resolvedEnd..remainingEnd].Trim();
+
+            var part = CreateMatchedExercisePart(
+                sourceText, candidate, matchedText, exerciseText, remainingText, qualifierAttributes);
+            TextSpan? resolvedSpan = part.ExerciseId is null
+                ? null
+                : new TextSpan(textOffset + matchStart, resolvedEnd - matchStart);
+            yield return (part, resolvedSpan);
+
+            candidate = nextCandidate;
+            matchStart = nextStart;
+            exerciseOffset = nextStart;
+            matchEnd = nextEnd;
+            qualifierAttributes.Clear();
+        }
+    }
+
+    private WorkoutImportExercisePart CreateMatchedExercisePart(
+        string sourceText,
+        ExerciseCandidate candidate,
+        string matchedText,
+        string exerciseText,
+        string remainingText,
+        List<WorkoutImportAttributeAssignment> qualifierAttributes)
+    {
         var attributes = CollectMatchedAttributes(qualifierAttributes, matchedText, exerciseText);
         var exercise = candidate.Exercise;
         var warning = GetExerciseMatchWarning(candidate, matchedText);
@@ -197,7 +230,7 @@ internal sealed class WorkoutInterpreterHelper
     private (ExerciseCandidate? Candidate, int ExerciseOffset, int MatchEnd) MatchExerciseWithLeadingQualifiers(
         string text, List<WorkoutImportAttributeAssignment> qualifierAttributes)
     {
-        var (bestCandidate, matchLength) = FindExercise(text);
+        var (bestCandidate, matchLength) = FindExerciseAtStart(text);
         var exerciseOffset = 0;
         var qualifierLimit = bestCandidate is null ? text.Length : matchLength;
 
@@ -218,7 +251,7 @@ internal sealed class WorkoutInterpreterHelper
 
             if (bestCandidate is null)
             {
-                var (candidate, length) = FindExercise(remainder);
+                var (candidate, length) = FindExerciseAtStart(remainder);
                 if (candidate is not null)
                 {
                     var matchEnd = exerciseOffset + length;
@@ -266,13 +299,37 @@ internal sealed class WorkoutInterpreterHelper
             .ToList();
     }
 
-    private (ExerciseCandidate? Candidate, int Length) FindExercise(string text)
+    private (ExerciseCandidate? Candidate, int Length) FindExerciseAtStart(string text)
     {
-        var match = candidates
-            .Select(candidate => (Candidate: candidate, Length: candidate.Pattern.Match(text).Length))
-            .DefaultIfEmpty()
-            .MaxBy(match => match.Length);
-        return match.Length > 0 ? match : default;
+        var (candidate, start, end) = FindNextExercise(text, 0);
+        return start == 0 ? (candidate, end) : default;
+    }
+
+    private (ExerciseCandidate? Candidate, int Start, int End) FindNextExercise(string text, int offset)
+    {
+        ExerciseCandidate? bestCandidate = null;
+        var bestStart = text.Length;
+        var bestLength = 0;
+
+        foreach (var candidate in candidates)
+        {
+            var match = candidate.Pattern.Match(text, offset);
+            if (!match.Success)
+            {
+                continue;
+            }
+
+            var startsEarlier = match.Index < bestStart;
+            var isLongerAtSameStart = match.Index == bestStart && match.Length > bestLength;
+            if (startsEarlier || isLongerAtSameStart)
+            {
+                bestCandidate = candidate;
+                bestStart = match.Index;
+                bestLength = match.Length;
+            }
+        }
+
+        return (bestCandidate, bestStart, bestStart + bestLength);
     }
 
     private sealed record ExerciseCandidate(
