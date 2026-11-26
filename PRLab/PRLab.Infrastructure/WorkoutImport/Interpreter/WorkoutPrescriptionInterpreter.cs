@@ -22,6 +22,35 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger)
     private static readonly Regex timeCapPattern = CreatePattern(@"(?:time\s+cap|cap)\s+" + Duration);
     private static readonly Regex loadPattern = CreatePattern(@"(?:@\s*)?(?<load>[0-9]+(?:\.[0-9]+)?)\s*(?<unit>kg|lb|lbs)");
     private static readonly Regex splitPattern = CreatePattern(@"split\s+anyhow");
+    private static readonly Regex amrapPattern = new(
+        $@"{WorkoutTextMatching.WordStart}amrap\s*{Duration}{WorkoutTextMatching.WordEnd}",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+    public IEnumerable<(WorkoutWorkWindowDraft Draft, TextSpan Span)> InterpretWorkWindows(
+        string text, string? sourceReference, int sourceOffset)
+    {
+        var matches = amrapPattern.Matches(text);
+        foreach (Match match in matches)
+        {
+            if (!TryReadSeconds(match, out var durationSeconds))
+            {
+                LogRejectedMatch(match, sourceReference, "AMRAP work window");
+                continue;
+            }
+
+            var span = new TextSpan(match.Index, match.Length);
+            var draft = new WorkoutWorkWindowDraft(WorkMode.MaxWorkInTime, durationSeconds, match.Value, sourceReference);
+            if (logger.Enabled)
+            {
+                var absoluteOffset = sourceOffset + span.Start;
+                logger.Log(nameof(WorkoutPrescriptionInterpreter),
+                    $"{sourceReference} · matched workout work window {QuoteText(match.Value)} at offset {absoluteOffset} · " +
+                    $"mode={draft.Mode}, duration seconds={draft.DurationSeconds}");
+            }
+
+            yield return (draft, span);
+        }
+    }
 
     public IEnumerable<(WorkoutImportPrescriptionDraft Draft, TextSpan Span)> Interpret(
         string text, string? sourceReference, int sourceOffset)

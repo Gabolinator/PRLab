@@ -17,33 +17,53 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
     public WorkoutImportRowDraft? Interpret(WorkoutRowCells row)
     {
-        var exercise = FindRowExercise(row);
-        if (exercise is null)
+        var expectedExerciseCell = row.GetExpectedCell(WorkoutImportProperty.Exercise);
+        if (expectedExerciseCell is not null && IsIgnored(expectedExerciseCell.Text))
         {
             return null;
+        }
+
+        var exercise = FindRowExercise(row, expectedExerciseCell);
+        var exerciseParts = exercise is null ? [] : InterpretExerciseAttributes(exercise.Fragments);
+        var workWindows = InterpretWorkWindows(row);
+        if (exercise is null && workWindows.Count == 0)
+        {
+            return null;
+        }
+
+        if (exercise is not null && workWindows.Count > 0)
+        {
+            var exerciseSource = exercise.Input.Cell.SourceReference;
+            var workWindowLabels = workWindows.Where(window => window.SourceReference == exerciseSource)
+                .Select(window => window.SourceText)
+                .ToHashSet(StringComparer.Ordinal);
+            exerciseParts = exerciseParts
+                .Where(part => part.MatchedText is not null || !workWindowLabels.Contains(part.SourceText.Trim()))
+                .ToList();
         }
 
         var orderCell = row.GetExpectedCell(WorkoutImportProperty.Order);
         int? order = orderCell.TryConsumeOrder(out var foundOrder) ? foundOrder : null;
         
-        var exerciseParts = InterpretExerciseAttributes(exercise.Fragments);
         var rowPrescriptions = InterpretPrescriptions(row);
         var unconsumedText = row.GetUnconsumedText()
             .Select(input => new WorkoutImportTextFragment(input.Cell.SourceReference, input.Text))
             .ToList();
         var details = GetCellText(row, WorkoutImportProperty.Details);
         var notes = GetCellText(row, WorkoutImportProperty.Notes);
-        var sourceReference = exercise.Input.Cell.SourceReference ?? string.Empty;
+        var sourceText = exercise?.Input.Text ?? workWindows[0].SourceText;
+        var sourceReference = exercise is null ? workWindows[0].SourceReference : exercise.Input.Cell.SourceReference;
         
         return new WorkoutImportRowDraft
         {
-            SourceText = exercise.Input.Text,
-            SourceReference = sourceReference,
+            SourceText = sourceText,
+            SourceReference = sourceReference ?? string.Empty,
             Order = order,
             Details = details,
             Notes = notes,
             ExerciseParts = exerciseParts,
             Prescriptions = rowPrescriptions,
+            WorkWindows = workWindows,
             UnconsumedText = unconsumedText
         };
     }
@@ -70,14 +90,8 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
         };
     }
 
-    private RowExercise? FindRowExercise(WorkoutRowCells row)
+    private RowExercise? FindRowExercise(WorkoutRowCells row, WorkoutRowCell? expectedExerciseCell)
     {
-        var expectedExerciseCell = row.GetExpectedCell(WorkoutImportProperty.Exercise);
-        if (expectedExerciseCell is not null && IsIgnored(expectedExerciseCell.Text))
-        {
-            return null;
-        }
-
         var exerciseInputsInPriorityOrder = row.GetUnconsumedText()
             .OrderByDescending(input => input.Cell == expectedExerciseCell);
         RowExercise? unresolved = null;
@@ -168,6 +182,29 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
         }
 
         return parts;
+    }
+
+    private IReadOnlyList<WorkoutWorkWindowDraft> InterpretWorkWindows(WorkoutRowCells row)
+    {
+        var drafts = new List<WorkoutWorkWindowDraft>();
+        var notesCell = row.GetExpectedCell(WorkoutImportProperty.Notes);
+        var workoutInputs = row.GetUnconsumedText()
+            .Where(input => input.Cell != notesCell)
+            .SelectMany(SplitInput)
+            .ToList();
+        foreach (var input in workoutInputs)
+        {
+            var workWindowResults = prescriptions.InterpretWorkWindows(
+                input.Text, input.Cell.SourceReference, input.Span.Start);
+            foreach (var (draft, span) in workWindowResults)
+            {
+                var workWindowSpan = span.OffsetBy(input.Span.Start);
+                input.Cell.Consume(workWindowSpan, ConsumptionKind.WorkWindow);
+                drafts.Add(draft);
+            }
+        }
+
+        return drafts;
     }
 
     private IReadOnlyList<WorkoutImportPrescriptionDraft> InterpretPrescriptions(WorkoutRowCells row)

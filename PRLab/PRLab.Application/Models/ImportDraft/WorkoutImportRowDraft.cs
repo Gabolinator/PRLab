@@ -1,5 +1,6 @@
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Application.WorkoutImport.Model;
+using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 
 namespace PRLab.Application.Models.ImportDraft;
 
@@ -19,11 +20,16 @@ public sealed record WorkoutImportRowDraft
 
     public IReadOnlyList<WorkoutImportPrescriptionDraft> Prescriptions { get; init; } = [];
 
+    public IReadOnlyList<WorkoutWorkWindowDraft> WorkWindows { get; init; } = [];
+
     public IReadOnlyList<WorkoutImportTextFragment> UnconsumedText { get; init; } = [];
 }
 
 public sealed record WorkoutImportPrescriptionDraft(
     string? SourceReference, WorkoutStepImportDraft Step, int? TimeCapSeconds = null);
+
+public sealed record WorkoutWorkWindowDraft(
+    WorkMode Mode, int DurationSeconds, string SourceText, string? SourceReference);
 
 public sealed record WorkoutImportTextFragment(string? SourceReference, string Text);
 

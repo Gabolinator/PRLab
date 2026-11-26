@@ -141,7 +141,8 @@ internal enum ConsumptionKind
     Order,
     Exercise,
     Attribute,
-    Prescription
+    Prescription,
+    WorkWindow
 }
 
 internal sealed record CellConsumption(TextSpan Span, ConsumptionKind Kind);

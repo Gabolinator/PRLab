@@ -1,6 +1,7 @@
 using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport;
 using PRLab.Application.WorkoutImport.Model;
+using PRLab.Domain.Model.Value.Enum.Workout;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.WorkoutImport.Extractor.Excel;
 using PRLab.Infrastructure.WorkoutImport.Interpreter.Extensions;
@@ -39,20 +40,62 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         {
             Date = date,
             SourceReference = sourceName,
+            Blocks = CreateWorkoutBlocks(rows),
             Rows = rows,
-            Warnings = CollectExerciseWarnings(rows)
+            Warnings = CollectImportWarnings(rows)
         };
 
-    private static IReadOnlyList<WorkoutImportWarning> CollectExerciseWarnings(
-        IReadOnlyList<WorkoutImportRowDraft> rows) =>
-        rows.SelectMany(row => row.ExerciseParts
+    private static IReadOnlyList<WorkoutBlockImportDraft> CreateWorkoutBlocks(
+        IReadOnlyList<WorkoutImportRowDraft> rows)
+    {
+        var blockRows = rows.Where(row => row.WorkWindows.Count == 1);
+        return blockRows.Select(CreateWorkoutBlock).ToList();
+    }
+
+    private static WorkoutBlockImportDraft CreateWorkoutBlock(WorkoutImportRowDraft row)
+    {
+        var workWindow = row.WorkWindows[0];
+        var resolvedExercises = row.ExerciseParts.Where(part => part.ExerciseId.HasValue);
+        var steps = resolvedExercises.Select(part => new WorkoutStepImportDraft
+        {
+            SourceText = part.SourceText,
+            ExerciseName = part.ExerciseName,
+            StepKind = WorkoutStepKind.Exercise,
+            Confidence = 1
+        }).ToList();
+        var segment = new WorkoutSegmentImportDraft
+        {
+            Name = workWindow.SourceText,
+            WorkMode = workWindow.Mode,
+            WorkWindowSeconds = workWindow.DurationSeconds,
+            Steps = steps
+        };
+        return new WorkoutBlockImportDraft
+        {
+            Name = workWindow.SourceText,
+            Order = row.Order,
+            Segments = [segment]
+        };
+    }
+
+    private static IReadOnlyList<WorkoutImportWarning> CollectImportWarnings(
+        IReadOnlyList<WorkoutImportRowDraft> rows)
+    {
+        var exerciseWarnings = rows.SelectMany(row => row.ExerciseParts
                 .Where(part => part.Warning is not null)
                 .Select(part => new WorkoutImportWarning
                 {
                     Severity = WorkoutImportIssueSeverity.Warning,
                     Message = $"{row.SourceReference}: {part.Warning}"
-                }))
-            .ToList();
+                }));
+        var ambiguousBlockRows = rows.Where(row => row.WorkWindows.Count > 1);
+        var blockWarnings = ambiguousBlockRows.Select(row => new WorkoutImportWarning
+        {
+            Severity = WorkoutImportIssueSeverity.Warning,
+            Message = $"{row.SourceReference}: Multiple work windows were found in one row. Exercise grouping needs review."
+        });
+        return exerciseWarnings.Concat(blockWarnings).ToList();
+    }
 
     private SortedDictionary<DateTime, List<WorkoutImportRowDraft>> InterpretRowsByDate(
         IEnumerable<ExtractedWorkoutRow> sourceRows,
