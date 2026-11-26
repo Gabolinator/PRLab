@@ -139,7 +139,9 @@ internal enum ConsumptionKind
 {
     Date,
     Order,
-    Exercise
+    Exercise,
+    Attribute,
+    Prescription
 }
 
 internal sealed record CellConsumption(TextSpan Span, ConsumptionKind Kind);

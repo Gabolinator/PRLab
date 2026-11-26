@@ -19,9 +19,9 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         var profile = context.Profile;
         var excelProfile = profile.GetRequiredSourceProfile<ExcelWorkoutImportSourceProfile>();
         var columns = excelProfile.GetCoachColumnMapping();
-        var matcher = new WorkoutInterpreterHelper(profile, context.Exercises);
+        var rowInterpreter = new WorkoutRowInterpreter(context);
         var sourceRows = source.Sheets.SelectMany(sheet => sheet.Rows);
-        var rowsByDate = InterpretRowsByDate(sourceRows, columns, matcher, ct);
+        var rowsByDate = InterpretRowsByDate(sourceRows, columns, rowInterpreter, ct);
 
         logger.Log(nameof(CoachExcelWorkoutImportInterpreter),
             $"Found {rowsByDate.Count} distinct workout dates.");
@@ -31,94 +31,6 @@ public sealed class CoachExcelWorkoutImportInterpreter(
             .ToList();
 
         return Task.FromResult(drafts);
-    }
-
-    private static WorkoutImportRowDraft? InterpretRow(WorkoutRowCells row, WorkoutInterpreterHelper matcher)
-    {
-        var orderCell = row.GetExpectedCell(WorkoutImportProperty.Order);
-        var hasOrder = orderCell.TryConsumeOrder(out var order);
-        var exercise = FindRowExercise(row, matcher);
-        if (exercise is null)
-        {
-            return null;
-        }
-
-        var (input, exerciseParts) = exercise.Value;
-        var details = GetCellText(row, WorkoutImportProperty.Details);
-        var notes = GetCellText(row, WorkoutImportProperty.Notes);
-        return new WorkoutImportRowDraft
-        {
-            SourceText = input.Text,
-            SourceReference = input.Cell.SourceReference,
-            Order = hasOrder ? order : null,
-            Details = details,
-            Notes = notes,
-            ExerciseParts = exerciseParts
-        };
-    }
-
-    private static (UnconsumedCellText Input, IReadOnlyList<WorkoutImportExercisePart> Parts)? FindRowExercise(
-        WorkoutRowCells row, WorkoutInterpreterHelper matcher)
-    {
-        var expectedExerciseCell = row.GetExpectedCell(WorkoutImportProperty.Exercise);
-        var exerciseInputsInPriorityOrder = row.GetUnconsumedText()
-            .OrderByDescending(input => input.Cell == expectedExerciseCell);
-        (UnconsumedCellText Input, IReadOnlyList<WorkoutImportExercisePart> Parts)? unresolved = null;
-
-        foreach (var input in exerciseInputsInPriorityOrder)
-        {
-            if (TryGetExercisePart(input, matcher, out var exerciseResult))
-            {
-                return exerciseResult;
-            }
-
-            if (input.Cell == expectedExerciseCell && exerciseResult is not null)
-            {
-                unresolved = exerciseResult;
-            }
-        }
-
-        return unresolved;
-    }
-
-    private static bool TryGetExercisePart(
-        UnconsumedCellText input,
-        WorkoutInterpreterHelper matcher,
-        out (UnconsumedCellText Input, IReadOnlyList<WorkoutImportExercisePart> Parts)? exerciseResult)
-    {
-        exerciseResult = null;
-        var inputText = input.Text;
-        if (matcher.IsIgnored(inputText))
-        {
-            return false;
-        }
-
-        var results = matcher.InterpretExerciseText(inputText);
-        var parts = results.Select(result => result.Part).ToList();
-        exerciseResult = (input, parts);
-        var hasResolvedExercise = results.Any(result => result.ResolvedSpan.HasValue);
-        if (hasResolvedExercise)
-        {
-            var exerciseCell = input.Cell;
-            foreach (var result in results)
-            {
-                if (result.ResolvedSpan is { } span)
-                {
-                    var exerciseSpan = new TextSpan(input.Span.Start + span.Start, span.Length);
-                    exerciseCell.Consume(exerciseSpan, ConsumptionKind.Exercise);
-                }
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private static string? GetCellText(WorkoutRowCells row, WorkoutImportProperty property)
-    {
-        var cell = row.GetExpectedCell(property);
-        return string.IsNullOrWhiteSpace(cell?.Text) ? null : cell.Text;
     }
 
     private static WorkoutImportDraft CreateWorkoutDraft(
@@ -145,7 +57,7 @@ public sealed class CoachExcelWorkoutImportInterpreter(
     private SortedDictionary<DateTime, List<WorkoutImportRowDraft>> InterpretRowsByDate(
         IEnumerable<ExtractedWorkoutRow> sourceRows,
         ILookup<int, WorkoutImportProperty> columns,
-        WorkoutInterpreterHelper matcher,
+        WorkoutRowInterpreter rowInterpreter,
         CancellationToken ct)
     {
         var rowsByDate = new SortedDictionary<DateTime, List<WorkoutImportRowDraft>>();
@@ -167,7 +79,7 @@ public sealed class CoachExcelWorkoutImportInterpreter(
                 rowsByDate.Add(date, rows);
             }
 
-            var rowDraft = InterpretRow(rowCells, matcher);
+            var rowDraft = rowInterpreter.Interpret(rowCells);
             if (rowDraft is not null)
             {
                 rows.Add(rowDraft);

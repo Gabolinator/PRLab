@@ -16,7 +16,16 @@ public sealed record WorkoutImportRowDraft
     public string? Notes { get; init; }
 
     public IReadOnlyList<WorkoutImportExercisePart> ExerciseParts { get; init; } = [];
+
+    public IReadOnlyList<WorkoutImportPrescriptionDraft> Prescriptions { get; init; } = [];
+
+    public IReadOnlyList<WorkoutImportTextFragment> UnconsumedText { get; init; } = [];
 }
+
+public sealed record WorkoutImportPrescriptionDraft(
+    string? SourceReference, WorkoutStepImportDraft Step, int? TimeCapSeconds = null);
+
+public sealed record WorkoutImportTextFragment(string? SourceReference, string Text);
 
 public sealed record WorkoutImportExercisePart
 {
