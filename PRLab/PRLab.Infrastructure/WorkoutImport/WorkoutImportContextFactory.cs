@@ -23,24 +23,21 @@ public sealed class WorkoutImportContextFactory(
             ct);
         
         var exercises = await exerciseRepository.ListAsync(ct);
-        
-        logger.Log(nameof(WorkoutImportContextFactory),$"Retrieved exercises: {exercises.Count}");
-        
+        logger.Log(nameof(WorkoutImportContextFactory), $"Retrieved exercises: {exercises.Count}");
+
+        var userId = currentUserService.GetRequiredUserId();
+        var exerciseReferences = exercises.Select(exercise => new WorkoutImportExerciseReference
+        {
+            Id = exercise.Id,
+            Name = exercise.Name,
+            NameKey = exercise.NameKey
+        }).ToList();
+
         return new WorkoutImportContext
         {
-            UserId = currentUserService.GetRequiredUserId(),
-
+            UserId = userId,
             Profile = profile,
-            
-            Exercises = exercises
-                .Select(exercise =>
-                    new WorkoutImportExerciseReference
-                    {
-                        Id = exercise.Id,
-                        Name = exercise.Name,
-                        NameKey = exercise.NameKey
-                    })
-                .ToList()
+            Exercises = exerciseReferences
         };
     }
 }

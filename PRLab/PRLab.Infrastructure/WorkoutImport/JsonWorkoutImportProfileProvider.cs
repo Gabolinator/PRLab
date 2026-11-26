@@ -54,19 +54,7 @@ public sealed class JsonWorkoutImportProfileProvider(
             filePath,
             ct);
 
-        var serializerOptions = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            AllowTrailingCommas = true
-        };
-
-        serializerOptions.Converters.Add(
-            new JsonStringEnumConverter());
-
-        serializerOptions.Converters.Add(
-            new WorkoutImportSourceProfileJsonConverter());
-
+        var serializerOptions = CreateSerializerOptions();
         var profile = JsonSerializer.Deserialize<WorkoutImportProfile>(
             json,
             serializerOptions);
@@ -85,4 +73,17 @@ public sealed class JsonWorkoutImportProfileProvider(
                ?? throw new InvalidOperationException(
                    $"Workout import profile '{resolvedProfile}' could not be deserialized.");
     }
+
+    private static JsonSerializerOptions CreateSerializerOptions() =>
+        new()
+        {
+            PropertyNameCaseInsensitive = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            AllowTrailingCommas = true,
+            Converters =
+            {
+                new JsonStringEnumConverter(),
+                new WorkoutImportSourceProfileJsonConverter()
+            }
+        };
 }
