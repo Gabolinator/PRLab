@@ -77,14 +77,16 @@ internal sealed class ExerciseInterpreter(
     {
         var exercisesByKey = exercises.ToLookup(exercise => exercise.NameKey);
         var names = exercises.Select(exercise => (Text: exercise.Name, Key: exercise.NameKey));
-        var aliases = profile.Aliases.Exercises
-            .SelectMany(entry => entry.Value.Select(alias =>
-                (Text: alias, Key: FormatingUtilities.NormalizeNameKey(entry.Key))));
+        var aliases =
+            profile.Aliases.Exercises
+                .SelectMany(entry => entry.Value
+                    .Select(alias => (Text: alias, Key: FormatingUtilities.NormalizeNameKey(entry.Key))));
 
         var namesAndAliases = names.Concat(aliases);
-        var entriesByMatchText = namesAndAliases
-            .Where(entry => !string.IsNullOrWhiteSpace(entry.Text))
-            .GroupBy(entry => FormatingUtilities.NormalizeNonNullString(entry.Text));
+        var entriesByMatchText =
+            namesAndAliases
+                .Where(entry => !string.IsNullOrWhiteSpace(entry.Text))
+                .GroupBy(entry => FormatingUtilities.NormalizeNonNullString(entry.Text));
 
         return entriesByMatchText
             .Select(group =>
@@ -100,8 +102,15 @@ internal sealed class ExerciseInterpreter(
         IEnumerable<string> targetKeys,
         ILookup<string, WorkoutImportExerciseReference> exercisesByKey)
     {
-        var keys = targetKeys.Distinct().ToList();
-        var matches = keys.SelectMany(key => exercisesByKey[key]).ToList();
+        var keys =
+            targetKeys
+                .Distinct()
+                .ToList();
+        var matches =
+            keys
+                .SelectMany(key => exercisesByKey[key])
+                .ToList();
+
         var ambiguous = keys.Count > 1 || matches.Count > 1;
         var pattern = WorkoutTextMatching.CreatePhrasePattern(matchText, WorkoutTextMatching.WordStart, WorkoutTextMatching.WordEnd);
         var exercise = ambiguous ? null : matches.SingleOrDefault();

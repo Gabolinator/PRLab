@@ -18,6 +18,10 @@ public sealed record WorkoutImportRowDraft
 
     public IReadOnlyList<WorkoutImportExercisePart> ExerciseParts { get; init; } = [];
 
+    public IReadOnlyList<WorkoutImportExerciseInterpretation> ExerciseInterpretations { get; init; } = [];
+
+    public IReadOnlyList<WorkoutImportSemanticItem> RowSemanticItems { get; init; } = [];
+
     public IReadOnlyList<WorkoutImportPrescriptionDraft> Prescriptions { get; init; } = [];
 
     public IReadOnlyList<WorkoutWorkWindowDraft> WorkWindows { get; init; } = [];
@@ -40,11 +44,16 @@ public sealed record WorkoutImportPrescriptionDraft(
 public sealed record WorkoutWorkWindowDraft(
     WorkMode Mode, int DurationSeconds, string SourceText, string? SourceReference);
 
-public sealed record WorkoutImportTextFragment(string? SourceReference, string Text);
+public sealed record WorkoutImportTextFragment(string? SourceReference, string Text)
+{
+    public int? SourceOffset { get; init; }
+}
 
 public sealed record WorkoutImportExercisePart
 {
     public required string SourceText { get; init; }
+
+    public string? SourceReference { get; init; }
 
     public int? SourceOffset { get; init; }
 
@@ -60,5 +69,19 @@ public sealed record WorkoutImportExercisePart
 
     public IReadOnlyList<WorkoutImportAttributeAssignment> ExpectedAttributes { get; init; } = [];
 
+    public IReadOnlyList<WorkoutImportAttributeAssignment> PossiblyMissingAttributes { get; init; } = [];
+
     public string? Warning { get; init; }
+
+    public bool HasAttribute(WorkoutImportAttributeAssignment attribute)
+    {
+       return Attributes.Any(a => a.Type == attribute.Type);
+    }
+
+    public WorkoutImportExercisePart WithPossiblyMissingAttributes(
+        List<WorkoutImportAttributeAssignment> possiblyMissing)
+        => this with
+        {
+            PossiblyMissingAttributes = possiblyMissing,
+        };
 }

@@ -1,8 +1,6 @@
 using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport;
 using PRLab.Application.WorkoutImport.Model;
-using PRLab.Domain.Model.Value.Enum.Prescription.Work;
-using PRLab.Domain.Model.Value.Enum.Workout;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Infrastructure.WorkoutImport.Extractor.Excel;
 using PRLab.Infrastructure.WorkoutImport.Interpreter.Extensions;
@@ -21,94 +19,49 @@ public sealed class CoachExcelWorkoutImportInterpreter(
         var profile = context.Profile;
         var excelProfile = profile.GetRequiredSourceProfile<ExcelWorkoutImportSourceProfile>();
         var columns = excelProfile.GetCoachColumnMapping();
+
         var rowInterpreter = new WorkoutRowInterpreter(context, logger);
         var sourceRows = source.Sheets.SelectMany(sheet => sheet.Rows);
         var rowsByDate = InterpretRowsByDate(sourceRows, columns, rowInterpreter, ct);
 
-        logger.Log(nameof(CoachExcelWorkoutImportInterpreter),
+        logger.Log(
+            nameof(CoachExcelWorkoutImportInterpreter),
             $"Found {rowsByDate.Count} distinct workout dates.");
 
-        IReadOnlyList<WorkoutImportDraft> drafts = rowsByDate
-            .Select(entry => CreateWorkoutDraft(entry.Key, source.SourceName, entry.Value))
-            .ToList();
+        IReadOnlyList<WorkoutImportDraft> drafts =
+            rowsByDate
+                .Select(entry => CreateWorkoutDraft(entry.Key, source.SourceName, entry.Value))
+                .ToList();
 
         return Task.FromResult(drafts);
     }
 
     private static WorkoutImportDraft CreateWorkoutDraft(
-        DateTime date, string? sourceName, IReadOnlyList<WorkoutImportRowDraft> rows) =>
+        DateTime date,
+        string? sourceName,
+        IReadOnlyList<WorkoutImportRowDraft> rows) =>
         new()
         {
             Date = date,
             SourceReference = sourceName,
-            Blocks = CreateWorkoutBlocks(rows),
+            Blocks = WorkoutSemanticResolver.ResolveBlocks(rows),
             Rows = rows,
             Warnings = CollectImportWarnings(rows)
         };
 
-    private static IReadOnlyList<WorkoutBlockImportDraft> CreateWorkoutBlocks(
-        IReadOnlyList<WorkoutImportRowDraft> rows)
-    {
-        var blockRows = rows.Where(row => row.WorkWindows.Count == 1);
-        return blockRows.Select(CreateWorkoutBlock).ToList();
-    }
-
-    private static WorkoutBlockImportDraft CreateWorkoutBlock(WorkoutImportRowDraft row)
-    {
-        var workWindow = row.WorkWindows[0];
-        var resolvedExercises = row.ExerciseParts.Where(part => part.ExerciseId.HasValue);
-        var steps = resolvedExercises.Select(part => CreateWorkoutStep(row, part)).ToList();
-        var segment = new WorkoutSegmentImportDraft
-        {
-            Name = workWindow.SourceText,
-            WorkMode = workWindow.Mode,
-            WorkWindowSeconds = workWindow.DurationSeconds,
-            Steps = steps
-        };
-        return new WorkoutBlockImportDraft
-        {
-            Name = workWindow.SourceText,
-            Order = row.Order,
-            Segments = [segment]
-        };
-    }
-
-    private static WorkoutStepImportDraft CreateWorkoutStep(WorkoutImportRowDraft row, WorkoutImportExercisePart part)
-    {
-        var prescriptions = row.Prescriptions.Where(prescription =>
-            prescription.ExerciseId == part.ExerciseId &&
-            prescription.ExerciseSourceReference == row.SourceReference &&
-            prescription.ExerciseSourceOffset == part.SourceOffset).ToList();
-        var workTargets = prescriptions.Where(prescription => prescription.Step.WorkTargetType.HasValue).ToList();
-        var loadTargets = prescriptions.Where(prescription => prescription.Step.LoadValue.HasValue).ToList();
-        var work = workTargets.Count == 1 ? workTargets[0].Step : null;
-        var load = loadTargets.Count == 1 ? loadTargets[0].Step : null;
-
-        return new WorkoutStepImportDraft
-        {
-            SourceText = part.SourceText,
-            ExerciseName = part.ExerciseName,
-            StepKind = WorkoutStepKind.Exercise,
-            WorkValue = work?.WorkValue,
-            WorkTargetType = work?.WorkTargetType,
-            Scope = work?.Scope ?? WorkTargetScope.Total,
-            SetCount = work?.SetCount,
-            LoadValue = load?.LoadValue,
-            LoadUnit = load?.LoadUnit,
-            Confidence = 1
-        };
-    }
-
     private static IReadOnlyList<WorkoutImportWarning> CollectImportWarnings(
         IReadOnlyList<WorkoutImportRowDraft> rows)
     {
-        var exerciseWarnings = rows.SelectMany(row => row.ExerciseParts
-                .Where(part => part.Warning is not null)
-                .Select(part => new WorkoutImportWarning
-                {
-                    Severity = WorkoutImportIssueSeverity.Warning,
-                    Message = $"{row.SourceReference}: {part.Warning}"
-                }));
+        var exerciseWarnings =
+            rows
+                .SelectMany(row => row.ExerciseParts
+                    .Where(part => part.Warning is not null)
+                    .Select(part => new WorkoutImportWarning
+                    {
+                        Severity = WorkoutImportIssueSeverity.Warning,
+                        Message = $"{row.SourceReference}: {part.Warning}"
+                    }));
+
         var ambiguousBlockRows = rows.Where(row => row.WorkWindows.Count > 1);
         var blockWarnings = ambiguousBlockRows.Select(row => new WorkoutImportWarning
         {
@@ -116,7 +69,11 @@ public sealed class CoachExcelWorkoutImportInterpreter(
             Message = $"{row.SourceReference}: Multiple work windows were found in one row. Exercise grouping needs review."
         });
         var prescriptionWarnings = rows.SelectMany(row => row.Warnings);
-        return exerciseWarnings.Concat(prescriptionWarnings).Concat(blockWarnings).ToList();
+
+        return exerciseWarnings
+            .Concat(prescriptionWarnings)
+            .Concat(blockWarnings)
+            .ToList();
     }
 
     private SortedDictionary<DateTime, List<WorkoutImportRowDraft>> InterpretRowsByDate(
@@ -144,7 +101,8 @@ public sealed class CoachExcelWorkoutImportInterpreter(
                 rowsByDate.Add(date, rows);
             }
 
-            var rowDraft = rowInterpreter.Interpret(rowCells);
+            var recognizedRow = rowInterpreter.Interpret(rowCells);
+            var rowDraft = recognizedRow is null ? null : WorkoutSemanticResolver.ResolveRow(recognizedRow);
             if (rowDraft is not null)
             {
                 rows.Add(rowDraft);
@@ -152,7 +110,7 @@ public sealed class CoachExcelWorkoutImportInterpreter(
 
             if (logger.Enabled)
             {
-                var rowLog = WorkoutRowLog.Format(date, row.RowNumber, rowDraft, rowCells);
+                var rowLog = WorkoutRowLog.Format(date, row, rowDraft, rowCells);
                 logger.Log(nameof(CoachExcelWorkoutImportInterpreter), rowLog);
             }
         }

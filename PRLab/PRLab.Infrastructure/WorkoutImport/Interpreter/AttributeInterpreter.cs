@@ -1,3 +1,5 @@
+using System.Globalization;
+using PRLab.Application.Models.ImportDraft;
 using System.Text.RegularExpressions;
 using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Utilities;
@@ -11,11 +13,14 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
     private readonly IReadOnlyList<Qualifier> trailing = BuildQualifiers(
         profile, WorkoutImportAttributeMatchMode.TrailingQualifier, WorkoutTextMatching.WordEnd);
     private readonly ILookup<string, WorkoutImportAttributeAssignment> matchedAliases = BuildAliasLookup(profile);
-    private readonly IReadOnlyList<Qualifier> equipmentAliases = BuildEquipmentAliases(profile);
+    private readonly IReadOnlyList<EquipmentAlias> equipmentAliases = BuildEquipmentAliases(profile);
 
-    public ExerciseAttributes Interpret(string text, TextSpan exerciseSpan, int nextExerciseStart, bool isFirstMatch)
+    public ExerciseQualifiers Recognize(
+        WorkoutSemanticSource source, WorkoutExerciseSemanticTarget target,
+        TextSpan exerciseSpan, int nextExerciseStart, bool isFirstMatch)
     {
-        var assignments = new List<WorkoutImportAttributeAssignment>();
+        var text = source.Text;
+        var items = new List<WorkoutImportSemanticItem>();
         var spans = new List<TextSpan>();
         var matchedStart = exerciseSpan.Start;
 
@@ -27,97 +32,175 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
             var gap = leadingEnd < exerciseSpan.Start ? text[leadingEnd..exerciseSpan.Start] : string.Empty;
             if (string.IsNullOrWhiteSpace(gap))
             {
-                var precedingMatches = leadingMatches.Where(match => match.Span.Start < exerciseSpan.Start);
-                foreach (var match in precedingMatches)
+                foreach (var match in leadingMatches)
                 {
-                    assignments.AddRange(match.Assignments);
+                    var recognized = RecognizeAssignments(match.Assignments, source, target, match.Span);
+                    items.AddRange(recognized);
+                    if (recognized.Count == 0 || match.Span.Start >= exerciseSpan.Start)
+                    {
+                        continue;
+                    }
+
                     var end = Math.Min(match.Span.End, exerciseSpan.Start);
                     spans.Add(new TextSpan(match.Span.Start, end - match.Span.Start));
                     matchedStart = Math.Min(matchedStart, match.Span.Start);
                 }
-
-                var overlappingMatches = leadingMatches.Where(match => match.Span.Start >= exerciseSpan.Start);
-                foreach (var match in overlappingMatches)
-                {
-                    assignments.AddRange(match.Assignments);
-                }
             }
         }
 
+        var remainingStart = exerciseSpan.End;
         var trailingMatches = MatchTrailingQualifiers(text, exerciseSpan.End, nextExerciseStart);
         foreach (var match in trailingMatches)
         {
-            assignments.AddRange(match.Assignments);
+            var recognized = RecognizeAssignments(match.Assignments, source, target, match.Span);
+            if (recognized.Count == 0)
+            {
+                break;
+            }
+
+            items.AddRange(recognized);
             spans.Add(match.Span);
+            remainingStart = match.Span.End;
         }
 
+        var matchedSpan = new TextSpan(matchedStart, exerciseSpan.End - matchedStart);
+        var matchedText = matchedSpan.Read(text);
         var exerciseText = exerciseSpan.Read(text);
-        var matchedText = text[matchedStart..exerciseSpan.End];
-        assignments.AddRange(GetAliasAssignments(matchedText));
-        assignments.AddRange(GetAliasAssignments(exerciseText));
-        var distinctAssignments = assignments.DistinctBy(attribute => (attribute.Type, attribute.Value)).ToList();
-        var remainingStart = trailingMatches.Count == 0 ? exerciseSpan.End : trailingMatches[^1].Span.End;
-        var remainingText = text[remainingStart..nextExerciseStart].Trim();
+        items.AddRange(RecognizeAssignments(GetAliasAssignments(matchedText), source, target, matchedSpan));
+        if (matchedSpan != exerciseSpan)
+        {
+            items.AddRange(RecognizeAssignments(GetAliasAssignments(exerciseText), source, target, exerciseSpan));
+        }
 
-        return new ExerciseAttributes(matchedText, remainingText, distinctAssignments, spans);
+        var remainingText = text[remainingStart..nextExerciseStart].Trim();
+        return new ExerciseQualifiers(matchedText, remainingText, items, spans);
     }
 
-    public IEnumerable<(TextSpan Span, WorkoutImportAttributeAssignment Assignment)> FindEquipment(string text)
+    public IEnumerable<WorkoutEquipmentSemantic> FindEquipment(WorkoutSemanticSource source, WorkoutExerciseSemanticTarget target)
     {
-        var matches = equipmentAliases.SelectMany(alias => alias.Pattern.Matches(text).Cast<Match>()
-            .Select(match => (Match: match, Assignment: alias.Assignments[0])));
-        var matchesInTextOrder = matches.OrderBy(entry => entry.Match.Index)
-            .ThenByDescending(entry => entry.Match.Length);
+        var matches =
+            equipmentAliases
+                .SelectMany(alias => alias.Pattern.Matches(source.Text)
+                    .Cast<Match>()
+                    .Select(match => (Match: match, Name: alias.Name)));
+        var matchesInTextOrder =
+            matches
+                .OrderBy(entry => entry.Match.Index)
+                .ThenByDescending(entry => entry.Match.Length);
+
         var end = 0;
-        foreach (var (match, assignment) in matchesInTextOrder)
+        foreach (var (match, name) in matchesInTextOrder)
         {
             if (match.Index >= end)
             {
                 var span = new TextSpan(match.Index, match.Length);
-                yield return (span, assignment);
+                var origin = CreateOrigin(source, target, span);
+                yield return new WorkoutEquipmentSemantic(origin, name);
                 end = span.End;
             }
         }
     }
 
-    private static IReadOnlyList<Qualifier> BuildEquipmentAliases(WorkoutImportProfile profile) =>
+    private static List<WorkoutImportSemanticItem> RecognizeAssignments(
+        IEnumerable<WorkoutImportAttributeAssignment> assignments,
+        WorkoutSemanticSource source,
+        WorkoutExerciseSemanticTarget target,
+        TextSpan span)
+    {
+        var origin = CreateOrigin(source, target, span);
+        var items = new List<WorkoutImportSemanticItem>();
+        foreach (var assignment in assignments)
+        {
+            var value = assignment.Value;
+            WorkoutImportSemanticItem? item = assignment.Type switch
+            {
+                WorkoutImportAttributeType.Technique => new WorkoutTechniqueSemantic(origin, value),
+                WorkoutImportAttributeType.MovementQuality => new WorkoutMovementQualitySemantic(origin, value),
+                WorkoutImportAttributeType.Equipment => new WorkoutEquipmentSemantic(origin, value),
+                WorkoutImportAttributeType.EquipmentQuantity when int.TryParse(value, out var quantity) =>
+                    new WorkoutEquipmentQuantitySemantic(origin, quantity),
+                WorkoutImportAttributeType.EquipmentHeight when decimal.TryParse(
+                    value,
+                    NumberStyles.Number,
+                    CultureInfo.InvariantCulture,
+                    out var height) =>
+                    new WorkoutEquipmentHeightSemantic(origin, height),
+                WorkoutImportAttributeType.EquipmentUnit => new WorkoutEquipmentUnitSemantic(origin, value),
+                WorkoutImportAttributeType.AddedLoad when bool.TryParse(value, out var addedLoad) =>
+                    new WorkoutAddedLoadSemantic(origin, addedLoad),
+                WorkoutImportAttributeType.DistanceUnit => new WorkoutDistanceUnitSemantic(origin, value),
+                _ => null
+            };
+            if (item is not null)
+            {
+                items.Add(item);
+            }
+        }
+
+        return items;
+    }
+
+    private static WorkoutSemanticOrigin CreateOrigin(
+        WorkoutSemanticSource source,
+        WorkoutExerciseSemanticTarget target,
+        TextSpan span)
+    {
+        var matchedSource = source with { Text = span.Read(source.Text), Offset = source.Offset + span.Start };
+        return new WorkoutSemanticOrigin(matchedSource, target);
+    }
+
+    private static IReadOnlyList<EquipmentAlias> BuildEquipmentAliases(WorkoutImportProfile profile) =>
         profile.Aliases.Equipment
             .Where(alias => !string.IsNullOrWhiteSpace(alias.Key) && !string.IsNullOrWhiteSpace(alias.Value))
-            .Select(alias => new Qualifier(
+            .Select(alias => new EquipmentAlias(
                 WorkoutTextMatching.CreatePhrasePattern(
-                    alias.Key, WorkoutTextMatching.WordStart, WorkoutTextMatching.WordEnd),
-                [new WorkoutImportAttributeAssignment { Type = WorkoutImportAttributeType.Equipment, Value = alias.Value }]))
+                    alias.Key,
+                    WorkoutTextMatching.WordStart,
+                    WorkoutTextMatching.WordEnd),
+                alias.Value))
             .ToList();
 
     private static IReadOnlyList<Qualifier> BuildQualifiers(
-        WorkoutImportProfile profile, WorkoutImportAttributeMatchMode mode, string boundary) =>
+        WorkoutImportProfile profile,
+        WorkoutImportAttributeMatchMode mode,
+        string boundary) =>
         profile.Aliases.Attributes
             .Where(entry => entry.Value.MatchMode == mode && !string.IsNullOrWhiteSpace(entry.Key))
             .Select(entry => new Qualifier(
-                WorkoutTextMatching.CreatePhrasePattern(entry.Key, "^", boundary), entry.Value.Assignments))
+                WorkoutTextMatching.CreatePhrasePattern(entry.Key, "^", boundary),
+                entry.Value.Assignments))
             .ToList();
 
     private static ILookup<string, WorkoutImportAttributeAssignment> BuildAliasLookup(WorkoutImportProfile profile)
     {
-        var aliasRules = profile.Aliases.Attributes.Where(entry =>
-            entry.Value.MatchMode == WorkoutImportAttributeMatchMode.MatchedAlias &&
-            !string.IsNullOrWhiteSpace(entry.Key));
-        var assignments = aliasRules.SelectMany(entry =>
-        {
-            var aliasKey = FormatingUtilities.NormalizeNonNullString(entry.Key);
-            return entry.Value.Assignments.Select(attribute => (AliasKey: aliasKey, Attribute: attribute));
-        });
+        var aliasRules =
+            profile.Aliases.Attributes
+                .Where(entry =>
+                    entry.Value.MatchMode == WorkoutImportAttributeMatchMode.MatchedAlias &&
+                    !string.IsNullOrWhiteSpace(entry.Key));
+        var assignments =
+            aliasRules
+                .SelectMany(entry =>
+                {
+                    var aliasKey = FormatingUtilities.NormalizeNonNullString(entry.Key);
+                    return entry.Value.Assignments.Select(attribute => (AliasKey: aliasKey, Attribute: attribute));
+                });
+
         return assignments.ToLookup(entry => entry.AliasKey, entry => entry.Attribute);
     }
 
     private static (TextSpan Span, IReadOnlyList<WorkoutImportAttributeAssignment> Assignments)? FindQualifier(
-        IReadOnlyList<Qualifier> qualifiers, string text, int offset)
+        IReadOnlyList<Qualifier> qualifiers,
+        string text,
+        int offset)
     {
         var matches = qualifiers.Select(qualifier => (Qualifier: qualifier, Match: qualifier.Pattern.Match(text)));
-        var bestMatch = matches
-            .Where(entry => entry.Match.Success)
-            .DefaultIfEmpty()
-            .MaxBy(entry => entry.Match?.Length ?? 0);
+        var bestMatch =
+            matches
+                .Where(entry => entry.Match.Success)
+                .DefaultIfEmpty()
+                .MaxBy(entry => entry.Match?.Length ?? 0);
+
         if (bestMatch.Match is null || bestMatch.Qualifier is null)
         {
             return null;
@@ -176,11 +259,13 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
         return matchedAliases[aliasKey];
     }
 
+    private sealed record EquipmentAlias(Regex Pattern, string Name);
+
     private sealed record Qualifier(Regex Pattern, IReadOnlyList<WorkoutImportAttributeAssignment> Assignments);
 }
 
-internal sealed record ExerciseAttributes(
+internal sealed record ExerciseQualifiers(
     string MatchedText,
     string RemainingText,
-    IReadOnlyList<WorkoutImportAttributeAssignment> Assignments,
+    IReadOnlyList<WorkoutImportSemanticItem> Items,
     IReadOnlyList<TextSpan> Spans);

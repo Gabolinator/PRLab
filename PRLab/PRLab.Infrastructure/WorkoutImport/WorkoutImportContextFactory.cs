@@ -7,7 +7,6 @@ using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 
-
 namespace PRLab.Infrastructure.WorkoutImport;
 
 public sealed class WorkoutImportContextFactory(
@@ -24,12 +23,15 @@ public sealed class WorkoutImportContextFactory(
         var profile = await profileProvider.GetAsync(
             profileName,
             ct);
-        
+
         var exercises = await exerciseRepository.ListAsync(ct);
         logger.Log(nameof(WorkoutImportContextFactory), $"Retrieved exercises: {exercises.Count}");
 
         var userId = currentUserService.GetRequiredUserId();
-        var exerciseReferences = exercises.Select(CreateExerciseReference).ToList();
+        var exerciseReferences =
+            exercises
+                .Select(CreateExerciseReference)
+                .ToList();
 
         return new WorkoutImportContext
         {
@@ -41,15 +43,29 @@ public sealed class WorkoutImportContextFactory(
 
     private static WorkoutImportExerciseReference CreateExerciseReference(Exercise exercise)
     {
-        var movements = exercise.Steps.Select(step => step.Movement).DistinctBy(movement => movement.Id).ToList();
-        var defaults = movements.Select(movement => movement.DefaultWorkTargetType).Distinct().ToList();
-        var allowedTypes = movements
-            .Select(movement => movement.AllowedWorkTargets.Select(target => target.TargetType)
-                .Append(movement.DefaultWorkTargetType))
-            .ToList();
+        var movements =
+            exercise.Steps
+                .Select(step => step.Movement)
+                .DistinctBy(movement => movement.Id)
+                .ToList();
+
+        var defaults =
+            movements
+                .Select(movement => movement.DefaultWorkTargetType)
+                .Distinct()
+                .ToList();
+        var allowedTypes =
+            movements
+                .Select(movement => movement.AllowedWorkTargets
+                    .Select(target => target.TargetType)
+                    .Append(movement.DefaultWorkTargetType))
+                .ToList();
         var sharedTypes = allowedTypes.Count == 0
             ? null
-            : allowedTypes.Aggregate((shared, next) => shared.Intersect(next)).Distinct().ToArray();
+            : allowedTypes
+                .Aggregate((shared, next) => shared.Intersect(next))
+                .Distinct()
+                .ToArray();
 
         return new WorkoutImportExerciseReference
         {

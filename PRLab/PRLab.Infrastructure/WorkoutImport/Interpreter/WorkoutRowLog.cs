@@ -1,18 +1,37 @@
 using System.Text;
 using PRLab.Application.Models.ImportDraft;
+using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
+using PRLab.Infrastructure.WorkoutImport.Extractor.Excel;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
 
 internal static class WorkoutRowLog
 {
     public static string Format(
-        DateTime date, int rowNumber, WorkoutImportRowDraft? row, WorkoutRowCells rowCells)
+        DateTime date,
+        ExtractedWorkoutRow sourceRow,
+        WorkoutImportRowDraft? row,
+        WorkoutRowCells rowCells)
     {
         if (row is null)
         {
-            var skipped = new StringBuilder($"Skipped workout row · {date:yyyy-MM-dd} · row {rowNumber}");
-            AppendCellConsumption(skipped, rowCells);
+            var ignoredLabels =
+                rowCells.Cells
+                    .SelectMany(cell => cell.Consumption
+                        .Where(entry => entry.Kind == ConsumptionKind.Ignored)
+                        .Select(entry => entry.Span.Read(cell.Text)))
+                    .Distinct();
+            var reason = string.Join(", ", ignoredLabels);
+
+            var skipped = new StringBuilder($"Skipped workout row · {date:yyyy-MM-dd} · row {sourceRow.RowNumber}");
+            if (reason.Length > 0)
+            {
+                skipped.Append($" · ignored label: {reason}");
+            }
+
+            AppendSourceRow(skipped, sourceRow, rowCells);
+
             return skipped.ToString();
         }
 
@@ -22,160 +41,209 @@ internal static class WorkoutRowLog
             message.Append($" · order {order}");
         }
 
-        AppendField("Exercise cell", row.SourceText, "  ");
-        AppendField("Details", row.Details, "  ");
-        AppendField("Notes", row.Notes, "  ");
+        AppendSourceRow(message, sourceRow, rowCells);
+        AppendExercises(message, row);
+        AppendRowSemantics(message, row.RowSemanticItems);
+        AppendUnconsumed(message, row.UnconsumedText);
+        AppendWarnings(message, row);
 
-        if (row.ExerciseParts.Count == 0)
-        {
-            message.AppendLine().Append("  No exercise parts");
-        }
-
-        foreach (var part in row.ExerciseParts)
-        {
-            message.AppendLine().Append(part.ExerciseName is null
-                ? "  - Unresolved exercise"
-                : $"  - {part.ExerciseName} ({part.ExerciseId})");
-
-            var exerciseTextLabel = part.MatchedText is null ? "Source" : "Matched";
-            var exerciseText = part.MatchedText ?? part.SourceText;
-            var exerciseAttributes = part.Attributes.Select(attribute => $"{attribute.Type} = {attribute.Value}");
-            var attributeText = string.Join(", ", exerciseAttributes);
-            var expectedAttributes = part.ExpectedAttributes.Select(attribute => $"{attribute.Type} = {attribute.Value}");
-            var expectedAttributeText = string.Join(", ", expectedAttributes);
-            AppendField(exerciseTextLabel, exerciseText, "    ");
-            AppendField("Remaining text", part.RemainingText, "    ");
-            AppendField("Attributes", attributeText, "    ");
-            AppendField("Expected attributes", expectedAttributeText, "    ");
-            AppendField("Warning", part.Warning, "    ");
-        }
-
-        AppendResolvedPrescriptions(message, row);
-        AppendCellConsumption(message, rowCells);
         return message.ToString();
-
-        void AppendField(string label, string? value, string indent)
-        {
-            AppendLogField(message, label, value, indent);
-        }
     }
 
-    private static void AppendResolvedPrescriptions(StringBuilder message, WorkoutImportRowDraft row)
+    private static void AppendSourceRow(
+        StringBuilder message,
+        ExtractedWorkoutRow sourceRow,
+        WorkoutRowCells rowCells)
     {
-        if (row.WorkWindows.Count == 0 && row.Prescriptions.Count == 0)
+        var lastSourceColumn = sourceRow.Cells.Max(cell => cell.ColumnIndex);
+        var sourceValues =
+            rowCells.Cells
+                .Take(lastSourceColumn + 1)
+                .Select(cell => cell.Text);
+        var originalRowText = string.Join(" | ", sourceValues);
+
+        AppendLine(message, "  Source row: ", originalRowText);
+    }
+
+    private static void AppendExercises(StringBuilder message, WorkoutImportRowDraft row)
+    {
+        if (row.ExerciseInterpretations.Count == 0)
         {
             return;
         }
 
-        message.AppendLine().Append("  Resolved prescriptions");
-        foreach (var window in row.WorkWindows)
+        message.AppendLine().Append("  Exercises");
+        foreach (var exercise in row.ExerciseInterpretations)
         {
-            var mode = window.Mode == WorkMode.MaxWorkInTime ? "AMRAP (MaxWorkInTime)" : window.Mode.ToString();
-            var duration = FormatDuration(window.DurationSeconds);
-            var result = $"{window.SourceText} → {mode}, {duration} · {window.SourceReference}";
-            AppendLogField(message, "Work window", result, "    ");
-        }
+            var part = row.ExerciseParts.FirstOrDefault(part =>
+                part.ExerciseId == exercise.Exercise.Id &&
+                part.SourceReference == exercise.Source.Reference &&
+                part.SourceOffset == exercise.Source.Offset);
+            var matchedText = part?.MatchedText ?? exercise.Source.Text;
 
-        foreach (var prescription in row.Prescriptions)
-        {
-            var step = prescription.Step;
-            var details = FormatPrescription(prescription);
-            var result = $"{step.SourceText} → {details} · {prescription.SourceReference}";
-            AppendLogField(message, "Prescription", result, "    ");
+            message.AppendLine().Append("    ").Append(exercise.Exercise.Name);
+            AppendLine(message, "      Matched: ", matchedText);
+            AppendSemantics(message, exercise.SemanticItems, "      ");
         }
     }
 
-    private static string FormatPrescription(WorkoutImportPrescriptionDraft prescription)
+    private static void AppendRowSemantics(StringBuilder message, IReadOnlyList<WorkoutImportSemanticItem> items)
     {
-        var step = prescription.Step;
-        var details = new List<string>();
-        if (step.ExerciseName is { } name)
+        if (items.Count == 0)
         {
-            details.Add(name);
+            return;
         }
 
-        if (step.WorkValue is { } value && step.WorkTargetType is { } target)
-        {
-            var work = target == WorkTargetType.DurationSeconds ? $"{value} seconds" : $"{value} {target}";
-            details.Add(step.Scope == WorkTargetScope.Total ? work : $"{work} ({step.Scope})");
-        }
-
-        if (step.SetCount is { } sets)
-        {
-            details.Add($"sets = {sets}");
-        }
-
-        if (step.LoadValue is { } load)
-        {
-            details.Add($"load = {load} {step.LoadUnit}");
-        }
-
-        if (step.RestSeconds is { } rest)
-        {
-            details.Add($"rest = {FormatDuration(rest)}");
-        }
-
-        if (step.MinimumRestSeconds is { } minimumRest)
-        {
-            details.Add($"minimum rest = {FormatDuration(minimumRest)}");
-        }
-
-        if (prescription.TimeCapSeconds is { } cap)
-        {
-            details.Add($"time cap = {FormatDuration(cap)}");
-        }
-
-        if (step.Notes is { } notes)
-        {
-            details.Add(notes);
-        }
-
-        return details.Count == 0 ? step.StepKind.ToString() : string.Join(", ", details);
+        message.AppendLine().Append("  Row and block semantics");
+        AppendSemantics(message, items, "    ");
     }
+
+    private static void AppendSemantics(
+        StringBuilder message,
+        IReadOnlyList<WorkoutImportSemanticItem> items,
+        string indent)
+    {
+        var semanticGroups = items.GroupBy(item => item.Origin);
+        foreach (var group in semanticGroups)
+        {
+            var descriptions =
+                group
+                    .Select(DescribeSemanticItem)
+                    .Distinct();
+            if (group.Key.SeriesIndex.HasValue)
+            {
+                AppendLine(message, indent, string.Join(" · ", descriptions));
+                continue;
+            }
+
+            foreach (var description in descriptions)
+            {
+                AppendLine(message, indent, description);
+            }
+        }
+    }
+
+    private static string DescribeSemanticItem(WorkoutImportSemanticItem item) =>
+        item switch
+        {
+            WorkoutTechniqueSemantic technique => $"Technique: {technique.Technique}",
+            WorkoutMovementQualitySemantic quality => $"Movement quality: {quality.Quality}",
+            WorkoutEquipmentSemantic equipment => $"Equipment: {equipment.Name}",
+            WorkoutEquipmentQuantitySemantic quantity => $"Equipment quantity: {quantity.Quantity}",
+            WorkoutEquipmentHeightSemantic height => $"Equipment height: {height.Height}",
+            WorkoutEquipmentUnitSemantic unit => $"Equipment unit: {unit.Unit}",
+            WorkoutAddedLoadSemantic load => $"Added load: {(load.AddedLoad ? "yes" : "no")}",
+            WorkoutDistanceUnitSemantic unit => $"Distance unit: {unit.Unit}",
+            WorkoutWorkSemantic work => $"Work: {FormatWork(work)}",
+            WorkoutLoadSemantic load => $"Load: {FormatLoad(load)}",
+            WorkoutRestSemantic rest => $"Rest: {(rest.IsMinimum ? "minimum " : string.Empty)}{FormatDuration(rest.Seconds)}",
+            WorkoutTimeCapSemantic cap => $"Time cap: {FormatDuration(cap.Seconds)}",
+            WorkoutWorkWindowSemantic window => $"Work window: {FormatWorkMode(window.Mode)} {FormatDuration(window.DurationSeconds)}",
+            WorkoutInstructionSemantic { Instruction: WorkoutInstructionKind.SplitAnyhow } => "Instruction: Split anyhow",
+            _ => item.Origin.Source.Text
+        };
+
+    private static string FormatWork(WorkoutWorkSemantic work)
+    {
+        var unit = work.TargetType switch
+        {
+            WorkTargetType.Repetitions => work.Value == 1 ? "rep" : "reps",
+            WorkTargetType.DurationSeconds => "seconds",
+            WorkTargetType.DistanceMeters => "meters",
+            WorkTargetType.TimeUnderTensionSeconds => "seconds under tension",
+            _ => work.TargetType.ToString()
+        };
+        var sets = work.SetCount is { } count
+            ? $"{count} {(count == 1 ? "set" : "sets")} × "
+            : string.Empty;
+        var scope = work.Scope switch
+        {
+            WorkTargetScope.Total => string.Empty,
+            WorkTargetScope.PerSide => " per side",
+            _ => $" ({work.Scope})"
+        };
+
+        return $"{sets}{work.Value} {unit}{scope}";
+    }
+
+    private static string FormatLoad(WorkoutLoadSemantic load)
+    {
+        var unit = load.Unit switch
+        {
+            LoadUnit.Kilogram => "kg",
+            LoadUnit.Pound => "lb",
+            _ => load.Unit.ToString()
+        };
+
+        return $"{load.Value} {unit}";
+    }
+
+    private static string FormatWorkMode(WorkMode mode) =>
+        mode == WorkMode.MaxWorkInTime ? "AMRAP" : mode.ToString();
 
     private static string FormatDuration(int seconds) =>
         seconds >= 60 && seconds % 60 == 0 ? $"{seconds / 60} min ({seconds} s)" : $"{seconds} s";
 
-    private static void AppendCellConsumption(StringBuilder message, WorkoutRowCells row)
+    private static void AppendUnconsumed(StringBuilder message, IReadOnlyList<WorkoutImportTextFragment> fragments)
     {
-        message.AppendLine().Append($"  Cell consumption (date column {row.DateColumnIndex + 1}, offset {row.ColumnOffset})");
-        foreach (var cell in row.Cells)
+        var remaining =
+            fragments
+                .Select(fragment => (fragment.SourceReference, Text: CleanUnconsumedText(fragment.Text)))
+                .Where(fragment => fragment.Text.Any(char.IsLetterOrDigit))
+                .Distinct()
+                .ToList();
+        if (remaining.Count == 0)
         {
-            var remainingText = cell.GetUnconsumedText().ToList();
-            var state = string.IsNullOrWhiteSpace(cell.Text) ? "blank"
-                : cell.Consumption.Count == 0 ? "unconsumed"
-                : remainingText.Count == 0 ? "consumed"
-                : "partially consumed";
-            var expected = cell.ExpectedProperties.Count == 0
-                ? "none"
-                : string.Join(", ", cell.ExpectedProperties);
+            return;
+        }
 
-            message.AppendLine().Append($"    Column {cell.ColumnIndex + 1} · {state} · expected {expected}");
-            if (cell.SourceReference is not null)
-            {
-                message.Append($" · {cell.SourceReference}");
-            }
-
-            var consumptionInTextOrder = cell.Consumption.OrderBy(entry => entry.Span.Start);
-            foreach (var entry in consumptionInTextOrder)
-            {
-                var consumedText = cell.Text.Substring(entry.Span.Start, entry.Span.Length);
-                AppendLogField(message, $"Consumed as {entry.Kind}", consumedText, "      ");
-            }
-
-            foreach (var remaining in remainingText)
-            {
-                AppendLogField(message, "Unconsumed", remaining.Text, "      ");
-            }
+        message.AppendLine().Append("  Unconsumed");
+        foreach (var (sourceReference, text) in remaining)
+        {
+            var prefix = string.IsNullOrWhiteSpace(sourceReference) ? "    " : $"    {sourceReference} · ";
+            AppendLine(message, prefix, text);
         }
     }
 
-    private static void AppendLogField(StringBuilder message, string label, string? value, string indent)
+    private static string CleanUnconsumedText(string text)
     {
-        if (!string.IsNullOrWhiteSpace(value))
+        var trimmed = text.Trim(' ', '\t', '\r', '\n', ',', ';', '|');
+        if (trimmed.EndsWith(" +", StringComparison.Ordinal))
         {
-            message.AppendLine().Append(indent).Append(label).Append(": ")
-                .Append(value.ReplaceLineEndings(Environment.NewLine + indent + "  "));
+            trimmed = trimmed[..^2];
+        }
+
+        return trimmed.Trim(' ', '\t', '\r', '\n', '(', ')');
+    }
+
+    private static void AppendWarnings(StringBuilder message, WorkoutImportRowDraft row)
+    {
+        var exerciseWarnings =
+            row.ExerciseParts
+                .Where(part => part.Warning is not null)
+                .Select(part => part.ExerciseName is { } name ? $"{name} · {part.Warning}" : part.Warning!);
+        var warnings =
+            exerciseWarnings
+                .Concat(row.Warnings.Select(warning => warning.Message))
+                .Distinct()
+                .ToList();
+        if (row.WorkWindows.Count > 1)
+        {
+            warnings.Add("Multiple work windows were found in one row. Exercise grouping needs review.");
+        }
+
+        if (warnings.Count == 0)
+        {
+            return;
+        }
+
+        message.AppendLine().Append("  Warnings");
+        foreach (var warning in warnings)
+        {
+            AppendLine(message, "    ", warning);
         }
     }
+
+    private static void AppendLine(StringBuilder message, string prefix, string text) =>
+        message.AppendLine().Append(prefix).Append(text.ReplaceLineEndings(Environment.NewLine + "      "));
 }

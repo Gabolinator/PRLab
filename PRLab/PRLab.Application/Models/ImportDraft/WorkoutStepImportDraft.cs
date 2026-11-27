@@ -2,6 +2,8 @@
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.Workout;
 
+using PRLab.Application.WorkoutImport.Model;
+
 namespace PRLab.Application.Models.ImportDraft;
 
 public sealed record WorkoutStepImportDraft
@@ -29,6 +31,8 @@ public sealed record WorkoutStepImportDraft
     public int? SetCount { get; init; }
 
     public string? Notes { get; init; }
+
+    public IReadOnlyList<WorkoutImportAttributeAssignment> Attributes { get; init; } = [];
 
     public decimal Confidence { get; init; }
     

@@ -16,9 +16,10 @@ public sealed class WorkoutImportInterpreterCoordinator(
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(context);
 
-        var matchingInterpreters = interpreters
-            .Where(interpreter => interpreter.CanHandle(source))
-            .ToList();
+        var matchingInterpreters =
+            interpreters
+                .Where(interpreter => interpreter.CanHandle(source))
+                .ToList();
 
         if (matchingInterpreters.Count == 0)
         {
