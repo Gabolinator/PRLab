@@ -14,6 +14,13 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
         profile, WorkoutImportAttributeMatchMode.TrailingQualifier, WorkoutTextMatching.WordEnd);
     private readonly ILookup<string, WorkoutImportAttributeAssignment> matchedAliases = BuildAliasLookup(profile);
     private readonly IReadOnlyList<EquipmentAlias> equipmentAliases = BuildEquipmentAliases(profile);
+    private readonly IReadOnlyList<PauseAlias> pauseAliases =
+        profile.Aliases.PausePositions
+            .Where(alias => !string.IsNullOrWhiteSpace(alias.Key))
+            .Select(alias => new PauseAlias(
+                WorkoutTextMatching.CreatePhrasePattern(alias.Key, WorkoutTextMatching.WordStart, WorkoutTextMatching.WordEnd),
+                alias.Value))
+            .ToList();
 
     public ExerciseQualifiers Recognize(
         WorkoutSemanticSource source, WorkoutExerciseSemanticTarget target,
@@ -74,6 +81,18 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
 
         var remainingText = text[remainingStart..nextExerciseStart].Trim();
         return new ExerciseQualifiers(matchedText, remainingText, items, spans);
+    }
+
+    public IEnumerable<WorkoutPauseSemantic> FindPauses(WorkoutSemanticSource source, WorkoutExerciseSemanticTarget target)
+    {
+        foreach (var alias in pauseAliases)
+        {
+            foreach (Match match in alias.Pattern.Matches(source.Text))
+            {
+                var span = new TextSpan(match.Index, match.Length);
+                yield return new WorkoutPauseSemantic(CreateOrigin(source, target, span), alias.Position);
+            }
+        }
     }
 
     public IEnumerable<WorkoutEquipmentSemantic> FindEquipment(WorkoutSemanticSource source, WorkoutExerciseSemanticTarget target)
@@ -258,6 +277,8 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
         var aliasKey = FormatingUtilities.NormalizeNonNullString(text);
         return matchedAliases[aliasKey];
     }
+
+    private sealed record PauseAlias(Regex Pattern, WorkoutPausePosition Position);
 
     private sealed record EquipmentAlias(Regex Pattern, string Name);
 

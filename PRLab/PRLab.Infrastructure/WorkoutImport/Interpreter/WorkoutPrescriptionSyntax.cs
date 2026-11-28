@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
+using PRLab.Application.Models.ImportDraft;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
@@ -27,8 +28,11 @@ internal static class WorkoutPrescriptionSyntax
     private const string Times = @"\s*[x×]\s*";
     private static readonly Regex compactLoadPattern = CreatePattern(
         $@"(?:(?<sets>{Count}){Times}(?<reps>{Count}){Times}(?<load>{Weight})|" +
-        $@"(?<reps>{Count}){Times}(?<load>{Weight})(?:\s*-\s*(?<load>{Weight}))+|" +
-        $@"(?<reps>{Count}){Times}(?<load>[0-9]+\.[0-9]+))(?!\s*[x×.\-]\s*[0-9])");
+        $@"(?<reps>{Count}){Times}(?<load>{Weight})(?:\s*-\s*(?<load>{Weight}))+)(?!\s*[x×.\-]\s*[0-9])");
+    private static readonly Regex compactPairPattern = CreatePattern(
+        $@"(?<first>{Count}){Times}(?<second>{Weight})(?!\s*[x×.\-]\s*[0-9])");
+    private static readonly Regex clockPattern = CreatePattern(@"(?<minutes>[0-9]+):(?<seconds>[0-5][0-9])");
+    private static readonly Regex calorieRatePattern = CreatePattern($@"(?<rate>{Weight})\s*cal\s*/\s*h");
 
     public static IEnumerable<RawPrescriptionToken> Scan(string text, bool useCompactRepLoadSyntax)
     {
@@ -49,6 +53,13 @@ internal static class WorkoutPrescriptionSyntax
                 continue;
             }
 
+            if (useCompactRepLoadSyntax && ReadCompactPair(text, offset) is { } compactPair)
+            {
+                yield return compactPair;
+                offset = compactPair.Span.End;
+                continue;
+            }
+
             var composite = unsupportedComposite.Match(text, offset);
             if (composite.Success)
             {
@@ -66,6 +77,22 @@ internal static class WorkoutPrescriptionSyntax
             yield return token;
             offset = token.Span.End;
         }
+    }
+
+    private static RawCompactPairToken? ReadCompactPair(string text, int offset)
+    {
+        var match = compactPairPattern.Match(text, offset);
+        var explicitWork = workPattern.Match(text, offset);
+        var secondText = match.Groups["second"].Value;
+        if (explicitWork.Length > match.Length ||
+            !int.TryParse(match.Groups["first"].Value, out var first) ||
+            !decimal.TryParse(secondText, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var second))
+        {
+            return null;
+        }
+
+        int? integerSecond = int.TryParse(secondText, out var repetitions) && repetitions > 0 ? repetitions : null;
+        return new RawCompactPairToken(GetSpan(match), first, second, integerSecond);
     }
 
     private static RawRepLoadToken? ReadCompactLoad(string text, int offset)
@@ -114,6 +141,21 @@ internal static class WorkoutPrescriptionSyntax
 
     private static RawPrescriptionToken? ReadToken(string text, int offset, int firstContent)
     {
+        var rate = calorieRatePattern.Match(text, offset);
+        if (decimal.TryParse(rate.Groups["rate"].Value, NumberStyles.AllowDecimalPoint,
+                CultureInfo.InvariantCulture, out var caloriesPerHour) && caloriesPerHour > 0)
+        {
+            return new RawCalorieRateToken(GetSpan(rate), caloriesPerHour);
+        }
+
+        var clock = clockPattern.Match(text, offset);
+        if (int.TryParse(clock.Groups["minutes"].Value, out var minutes) &&
+            int.TryParse(clock.Groups["seconds"].Value, out var seconds) &&
+            minutes <= (int.MaxValue - seconds) / 60 && minutes * 60 + seconds > 0)
+        {
+            return new RawClockToken(GetSpan(clock), minutes * 60 + seconds);
+        }
+
         var rest = restPattern.Match(text, offset);
         if (TryReadSeconds(rest, out var restSeconds))
         {
@@ -137,7 +179,7 @@ internal static class WorkoutPrescriptionSyntax
         var split = splitPattern.Match(text, offset);
         if (split.Success)
         {
-            return new RawInstructionToken(GetSpan(split));
+            return new RawInstructionToken(GetSpan(split), WorkoutInstructionKind.SplitAnyhow);
         }
 
         var attached = attachedQuantityPattern.Match(text, offset);
@@ -203,11 +245,18 @@ internal sealed record RawWorkToken(TextSpan Span, RawWorkoutWork Work, bool Req
 internal sealed record RawRepLoadToken(TextSpan Span, int Sets, int Reps, IReadOnlyList<decimal> Loads)
     : RawPrescriptionToken(Span);
 
+internal sealed record RawCompactPairToken(TextSpan Span, int First, decimal Second, int? IntegerSecond)
+    : RawPrescriptionToken(Span);
+
+internal sealed record RawClockToken(TextSpan Span, int Seconds) : RawPrescriptionToken(Span);
+
+internal sealed record RawCalorieRateToken(TextSpan Span, decimal CaloriesPerHour) : RawPrescriptionToken(Span);
+
 internal sealed record RawLoadToken(TextSpan Span, decimal Value, string Unit) : RawPrescriptionToken(Span);
 
 internal sealed record RawDurationToken(TextSpan Span, int Seconds, DurationRole Role) : RawPrescriptionToken(Span);
 
-internal sealed record RawInstructionToken(TextSpan Span) : RawPrescriptionToken(Span);
+internal sealed record RawInstructionToken(TextSpan Span, WorkoutInstructionKind Instruction) : RawPrescriptionToken(Span);
 
 internal enum DurationRole
 {

@@ -103,7 +103,7 @@ internal static class WorkoutRowLog
         IReadOnlyList<WorkoutImportSemanticItem> items,
         string indent)
     {
-        var semanticGroups = items.GroupBy(item => item.Origin);
+        var semanticGroups = items.GroupBy(item => item is WorkoutSetCadenceSemantic cadence ? cadence.WorkOrigin : item.Origin);
         foreach (var group in semanticGroups)
         {
             var descriptions =
@@ -128,6 +128,7 @@ internal static class WorkoutRowLog
         {
             WorkoutTechniqueSemantic technique => $"Technique: {technique.Technique}",
             WorkoutMovementQualitySemantic quality => $"Movement quality: {quality.Quality}",
+            WorkoutPauseSemantic pause => $"Paused at {pause.Position}",
             WorkoutEquipmentSemantic equipment => $"Equipment: {equipment.Name}",
             WorkoutEquipmentQuantitySemantic quantity => $"Equipment quantity: {quantity.Quantity}",
             WorkoutEquipmentHeightSemantic height => $"Equipment height: {height.Height}",
@@ -136,6 +137,8 @@ internal static class WorkoutRowLog
             WorkoutDistanceUnitSemantic unit => $"Distance unit: {unit.Unit}",
             WorkoutWorkSemantic work => $"Work: {FormatWork(work)}",
             WorkoutLoadSemantic load => $"Load: {FormatLoad(load)}",
+            WorkoutSetCadenceSemantic cadence => $"Every: {cadence.Seconds} s",
+            WorkoutCalorieRateSemantic rate => $"Pace: {rate.CaloriesPerHour} cal/h",
             WorkoutRestSemantic rest => $"Rest: {(rest.IsMinimum ? "minimum " : string.Empty)}{FormatDuration(rest.Seconds)}",
             WorkoutTimeCapSemantic cap => $"Time cap: {FormatDuration(cap.Seconds)}",
             WorkoutWorkWindowSemantic window => $"Work window: {FormatWorkMode(window.Mode)} {FormatDuration(window.DurationSeconds)}",
@@ -175,7 +178,7 @@ internal static class WorkoutRowLog
             _ => load.Unit.ToString()
         };
 
-        return $"{load.Value} {unit}";
+        return FormattableString.Invariant($"{load.Value} {unit}");
     }
 
     private static string FormatWorkMode(WorkMode mode) =>

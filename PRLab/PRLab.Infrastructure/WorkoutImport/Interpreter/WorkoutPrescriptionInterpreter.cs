@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using PRLab.Application.Models.ImportDraft;
+using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Model.Value.Enum;
 using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
@@ -7,10 +8,10 @@ using PRLab.Domain.Utilities.Interface;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
 
-internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger, MeasurementSystem measurementSystem)
+internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger, WorkoutImportProfile profile)
 {
     private readonly LoadUnit preferredLoadUnit =
-        measurementSystem == MeasurementSystem.Imperial ? LoadUnit.Pound : LoadUnit.Kilogram;
+        profile.PreferredMeasurementSystem == MeasurementSystem.Imperial ? LoadUnit.Pound : LoadUnit.Kilogram;
     private static readonly Regex amrapPattern = new(
         $@"{WorkoutTextMatching.WordStart}amrap\s*{WorkoutPrescriptionSyntax.Duration}{WorkoutTextMatching.WordEnd}",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -36,7 +37,9 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger, Measurem
     public PrescriptionRecognition RecognizeToken(
         RawPrescriptionToken token,
         WorkoutSemanticSource source,
-        ExercisePrescriptionContext? exerciseContext)
+        ExercisePrescriptionContext? exerciseContext,
+        IReadOnlySet<WorkoutInstructionKind> instructions,
+        WorkoutWorkSemantic? cadenceWork)
     {
         var matchedSource = source with
         {
@@ -54,6 +57,14 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger, Measurem
         {
             RawWorkToken work => RecognizeWork(work, origin, exerciseContext),
             RawRepLoadToken repLoad => RecognizeRepLoad(repLoad, origin, exerciseContext, preferredLoadUnit),
+            RawCompactPairToken pair => RecognizeCompactPair(pair, origin, exerciseContext, instructions),
+            RawClockToken clock when profile.Parsing.UseCompactSetCadence && cadenceWork is not null =>
+                new PrescriptionRecognition(
+                    [new WorkoutSetCadenceSemantic(origin with { Target = cadenceWork.Origin.Target }, clock.Seconds, cadenceWork.Origin)], null),
+            RawClockToken => new PrescriptionRecognition([], null),
+            RawCalorieRateToken rate when exerciseContext is not null =>
+                new PrescriptionRecognition([new WorkoutCalorieRateSemantic(origin, rate.CaloriesPerHour)], null),
+            RawCalorieRateToken => new PrescriptionRecognition([], null),
             RawLoadToken load => new PrescriptionRecognition([new WorkoutLoadSemantic(origin, load.Value,
                 load.Unit.Equals("kg", StringComparison.OrdinalIgnoreCase) ? LoadUnit.Kilogram : LoadUnit.Pound)], null),
             RawDurationToken { Role: DurationRole.TimeCap } cap => new PrescriptionRecognition(
@@ -97,9 +108,7 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger, Measurem
         ExercisePrescriptionContext? exerciseContext,
         LoadUnit loadUnit)
     {
-        var exercise = exerciseContext?.Exercise;
-        if (exercise is null || !exercise.SupportsExternalLoad ||
-            exercise.AllowedWorkTargetTypes?.Contains(WorkTargetType.Repetitions) != true)
+        if (exerciseContext?.SupportsRepLoad != true)
         {
             return new PrescriptionRecognition([], "Compact rep/load notation requires an exercise that supports repetitions and external load.");
         }
@@ -113,6 +122,37 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger, Measurem
         }
 
         return new PrescriptionRecognition(items, null);
+    }
+
+    private PrescriptionRecognition RecognizeCompactPair(
+        RawCompactPairToken pair,
+        WorkoutSemanticOrigin origin,
+        ExercisePrescriptionContext? exerciseContext,
+        IReadOnlySet<WorkoutInstructionKind> instructions)
+    {
+        var requiredInstruction = profile.Parsing.CompactPairRepLoadInstruction;
+        if (requiredInstruction.HasValue && instructions.Contains(requiredInstruction.Value))
+        {
+            if (exerciseContext?.SupportsRepLoad != true)
+            {
+                return new PrescriptionRecognition([], "Compact rep/load notation requires an exercise that supports repetitions and external load.");
+            }
+
+            return new PrescriptionRecognition(
+                [
+                    new WorkoutWorkSemantic(origin, WorkTargetType.Repetitions, pair.First, null, WorkTargetScope.Total),
+                    new WorkoutLoadSemantic(origin, pair.Second, preferredLoadUnit)
+                ],
+                null);
+        }
+
+        if (pair.IntegerSecond is not { } repetitions)
+        {
+            return new PrescriptionRecognition([], "Compact rep/load notation has no matching profile instruction.");
+        }
+
+        var work = new RawWorkoutWork(repetitions, string.Empty, pair.First, WorkTargetScope.Total);
+        return RecognizeWork(new RawWorkToken(pair.Span, work, RequiresFollowingExercise: false), origin, exerciseContext);
     }
 
     private void LogWarning(string? sourceReference, string text, string warning)

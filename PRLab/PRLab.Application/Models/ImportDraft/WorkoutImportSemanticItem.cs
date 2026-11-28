@@ -46,6 +46,9 @@ public sealed record WorkoutSemanticOrigin(
 [JsonDerivedType(typeof(WorkoutEquipmentUnitSemantic), "equipmentUnit")]
 [JsonDerivedType(typeof(WorkoutAddedLoadSemantic), "addedLoad")]
 [JsonDerivedType(typeof(WorkoutDistanceUnitSemantic), "distanceUnit")]
+[JsonDerivedType(typeof(WorkoutPauseSemantic), "pause")]
+[JsonDerivedType(typeof(WorkoutSetCadenceSemantic), "setCadence")]
+[JsonDerivedType(typeof(WorkoutCalorieRateSemantic), "calorieRate")]
 public abstract record WorkoutImportSemanticItem(WorkoutSemanticOrigin Origin);
 
 public sealed record WorkoutWorkSemantic(
@@ -90,6 +93,20 @@ public sealed record WorkoutEquipmentUnitSemantic(WorkoutSemanticOrigin Origin, 
 public sealed record WorkoutAddedLoadSemantic(WorkoutSemanticOrigin Origin, bool AddedLoad) : WorkoutImportSemanticItem(Origin);
 
 public sealed record WorkoutDistanceUnitSemantic(WorkoutSemanticOrigin Origin, string Unit) : WorkoutImportSemanticItem(Origin);
+
+public enum WorkoutPausePosition
+{
+    Top
+}
+
+public sealed record WorkoutPauseSemantic(WorkoutSemanticOrigin Origin, WorkoutPausePosition Position)
+    : WorkoutImportSemanticItem(Origin);
+
+public sealed record WorkoutSetCadenceSemantic(WorkoutSemanticOrigin Origin, int Seconds, WorkoutSemanticOrigin WorkOrigin)
+    : WorkoutImportSemanticItem(Origin);
+
+public sealed record WorkoutCalorieRateSemantic(WorkoutSemanticOrigin Origin, decimal CaloriesPerHour)
+    : WorkoutImportSemanticItem(Origin);
 
 public sealed record WorkoutImportExerciseInterpretation(
     WorkoutImportExerciseReference Exercise,

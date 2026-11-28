@@ -63,4 +63,11 @@ internal static class WorkoutWorkTargetResolver
 internal sealed record RawWorkoutWork(int Value, string Unit, int? SetCount, WorkTargetScope Scope);
 
 internal sealed record ExercisePrescriptionContext(
-    WorkoutImportExerciseReference Exercise, WorkTargetType? Hint, string? SourceReference, int SourceOffset);
+    WorkoutImportExerciseReference Exercise, WorkTargetType? Hint, string? SourceReference, int SourceOffset)
+{
+    public bool HasExternalLoadEquipment { get; init; }
+
+    public bool SupportsRepLoad =>
+        (Exercise.SupportsExternalLoad || HasExternalLoadEquipment) &&
+        Exercise.AllowedWorkTargetTypes?.Contains(WorkTargetType.Repetitions) == true;
+}

@@ -29,6 +29,9 @@
     }
   ],
   "Aliases": {
+    "PausePositions": {
+      "paused top": "Top"
+    },
     "Exercises": {
       "Alternating Dumbbell Devil Press": ["alternating dumbbell devil presses"],
       "Assault Bike": ["AB", "calab", "cal assault bike"],
@@ -172,6 +175,8 @@
   },
   "Parsing": {
     "UseCompactRepLoadSyntax": true,
+    "CompactPairRepLoadInstruction": "SplitAnyhow",
+    "UseCompactSetCadence": true,
     "Separators": [
       "|"
     ],

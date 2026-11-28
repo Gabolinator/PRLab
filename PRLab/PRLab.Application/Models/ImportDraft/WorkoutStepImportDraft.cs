@@ -30,6 +30,10 @@ public sealed record WorkoutStepImportDraft
 
     public int? SetCount { get; init; }
 
+    public int? SetCadenceSeconds { get; init; }
+
+    public decimal? CaloriesPerHour { get; init; }
+
     public string? Notes { get; init; }
 
     public IReadOnlyList<WorkoutImportAttributeAssignment> Attributes { get; init; } = [];

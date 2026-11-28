@@ -62,10 +62,19 @@ public sealed record WorkoutBlockImportDraft
             prescriptions
                 .Where(prescription => prescription.Step.LoadValue.HasValue)
                 .ToList();
+        var paceTargets =
+            prescriptions
+                .Where(prescription => prescription.Step.CaloriesPerHour.HasValue)
+                .ToList();
+        var caloriesPerHour = paceTargets.Count == 1 ? paceTargets[0].Step.CaloriesPerHour : null;
 
         if (workTargets.Count > 1 && workTargets.All(prescription => prescription.Step.LoadValue.HasValue))
         {
-            return workTargets.Select(prescription => prescription.Step with { Attributes = part.Attributes });
+            return workTargets.Select(prescription => prescription.Step with
+            {
+                Attributes = part.Attributes,
+                CaloriesPerHour = caloriesPerHour
+            });
         }
 
         var work = workTargets.Count == 1 ? workTargets[0].Step : null;
@@ -82,6 +91,8 @@ public sealed record WorkoutBlockImportDraft
                 WorkTargetType = work?.WorkTargetType,
                 Scope = work?.Scope ?? WorkTargetScope.Total,
                 SetCount = work?.SetCount,
+                SetCadenceSeconds = work?.SetCadenceSeconds,
+                CaloriesPerHour = caloriesPerHour,
                 LoadValue = load?.LoadValue,
                 LoadUnit = load?.LoadUnit,
                 Attributes = part.Attributes,

@@ -14,7 +14,7 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
     private readonly AttributeInterpreter attributes = new(context.Profile);
 
-    private readonly WorkoutPrescriptionInterpreter prescriptions = new(logger, context.Profile.PreferredMeasurementSystem);
+    private readonly WorkoutPrescriptionInterpreter prescriptions = new(logger, context.Profile);
 
     private readonly string[] separators =
         context.Profile.Parsing.Separators
@@ -218,13 +218,13 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
                 if (fragment.Matches.Count == 1)
                 {
-                    semanticItems.AddRange(RecognizeEquipment(fragment.Input.Cell, fragment.Input.Span, target));
+                    semanticItems.AddRange(RecognizeStandaloneAttributes(fragment.Input.Cell, fragment.Input.Span, target));
                 }
 
                 if (resolvedExerciseCount == 1 && detailsCell is not null && detailsCell != fragment.Input.Cell)
                 {
                     var detailsSpan = new TextSpan(0, detailsCell.Text.Length);
-                    semanticItems.AddRange(RecognizeEquipment(detailsCell, detailsSpan, target));
+                    semanticItems.AddRange(RecognizeStandaloneAttributes(detailsCell, detailsSpan, target));
                 }
 
                 parts.Add(match.Part with
@@ -240,12 +240,12 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
         return parts;
     }
 
-    private IReadOnlyList<WorkoutEquipmentSemantic> RecognizeEquipment(
+    private IReadOnlyList<WorkoutImportSemanticItem> RecognizeStandaloneAttributes(
         WorkoutRowCell cell,
         TextSpan region,
         WorkoutExerciseSemanticTarget target)
     {
-        var items = new List<WorkoutEquipmentSemantic>();
+        var items = new List<WorkoutImportSemanticItem>();
         var inputsInRegion =
             cell.GetUnconsumedText()
                 .SelectMany(SplitInput)
@@ -255,12 +255,25 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
         foreach (var input in inputsInRegion)
         {
             var source = CreateSemanticSource(input);
-            foreach (var item in attributes.FindEquipment(source, target))
+            var standaloneItems =
+                attributes.FindPauses(source, target)
+                    .Cast<WorkoutImportSemanticItem>()
+                    .Concat(attributes.FindEquipment(source, target))
+                    .OrderBy(item => item.Origin.Source.Offset)
+                    .ThenByDescending(item => item.Origin.Source.Length);
+            var previousEnd = input.Span.Start;
+            foreach (var item in standaloneItems)
             {
                 var matchedSource = item.Origin.Source;
-                var equipmentSpan = new TextSpan(matchedSource.Offset, matchedSource.Length);
-                cell.Consume(equipmentSpan, ConsumptionKind.Attribute);
+                if (matchedSource.Offset < previousEnd)
+                {
+                    continue;
+                }
+
+                var matchedSpan = new TextSpan(matchedSource.Offset, matchedSource.Length);
+                cell.Consume(matchedSpan, ConsumptionKind.Attribute);
                 items.Add(item);
+                previousEnd = matchedSpan.End;
             }
         }
 
@@ -308,6 +321,12 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
         var detailsCell = row.GetExpectedCell(WorkoutImportProperty.Details);
         var notesCell = row.GetExpectedCell(WorkoutImportProperty.Notes);
+        var externalLoadEquipmentTargets =
+            semanticItems
+                .OfType<WorkoutEquipmentSemantic>()
+                .Where(item => WorkoutImportEquipment.SupportsExternalLoad(item.Name))
+                .Select(item => item.Origin.Target)
+                .ToHashSet();
         var remainingInputs =
             row.GetUnconsumedText()
                 .Where(input => input.Cell != notesCell && (input.Cell == detailsCell || input.Cell == exercise?.Input.Cell))
@@ -323,15 +342,38 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
                 : null;
             var inputText = input.Text;
             var source = CreateSemanticSource(input);
-            var tokens = WorkoutPrescriptionSyntax.Scan(inputText, context.Profile.Parsing.UseCompactRepLoadSyntax);
+            var tokens = WorkoutPrescriptionSyntax.Scan(inputText, context.Profile.Parsing.UseCompactRepLoadSyntax).ToList();
+            var instructions = tokens.OfType<RawInstructionToken>()
+                .Select(instruction => instruction.Instruction)
+                .ToHashSet();
+            WorkoutWorkSemantic? repeatedWork = null;
+            var previousTokenEnd = 0;
             foreach (var token in tokens)
             {
                 var prescriptionSpan = token.Span.OffsetBy(input.Span.Start);
                 var requiresFollowingExercise = token is RawWorkToken { RequiresFollowingExercise: true };
                 var exerciseContext = fragment is not null
-                    ? FindFragmentExercise(fragment, prescriptionSpan, requiresFollowingExercise)
+                    ? FindFragmentExercise(fragment, prescriptionSpan, token)
                     : requiresFollowingExercise ? null : fallbackContext;
-                var result = prescriptions.RecognizeToken(token, source, exerciseContext);
+                if (exerciseContext is not null)
+                {
+                    var exerciseTarget = new WorkoutExerciseSemanticTarget(
+                        exerciseContext.Exercise.Id,
+                        exerciseContext.SourceReference,
+                        exerciseContext.SourceOffset);
+                    exerciseContext = exerciseContext with
+                    {
+                        HasExternalLoadEquipment = externalLoadEquipmentTargets.Contains(exerciseTarget)
+                    };
+                }
+
+                var gap = inputText[previousTokenEnd..token.Span.Start];
+                var cadenceWork = string.IsNullOrWhiteSpace(gap) ? repeatedWork : null;
+                var result = prescriptions.RecognizeToken(token, source, exerciseContext, instructions, cadenceWork);
+                repeatedWork = token is RawRepLoadToken { Sets: > 1, Loads.Count: 1 }
+                    ? result.Items.OfType<WorkoutWorkSemantic>().SingleOrDefault()
+                    : null;
+                previousTokenEnd = token.Span.End;
                 if (result.Warning is { } warning)
                 {
                     var sourceText = prescriptionSpan.Read(input.Cell.Text);
@@ -395,12 +437,12 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
     private ExercisePrescriptionContext? FindFragmentExercise(
         ExerciseFragment fragment,
         TextSpan prescriptionSpan,
-        bool requiresFollowingExercise)
+        RawPrescriptionToken token)
     {
         var tokenStart = prescriptionSpan.Start - fragment.Input.Span.Start;
         var tokenEnd = prescriptionSpan.End - fragment.Input.Span.Start;
         var followingMatch = fragment.Matches.FirstOrDefault(match => match.Span.Start >= tokenEnd);
-        if (requiresFollowingExercise)
+        if (token is RawWorkToken { RequiresFollowingExercise: true })
         {
             if (followingMatch is null)
             {
@@ -412,6 +454,15 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
         }
 
         var precedingMatch = fragment.Matches.LastOrDefault(match => match.Span.End <= tokenStart);
+        if (token is RawCalorieRateToken && precedingMatch is not null)
+        {
+            var prefix = fragment.Input.Text[precedingMatch.Span.End..tokenStart].Trim();
+            if (prefix is "" or "(")
+            {
+                return CreatePrescriptionContext(fragment, precedingMatch);
+            }
+        }
+
         var match = precedingMatch is null ? followingMatch : followingMatch is null ? precedingMatch : null;
         return match is null ? null : CreatePrescriptionContext(fragment, match);
     }

@@ -70,8 +70,7 @@ internal static class WorkoutSemanticResolver
         {
             var attributes =
                 exercise.SemanticItems
-                    .Select(ResolveAttribute)
-                    .OfType<WorkoutImportAttributeAssignment>()
+                    .SelectMany(ResolveAttributes)
                     .DistinctBy(attribute => (attribute.Type, attribute.Value))
                     .ToList();
 
@@ -84,6 +83,21 @@ internal static class WorkoutSemanticResolver
                 .ToList();
 
         return part.WithPossiblyMissingAttributes(possiblyMissing);
+    }
+
+    private static IEnumerable<WorkoutImportAttributeAssignment> ResolveAttributes(WorkoutImportSemanticItem item)
+    {
+        if (item is WorkoutPauseSemantic pause)
+        {
+            return
+            [
+                CreateAttribute(WorkoutImportAttributeType.MovementQuality, "Paused"),
+                CreateAttribute(WorkoutImportAttributeType.PausePosition, pause.Position.ToString())
+            ];
+        }
+
+        var attribute = ResolveAttribute(item);
+        return attribute is null ? [] : [attribute];
     }
 
     private static WorkoutImportAttributeAssignment? ResolveAttribute(WorkoutImportSemanticItem item) =>
@@ -115,13 +129,15 @@ internal static class WorkoutSemanticResolver
             items
                 .Where(item => item is WorkoutWorkSemantic or
                     WorkoutLoadSemantic or
+                    WorkoutSetCadenceSemantic or
+                    WorkoutCalorieRateSemantic or
                     WorkoutRestSemantic or
                     WorkoutTimeCapSemantic or
                     WorkoutInstructionSemantic)
                 .OrderBy(item => item.Origin.Source.ColumnIndex)
                 .ThenBy(item => item.Origin.Source.Offset)
                 .ThenBy(item => item.Origin.SeriesIndex);
-        var groups = prescriptionItems.GroupBy(item => item.Origin);
+        var groups = prescriptionItems.GroupBy(item => item is WorkoutSetCadenceSemantic cadence ? cadence.WorkOrigin : item.Origin);
 
         return groups
             .Select(group => ResolvePrescription(group, exercisesByTarget))
@@ -138,6 +154,8 @@ internal static class WorkoutSemanticResolver
 
         var work = group.OfType<WorkoutWorkSemantic>().SingleOrDefault();
         var load = group.OfType<WorkoutLoadSemantic>().SingleOrDefault();
+        var cadence = group.OfType<WorkoutSetCadenceSemantic>().SingleOrDefault();
+        var calorieRate = group.OfType<WorkoutCalorieRateSemantic>().SingleOrDefault();
         var rest = group.OfType<WorkoutRestSemantic>().SingleOrDefault();
         var timeCap = group.OfType<WorkoutTimeCapSemantic>().SingleOrDefault();
         var instruction = group.OfType<WorkoutInstructionSemantic>().SingleOrDefault();
@@ -152,6 +170,8 @@ internal static class WorkoutSemanticResolver
             WorkTargetType = work?.TargetType,
             WorkValue = work?.Value,
             SetCount = work?.SetCount,
+            SetCadenceSeconds = cadence?.Seconds,
+            CaloriesPerHour = calorieRate?.CaloriesPerHour,
             Scope = work?.Scope ?? WorkTargetScope.Total,
             LoadValue = load?.Value,
             LoadUnit = load?.Unit,

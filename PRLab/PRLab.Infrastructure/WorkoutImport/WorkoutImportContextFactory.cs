@@ -80,6 +80,5 @@ public sealed class WorkoutImportContextFactory(
 
     private static bool SupportsExternalLoad(ExerciseSteps step) =>
         step.LoadTarget.Type is LoadTargetType.ExternalLoad or LoadTargetType.AddedBodyWeightLoad ||
-        step.Movement.EquipmentRequirements.Any(requirement => requirement.Equipment.NameKey is
-            "barbell" or "dumbbell" or "kettlebell" or "sandbag");
+        step.Movement.EquipmentRequirements.Any(requirement => WorkoutImportEquipment.SupportsExternalLoad(requirement.Equipment.NameKey));
 }
