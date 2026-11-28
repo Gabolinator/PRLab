@@ -2,6 +2,10 @@
   {
     "Id": "933351fd-2dca-47ce-b8c4-c4d15744c6e8",
     "Name": "Alternating Dumbbell Devil Press",
+    "Aliases": [
+      "Alternating DB Devil Press",
+      "Alt DB Devil Press"
+    ],
     "NameKey": "alternatingdumbbelldevilpress",
     "Category": {
       "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
@@ -92,11 +96,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "3a8f2d12-cb1a-4dcb-95bc-0fdbf27986e2",
     "Name": "Assault Bike",
+    "Aliases": [
+      "Air Bike"
+    ],
     "NameKey": "assaultbike",
     "Category": {
       "Id": "bd4a56bd-d759-42ee-8493-92d5826881d2",
@@ -176,11 +183,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "486661cf-963a-4b86-8a55-517f47ec2169",
     "Name": "Back Squat",
+    "Aliases": [
+      "BS"
+    ],
     "NameKey": "backsquat",
     "Category": {
       "Id": "5f924600-1838-4084-838e-45e6a8457d0c",
@@ -264,11 +274,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "d2268e1a-b5e0-40c4-a70c-c290c7f9fb7c",
     "Name": "Barbell Bench Press",
+    "Aliases": [
+      "BB Bench Press",
+      "Barbell BP"
+    ],
     "NameKey": "barbellbenchpress",
     "Category": {
       "Id": "5f924600-1838-4084-838e-45e6a8457d0c",
@@ -338,7 +352,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "868f2020-a893-412a-b925-4d22b67e6bfc",
@@ -402,6 +416,9 @@
   {
     "Id": "38b43fe0-b408-431a-be99-619446d599fe",
     "Name": "Bodyweight Squat",
+    "Aliases": [
+      "BW Squat"
+    ],
     "NameKey": "bodyweightsquat",
     "Category": {
       "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
@@ -450,7 +467,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "adba1c2a-e89f-465c-867f-f3c5cf9b7c08",
@@ -526,6 +543,10 @@
   {
     "Id": "6c721951-9272-47c0-a119-a43bfbfd0e0f",
     "Name": "Box Jump Over",
+    "Aliases": [
+      "BJO",
+      "Box Jump-Over"
+    ],
     "NameKey": "boxjumpover",
     "Category": {
       "Id": "40732a19-c543-41c4-91ec-a42cb8619177",
@@ -596,11 +617,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "11bab3f4-6781-4e69-a791-77433609f3cb",
     "Name": "Box Step Over",
+    "Aliases": [
+      "Box Step-Over"
+    ],
     "NameKey": "boxstepover",
     "Category": {
       "Id": "40732a19-c543-41c4-91ec-a42cb8619177",
@@ -667,11 +691,16 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "64daabad-88b9-410a-90b7-27c0820ee16a",
     "Name": "Bulgarian Split Squat",
+    "Aliases": [
+      "BSS",
+      "Rear Foot Elevated Split Squat",
+      "RFESS"
+    ],
     "NameKey": "bulgariansplitsquat",
     "Category": {
       "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
@@ -742,7 +771,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "37e57f66-b2d1-4770-8815-c790e0325459",
@@ -818,6 +847,10 @@
   {
     "Id": "cdce3717-4ce8-45e9-906a-36207ab610c8",
     "Name": "C2 Bike",
+    "Aliases": [
+      "BikeErg",
+      "Concept2 BikeErg"
+    ],
     "NameKey": "c2bike",
     "Category": {
       "Id": "52921f7f-a1ee-4bc4-a79d-cf7e468c2f6f",
@@ -879,11 +912,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "6c9c00be-9fe2-47ea-ac75-c6730b1815ff",
     "Name": "Dead Stop Strict Hand Stand Push Up",
+    "Aliases": [
+      "Dead Stop Strict HSPU"
+    ],
     "NameKey": "deadstopstricthandstandpushup",
     "Category": {
       "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
@@ -948,11 +984,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "4316dd12-67a5-4969-b8fe-78c1eeafa41f",
     "Name": "Deadlift",
+    "Aliases": [
+      "DL"
+    ],
     "NameKey": "deadlift",
     "Category": {
       "Id": "5f924600-1838-4084-838e-45e6a8457d0c",
@@ -1033,11 +1072,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "e8ac3d51-028f-48b8-8296-0f20611380d3",
     "Name": "Deep Lateral Box Step Up",
+    "Aliases": [
+      "Deep Lateral Box Step-Up"
+    ],
     "NameKey": "deeplateralboxstepup",
     "Category": {
       "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
@@ -1108,11 +1150,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "c5c039a1-2f0e-4d71-94fa-eda8b4211406",
     "Name": "Double Dumbbell Hang Power Clean",
+    "Aliases": [
+      "Double DB Hang Power Clean",
+      "2DB Hang Power Clean"
+    ],
     "NameKey": "doubledumbbellhangpowerclean",
     "Category": {
       "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
@@ -1187,11 +1233,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "1250af3d-2419-491b-ad17-4f2d6e5b3f49",
     "Name": "Double Under",
+    "Aliases": [
+      "Double-Under",
+      "DU"
+    ],
     "NameKey": "doubleunder",
     "Category": {
       "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
@@ -1249,11 +1299,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "7527b0c9-3fb8-4d6b-a221-af33d9edc3ad",
     "Name": "Dumbbell Deadlift",
+    "Aliases": [
+      "DB Deadlift"
+    ],
     "NameKey": "dumbbelldeadlift",
     "Category": {
       "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
@@ -1330,11 +1383,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "052d6c02-a05d-4893-bb85-58f6f2ae54b5",
     "Name": "Dumbbell Shoulder Press",
+    "Aliases": [
+      "DB Shoulder Press"
+    ],
     "NameKey": "dumbbellshoulderpress",
     "Category": {
       "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
@@ -1411,11 +1467,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "9faf5886-ada7-420a-8087-7ab740b89585",
     "Name": "Front-Rack Lunge",
+    "Aliases": [
+      "Front Rack Lunge"
+    ],
     "NameKey": "frontracklunge",
     "Category": {
       "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
@@ -1474,11 +1533,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "f3dd5ba5-a25e-4e0e-924c-1ae00d381715",
     "Name": "Frontal Burpee Box Jump Over",
+    "Aliases": [
+      "Front Facing Burpee Box Jump Over"
+    ],
     "NameKey": "frontalburpeeboxjumpover",
     "Category": {
       "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
@@ -1561,11 +1623,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "c709ad67-96ea-435d-a126-10c8ad192b7e",
     "Name": "Frontal Burpee Over Bar",
+    "Aliases": [
+      "Front Facing Burpee Over Bar"
+    ],
     "NameKey": "frontalburpeeoverbar",
     "Category": {
       "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
@@ -1648,11 +1713,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "ec791ed2-df04-4736-a7b8-fb9511ef573f",
     "Name": "GHD Hip Extension",
+    "Aliases": [
+      "GHD Hip Ext"
+    ],
     "NameKey": "ghdhipextension",
     "Category": {
       "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
@@ -1713,11 +1781,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "2dffb413-b191-4081-8762-f949e3c2ec99",
     "Name": "GHD Sit-Up",
+    "Aliases": [
+      "GHD Sit Up"
+    ],
     "NameKey": "ghdsitup",
     "Category": {
       "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
@@ -1778,7 +1849,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "377eee1c-9cdf-44e5-adbd-4ede91d68ca1",
@@ -1859,6 +1930,10 @@
   {
     "Id": "ce25bd46-5cd2-4db9-9851-9c6acc1be636",
     "Name": "Hand Stand Push Up",
+    "Aliases": [
+      "Handstand Push Up",
+      "HSPU"
+    ],
     "NameKey": "handstandpushup",
     "Category": {
       "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
@@ -1919,11 +1994,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "b562870d-8d63-473e-8954-5d1e474548c3",
     "Name": "Hanging Knee Raise",
+    "Aliases": [
+      "HKR",
+      "Hanging Knee Raises"
+    ],
     "NameKey": "hangingkneeraise",
     "Category": {
       "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
@@ -1990,7 +2069,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "ea85f38b-13fc-4b79-8f12-52dc7d81cf14",
@@ -2123,6 +2202,10 @@
   {
     "Id": "d3f22a7c-2676-4742-9e9e-60b828e681b7",
     "Name": "Kipping Toes To Bar",
+    "Aliases": [
+      "Kipping TTB",
+      "Kipping Toes-to-Bar"
+    ],
     "NameKey": "kippingtoestobar",
     "Category": {
       "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
@@ -2193,7 +2276,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "82a6aec6-93e3-4fa9-8383-2c3083db23c3",
@@ -2365,6 +2448,9 @@
   {
     "Id": "c40b5711-98a4-4ffe-a6f0-2bf23b4e6da6",
     "Name": "Lateral Burpee Over Line",
+    "Aliases": [
+      "Lateral Burpee Over The Line"
+    ],
     "NameKey": "lateralburpeeoverline",
     "Category": {
       "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
@@ -2453,11 +2539,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "24757a24-f7a5-44c4-bc5e-00396d69030e",
     "Name": "Lie On Back On Bench Straight Arms To Side Stretch",
+    "Aliases": [
+      "Lying On Back On Bench Straight Arms To Side Stretch"
+    ],
     "NameKey": "lieonbackonbenchstraightarmstosidestretch",
     "Category": {
       "Id": "dbbc1cd0-2de0-4cbd-910e-5da272e62f90",
@@ -2506,7 +2595,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "f2529676-8163-48c1-bed7-c3f88a6821ec",
@@ -2613,6 +2702,9 @@
   {
     "Id": "3bd736ef-dd9b-4c3a-81bf-f91abc4379a6",
     "Name": "Lying On Back On Floor Bent Leg Butterfly Stretch",
+    "Aliases": [
+      "Supine Butterfly Stretch"
+    ],
     "NameKey": "lyingonbackonfloorbentlegbutterflystretch",
     "Category": {
       "Id": "dbbc1cd0-2de0-4cbd-910e-5da272e62f90",
@@ -2643,11 +2735,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "1010be0e-7ee8-4d37-a042-aba22add7b0e",
     "Name": "Lying On Back On Floor Straight Leg Rotation",
+    "Aliases": [
+      "Supine Straight Leg Rotation"
+    ],
     "NameKey": "lyingonbackonfloorstraightlegrotation",
     "Category": {
       "Id": "bb07a7d4-846a-402e-ac6d-8a37fec8b78e",
@@ -2690,11 +2785,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "b60c5e22-aab9-4526-adb7-35ffedb7774f",
     "Name": "Lying On Belly On Floor Snatch Grip Overhead Hold",
+    "Aliases": [
+      "Prone Snatch Grip Overhead Hold"
+    ],
     "NameKey": "lyingonbellyonfloorsnatchgripoverheadhold",
     "Category": {
       "Id": "bb07a7d4-846a-402e-ac6d-8a37fec8b78e",
@@ -2749,7 +2847,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "a11ffd8a-1992-48ce-8b59-d04e227d3e54",
@@ -2807,6 +2905,9 @@
   {
     "Id": "b7f7e8d6-cf20-4eb3-87ee-df1871d04393",
     "Name": "Lying On Floor On Side Bent Arm External Rotation",
+    "Aliases": [
+      "Side Lying External Rotation"
+    ],
     "NameKey": "lyingonflooronsidebentarmexternalrotation",
     "Category": {
       "Id": "bb07a7d4-846a-402e-ac6d-8a37fec8b78e",
@@ -2849,11 +2950,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "919a29c7-53fe-441e-985f-6cda54e8cb33",
     "Name": "Overhead Squat",
+    "Aliases": [
+      "OHS"
+    ],
     "NameKey": "overheadsquat",
     "Category": {
       "Id": "a689d28b-d1fc-4bfa-b695-6005fb43e7ce",
@@ -2924,11 +3028,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "92eac3f6-1b08-4c87-ba39-b3e40f141466",
     "Name": "Parallel Bar Dip",
+    "Aliases": [
+      "P-Bar Dip",
+      "Parallel Bars Dip"
+    ],
     "NameKey": "parallelbardip",
     "Category": {
       "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
@@ -2983,11 +3091,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "bbb4e80a-8908-4a6f-af2c-759bbd8d3e4e",
     "Name": "Power Clean",
+    "Aliases": [
+      "PC"
+    ],
     "NameKey": "powerclean",
     "Category": {
       "Id": "a689d28b-d1fc-4bfa-b695-6005fb43e7ce",
@@ -3066,7 +3177,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "54edc0d0-cf57-4509-a1a4-58ca107e06d4",
@@ -3160,6 +3271,9 @@
   {
     "Id": "02b62c46-dfc8-442f-9276-db9acf93953c",
     "Name": "Pull Up",
+    "Aliases": [
+      "Pull-Up"
+    ],
     "NameKey": "pullup",
     "Category": {
       "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
@@ -3216,11 +3330,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "e6078848-2e2b-433d-b4e6-7b4591ea6a80",
     "Name": "Push Up",
+    "Aliases": [
+      "Push-Up"
+    ],
     "NameKey": "pushup",
     "Category": {
       "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
@@ -3271,11 +3388,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "55aa2584-63c5-4bd7-97ef-f3de3c7b6fc8",
     "Name": "Ring Row",
+    "Aliases": [
+      "Ring Rows"
+    ],
     "NameKey": "ringrow",
     "Category": {
       "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
@@ -3354,11 +3474,17 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "6e23e8f1-7c85-499c-89b1-3ac04c6c759b",
     "Name": "Row",
+    "Aliases": [
+      "Row Erg",
+      "Rower",
+      "C2 Row",
+      "Concept2 Row"
+    ],
     "NameKey": "row",
     "Category": {
       "Id": "52921f7f-a1ee-4bc4-a79d-cf7e468c2f6f",
@@ -3434,11 +3560,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "60a34045-072a-40bc-969d-a32531d1766a",
     "Name": "Running",
+    "Aliases": [
+      "Run"
+    ],
     "NameKey": "running",
     "Category": {
       "Id": "3d08a932-8de7-4fc7-bc85-2f93f9ed16e4",
@@ -3494,11 +3623,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "31eaae56-1179-4c03-9f6b-3be12cdbbf83",
     "Name": "Sandbag Carry",
+    "Aliases": [
+      "Sand Bag Carry"
+    ],
     "NameKey": "sandbagcarry",
     "Category": {
       "Id": "58f7306e-9fb0-4d91-910e-d89c15900727",
@@ -3571,7 +3703,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "b2637a2b-9bfe-4086-96e2-8dac0906a993",
@@ -3688,6 +3820,9 @@
   {
     "Id": "bd739018-cd9e-4553-a4b7-c79d1a33a402",
     "Name": "Single Leg Hip Thrust",
+    "Aliases": [
+      "Single-Leg Hip Thrust"
+    ],
     "NameKey": "singleleghipthrust",
     "Category": {
       "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
@@ -3740,11 +3875,16 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "1908c201-719c-4914-8c90-3a261e1f589d",
     "Name": "Ski Erg",
+    "Aliases": [
+      "SkiErg",
+      "C2 SkiErg",
+      "Concept2 SkiErg"
+    ],
     "NameKey": "skierg",
     "Category": {
       "Id": "bd4a56bd-d759-42ee-8493-92d5826881d2",
@@ -3820,7 +3960,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "6a1dddfa-2b8a-4492-9113-90edc6357003",
@@ -3960,6 +4100,9 @@
   {
     "Id": "f26d9779-ce8a-4743-b270-db638ef59d5d",
     "Name": "Step Up",
+    "Aliases": [
+      "Step-Up"
+    ],
     "NameKey": "stepup",
     "Category": {
       "Id": "5767ba40-bd1a-46c7-9165-458f287c3dab",
@@ -4026,11 +4169,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "9bb6b825-6996-4fa0-8601-18ef737e50b4",
     "Name": "Toes To Bar",
+    "Aliases": [
+      "Toes-to-Bar",
+      "TTB"
+    ],
     "NameKey": "toestobar",
     "Category": {
       "Id": "17ef5b3f-7561-4255-8062-503b3b01d2a4",
@@ -4097,11 +4244,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "45bb6641-6559-4f00-be6c-8072992e6d97",
     "Name": "V-Up",
+    "Aliases": [
+      "V Up"
+    ],
     "NameKey": "vup",
     "Category": {
       "Id": "051f6466-c9b5-4a72-9c37-0d5375f8e145",
@@ -4144,11 +4294,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "37376bd7-25b7-42ea-8d8b-b4977330f7a1",
     "Name": "Wall Ball",
+    "Aliases": [
+      "Wallball",
+      "Wall Ball Shot"
+    ],
     "NameKey": "wallball",
     "Category": {
       "Id": "bd4a56bd-d759-42ee-8493-92d5826881d2",
@@ -4231,11 +4385,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "ba2856cd-da28-463d-bcd2-f480a18c76c8",
     "Name": "Wall Walk",
+    "Aliases": [
+      "Wallwalk"
+    ],
     "NameKey": "wallwalk",
     "Category": {
       "Id": "5ef79cc8-8a89-4860-bcc9-0bcc54131abf",
@@ -4314,7 +4471,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Name": "Lunge Stretch",

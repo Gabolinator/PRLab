@@ -2,6 +2,9 @@
   {
     "Id": "5682a14b-ca3a-4574-841b-e5d9b4aae3b3",
     "Name": "Air Squat",
+    "Aliases": [
+      "Air Squats"
+    ],
     "NameKey": "airsquat",
     "Description": {
       "Content": "Perform a squat using bodyweight."
@@ -28,11 +31,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "a6f3c775-29e2-4102-b79c-566338eb0323",
     "Name": "Alternating Dumbbell Devil Press",
+    "Aliases": [
+      "Alternating DB Devil Press",
+      "Alt DB Devil Press"
+    ],
     "NameKey": "alternatingdumbbelldevilpress",
     "Description": {
       "Content": "Perform a burpee with dumbbells, then take one dumbbell overhead, alternating arms."
@@ -59,11 +66,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "4b441b31-cc9f-48a2-90b8-c6736d831a0d",
     "Name": "Assault Bike",
+    "Aliases": [
+      "Air Bike"
+    ],
     "NameKey": "assaultbike",
     "Description": {
       "Content": "Assault bike work prescribed by calories, time, distance, or interval format."
@@ -90,11 +100,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "33ba89e9-6ed7-48ff-9376-a917a44b846a",
     "Name": "Back Squat",
+    "Aliases": [
+      "BS"
+    ],
     "NameKey": "backsquat",
     "Description": {
       "Content": "Barbell back squat prescribed by reps, sets, load, or percentage."
@@ -121,11 +134,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "1c804cef-8cf2-49e7-b8af-5af2a5fb8bd9",
     "Name": "Barbell Bench Press",
+    "Aliases": [
+      "BB Bench Press"
+    ],
     "NameKey": "barbellbenchpress",
     "Description": {
       "Content": "Press a barbell from the chest while lying on a bench."
@@ -152,11 +168,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "d95b573f-659b-495e-b518-ba4a31c26a53",
     "Name": "Bodyweight Squat",
+    "Aliases": [
+      "BW Squat"
+    ],
     "NameKey": "bodyweightsquat",
     "Description": {
       "Content": "Basic lower-body squat movement performed without external load."
@@ -187,11 +206,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "ad3e98a4-dfa0-4427-8cdb-b3fa37c5cc8d",
     "Name": "Box Jump",
+    "Aliases": [
+      "Box Jumps"
+    ],
     "NameKey": "boxjump",
     "Description": {
       "Content": "Jump from the floor onto a box."
@@ -218,11 +240,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "1e5f7843-7082-4822-9aab-bbc016b33131",
     "Name": "Box Jump Over",
+    "Aliases": [
+      "Box Jump-Over",
+      "Box Jump Overs"
+    ],
     "NameKey": "boxjumpover",
     "Description": {
       "Content": "Jump onto or over a box and finish on the opposite side."
@@ -249,11 +275,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "b59042bd-9911-4243-83df-2e99588bc883",
     "Name": "Box Step Over",
+    "Aliases": [
+      "Box Step-Over",
+      "Box Step Overs"
+    ],
     "NameKey": "boxstepover",
     "Description": {
       "Content": "Step onto a box and descend on the opposite side."
@@ -280,11 +310,16 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "c9d953f3-7b87-47b6-b519-0ac85c1296e5",
     "Name": "Bulgarian Split Squat",
+    "Aliases": [
+      "BSS",
+      "Rear Foot Elevated Split Squat",
+      "RFESS"
+    ],
     "NameKey": "bulgariansplitsquat",
     "Description": {
       "Content": "Squat in a split stance with the rear foot elevated."
@@ -311,11 +346,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "e429fc00-b10b-441d-b363-3bf88c49bf48",
     "Name": "Burpee",
+    "Aliases": [
+      "Burpees"
+    ],
     "NameKey": "burpee",
     "Description": {
       "Content": "Full-body bodyweight conditioning movement combining a squat, plank or push-up position, and jump."
@@ -346,11 +384,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "e6b47a1d-c232-47db-9265-6f6420099341",
     "Name": "Burpee Pull-Up",
+    "Aliases": [
+      "Burpee Pull Up"
+    ],
     "NameKey": "burpeepullup",
     "Description": {
       "Content": "Burpee performed directly into a pull-up."
@@ -402,11 +443,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "2e47d893-6f7e-4a2b-920f-680c7910b0e5",
     "Name": "C2 Bike",
+    "Aliases": [
+      "BikeErg",
+      "Concept2 BikeErg"
+    ],
     "NameKey": "c2bike",
     "Description": {
       "Content": "Cycle on a C2 Bike for calories, distance, or time."
@@ -433,11 +478,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "289098f4-5258-4549-9d67-ee8df21b5ec4",
     "Name": "Dead Stop Strict Hand Stand Push Up",
+    "Aliases": [
+      "Dead Stop Strict HSPU"
+    ],
     "NameKey": "deadstopstricthandstandpushup",
     "Description": {
       "Content": "Press from a dead stop in the bottom position without kipping."
@@ -474,11 +522,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "5566ce27-7ac6-4362-879d-655a9fe57bef",
     "Name": "Deadlift",
+    "Aliases": [
+      "DL"
+    ],
     "NameKey": "deadlift",
     "Description": {
       "Content": "Barbell deadlift prescribed by reps, load, or strength target."
@@ -505,11 +556,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "43d8c950-4586-480c-a4d6-88c0d439c7e2",
     "Name": "Deep Lateral Box Step Up",
+    "Aliases": [
+      "Deep Lateral Box Step-Up"
+    ],
     "NameKey": "deeplateralboxstepup",
     "Description": {
       "Content": "Step sideways onto a box from a deep starting position."
@@ -536,11 +590,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "854744f4-8695-43b7-8253-f6082bbb8af3",
     "Name": "Double Dumbbell Hang Power Clean",
+    "Aliases": [
+      "Double DB Hang Power Clean",
+      "2DB Hang Power Clean"
+    ],
     "NameKey": "doubledumbbellhangpowerclean",
     "Description": {
       "Content": "Two-dumbbell hang power clean prescribed by reps and load."
@@ -567,11 +625,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "1967d2ed-be5a-4cdc-a9ac-dac97615de97",
     "Name": "Double Dumbbell Shoulder Press",
+    "Aliases": [
+      "Double DB Shoulder Press",
+      "2DB Shoulder Press"
+    ],
     "NameKey": "doubledumbbellshoulderpress",
     "Description": {
       "Content": "Press two dumbbells overhead, one in each hand."
@@ -598,11 +660,16 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "4c7dde9e-304f-43f2-93a6-284856f4ae93",
     "Name": "Double Under",
+    "Aliases": [
+      "Double-Under",
+      "Double Unders",
+      "DU"
+    ],
     "NameKey": "doubleunder",
     "Description": {
       "Content": "Jump rope movement where the rope passes under the feet twice per jump."
@@ -633,11 +700,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "b3457b41-26a0-4252-994e-7a299daa4b09",
     "Name": "Dumbbell Deadlift",
+    "Aliases": [
+      "DB Deadlift"
+    ],
     "NameKey": "dumbbelldeadlift",
     "Description": {
       "Content": "Lift dumbbells from the floor to standing."
@@ -664,11 +734,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "3d69a04f-be86-4f87-8575-59a1f3de0018",
     "Name": "Front-Rack Lunge",
+    "Aliases": [
+      "Front Rack Lunge"
+    ],
     "NameKey": "frontracklunge",
     "Description": {
       "Content": "Lunge while holding the load in the front rack."
@@ -695,11 +768,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "8aabf572-fcdf-4dc7-9c20-e15034400f82",
     "Name": "Frontal Burpee Box Jump Over",
+    "Aliases": [
+      "Front Facing Burpee Box Jump Over"
+    ],
     "NameKey": "frontalburpeeboxjumpover",
     "Description": {
       "Content": "Perform a burpee facing a box, then jump over to the opposite side."
@@ -726,11 +802,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "6717f658-0af9-40eb-a1c4-e54d3c085e89",
     "Name": "Frontal Burpee Over Bar",
+    "Aliases": [
+      "Front Facing Burpee Over Bar"
+    ],
     "NameKey": "frontalburpeeoverbar",
     "Description": {
       "Content": "Perform a burpee facing a barbell, then jump forward across it."
@@ -757,11 +836,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "7606a909-4e90-47af-bda4-d03e08856594",
     "Name": "GHD Hip Extension",
+    "Aliases": [
+      "GHD Hip Ext"
+    ],
     "NameKey": "ghdhipextension",
     "Description": {
       "Content": "Extend the hips with the lower body supported on a glute ham developer."
@@ -788,11 +870,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "c600f432-3f87-4f3b-8aa1-624baf6e9cad",
     "Name": "GHD Sit-Up",
+    "Aliases": [
+      "GHD Sit Up"
+    ],
     "NameKey": "ghdsitup",
     "Description": {
       "Content": "Perform a sit-up on a glute ham developer."
@@ -819,7 +904,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "fc8c20c0-7b22-4a76-af3d-658e9e1dee0c",
@@ -886,6 +971,10 @@
   {
     "Id": "ce09fb65-6195-4928-8e86-4c5aa1b09290",
     "Name": "Kipping Toes To Bar",
+    "Aliases": [
+      "Kipping TTB",
+      "Kipping Toes-to-Bar"
+    ],
     "NameKey": "kippingtoestobar",
     "Description": {
       "Content": "Use a kip to bring the toes to the bar."
@@ -912,7 +1001,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "89bf1a8f-5667-4e3f-920f-03006d56a6e5",
@@ -983,6 +1072,9 @@
   {
     "Id": "3d3135b4-35ba-49f8-888f-60bdc1c387a6",
     "Name": "Lateral Burpee Over Line",
+    "Aliases": [
+      "Lateral Burpee Over The Line"
+    ],
     "NameKey": "lateralburpeeoverline",
     "Description": {
       "Content": "Perform a burpee followed by a sideways jump across a floor line."
@@ -1009,11 +1101,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "ff5a36a7-a729-4a6e-8be6-aa4cbe55fc74",
     "Name": "Lie On Back On Bench Straight Arms To Side Stretch",
+    "Aliases": [
+      "Lying On Back On Bench Straight Arms To Side Stretch"
+    ],
     "NameKey": "lieonbackonbenchstraightarmstosidestretch",
     "Description": {
       "Content": "Lie face up on a bench and extend the straight arms to the sides."
@@ -1040,7 +1135,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "961478ba-8df5-4ef3-b7a2-3b616093300f",
@@ -1107,6 +1202,9 @@
   {
     "Id": "119701d4-e537-4a36-b611-4a446b325ea8",
     "Name": "Lying On Back On Floor Bent Leg Butterfly Stretch",
+    "Aliases": [
+      "Supine Butterfly Stretch"
+    ],
     "NameKey": "lyingonbackonfloorbentlegbutterflystretch",
     "Description": {
       "Content": "Lie face up on the floor with the knees bent outward in a butterfly position."
@@ -1133,11 +1231,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "3a391966-4695-4547-a494-9fbdf14c2a25",
     "Name": "Lying On Back On Floor Straight Leg Rotation",
+    "Aliases": [
+      "Supine Straight Leg Rotation"
+    ],
     "NameKey": "lyingonbackonfloorstraightlegrotation",
     "Description": {
       "Content": "Rotate a straight leg across the body while lying face up on the floor."
@@ -1164,11 +1265,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "f9087b26-61bf-4709-ae0d-972c7d92c072",
     "Name": "Lying On Belly On Floor Snatch Grip Overhead Hold",
+    "Aliases": [
+      "Prone Snatch Grip Overhead Hold"
+    ],
     "NameKey": "lyingonbellyonfloorsnatchgripoverheadhold",
     "Description": {
       "Content": "Lie face down and hold the arms overhead in a wide snatch-grip position."
@@ -1195,7 +1299,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "fe1471fb-2599-4fd5-91fc-123bfb30e461",
@@ -1231,6 +1335,9 @@
   {
     "Id": "a111a68b-740d-4d98-b054-4fa09622d354",
     "Name": "Lying On Floor On Side Bent Arm External Rotation",
+    "Aliases": [
+      "Side Lying External Rotation"
+    ],
     "NameKey": "lyingonflooronsidebentarmexternalrotation",
     "Description": {
       "Content": "Lie on one side and externally rotate the shoulder with the elbow bent."
@@ -1257,11 +1364,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "78b42cf8-3d6f-4bec-b585-b69bcf6d2416",
     "Name": "Overhead Squat",
+    "Aliases": [
+      "OHS"
+    ],
     "NameKey": "overheadsquat",
     "Description": {
       "Content": "Squat while supporting a load overhead."
@@ -1288,11 +1398,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "1ac34347-7493-4e91-856a-19f08d1c0562",
     "Name": "Power Clean",
+    "Aliases": [
+      "PC"
+    ],
     "NameKey": "powerclean",
     "Description": {
       "Content": "Lift a barbell from the floor to the front rack and receive it above a full squat."
@@ -1319,7 +1432,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "f510abe9-6d38-4b17-934a-0332157a8d7c",
@@ -1355,6 +1468,9 @@
   {
     "Id": "557e36be-5924-461f-b148-cd7d4cb38716",
     "Name": "Pull Up",
+    "Aliases": [
+      "Pull-Up"
+    ],
     "NameKey": "pullup",
     "Description": {
       "Content": "Bodyweight upper-body pulling movement performed from a bar."
@@ -1385,11 +1501,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "4937591b-97ac-4971-8f54-11ae9647db39",
     "Name": "Push Up",
+    "Aliases": [
+      "Push-Up"
+    ],
     "NameKey": "pushup",
     "Description": {
       "Content": "Bodyweight upper-body pushing movement performed from the floor."
@@ -1420,11 +1539,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "fafc81fd-309a-40e3-b6cd-701874319bc6",
     "Name": "Ring Row",
+    "Aliases": [
+      "Ring Rows"
+    ],
     "NameKey": "ringrow",
     "Description": {
       "Content": "Pull the body toward suspended rings from an inclined position."
@@ -1451,11 +1573,17 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "5d583994-354f-4faa-9306-a2e1df38fcf1",
     "Name": "Row",
+    "Aliases": [
+      "Row Erg",
+      "Rower",
+      "C2 Row",
+      "Concept2 Row"
+    ],
     "NameKey": "row",
     "Description": {
       "Content": "Row erg work prescribed by calories, distance, time, or interval format."
@@ -1482,11 +1610,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "97d1747b-28b7-4102-8b22-561fdbb9525a",
     "Name": "Running",
+    "Aliases": [
+      "Run"
+    ],
     "NameKey": "running",
     "Description": {
       "Content": "Running prescribed by distance, time, pace, or interval format."
@@ -1513,11 +1644,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "338a40fa-a927-49bd-a308-d2694b85c695",
     "Name": "Sandbag Carry",
+    "Aliases": [
+      "Sand Bag Carry"
+    ],
     "NameKey": "sandbagcarry",
     "Description": {
       "Content": "Carry a sandbag for distance or time."
@@ -1544,7 +1678,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "37fc0309-8cdd-4e07-ae9e-4602d496d971",
@@ -1580,6 +1714,9 @@
   {
     "Id": "c733aaae-3f7f-45a4-8042-90a901c1191a",
     "Name": "Single Leg Hip Thrust",
+    "Aliases": [
+      "Single-Leg Hip Thrust"
+    ],
     "NameKey": "singleleghipthrust",
     "Description": {
       "Content": "Extend the hips using one working leg."
@@ -1606,11 +1743,16 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "13b9c6f3-f46a-4e8f-8567-035f4c9f2a9d",
     "Name": "Ski Erg",
+    "Aliases": [
+      "SkiErg",
+      "C2 SkiErg",
+      "Concept2 SkiErg"
+    ],
     "NameKey": "skierg",
     "Description": {
       "Content": "Ski erg work prescribed by calories, distance, time, or interval format."
@@ -1637,7 +1779,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "990249c5-2cb7-41f8-bdd3-afa90115915c",
@@ -1704,6 +1846,9 @@
   {
     "Id": "c83a80ac-d3ce-4d9d-b8c0-d1483a2c4977",
     "Name": "Standing Bent Over Hamstring Stretch",
+    "Aliases": [
+      "Standing Bent-Over Hamstring Stretch"
+    ],
     "NameKey": "standingbentoverhamstringstretch",
     "Description": {
       "Content": "Hinge forward while standing to stretch the hamstrings."
@@ -1730,11 +1875,16 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "f7905e4d-5873-438d-bc03-ed958ee7f5b4",
     "Name": "Strict P-Bar Dip",
+    "Aliases": [
+      "Strict P Bar Dip",
+      "Strict Parallel Bar Dip",
+      "Strict Parallel Bars Dip"
+    ],
     "NameKey": "strictpbardip",
     "Description": {
       "Content": "Perform parallel bar dips without kipping."
@@ -1771,11 +1921,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "076dbaeb-582d-4974-84c5-ac0e9f96c6bb",
     "Name": "Toes To Bar",
+    "Aliases": [
+      "Toes-to-Bar",
+      "TTB"
+    ],
     "NameKey": "toestobar",
     "Description": {
       "Content": "Raise the feet from a hang until the toes reach the bar."
@@ -1802,11 +1956,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "7d6811d6-2978-4e8b-b57e-0f5662af7ea3",
     "Name": "V-Up",
+    "Aliases": [
+      "V Up"
+    ],
     "NameKey": "vup",
     "Description": {
       "Content": "Raise the torso and legs together from a face-up position."
@@ -1833,11 +1990,15 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "fe464d08-fdd6-4ab9-a37b-49f4a8cf846f",
     "Name": "Wall Ball",
+    "Aliases": [
+      "Wallball",
+      "Wall Ball Shot"
+    ],
     "NameKey": "wallball",
     "Description": {
       "Content": "Wall ball shot performed with a weighted ball to a target."
@@ -1864,11 +2025,14 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "191df80e-ed03-4bd8-8929-a8388b87634c",
     "Name": "Wall Walk",
+    "Aliases": [
+      "Wallwalk"
+    ],
     "NameKey": "wallwalk",
     "Description": {
       "Content": "Walk the feet up a wall and the hands toward it from a prone position."
@@ -1895,7 +2059,7 @@
     "Origin": "BuiltIn",
     "OwnerUserId": null,
     "VisibilityScope": "Public",
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Name": "Lunge Stretch",

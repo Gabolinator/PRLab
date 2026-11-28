@@ -2,6 +2,9 @@
   {
     "Id": "d44c29ed-e269-4c3f-bd32-7df22e6946c3",
     "Name": "Abductors",
+    "Aliases": [
+      "Hip Abductors"
+    ],
     "NameKey": "abductors",
     "LatinName": "Musculi abductores coxae",
     "BodySection": "LowerBody",
@@ -21,11 +24,15 @@
         "NameKey": "adductors"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "ac06083a-8ff2-4630-8d8f-eb2079c27f2b",
     "Name": "Abs",
+    "Aliases": [
+      "Abdominals",
+      "Rectus Abdominis"
+    ],
     "NameKey": "abs",
     "LatinName": "Musculus rectus abdominis",
     "BodySection": "MidSection",
@@ -45,11 +52,15 @@
         "NameKey": "spinalerectors"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "5a05604e-4a78-4675-8067-71c34fdcc6d9",
     "Name": "Adductors",
+    "Aliases": [
+      "Hip Adductors",
+      "Thigh Adductors"
+    ],
     "NameKey": "adductors",
     "LatinName": "Musculi adductores femoris",
     "BodySection": "LowerBody",
@@ -69,11 +80,14 @@
         "NameKey": "abductors"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "e691e48b-8e41-4282-9d73-fcb73f7fb446",
     "Name": "Biceps",
+    "Aliases": [
+      "Biceps Brachii"
+    ],
     "NameKey": "biceps",
     "LatinName": "Musculus biceps brachii",
     "BodySection": "UpperBody",
@@ -97,11 +111,16 @@
         "NameKey": "triceps"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "2397c49c-48fe-48d6-a298-7ef875954603",
     "Name": "Calves",
+    "Aliases": [
+      "Calf",
+      "Calf Muscles",
+      "Gastrocnemius"
+    ],
     "NameKey": "calves",
     "LatinName": "Musculus gastrocnemius",
     "BodySection": "LowerBody",
@@ -125,11 +144,16 @@
         "NameKey": "shins"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "07493ef3-d065-4e21-87ed-b31baf83bf75",
     "Name": "Chest",
+    "Aliases": [
+      "Pecs",
+      "Pectorals",
+      "Pectoralis Major"
+    ],
     "NameKey": "chest",
     "LatinName": "Musculus pectoralis major",
     "BodySection": "UpperBody",
@@ -157,11 +181,15 @@
         "NameKey": "lats"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "8456dcde-9af8-41be-b7fb-bb0507079e7e",
     "Name": "Forearms Extensors",
+    "Aliases": [
+      "Forearm Extensors",
+      "Forearm Extensor Group"
+    ],
     "NameKey": "forearmsextensors",
     "LatinName": "Musculi extensores antebrachii",
     "BodySection": "UpperBody",
@@ -181,11 +209,15 @@
         "NameKey": "forearmsflexors"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "3eb2dba7-d892-4c7d-b696-f066496396fc",
     "Name": "Forearms Flexors",
+    "Aliases": [
+      "Forearm Flexors",
+      "Forearm Flexor Group"
+    ],
     "NameKey": "forearmsflexors",
     "LatinName": "Musculi flexores antebrachii",
     "BodySection": "UpperBody",
@@ -205,11 +237,17 @@
         "NameKey": "forearmsextensors"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "3dafdfe7-ae8b-4c8b-a15d-3f3d68aef473",
     "Name": "Front Delts",
+    "Aliases": [
+      "Front Deltoids",
+      "Anterior Delts",
+      "Anterior Deltoids",
+      "Anterior Deltoid"
+    ],
     "NameKey": "frontdelts",
     "LatinName": "Musculus deltoideus pars clavicularis",
     "BodySection": "UpperBody",
@@ -237,11 +275,16 @@
         "NameKey": "reardelts"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "a3bf61ab-66fe-46b9-a704-6a06736834b1",
     "Name": "Glutes",
+    "Aliases": [
+      "Gluteals",
+      "Gluteal Muscles",
+      "Gluteus Maximus"
+    ],
     "NameKey": "glutes",
     "LatinName": "Musculus gluteus maximus",
     "BodySection": "LowerBody",
@@ -269,11 +312,15 @@
         "NameKey": "hipflexors"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "8a7f90f7-ed88-4095-9125-089fa55f7c7a",
     "Name": "Hamstrings",
+    "Aliases": [
+      "Hamstring",
+      "Hamstring Group"
+    ],
     "NameKey": "hamstrings",
     "LatinName": "Musculi ischiocrurales",
     "BodySection": "LowerBody",
@@ -297,11 +344,15 @@
         "NameKey": "quads"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "a4d8f4cb-6359-4000-b5ad-ee01cc9afaff",
     "Name": "Hip Flexors",
+    "Aliases": [
+      "Hip Flexor",
+      "Iliopsoas"
+    ],
     "NameKey": "hipflexors",
     "LatinName": "Musculus iliopsoas",
     "BodySection": "LowerBody",
@@ -321,7 +372,7 @@
         "NameKey": "glutes"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "59cc9aae-fc6b-4091-92af-7f7c58ac93b2",
@@ -344,6 +395,11 @@
   {
     "Id": "92abbb0e-960f-4c4e-a84e-76de619156eb",
     "Name": "Lats",
+    "Aliases": [
+      "Lat",
+      "Latissimus Dorsi",
+      "Latissimus"
+    ],
     "NameKey": "lats",
     "LatinName": "Musculus latissimus dorsi",
     "BodySection": "UpperBody",
@@ -375,11 +431,15 @@
         "NameKey": "chest"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "3f13ac3a-5f93-49f0-ad6b-9da112556852",
     "Name": "Neck Flexors",
+    "Aliases": [
+      "Cervical Flexors",
+      "Neck Flexor Muscles"
+    ],
     "NameKey": "neckflexors",
     "LatinName": "Musculi flexores colli",
     "BodySection": "UpperBody",
@@ -394,11 +454,15 @@
         "NameKey": "traps"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "ecd58744-bf7a-4652-83a3-eb796532753b",
     "Name": "Obliques",
+    "Aliases": [
+      "Abdominal Obliques",
+      "Oblique Abdominals"
+    ],
     "NameKey": "obliques",
     "LatinName": "Musculi obliqui abdominis",
     "BodySection": "MidSection",
@@ -412,11 +476,16 @@
       "Content": "Abdominal muscles that rotate and laterally flex the trunk and assist abdominal bracing."
     },
     "Antagonists": [],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "41d98c0e-bf4c-4f34-9d44-72a2db91b537",
     "Name": "Quads",
+    "Aliases": [
+      "Quadriceps",
+      "Quadriceps Femoris",
+      "Quadriceps Group"
+    ],
     "NameKey": "quads",
     "LatinName": "Musculus quadriceps femoris",
     "BodySection": "LowerBody",
@@ -440,11 +509,17 @@
         "NameKey": "hamstrings"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "7ab150ce-7324-4f03-a470-8bb50afb4e2c",
     "Name": "Rear Delts",
+    "Aliases": [
+      "Rear Deltoids",
+      "Posterior Delts",
+      "Posterior Deltoids",
+      "Posterior Deltoid"
+    ],
     "NameKey": "reardelts",
     "LatinName": "Musculus deltoideus pars spinalis",
     "BodySection": "UpperBody",
@@ -472,11 +547,15 @@
         "NameKey": "frontdelts"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "03b75182-7055-4298-91dc-64fc4db5bf4d",
     "Name": "Rhomboids",
+    "Aliases": [
+      "Rhomboid",
+      "Rhomboid Muscles"
+    ],
     "NameKey": "rhomboids",
     "LatinName": "Musculi rhomboidei",
     "BodySection": "UpperBody",
@@ -490,11 +569,14 @@
       "Content": "Upper back muscles that retract and stabilize the shoulder blades."
     },
     "Antagonists": [],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "dede233a-c224-40f3-9721-3b8021977513",
     "Name": "Serratus Anterior",
+    "Aliases": [
+      "Serratus"
+    ],
     "NameKey": "serratusanterior",
     "LatinName": "Musculus serratus anterior",
     "BodySection": "UpperBody",
@@ -508,11 +590,15 @@
       "Content": "Scapular muscle that protracts the shoulder blade and assists upward rotation during overhead reach."
     },
     "Antagonists": [],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "ec495028-a114-4d55-aa1c-c6c49881028f",
     "Name": "Shins",
+    "Aliases": [
+      "Tibialis Anterior",
+      "Anterior Tibialis"
+    ],
     "NameKey": "shins",
     "LatinName": "Musculus tibialis anterior",
     "BodySection": "LowerBody",
@@ -532,11 +618,19 @@
         "NameKey": "calves"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "e5f27c80-49f1-423b-9b38-dfa005f8b64c",
     "Name": "Side Delts",
+    "Aliases": [
+      "Side Deltoids",
+      "Lateral Delts",
+      "Lateral Deltoids",
+      "Lateral Deltoid",
+      "Middle Delts",
+      "Middle Deltoids"
+    ],
     "NameKey": "sidedelts",
     "LatinName": "Musculus deltoideus pars acromialis",
     "BodySection": "UpperBody",
@@ -550,11 +644,15 @@
       "Content": "Lateral deltoid fibers that abduct the arm at the shoulder."
     },
     "Antagonists": [],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "2d1e1afd-b9d3-43f4-990e-24b671cc416d",
     "Name": "Spinal Erectors",
+    "Aliases": [
+      "Erector Spinae",
+      "Spinal Extensors"
+    ],
     "NameKey": "spinalerectors",
     "LatinName": "Musculus erector spinae",
     "BodySection": "MidSection",
@@ -578,7 +676,7 @@
         "NameKey": "abs"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "0269eef0-cf25-45fd-8dda-a97592e1e2d0",
@@ -601,6 +699,10 @@
   {
     "Id": "75a45bb6-4941-4023-8199-0d2e138f5fae",
     "Name": "Traps",
+    "Aliases": [
+      "Trapezius",
+      "Trapezius Muscle"
+    ],
     "NameKey": "traps",
     "LatinName": "Musculus trapezius",
     "BodySection": "UpperBody",
@@ -628,11 +730,14 @@
         "NameKey": "neckflexors"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   },
   {
     "Id": "4d3c3ed3-1a3d-45a8-90bd-804962949d4d",
     "Name": "Triceps",
+    "Aliases": [
+      "Triceps Brachii"
+    ],
     "NameKey": "triceps",
     "LatinName": "Musculus triceps brachii",
     "BodySection": "UpperBody",
@@ -656,6 +761,6 @@
         "NameKey": "biceps"
       }
     ],
-    "Action": "Ignore"
+    "Action": "CreateOrUpdate"
   }
 ]
