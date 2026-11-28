@@ -13,6 +13,7 @@ public static class EquipmentSeedValidator
         ArgumentNullException.ThrowIfNull(seedDto);
 
         AliasSeedValidator.Validate(seedDto.Name, seedDto.Aliases);
+        ValidateConfigurationTypes(seedDto);
 
         var ownerUserId = seedDto.OwnerUserId.HasValue
             ? UserId.FromGuid(seedDto.OwnerUserId.Value)
@@ -44,6 +45,20 @@ public static class EquipmentSeedValidator
         }
 
         ValidateSeedSpecificRules(seedDto);
+    }
+
+    private static void ValidateConfigurationTypes(EquipmentSeedJsonDto seedDto)
+    {
+        var configurationTypes = seedDto.SupportedConfigurationTypes ?? [];
+        if (configurationTypes.Any(type => !Enum.IsDefined(type)))
+        {
+            throw new InvalidOperationException($"Equipment seed '{seedDto.Name}' contains an unknown configuration type.");
+        }
+
+        if (configurationTypes.Distinct().Count() != configurationTypes.Count)
+        {
+            throw new InvalidOperationException($"Equipment seed '{seedDto.Name}' contains duplicate configuration types.");
+        }
     }
 
     private static void ValidateSeedSpecificRules(EquipmentSeedJsonDto seedDto)

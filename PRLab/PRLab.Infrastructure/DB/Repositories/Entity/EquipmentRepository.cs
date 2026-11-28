@@ -66,6 +66,9 @@ public sealed class EquipmentRepository(
             .ToListAsync(ct);
     }
 
+    public Task<IReadOnlyCollection<Equipment>> ListWithAliasesAsync(CancellationToken ct) =>
+        ListAsync(ct);
+
     public async Task<int> CountAsync(
         CancellationToken ct)
     {

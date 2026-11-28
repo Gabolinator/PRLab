@@ -1,4 +1,5 @@
 ﻿using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.Equipment;
 using PRLab.Domain.Utilities;
 
 namespace PRLab.Domain.Model.Value.Update;
@@ -8,6 +9,8 @@ public sealed record EquipmentUpdate()
     public string? Name { get; init; }
 
     public DescriptionUpdate? DescriptionUpdate { get; init; }
+
+    public IReadOnlyCollection<EquipmentConfigurationType>? SupportedConfigurationTypes { get; init; }
     
     public User? UpdatedBy { get; init; }
 
@@ -15,6 +18,7 @@ public sealed record EquipmentUpdate()
         => new()
         {
             Name = equipment.Name,
+            SupportedConfigurationTypes = equipment.SupportedConfigurationTypes,
             DescriptionUpdate = DescriptionUpdate.FromDescription(equipment.Description, language ,updatedBy),
             UpdatedBy = updatedBy
         };

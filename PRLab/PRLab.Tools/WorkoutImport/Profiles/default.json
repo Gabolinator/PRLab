@@ -29,13 +29,6 @@
     }
   ],
   "Aliases": {
-    "EquipmentOn": {
-      "on medball": "Medicine Ball",
-      "on med ball": "Medicine Ball"
-    },
-    "CountedEquipment": {
-      "db": "Dumbbell"
-    },
     "MovementQualityCues": {
       "max speed up": "Speed"
     },

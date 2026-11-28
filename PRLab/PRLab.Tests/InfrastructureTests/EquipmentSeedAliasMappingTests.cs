@@ -1,10 +1,16 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.UserService;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.Equipment;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Domain.Model.Value.Update;
+using PRLab.Infrastructure.DB.Context;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Factory;
 
@@ -61,14 +67,90 @@ public sealed class EquipmentSeedAliasMappingTests
             var equipment = seedItem.Entity;
             Assert.Equal(seedDto.Action, seedItem.Action);
             Assert.Equal(seedDto.Id, equipment.Id.Value);
+            EquipmentConfigurationType[] expectedConfigurationTypes = expectedEntry.Name switch
+            {
+                "Plyometric Box" => [EquipmentConfigurationType.Height],
+                "Jump Rope" => [EquipmentConfigurationType.Length],
+                "Resistance Band" => [EquipmentConfigurationType.Resistance],
+                _ => []
+            };
+            Assert.Equal(expectedConfigurationTypes, equipment.SupportedConfigurationTypes);
             Assert.Equal(seedDto.Aliases, equipment.Aliases.Select(relation => relation.Alias.Value));
             Assert.All(equipment.Aliases, relation => Assert.Equal(equipment.Id, relation.EquipmentId));
 
             var exported = EquipmentSeedJsonDto.FromEquipment(equipment);
             var exportedJson = JsonSerializer.SerializeToElement(exported, serializerOptions);
+            var exportedConfigurationTypes =
+                exportedJson.GetProperty(nameof(EquipmentSeedJsonDto.SupportedConfigurationTypes))
+                    .Deserialize<EquipmentConfigurationType[]>(serializerOptions);
+            Assert.Equal(expectedConfigurationTypes, exportedConfigurationTypes);
             var exportedAliases = exportedJson.GetProperty(nameof(EquipmentSeedJsonDto.Aliases));
             Assert.Equal(expectedAliases, exportedAliases.EnumerateArray().Select(alias => alias.GetString()));
         }
+    }
+
+    [Fact]
+    public void ConfigurationMigrationPreservesHeightAndMatchesThePostgresModel()
+    {
+        var options = new DbContextOptionsBuilder<PRLabPgDBContext>().UseNpgsql().Options;
+        using var db = new PRLabPgDBContext(options);
+
+        var migrator = db.GetService<IMigrator>();
+        var script = migrator.GenerateScript(
+            "20261128102212_AddEquipmentHeightConfiguration",
+            "20261128103117_AddEquipmentConfigurationTypes");
+        var rollback = migrator.GenerateScript(
+            "20261128103117_AddEquipmentConfigurationTypes",
+            "20261128102212_AddEquipmentHeightConfiguration");
+
+        Assert.False(db.Database.HasPendingModelChanges());
+        Assert.Contains("ADD \"SupportedConfigurationTypes\" integer[] NOT NULL", script);
+        Assert.Contains("SET \"SupportedConfigurationTypes\" = ARRAY[1]", script);
+        Assert.Contains("WHERE \"SupportsHeightConfiguration\"", script);
+        Assert.Contains("DROP COLUMN \"SupportsHeightConfiguration\"", script);
+        Assert.Contains("array_append(\"SupportedConfigurationTypes\", 2)", script);
+        Assert.Contains("array_append(\"SupportedConfigurationTypes\", 4)", script);
+        Assert.Contains("WHERE 1 = ANY(\"SupportedConfigurationTypes\")", rollback);
+    }
+
+    [Fact]
+    public void EquipmentConfigurationTypesAreDistinctAndCanBeReplacedOrCleared()
+    {
+        var equipment = Equipment.NewBuiltIn(
+            "Adjustable platform",
+            Description.None(),
+            supportedConfigurationTypes:
+            [EquipmentConfigurationType.Height, EquipmentConfigurationType.Angle, EquipmentConfigurationType.Height]);
+        var sameConfiguration = new EquipmentUpdate
+        {
+            SupportedConfigurationTypes = [EquipmentConfigurationType.Angle, EquipmentConfigurationType.Height]
+        };
+        var newConfiguration = new EquipmentUpdate { SupportedConfigurationTypes = [EquipmentConfigurationType.Length] };
+
+        Assert.Equal([EquipmentConfigurationType.Height, EquipmentConfigurationType.Angle], equipment.SupportedConfigurationTypes);
+        Assert.False(equipment.Update(sameConfiguration));
+        Assert.True(equipment.Update(newConfiguration));
+        Assert.Equal(EquipmentConfigurationType.Length, Assert.Single(equipment.SupportedConfigurationTypes));
+        Assert.True(equipment.Update(new EquipmentUpdate { SupportedConfigurationTypes = [] }));
+        Assert.Empty(equipment.SupportedConfigurationTypes);
+    }
+
+    [Fact]
+    public void EquipmentSeedRejectsDuplicateAndUndefinedConfigurationTypes()
+    {
+        var factory = new JsonEquipmentSeedFactory(new TestUserProvider(), new TestSeedConfig(string.Empty));
+        var duplicate = new EquipmentSeedJsonDto
+        {
+            Name = "Adjustable platform",
+            SupportedConfigurationTypes = [EquipmentConfigurationType.Height, EquipmentConfigurationType.Height]
+        };
+        var undefined = duplicate with { SupportedConfigurationTypes = [(EquipmentConfigurationType)99] };
+
+        var duplicateError = Assert.Throws<InvalidOperationException>(() => factory.Validate(duplicate));
+        var undefinedError = Assert.Throws<InvalidOperationException>(() => factory.Validate(undefined));
+
+        Assert.Contains("duplicate configuration types", duplicateError.Message);
+        Assert.Contains("unknown configuration type", undefinedError.Message);
     }
 
     [Fact]

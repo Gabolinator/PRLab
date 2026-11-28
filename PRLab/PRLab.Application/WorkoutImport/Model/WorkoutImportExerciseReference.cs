@@ -20,5 +20,5 @@ public sealed record WorkoutImportExerciseReference
 
     public bool SupportsExternalLoad { get; init; }
 
-    public IReadOnlyCollection<string> EquipmentNames { get; init; } = [];
+    public IReadOnlyList<EquipmentId> EquipmentIds { get; init; } = [];
 }

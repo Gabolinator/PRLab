@@ -92,7 +92,12 @@ public enum WorkoutEquipmentRelation
 
 public sealed record WorkoutEquipmentSemantic(
     WorkoutSemanticOrigin Origin, string Name, WorkoutEquipmentRelation? Relation = null,
-    int? Quantity = null, decimal? HeightCentimeters = null) : WorkoutImportSemanticItem(Origin);
+    int? Quantity = null, decimal? HeightCentimeters = null) : WorkoutImportSemanticItem(Origin)
+{
+    public EquipmentId? EquipmentId { get; init; }
+
+    public WorkTargetType? WorkTargetHint { get; init; }
+}
 
 public sealed record WorkoutEquipmentQuantitySemantic(WorkoutSemanticOrigin Origin, int Quantity)
     : WorkoutImportSemanticItem(Origin);

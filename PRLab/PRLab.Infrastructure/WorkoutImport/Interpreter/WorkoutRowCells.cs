@@ -140,6 +140,7 @@ internal enum ConsumptionKind
     Date,
     Order,
     Exercise,
+    Equipment,
     Attribute,
     Prescription,
     WorkWindow,

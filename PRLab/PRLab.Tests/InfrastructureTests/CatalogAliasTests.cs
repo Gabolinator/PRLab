@@ -2,14 +2,17 @@ using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.UserService;
 using PRLab.Application.Models.DB.Seeding;
+using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport;
 using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.Anatomy;
+using PRLab.Domain.Model.Value.Enum.Equipment;
 using PRLab.Domain.Model.Value.Enum.Movement;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
+using PRLab.Domain.Model.Value.Update;
 using PRLab.Infrastructure.DB.Repositories.Entity;
 using PRLab.Infrastructure.DB.Seeding.EntitySeeders;
 using PRLab.Infrastructure.DB.Seeding.Export.Exporter;
@@ -146,13 +149,44 @@ public sealed class CatalogAliasTests
     }
 
     [Fact]
-    public async Task ImportLoadsDomainAliasesAndDoesNotRequireAProfileAlias()
+    public async Task EquipmentConfigurationTypesPersistAndCanBeReplaced()
+    {
+        await using var database = await RepositoryTestDatabase.CreateAsync();
+        var equipment = Equipment.NewBuiltIn(
+            "Adjustable Rack",
+            Description.None(),
+            supportedConfigurationTypes: [EquipmentConfigurationType.Height]);
+        var repository = new EquipmentRepository(database.Db);
+        await repository.CreateAsync(equipment, default);
+        database.Db.ChangeTracker.Clear();
+
+        var tracked = await repository.GetTrackedByIdAsync(equipment.Id, default);
+        Assert.NotNull(tracked);
+        Assert.Equal(EquipmentConfigurationType.Height, Assert.Single(tracked.SupportedConfigurationTypes));
+        tracked.Update(new EquipmentUpdate { SupportedConfigurationTypes = [EquipmentConfigurationType.Angle, EquipmentConfigurationType.Length] });
+        await repository.UpdateAsync(tracked, default);
+        database.Db.ChangeTracker.Clear();
+
+        var reloaded = await repository.GetByIdAsync(equipment.Id, default);
+        Assert.NotNull(reloaded);
+        Assert.Equal([EquipmentConfigurationType.Length, EquipmentConfigurationType.Angle], reloaded.SupportedConfigurationTypes);
+    }
+
+    [Fact]
+    public async Task ImportLoadsExerciseAndEquipmentAliasesWithoutProfileAliases()
     {
         await using var database = await RepositoryTestDatabase.CreateAsync();
         var movement = CreateMovement();
         var exercise = Exercise.FromMovementBuiltIn(movement);
         exercise.AddAlias("Knee Dip");
-        database.Db.AddRange(movement, exercise);
+        var equipment = Equipment.NewBuiltIn("Dumbbell", Description.None());
+        equipment.AddAlias("DB");
+        var platform = Equipment.NewBuiltIn(
+            "Training Platform",
+            Description.None(),
+            supportedConfigurationTypes: [EquipmentConfigurationType.Height, EquipmentConfigurationType.Angle]);
+        movement.AddRequiredEquipmentOption(platform.Id, "standing surface");
+        database.Db.AddRange(movement, exercise, equipment, platform);
         await database.Db.SaveChangesAsync();
         database.Db.ChangeTracker.Clear();
 
@@ -163,15 +197,28 @@ public sealed class CatalogAliasTests
             [
                 new ExcelWorkoutImportSourceProfile
                 {
-                    Columns = [new() { Property = WorkoutImportProperty.Exercise, CellIndex = 1 }]
+                    Columns =
+                    [
+                        new() { Property = WorkoutImportProperty.Exercise, CellIndex = 1 },
+                        new() { Property = WorkoutImportProperty.Details, CellIndex = 2 }
+                    ]
                 }
             ]
         };
         var logger = new PRLabLogger();
         var contextFactory = new WorkoutImportContextFactory(
-            new ExerciseRepository(database.Db), new TestUserProvider(), new TestProfileProvider(profile), logger);
+            new ExerciseRepository(database.Db),
+            new EquipmentRepository(database.Db),
+            new TestUserProvider(),
+            new TestProfileProvider(profile),
+            logger);
         var context = await contextFactory.CreateAsync();
-        Assert.Equal("Knee Dip", Assert.Single(Assert.Single(context.Exercises).Aliases));
+        var exerciseReference = Assert.Single(context.Exercises);
+        Assert.Equal("Knee Dip", Assert.Single(exerciseReference.Aliases));
+        Assert.Equal(platform.Id, Assert.Single(exerciseReference.EquipmentIds));
+        Assert.Equal("DB", Assert.Single(Assert.Single(context.Equipment, reference => reference.Id == equipment.Id).Aliases));
+        var platformReference = Assert.Single(context.Equipment, reference => reference.Id == platform.Id);
+        Assert.Equal([EquipmentConfigurationType.Height, EquipmentConfigurationType.Angle], platformReference.SupportedConfigurationTypes);
 
         var source = new ExtractedExcelWorkoutSource
         {
@@ -183,13 +230,32 @@ public sealed class CatalogAliasTests
                 {
                     Name = "Test",
                     RawText = string.Empty,
-                    Rows = [new() { Cells = [new() { Value = "2026-11-28" }, new() { ColumnIndex = 1, Value = "knee dip" }] }]
+                    Rows =
+                    [
+                        new()
+                        {
+                            Cells =
+                            [
+                                new() { Value = "2026-11-28" },
+                                new() { ColumnIndex = 1, Value = "knee dip" },
+                                new() { ColumnIndex = 2, Value = "2 db | 61cm" }
+                            ]
+                        }
+                    ]
                 }
             ]
         };
         var imported = await new CoachExcelWorkoutImportInterpreter(logger).InterpretAsync(source, context);
         var row = Assert.Single(Assert.Single(imported).Rows);
         Assert.Equal(exercise.Id, Assert.Single(row.ExerciseParts).ExerciseId);
+        var interpretation = Assert.Single(row.ExerciseInterpretations);
+        var equipmentItems = interpretation.SemanticItems.OfType<WorkoutEquipmentSemantic>().ToList();
+        var matchedEquipment = Assert.Single(equipmentItems, item => item.Quantity.HasValue);
+        Assert.Equal(equipment.Id, matchedEquipment.EquipmentId);
+        Assert.Equal(2, matchedEquipment.Quantity);
+        var height = Assert.Single(equipmentItems, item => item.HeightCentimeters.HasValue);
+        Assert.Equal(platform.Id, height.EquipmentId);
+        Assert.Equal(61m, height.HeightCentimeters);
     }
 
     private static Movement CreateMovement() =>

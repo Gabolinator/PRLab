@@ -65,25 +65,29 @@ public sealed class JsonEquipmentSeedFactory(
                 seedDto.Name,
                 description,
                 SeedUser,
-                seedDto.VisibilityScope),
+                seedDto.VisibilityScope,
+                seedDto.SupportedConfigurationTypes),
 
             DataOrigin.UserCreated => Equipment.NewUserCreated(
                 seedDto.Name,
                 description,
                 GetRequiredOwner(seedDto),
-                seedDto.VisibilityScope),
+                seedDto.VisibilityScope,
+                seedDto.SupportedConfigurationTypes),
 
             DataOrigin.Imported => Equipment.NewImported(
                 seedDto.Name,
                 description,
                 GetRequiredOwner(seedDto),
-                seedDto.VisibilityScope),
+                seedDto.VisibilityScope,
+                seedDto.SupportedConfigurationTypes),
 
             DataOrigin.CoachCreated => Equipment.NewCoachCreated(
                 seedDto.Name,
                 description,
                 GetRequiredOwner(seedDto),
-                seedDto.VisibilityScope),
+                seedDto.VisibilityScope,
+                seedDto.SupportedConfigurationTypes),
 
             _ => throw new ArgumentOutOfRangeException(
                 nameof(seedDto),
@@ -105,7 +109,8 @@ public sealed class JsonEquipmentSeedFactory(
                 seedDto.Name,
                 description,
                 SeedUser,
-                seedDto.VisibilityScope),
+                seedDto.VisibilityScope,
+                seedDto.SupportedConfigurationTypes),
 
             _ => throw new InvalidOperationException(
                 $"{Entity} seed '{seedDto.Name}' has a fixed Id but is not BuiltIn. " +

@@ -9,4 +9,6 @@ public sealed record WorkoutImportContext
     public required WorkoutImportProfile Profile { get; init; }
 
     public IReadOnlyList<WorkoutImportExerciseReference> Exercises { get; init; } = [];
+
+    public IReadOnlyList<WorkoutImportEquipmentReference> Equipment { get; init; } = [];
 }

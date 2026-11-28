@@ -2,6 +2,7 @@ using PRLab.Domain.Model.Join;
 using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Access;
+using PRLab.Domain.Model.Value.Enum.Equipment;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Model.Value.Ownership;
@@ -18,6 +19,11 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilitySc
     public string Name { get; private set; } = string.Empty;
 
     public string NameKey { get; private set; } = string.Empty;
+
+    private List<EquipmentConfigurationType> supportedConfigurationTypes = [];
+
+    public IReadOnlyCollection<EquipmentConfigurationType> SupportedConfigurationTypes =>
+        supportedConfigurationTypes.AsReadOnly();
 
     private readonly List<EquipmentAlias> aliases = [];
 
@@ -63,7 +69,8 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilitySc
         Description description,
         AuditInfo audit,
         OwnershipInfo ownership,
-        VisibilityInfo visibility)
+        VisibilityInfo visibility,
+        IReadOnlyCollection<EquipmentConfigurationType>? supportedConfigurationTypes)
     {
         DomainGuard.NotEmptyId(
             id.Value,
@@ -92,50 +99,43 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilitySc
         Audit = audit;
         Ownership = ownership;
         Visibility = visibility;
+        this.supportedConfigurationTypes = NormalizeConfigurationTypes(supportedConfigurationTypes ?? []);
     }
 
     public static Equipment NewBuiltIn(
         string name,
         string? description,
         User? createdBy = null,
-        VisibilityScope? visibilityScope = null)
-    {
-        var ownership = OwnershipInfo.BuiltIn();
-
-        return new Equipment(
-            EquipmentId.New(),
+        VisibilityScope? visibilityScope = null,
+        IReadOnlyCollection<EquipmentConfigurationType>? supportedConfigurationTypes = null) =>
+        NewBuiltIn(
             name,
             Description.New(description),
-            AuditInfo.New(createdBy),
-            ownership,
-            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
-        );
-    }
+            createdBy,
+            visibilityScope,
+            supportedConfigurationTypes);
 
     public static Equipment NewBuiltIn(
         string name,
         Description description,
         User? createdBy = null,
-        VisibilityScope? visibilityScope = null)
-    {
-        var ownership = OwnershipInfo.BuiltIn();
-
-        return new Equipment(
+        VisibilityScope? visibilityScope = null,
+        IReadOnlyCollection<EquipmentConfigurationType>? supportedConfigurationTypes = null) =>
+        NewBuiltInWithId(
             EquipmentId.New(),
             name,
             description,
-            AuditInfo.New(createdBy),
-            ownership,
-            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
-        );
-    }
+            createdBy,
+            visibilityScope,
+            supportedConfigurationTypes);
 
     public static Equipment NewBuiltInWithId(
         EquipmentId id,
         string name,
         Description description,
         User? createdBy = null,
-        VisibilityScope? visibilityScope = null)
+        VisibilityScope? visibilityScope = null,
+        IReadOnlyCollection<EquipmentConfigurationType>? supportedConfigurationTypes = null)
     {
         var ownership = OwnershipInfo.BuiltIn();
 
@@ -145,35 +145,29 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilitySc
             description,
             AuditInfo.New(createdBy),
             ownership,
-            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
-        );
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
+            supportedConfigurationTypes);
     }
 
     public static Equipment NewUserCreated(
         string name,
         string? description,
         User owner,
-        VisibilityScope? visibilityScope = null)
-    {
-        ArgumentNullException.ThrowIfNull(owner);
-
-        var ownership = OwnershipInfo.UserCreated(owner);
-        
-        return new Equipment(
-            EquipmentId.New(),
+        VisibilityScope? visibilityScope = null,
+        IReadOnlyCollection<EquipmentConfigurationType>? supportedConfigurationTypes = null) =>
+        NewUserCreated(
             name,
             Description.New(description),
-            AuditInfo.New(owner),
-            ownership,
-            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
-        );
-    }
+            owner,
+            visibilityScope,
+            supportedConfigurationTypes);
 
     public static Equipment NewUserCreated(
         string name,
         Description description,
         User owner,
-        VisibilityScope? visibilityScope = null)
+        VisibilityScope? visibilityScope = null,
+        IReadOnlyCollection<EquipmentConfigurationType>? supportedConfigurationTypes = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
@@ -185,15 +179,16 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilitySc
             description,
             AuditInfo.New(owner),
             ownership,
-            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
-        );
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
+            supportedConfigurationTypes);
     }
 
     public static Equipment NewCoachCreated(
         string name,
         Description description,
         User coach,
-        VisibilityScope? visibilityScope = null)
+        VisibilityScope? visibilityScope = null,
+        IReadOnlyCollection<EquipmentConfigurationType>? supportedConfigurationTypes = null)
     {
         ArgumentNullException.ThrowIfNull(coach);
 
@@ -205,15 +200,16 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilitySc
             description,
             AuditInfo.New(coach),
             ownership,
-            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
-        );
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
+            supportedConfigurationTypes);
     }
 
     public static Equipment NewImported(
         string name,
         Description description,
         User owner,
-        VisibilityScope? visibilityScope = null)
+        VisibilityScope? visibilityScope = null,
+        IReadOnlyCollection<EquipmentConfigurationType>? supportedConfigurationTypes = null)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
@@ -225,14 +221,17 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilitySc
             description,
             AuditInfo.New(owner),
             ownership,
-            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope)
-        );
+            VisibilityInfo.FromPreferenceOrDefault(ownership, visibilityScope),
+            supportedConfigurationTypes);
     }
 
     public bool Update(EquipmentUpdate update)
     {
         ArgumentNullException.ThrowIfNull(update);
 
+        var configurationTypes = update.SupportedConfigurationTypes is { } updatedConfigurationTypes
+            ? NormalizeConfigurationTypes(updatedConfigurationTypes)
+            : null;
         var hasChanged = false;
 
         if (!string.IsNullOrWhiteSpace(update.Name))
@@ -247,6 +246,12 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilitySc
                 update.DescriptionUpdate.Language
             );
 
+            hasChanged = true;
+        }
+
+        if (configurationTypes is not null && !supportedConfigurationTypes.SequenceEqual(configurationTypes))
+        {
+            supportedConfigurationTypes = configurationTypes;
             hasChanged = true;
         }
 
@@ -306,6 +311,20 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilitySc
         return true;
     }
     
+    private static List<EquipmentConfigurationType> NormalizeConfigurationTypes(
+        IReadOnlyCollection<EquipmentConfigurationType> configurationTypes)
+    {
+        if (configurationTypes.Any(type => !Enum.IsDefined(type)))
+        {
+            throw new ArgumentOutOfRangeException(nameof(configurationTypes), "Unknown equipment configuration type.");
+        }
+
+        return configurationTypes
+            .Distinct()
+            .Order()
+            .ToList();
+    }
+
     private void SetName(string name)
     {
         Name = FormatingUtilities.NormalizeName(name);

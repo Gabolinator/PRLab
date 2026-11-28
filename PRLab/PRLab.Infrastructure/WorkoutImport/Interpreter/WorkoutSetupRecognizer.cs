@@ -2,34 +2,67 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport.Model;
+using PRLab.Domain.Model.Value.Enum.Equipment;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
 
 internal sealed class WorkoutSetupRecognizer(WorkoutImportProfile profile)
 {
-    private static readonly Regex boxHeightPattern = new(
+    private static readonly Regex heightPattern = new(
         @"(?<![\p{L}\p{N}_.-])(?<height>[0-9]+(?:\.[0-9]+)?)\s*cm(?![\p{L}\p{N}_/])",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
-    public IEnumerable<WorkoutImportSemanticItem> FindExerciseSetup(
-        WorkoutSemanticSource source,
-        WorkoutExerciseSemanticTarget target,
-        string? boxName)
+    public static IEnumerable<EquipmentHeightTextMatch> FindEquipmentHeights(WorkoutSemanticSource source)
     {
-        foreach (var (match, name) in FindAliases(source.Text, profile.Aliases.EquipmentOn))
+        foreach (Match match in heightPattern.Matches(source.Text))
         {
-            yield return new WorkoutEquipmentSemantic(CreateOrigin(source, target, match), name, WorkoutEquipmentRelation.On);
-        }
-
-        var countedPrefix = WorkoutTextMatching.WordStart + @"(?<quantity>[1-9][0-9]*)\s*";
-        foreach (var (match, name) in FindAliases(source.Text, profile.Aliases.CountedEquipment, countedPrefix))
-        {
-            if (int.TryParse(match.Groups["quantity"].Value, out var quantity))
+            var heightText = match.Groups["height"].Value;
+            if (decimal.TryParse(heightText, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var height) &&
+                height > 0)
             {
-                yield return new WorkoutEquipmentSemantic(CreateOrigin(source, target, match), name, Quantity: quantity);
+                var matchedSource = source with { Text = match.Value, Offset = source.Offset + match.Index };
+                yield return new EquipmentHeightTextMatch(matchedSource, height);
             }
         }
+    }
 
+    public static (WorkoutEquipmentSemantic? Equipment, string? Warning) RecognizeEquipmentHeight(
+        EquipmentHeightTextMatch match,
+        WorkoutExerciseSemanticTarget? target,
+        IReadOnlyList<WorkoutImportEquipmentReference> equipment)
+    {
+        var configurableEquipment =
+            equipment
+                .Where(reference => reference.SupportedConfigurationTypes.Contains(EquipmentConfigurationType.Height))
+                .ToList();
+        if (configurableEquipment.Count == 0)
+        {
+            return (null, null);
+        }
+
+        if (configurableEquipment.Count > 1)
+        {
+            var names = string.Join(", ", configurableEquipment.Select(reference => reference.Name));
+            return (null, $"Ambiguous equipment height '{match.Source.Text}': {names}.");
+        }
+
+        var reference = configurableEquipment[0];
+        WorkoutSemanticTarget semanticTarget = target is null
+            ? new WorkoutScopeSemanticTarget(WorkoutSemanticScope.Equipment)
+            : target;
+        var origin = new WorkoutSemanticOrigin(match.Source, semanticTarget);
+        var configuredEquipment = new WorkoutEquipmentSemantic(origin, reference.Name, HeightCentimeters: match.Centimeters)
+        {
+            EquipmentId = reference.Id
+        };
+
+        return (configuredEquipment, null);
+    }
+
+    public IEnumerable<WorkoutImportSemanticItem> FindExerciseCues(
+        WorkoutSemanticSource source,
+        WorkoutExerciseSemanticTarget target)
+    {
         foreach (var (match, quality) in FindAliases(source.Text, profile.Aliases.MovementQualityCues))
         {
             yield return new WorkoutMovementQualitySemantic(CreateOrigin(source, target, match), quality);
@@ -43,19 +76,6 @@ internal sealed class WorkoutSetupRecognizer(WorkoutImportProfile profile)
         foreach (var match in FindPhrases(source.Text, profile.Aliases.SelfPaced))
         {
             yield return new WorkoutSelfPacedSemantic(CreateOrigin(source, target, match));
-        }
-
-        if (boxName is not null)
-        {
-            foreach (Match match in boxHeightPattern.Matches(source.Text))
-            {
-                var heightText = match.Groups["height"].Value;
-                if (decimal.TryParse(heightText, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var height) &&
-                    height > 0)
-                {
-                    yield return new WorkoutEquipmentSemantic(CreateOrigin(source, target, match), boxName, HeightCentimeters: height);
-                }
-            }
         }
     }
 
@@ -95,8 +115,7 @@ internal sealed class WorkoutSetupRecognizer(WorkoutImportProfile profile)
 
     private static IEnumerable<(Match Match, TValue Value)> FindAliases<TValue>(
         string text,
-        IReadOnlyDictionary<string, TValue> aliases,
-        string start = WorkoutTextMatching.WordStart)
+        IReadOnlyDictionary<string, TValue> aliases)
     {
         foreach (var (phrase, value) in aliases)
         {
@@ -105,7 +124,10 @@ internal sealed class WorkoutSetupRecognizer(WorkoutImportProfile profile)
                 continue;
             }
 
-            var pattern = WorkoutTextMatching.CreatePhrasePattern(phrase, start, WorkoutTextMatching.WordEnd);
+            var pattern = WorkoutTextMatching.CreatePhrasePattern(
+                phrase,
+                WorkoutTextMatching.WordStart,
+                WorkoutTextMatching.WordEnd);
             foreach (Match match in pattern.Matches(text))
             {
                 yield return (match, value);
@@ -137,3 +159,5 @@ internal sealed class WorkoutSetupRecognizer(WorkoutImportProfile profile)
         return new WorkoutSemanticOrigin(matchSource, target);
     }
 }
+
+internal sealed record EquipmentHeightTextMatch(WorkoutSemanticSource Source, decimal Centimeters);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.Equipment;
 using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.Infrastructure.DB.ModelBuilders.Entity;
@@ -26,6 +27,11 @@ public static class EquipmentModelBuilder
             
             equipment.Property(equipment => equipment.NameKey)
                 .HasMaxLength(150)
+                .IsRequired();
+
+            equipment.Ignore(equipment => equipment.SupportedConfigurationTypes);
+            equipment.PrimitiveCollection<List<EquipmentConfigurationType>>("supportedConfigurationTypes")
+                .HasColumnName(nameof(Equipment.SupportedConfigurationTypes))
                 .IsRequired();
 
             equipment.HasOne(equipment => equipment.Description)

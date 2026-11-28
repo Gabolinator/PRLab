@@ -3,6 +3,7 @@ using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Utilities.Interface;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
+using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Utilities;
 using PRLab.Infrastructure.WorkoutImport.Interpreter.Extensions;
 
@@ -15,6 +16,11 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
     private readonly AttributeInterpreter attributes = new(context.Profile);
 
     private readonly WorkoutSetupRecognizer setup = new(context.Profile);
+
+    private readonly WorkoutEquipmentMatcher equipmentMatcher = new(context);
+
+    private readonly IReadOnlyDictionary<EquipmentId, WorkoutImportEquipmentReference> equipmentById =
+        context.Equipment.ToDictionary(equipment => equipment.Id);
 
     private readonly WorkoutPrescriptionInterpreter prescriptions = new(logger, context.Profile);
 
@@ -56,13 +62,23 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
         var blockHeading = RecognizeBlockHeading(expectedExerciseCell);
         semanticItems.AddRange(blockHeading);
 
+        var notesCell = row.GetExpectedCell(WorkoutImportProperty.Notes);
+        var equipmentInputs =
+            row.GetUnconsumedText()
+                .Where(input => input.Cell != notesCell)
+                .SelectMany(SplitInput)
+                .ToList();
         var exercise = FindRowExercise(row, expectedExerciseCell);
         var detailsCell = row.GetExpectedCell(WorkoutImportProperty.Details);
         var exerciseParts = exercise is null ? [] : RecognizeExerciseQualifiers(exercise.Fragments, detailsCell, semanticItems);
         var workWindows = RecognizeWorkWindows(row);
         semanticItems.AddRange(workWindows);
 
-        if (exercise is null && workWindows.Count == 0 && blockHeading.Count == 0)
+        var warnings = new List<WorkoutImportWarning>();
+        var exerciseTargets = GetExerciseTargets(exercise);
+        RecognizeEquipment(equipmentInputs, exercise?.Input.Cell, detailsCell, exerciseTargets, semanticItems, warnings);
+        RecognizeEquipmentHeights(equipmentInputs, exercise?.Input.Cell, detailsCell, exerciseTargets, semanticItems, warnings);
+        if (semanticItems.Count == 0 && exercise is null && warnings.Count == 0)
         {
             return null;
         }
@@ -81,7 +97,7 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
                     .ToList();
         }
 
-        var warnings = RecognizePrescriptions(row, exercise, semanticItems);
+        warnings.AddRange(RecognizePrescriptions(row, exercise, semanticItems));
         var exerciseInterpretations = CreateExerciseInterpretations(exercise, semanticItems);
         var rowSemanticItems =
             semanticItems
@@ -98,9 +114,12 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
         var details = GetCellText(row, WorkoutImportProperty.Details);
         var notes = GetCellText(row, WorkoutImportProperty.Notes);
-        var sourceText = exercise?.Input.Text ?? workWindows.FirstOrDefault()?.Origin.Source.Text ?? expectedExerciseCell!.Text;
+        var rowSource = semanticItems.FirstOrDefault()?.Origin.Source;
+        var sourceText = exercise?.Input.Text ?? workWindows.FirstOrDefault()?.Origin.Source.Text ??
+            rowSource?.Text ?? equipmentInputs.FirstOrDefault()?.Text ?? string.Empty;
         var sourceReference = exercise?.Input.Cell.SourceReference ??
-            workWindows.FirstOrDefault()?.Origin.Source.Reference ?? expectedExerciseCell?.SourceReference;
+            workWindows.FirstOrDefault()?.Origin.Source.Reference ?? rowSource?.Reference ??
+            equipmentInputs.FirstOrDefault()?.Cell.SourceReference;
 
         return new WorkoutImportRowDraft
         {
@@ -246,25 +265,17 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
                     fragment.Input.Cell.Consume(attributeSpan, ConsumptionKind.Attribute);
                 }
 
-                semanticItems.AddRange(result.Items);
+                semanticItems.AddRange(result.Items.Select(ResolveConfiguredEquipment));
 
-                var exerciseReference = context.Exercises.FirstOrDefault(reference => reference.Id == target.ExerciseId);
-                var boxNames =
-                    (exerciseReference?.EquipmentNames ?? [])
-                        .Concat(result.Items.OfType<WorkoutEquipmentSemantic>().Select(item => item.Name))
-                        .Where(IsBoxEquipment)
-                        .Distinct(StringComparer.OrdinalIgnoreCase)
-                        .ToList();
-                var boxName = boxNames.Count == 1 ? boxNames[0] : null;
                 if (fragment.Matches.Count == 1)
                 {
-                    semanticItems.AddRange(RecognizeStandaloneAttributes(fragment.Input.Cell, fragment.Input.Span, target, boxName));
+                    semanticItems.AddRange(RecognizeStandaloneAttributes(fragment.Input.Cell, fragment.Input.Span, target));
                 }
 
                 if (resolvedExerciseCount == 1 && detailsCell is not null && detailsCell != fragment.Input.Cell)
                 {
                     var detailsSpan = new TextSpan(0, detailsCell.Text.Length);
-                    semanticItems.AddRange(RecognizeStandaloneAttributes(detailsCell, detailsSpan, target, boxName));
+                    semanticItems.AddRange(RecognizeStandaloneAttributes(detailsCell, detailsSpan, target));
                 }
 
                 parts.Add(match.Part with
@@ -280,14 +291,10 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
         return parts;
     }
 
-    private static bool IsBoxEquipment(string name) =>
-        FormatingUtilities.NormalizeNameKey(name) is "box" or "plyometricbox";
-
     private IReadOnlyList<WorkoutImportSemanticItem> RecognizeStandaloneAttributes(
         WorkoutRowCell cell,
         TextSpan region,
-        WorkoutExerciseSemanticTarget target,
-        string? boxName)
+        WorkoutExerciseSemanticTarget target)
     {
         var items = new List<WorkoutImportSemanticItem>();
         var inputsInRegion =
@@ -302,8 +309,7 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
             var standaloneItems =
                 attributes.FindPauses(source, target)
                     .Cast<WorkoutImportSemanticItem>()
-                    .Concat(attributes.FindEquipment(source, target))
-                    .Concat(setup.FindExerciseSetup(source, target, boxName))
+                    .Concat(setup.FindExerciseCues(source, target))
                     .OrderBy(item => item.Origin.Source.Offset)
                     .ThenByDescending(item => item.Origin.Source.Length);
             var previousEnd = input.Span.Start;
@@ -317,12 +323,204 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
                 var matchedSpan = new TextSpan(matchedSource.Offset, matchedSource.Length);
                 cell.Consume(matchedSpan, ConsumptionKind.Attribute);
-                items.Add(item);
+                items.Add(ResolveConfiguredEquipment(item));
                 previousEnd = matchedSpan.End;
             }
         }
 
         return items;
+    }
+
+    private WorkoutImportSemanticItem ResolveConfiguredEquipment(WorkoutImportSemanticItem item) =>
+        item is WorkoutEquipmentSemantic equipment ? equipmentMatcher.ResolveConfiguredName(equipment) : item;
+
+    private void RecognizeEquipment(
+        IReadOnlyList<UnconsumedCellText> inputs,
+        WorkoutRowCell? exerciseCell,
+        WorkoutRowCell? detailsCell,
+        IReadOnlyList<WorkoutExerciseSemanticTarget> exerciseTargets,
+        List<WorkoutImportSemanticItem> items,
+        List<WorkoutImportWarning> warnings)
+    {
+        foreach (var input in inputs)
+        {
+            var source = CreateSemanticSource(input);
+            foreach (var match in equipmentMatcher.FindMatches(source))
+            {
+                var span = new TextSpan(match.Source.Offset, match.Source.Length);
+                var overlappingConsumption =
+                    input.Cell.Consumption
+                        .Where(entry => entry.Span.Start < span.End && entry.Span.End > span.Start)
+                        .ToList();
+                var coversExercise = overlappingConsumption.Count == 1 &&
+                    overlappingConsumption[0] is { Kind: ConsumptionKind.Exercise } consumed &&
+                    consumed.Span == match.LabelSpan;
+                if (overlappingConsumption.Count > 0 && !coversExercise)
+                {
+                    continue;
+                }
+
+                if (match.Warning is { } warning)
+                {
+                    warnings.Add(new WorkoutImportWarning
+                    {
+                        Severity = WorkoutImportIssueSeverity.Warning,
+                        Message = $"{source.Reference}: {warning}"
+                    });
+                }
+
+                if (match.Equipment is not { } equipment)
+                {
+                    continue;
+                }
+
+                var target = FindEquipmentTarget(input, match.LabelSpan, exerciseCell, detailsCell, exerciseTargets);
+                if (target is not null)
+                {
+                    equipment = equipment with { Origin = equipment.Origin with { Target = target } };
+                }
+
+                if (coversExercise)
+                {
+                    var prefixLength = match.LabelSpan.Start - span.Start;
+                    if (prefixLength > 0)
+                    {
+                        input.Cell.Consume(new TextSpan(span.Start, prefixLength), ConsumptionKind.Equipment);
+                    }
+                }
+                else
+                {
+                    input.Cell.Consume(span, ConsumptionKind.Equipment);
+                }
+
+                items.Add(equipment);
+            }
+        }
+    }
+
+    private static IReadOnlyList<WorkoutExerciseSemanticTarget> GetExerciseTargets(RowExercise? exercise) =>
+        (exercise?.Fragments ?? [])
+            .SelectMany(fragment => fragment.Matches
+                .Where(match => match.Part.ExerciseId.HasValue)
+                .Select(match => new WorkoutExerciseSemanticTarget(
+                    match.Part.ExerciseId!.Value,
+                    fragment.Input.Cell.SourceReference,
+                    fragment.Input.Span.Start + match.Span.Start)))
+            .ToList();
+
+    private void RecognizeEquipmentHeights(
+        IReadOnlyList<UnconsumedCellText> inputs,
+        WorkoutRowCell? exerciseCell,
+        WorkoutRowCell? detailsCell,
+        IReadOnlyList<WorkoutExerciseSemanticTarget> exerciseTargets,
+        List<WorkoutImportSemanticItem> items,
+        List<WorkoutImportWarning> warnings)
+    {
+        var explicitEquipment =
+            items
+                .OfType<WorkoutEquipmentSemantic>()
+                .Where(item => item.EquipmentId.HasValue)
+                .ToList();
+
+        foreach (var input in inputs)
+        {
+            var source = CreateSemanticSource(input);
+            foreach (var match in WorkoutSetupRecognizer.FindEquipmentHeights(source))
+            {
+                var span = new TextSpan(match.Source.Offset, match.Source.Length);
+                if (input.Cell.Consumption.Any(entry => entry.Span.Start < span.End && entry.Span.End > span.Start))
+                {
+                    continue;
+                }
+
+                var exerciseTarget = FindEquipmentTarget(input, span, exerciseCell, detailsCell, exerciseTargets);
+                var adjacentEquipment =
+                    explicitEquipment
+                        .Where(item => item.Origin.Source.ColumnIndex == input.Cell.ColumnIndex &&
+                            IsAdjacent(input.Cell.Text, span, item.Origin.Source))
+                        .ToList();
+                var adjacentTargets =
+                    adjacentEquipment
+                        .Select(item => item.Origin.Target)
+                        .OfType<WorkoutExerciseSemanticTarget>()
+                        .Distinct()
+                        .ToList();
+                var target = exerciseTarget ?? (adjacentTargets.Count == 1 ? adjacentTargets[0] : null);
+                var availableIds = adjacentEquipment.Count > 0
+                    ? adjacentEquipment.Select(item => item.EquipmentId!.Value)
+                    : GetExerciseEquipmentIds(target, explicitEquipment);
+                var availableEquipment =
+                    availableIds
+                        .Distinct()
+                        .Select(id => equipmentById.GetValueOrDefault(id))
+                        .OfType<WorkoutImportEquipmentReference>()
+                        .ToList();
+                var (equipment, warning) = WorkoutSetupRecognizer.RecognizeEquipmentHeight(match, target, availableEquipment);
+                if (warning is not null)
+                {
+                    warnings.Add(new WorkoutImportWarning
+                    {
+                        Severity = WorkoutImportIssueSeverity.Warning,
+                        Message = $"{source.Reference}: {warning}"
+                    });
+                }
+
+                if (equipment is not null)
+                {
+                    items.Add(equipment);
+                    input.Cell.Consume(span, ConsumptionKind.Equipment);
+                }
+            }
+        }
+    }
+
+    private IEnumerable<EquipmentId> GetExerciseEquipmentIds(
+        WorkoutExerciseSemanticTarget? target, IReadOnlyList<WorkoutEquipmentSemantic> explicitEquipment)
+    {
+        if (target is null)
+        {
+            return [];
+        }
+
+        var exercise = context.Exercises.FirstOrDefault(reference => reference.Id == target.ExerciseId);
+        var explicitIds =
+            explicitEquipment
+                .Where(item => item.Origin.Target == target)
+                .Select(item => item.EquipmentId!.Value);
+
+        return (exercise?.EquipmentIds ?? []).Concat(explicitIds);
+    }
+
+    private static bool IsAdjacent(string text, TextSpan measurement, WorkoutSemanticSource equipment)
+    {
+        var equipmentEnd = equipment.Offset + equipment.Length;
+        if (equipmentEnd <= measurement.Start)
+        {
+            return string.IsNullOrWhiteSpace(text[equipmentEnd..measurement.Start]);
+        }
+
+        return measurement.End <= equipment.Offset &&
+            string.IsNullOrWhiteSpace(text[measurement.End..equipment.Offset]);
+    }
+
+    private static WorkoutExerciseSemanticTarget? FindEquipmentTarget(
+        UnconsumedCellText input,
+        TextSpan labelSpan,
+        WorkoutRowCell? exerciseCell,
+        WorkoutRowCell? detailsCell,
+        IReadOnlyList<WorkoutExerciseSemanticTarget> targets)
+    {
+        if (input.Cell == exerciseCell)
+        {
+            var fragmentTargets =
+                targets
+                    .Where(target => target.SourceOffset >= input.Span.Start && target.SourceOffset < input.Span.End)
+                    .ToList();
+            var exactTarget = fragmentTargets.FirstOrDefault(target => target.SourceOffset == labelSpan.Start);
+            return exactTarget ?? (fragmentTargets.Count == 1 ? fragmentTargets[0] : null);
+        }
+
+        return input.Cell == detailsCell && targets.Count == 1 ? targets[0] : null;
     }
 
     private IReadOnlyList<WorkoutWorkWindowSemantic> RecognizeWorkWindows(WorkoutRowCells row)

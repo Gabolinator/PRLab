@@ -11,6 +11,8 @@ public interface IEquipmentRepository
     Task<Equipment?> GetByNameAsync(string name, CancellationToken ct);
 
     Task<IReadOnlyCollection<Equipment>> ListAsync(CancellationToken ct);
+
+    Task<IReadOnlyCollection<Equipment>> ListWithAliasesAsync(CancellationToken ct);
     
     Task<int> CountAsync(CancellationToken ct);
 

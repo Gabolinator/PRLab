@@ -1,6 +1,7 @@
 using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
+using PRLab.Domain.Model.Value.Enum.Equipment;
 using PRLab.Domain.Model.Value.Access;
 using PRLab.Domain.Model.Value.Enum.System;
 
@@ -15,6 +16,8 @@ public sealed record EquipmentSeedJsonDto
     public IReadOnlyList<string> Aliases { get; init; } = [];
 
     public string NameKey { get; init; } = string.Empty;
+
+    public IReadOnlyList<EquipmentConfigurationType> SupportedConfigurationTypes { get; init; } = [];
 
     public DescriptionSeedJsonDto? Description { get; init; }
 
@@ -39,6 +42,7 @@ public sealed record EquipmentSeedJsonDto
                 .Select(relation => relation.Alias.Value)
                 .ToArray(),
             NameKey = equipment.NameKey,
+            SupportedConfigurationTypes = equipment.SupportedConfigurationTypes.ToArray(),
             Description = equipment.Description is null
                 ? null
                 : DescriptionSeedJsonDto.FromDescription(equipment.Description),

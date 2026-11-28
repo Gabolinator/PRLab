@@ -13,7 +13,6 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
     private readonly IReadOnlyList<Qualifier> trailing = BuildQualifiers(
         profile, WorkoutImportAttributeMatchMode.TrailingQualifier, WorkoutTextMatching.WordEnd);
     private readonly ILookup<string, WorkoutImportAttributeAssignment> matchedAliases = BuildAliasLookup(profile);
-    private readonly IReadOnlyList<EquipmentAlias> equipmentAliases = BuildEquipmentAliases(profile);
     private readonly IReadOnlyList<PauseAlias> pauseAliases =
         profile.Aliases.PausePositions
             .Where(alias => !string.IsNullOrWhiteSpace(alias.Key))
@@ -95,31 +94,6 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
         }
     }
 
-    public IEnumerable<WorkoutEquipmentSemantic> FindEquipment(WorkoutSemanticSource source, WorkoutExerciseSemanticTarget target)
-    {
-        var matches =
-            equipmentAliases
-                .SelectMany(alias => alias.Pattern.Matches(source.Text)
-                    .Cast<Match>()
-                    .Select(match => (Match: match, Name: alias.Name)));
-        var matchesInTextOrder =
-            matches
-                .OrderBy(entry => entry.Match.Index)
-                .ThenByDescending(entry => entry.Match.Length);
-
-        var end = 0;
-        foreach (var (match, name) in matchesInTextOrder)
-        {
-            if (match.Index >= end)
-            {
-                var span = new TextSpan(match.Index, match.Length);
-                var origin = CreateOrigin(source, target, span);
-                yield return new WorkoutEquipmentSemantic(origin, name);
-                end = span.End;
-            }
-        }
-    }
-
     private static List<WorkoutImportSemanticItem> RecognizeAssignments(
         IEnumerable<WorkoutImportAttributeAssignment> assignments,
         WorkoutSemanticSource source,
@@ -167,17 +141,6 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
         var matchedSource = source with { Text = span.Read(source.Text), Offset = source.Offset + span.Start };
         return new WorkoutSemanticOrigin(matchedSource, target);
     }
-
-    private static IReadOnlyList<EquipmentAlias> BuildEquipmentAliases(WorkoutImportProfile profile) =>
-        profile.Aliases.Equipment
-            .Where(alias => !string.IsNullOrWhiteSpace(alias.Key) && !string.IsNullOrWhiteSpace(alias.Value))
-            .Select(alias => new EquipmentAlias(
-                WorkoutTextMatching.CreatePhrasePattern(
-                    alias.Key,
-                    WorkoutTextMatching.WordStart,
-                    WorkoutTextMatching.WordEnd),
-                alias.Value))
-            .ToList();
 
     private static IReadOnlyList<Qualifier> BuildQualifiers(
         WorkoutImportProfile profile,
@@ -279,8 +242,6 @@ internal sealed class AttributeInterpreter(WorkoutImportProfile profile)
     }
 
     private sealed record PauseAlias(Regex Pattern, WorkoutPausePosition Position);
-
-    private sealed record EquipmentAlias(Regex Pattern, string Name);
 
     private sealed record Qualifier(Regex Pattern, IReadOnlyList<WorkoutImportAttributeAssignment> Assignments);
 }

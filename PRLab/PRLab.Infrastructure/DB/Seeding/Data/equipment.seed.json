@@ -131,6 +131,7 @@
       "Speed Rope"
     ],
     "NameKey": "jumprope",
+    "SupportedConfigurationTypes": ["Length"],
     "Description": {
       "Content": "Lightweight rope with handles used for conditioning, coordination, footwork, agility, and jumping movements such as single unders and double unders."
     },
@@ -195,6 +196,7 @@
       "Plyo Box"
     ],
     "NameKey": "plyometricbox",
+    "SupportedConfigurationTypes": ["Height"],
     "Description": {
       "Content": "Stable elevated platform for jumps and step-ups."
     },
@@ -227,6 +229,7 @@
       "Exercise Band"
     ],
     "NameKey": "resistanceband",
+    "SupportedConfigurationTypes": ["Resistance"],
     "Description": {
       "Content": "Elastic training band used to add variable resistance, assistance, or mobility work to strength and conditioning movements."
     },

@@ -11,6 +11,7 @@ namespace PRLab.Infrastructure.WorkoutImport;
 
 public sealed class WorkoutImportContextFactory(
     IExerciseRepository exerciseRepository,
+    IEquipmentRepository equipmentRepository,
     ICurrentUserService currentUserService,
     IWorkoutImportProfileProvider profileProvider,
     IAppLogger logger)
@@ -27,17 +28,25 @@ public sealed class WorkoutImportContextFactory(
         var exercises = await exerciseRepository.ListWithAliasesAsync(ct);
         logger.Log(nameof(WorkoutImportContextFactory), $"Retrieved exercises: {exercises.Count}");
 
+        var equipment = await equipmentRepository.ListWithAliasesAsync(ct);
+        logger.Log(nameof(WorkoutImportContextFactory), $"Retrieved equipment: {equipment.Count}");
+
         var userId = currentUserService.GetRequiredUserId();
         var exerciseReferences =
             exercises
                 .Select(CreateExerciseReference)
+                .ToList();
+        var equipmentReferences =
+            equipment
+                .Select(CreateEquipmentReference)
                 .ToList();
 
         return new WorkoutImportContext
         {
             UserId = userId,
             Profile = profile,
-            Exercises = exerciseReferences
+            Exercises = exerciseReferences,
+            Equipment = equipmentReferences
         };
     }
 
@@ -76,11 +85,25 @@ public sealed class WorkoutImportContextFactory(
             DefaultWorkTargetType = defaults.Count == 1 ? defaults[0] : null,
             AllowedWorkTargetTypes = sharedTypes,
             SupportsExternalLoad = exercise.Steps.Count > 0 && exercise.Steps.All(SupportsExternalLoad),
-            EquipmentNames = movements
+            EquipmentIds = movements
                 .SelectMany(movement => movement.EquipmentRequirements)
-                .Select(requirement => requirement.Equipment.Name)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Select(requirement => requirement.EquipmentId)
+                .Distinct()
                 .ToArray()
+        };
+    }
+
+    private static WorkoutImportEquipmentReference CreateEquipmentReference(Equipment equipment)
+    {
+        var aliases = equipment.Aliases.Select(relation => relation.Alias.Value).ToArray();
+
+        return new WorkoutImportEquipmentReference
+        {
+            Id = equipment.Id,
+            Name = equipment.Name,
+            NameKey = equipment.NameKey,
+            Aliases = aliases,
+            SupportedConfigurationTypes = equipment.SupportedConfigurationTypes.ToArray()
         };
     }
 

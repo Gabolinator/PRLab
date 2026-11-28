@@ -156,8 +156,9 @@ internal static class WorkoutRowLog
         var quantity = equipment.Quantity is { } count ? $"{count} × " : string.Empty;
         var relation = equipment.Relation is WorkoutEquipmentRelation.On ? "on " : string.Empty;
         var height = equipment.HeightCentimeters is { } centimeters ? $" ({centimeters} cm)" : string.Empty;
+        var hint = equipment.WorkTargetHint is { } workTarget ? $" · Work hint: {workTarget}" : string.Empty;
 
-        return $"{relation}{quantity}{equipment.Name}{height}";
+        return $"{relation}{quantity}{equipment.Name}{height} · Matched: \"{equipment.Origin.Source.Text}\"{hint}";
     }
 
     private static string FormatWork(WorkoutWorkSemantic work)
