@@ -19,4 +19,6 @@ public sealed record WorkoutImportExerciseReference
     public IReadOnlyCollection<WorkTargetType>? AllowedWorkTargetTypes { get; init; }
 
     public bool SupportsExternalLoad { get; init; }
+
+    public IReadOnlyCollection<string> EquipmentNames { get; init; } = [];
 }

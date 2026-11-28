@@ -29,6 +29,18 @@
     }
   ],
   "Aliases": {
+    "EquipmentOn": {
+      "on medball": "Medicine Ball",
+      "on med ball": "Medicine Ball"
+    },
+    "CountedEquipment": {
+      "db": "Dumbbell"
+    },
+    "MovementQualityCues": {
+      "max speed up": "Speed"
+    },
+    "UnpositionedPauses": ["paused"],
+    "SelfPaced": ["eigene zeit", "own time"],
     "PausePositions": {
       "paused top": "Top"
     },
@@ -102,6 +114,9 @@
       "mlunges": "DistanceMeters"
     },
     "Equipment": {
+      "stick": "Stick",
+      "belt": "Weightlifting Belt",
+      "oly shoes": "Weightlifting Shoes",
       "bb": "Barbell"
     },
     "Attributes": {
@@ -175,6 +190,8 @@
   },
   "Parsing": {
     "UseCompactRepLoadSyntax": true,
+    "UseRepLoadSeries": true,
+    "UseZeroLoadPerSide": true,
     "CompactPairRepLoadInstruction": "SplitAnyhow",
     "UseCompactSetCadence": true,
     "Separators": [
@@ -185,7 +202,11 @@
     ]
   },
   "Mappings": {
+    "Intensities": {
+      "low intensity": "Low"
+    },
     "BlockTypes": {
+      "Metcon": "Metcon",
       "WOD": "Metcon",
       "Strength": "Strength",
       "Technique": "Skill",

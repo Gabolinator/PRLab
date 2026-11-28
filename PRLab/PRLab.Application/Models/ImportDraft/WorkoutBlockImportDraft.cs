@@ -9,6 +9,8 @@ public sealed record WorkoutBlockImportDraft
 
     public WorkoutBlockType? BlockType { get; init; }
 
+    public WorkoutTrainingIntensity? Intensity { get; init; }
+
     public int RepeatCount { get; init; } = 1;
 
     public int? RestBetweenRepeatsSeconds { get; init; }
@@ -38,6 +40,8 @@ public sealed record WorkoutBlockImportDraft
         {
             Name = workWindow.SourceText,
             Order = row.Order,
+            BlockType = row.RowSemanticItems.OfType<WorkoutBlockTypeSemantic>().FirstOrDefault()?.Type,
+            Intensity = row.RowSemanticItems.OfType<WorkoutIntensitySemantic>().FirstOrDefault()?.Intensity,
             Segments = [segment]
         };
     }
@@ -67,13 +71,15 @@ public sealed record WorkoutBlockImportDraft
                 .Where(prescription => prescription.Step.CaloriesPerHour.HasValue)
                 .ToList();
         var caloriesPerHour = paceTargets.Count == 1 ? paceTargets[0].Step.CaloriesPerHour : null;
+        var selfPaced = prescriptions.Any(prescription => prescription.Step.SelfPaced);
 
         if (workTargets.Count > 1 && workTargets.All(prescription => prescription.Step.LoadValue.HasValue))
         {
             return workTargets.Select(prescription => prescription.Step with
             {
                 Attributes = part.Attributes,
-                CaloriesPerHour = caloriesPerHour
+                CaloriesPerHour = caloriesPerHour,
+                SelfPaced = selfPaced
             });
         }
 
@@ -92,7 +98,9 @@ public sealed record WorkoutBlockImportDraft
                 Scope = work?.Scope ?? WorkTargetScope.Total,
                 SetCount = work?.SetCount,
                 SetCadenceSeconds = work?.SetCadenceSeconds,
+                HoldSecondsPerRep = work?.HoldSecondsPerRep,
                 CaloriesPerHour = caloriesPerHour,
+                SelfPaced = selfPaced,
                 LoadValue = load?.LoadValue,
                 LoadUnit = load?.LoadUnit,
                 Attributes = part.Attributes,

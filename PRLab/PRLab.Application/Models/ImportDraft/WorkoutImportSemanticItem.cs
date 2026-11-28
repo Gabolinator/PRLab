@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
+using PRLab.Domain.Model.Value.Enum.Workout;
 using PRLab.Domain.Model.Value.Identifier;
 
 namespace PRLab.Application.Models.ImportDraft;
@@ -49,6 +50,10 @@ public sealed record WorkoutSemanticOrigin(
 [JsonDerivedType(typeof(WorkoutPauseSemantic), "pause")]
 [JsonDerivedType(typeof(WorkoutSetCadenceSemantic), "setCadence")]
 [JsonDerivedType(typeof(WorkoutCalorieRateSemantic), "calorieRate")]
+[JsonDerivedType(typeof(WorkoutSelfPacedSemantic), "selfPaced")]
+[JsonDerivedType(typeof(WorkoutHoldSemantic), "hold")]
+[JsonDerivedType(typeof(WorkoutBlockTypeSemantic), "blockType")]
+[JsonDerivedType(typeof(WorkoutIntensitySemantic), "intensity")]
 public abstract record WorkoutImportSemanticItem(WorkoutSemanticOrigin Origin);
 
 public sealed record WorkoutWorkSemantic(
@@ -80,7 +85,14 @@ public sealed record WorkoutTechniqueSemantic(WorkoutSemanticOrigin Origin, stri
 public sealed record WorkoutMovementQualitySemantic(WorkoutSemanticOrigin Origin, string Quality)
     : WorkoutImportSemanticItem(Origin);
 
-public sealed record WorkoutEquipmentSemantic(WorkoutSemanticOrigin Origin, string Name) : WorkoutImportSemanticItem(Origin);
+public enum WorkoutEquipmentRelation
+{
+    On
+}
+
+public sealed record WorkoutEquipmentSemantic(
+    WorkoutSemanticOrigin Origin, string Name, WorkoutEquipmentRelation? Relation = null,
+    int? Quantity = null, decimal? HeightCentimeters = null) : WorkoutImportSemanticItem(Origin);
 
 public sealed record WorkoutEquipmentQuantitySemantic(WorkoutSemanticOrigin Origin, int Quantity)
     : WorkoutImportSemanticItem(Origin);
@@ -99,13 +111,29 @@ public enum WorkoutPausePosition
     Top
 }
 
-public sealed record WorkoutPauseSemantic(WorkoutSemanticOrigin Origin, WorkoutPausePosition Position)
+public sealed record WorkoutPauseSemantic(WorkoutSemanticOrigin Origin, WorkoutPausePosition? Position)
     : WorkoutImportSemanticItem(Origin);
 
 public sealed record WorkoutSetCadenceSemantic(WorkoutSemanticOrigin Origin, int Seconds, WorkoutSemanticOrigin WorkOrigin)
     : WorkoutImportSemanticItem(Origin);
 
 public sealed record WorkoutCalorieRateSemantic(WorkoutSemanticOrigin Origin, decimal CaloriesPerHour)
+    : WorkoutImportSemanticItem(Origin);
+
+public sealed record WorkoutSelfPacedSemantic(WorkoutSemanticOrigin Origin) : WorkoutImportSemanticItem(Origin);
+
+public sealed record WorkoutHoldSemantic(WorkoutSemanticOrigin Origin, int SecondsPerRep, WorkoutSemanticOrigin WorkOrigin)
+    : WorkoutImportSemanticItem(Origin);
+
+public sealed record WorkoutBlockTypeSemantic(WorkoutSemanticOrigin Origin, WorkoutBlockType Type)
+    : WorkoutImportSemanticItem(Origin);
+
+public enum WorkoutTrainingIntensity
+{
+    Low
+}
+
+public sealed record WorkoutIntensitySemantic(WorkoutSemanticOrigin Origin, WorkoutTrainingIntensity Intensity)
     : WorkoutImportSemanticItem(Origin);
 
 public sealed record WorkoutImportExerciseInterpretation(

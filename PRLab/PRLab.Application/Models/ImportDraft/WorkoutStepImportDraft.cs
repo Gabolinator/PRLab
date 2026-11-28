@@ -32,6 +32,10 @@ public sealed record WorkoutStepImportDraft
 
     public int? SetCadenceSeconds { get; init; }
 
+    public int? HoldSecondsPerRep { get; init; }
+
+    public bool SelfPaced { get; init; }
+
     public decimal? CaloriesPerHour { get; init; }
 
     public string? Notes { get; init; }

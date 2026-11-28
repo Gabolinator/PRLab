@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using PRLab.Application.Models.ImportDraft;
+using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
@@ -33,8 +34,12 @@ internal static class WorkoutPrescriptionSyntax
         $@"(?<first>{Count}){Times}(?<second>{Weight})(?!\s*[x×.\-]\s*[0-9])");
     private static readonly Regex clockPattern = CreatePattern(@"(?<minutes>[0-9]+):(?<seconds>[0-5][0-9])");
     private static readonly Regex calorieRatePattern = CreatePattern($@"(?<rate>{Weight})\s*cal\s*/\s*h");
+    private static readonly Regex perSideHoldPattern = CreatePattern(
+        $@"(?<repetitionPhrase>(?<reps>{Count})\s*[x×]\s*each\s+side)\s+(?<holdPhrase>{Duration}\s+hold)");
+    private static readonly Regex zeroLoadPerSidePattern = CreatePattern(
+        $@"(?<reps>{Count}){Times}0\s+each\s+side");
 
-    public static IEnumerable<RawPrescriptionToken> Scan(string text, bool useCompactRepLoadSyntax)
+    public static IEnumerable<RawPrescriptionToken> Scan(string text, WorkoutImportParsing parsing)
     {
         var firstContent = text.Length - text.TrimStart().Length;
         var offset = firstContent;
@@ -46,14 +51,43 @@ internal static class WorkoutPrescriptionSyntax
                 continue;
             }
 
-            if (useCompactRepLoadSyntax && ReadCompactLoad(text, offset) is { } compactLoad)
+            var hold = perSideHoldPattern.Match(text, offset);
+            if (int.TryParse(hold.Groups["reps"].Value, out var holdReps) && TryReadSeconds(hold, out var holdSeconds))
+            {
+                var holdToken = new RawPerSideHoldToken(
+                    GetSpan(hold),
+                    holdReps,
+                    holdSeconds,
+                    GetSpan(hold.Groups["repetitionPhrase"]),
+                    GetSpan(hold.Groups["holdPhrase"]));
+                yield return holdToken;
+                offset = holdToken.Span.End;
+                continue;
+            }
+
+            var zeroLoad = zeroLoadPerSidePattern.Match(text, offset);
+            if (zeroLoad.Success)
+            {
+                if (parsing.UseZeroLoadPerSide && int.TryParse(zeroLoad.Groups["reps"].Value, out var zeroLoadReps))
+                {
+                    yield return new RawZeroLoadPerSideToken(GetSpan(zeroLoad), zeroLoadReps);
+                }
+
+                offset += zeroLoad.Length;
+                continue;
+            }
+
+            if (ReadCompactLoad(text, offset) is { } compactLoad &&
+                (compactLoad.Loads.Count > 1
+                    ? parsing.UseRepLoadSeries ?? parsing.UseCompactRepLoadSyntax
+                    : parsing.UseCompactRepLoadSyntax))
             {
                 yield return compactLoad;
                 offset = compactLoad.Span.End;
                 continue;
             }
 
-            if (useCompactRepLoadSyntax && ReadCompactPair(text, offset) is { } compactPair)
+            if (parsing.UseCompactRepLoadSyntax && ReadCompactPair(text, offset) is { } compactPair)
             {
                 yield return compactPair;
                 offset = compactPair.Span.End;
@@ -234,7 +268,7 @@ internal static class WorkoutPrescriptionSyntax
     private static bool IsTokenStart(string text, int offset) =>
         offset == 0 || !(char.IsLetterOrDigit(text[offset - 1]) || text[offset - 1] is '_' or '.' or ':' or '-' or '/' or '×' or '+');
 
-    private static TextSpan GetSpan(Match match) => new(match.Index, match.Length);
+    private static TextSpan GetSpan(Capture match) => new(match.Index, match.Length);
 }
 
 internal abstract record RawPrescriptionToken(TextSpan Span);
@@ -249,6 +283,11 @@ internal sealed record RawCompactPairToken(TextSpan Span, int First, decimal Sec
     : RawPrescriptionToken(Span);
 
 internal sealed record RawClockToken(TextSpan Span, int Seconds) : RawPrescriptionToken(Span);
+
+internal sealed record RawPerSideHoldToken(
+    TextSpan Span, int Reps, int HoldSeconds, TextSpan RepSpan, TextSpan HoldSpan) : RawPrescriptionToken(Span);
+
+internal sealed record RawZeroLoadPerSideToken(TextSpan Span, int Reps) : RawPrescriptionToken(Span);
 
 internal sealed record RawCalorieRateToken(TextSpan Span, decimal CaloriesPerHour) : RawPrescriptionToken(Span);
 

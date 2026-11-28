@@ -14,6 +14,8 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
     private readonly AttributeInterpreter attributes = new(context.Profile);
 
+    private readonly WorkoutSetupRecognizer setup = new(context.Profile);
+
     private readonly WorkoutPrescriptionInterpreter prescriptions = new(logger, context.Profile);
 
     private readonly string[] separators =
@@ -42,14 +44,17 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
         var orderCell = row.GetExpectedCell(WorkoutImportProperty.Order);
         int? order = orderCell.TryConsumeOrder(out var foundOrder) ? foundOrder : null;
+        var semanticItems = new List<WorkoutImportSemanticItem>();
+        var blockHeading = RecognizeBlockHeading(expectedExerciseCell);
+        semanticItems.AddRange(blockHeading);
+
         var exercise = FindRowExercise(row, expectedExerciseCell);
         var detailsCell = row.GetExpectedCell(WorkoutImportProperty.Details);
-        var semanticItems = new List<WorkoutImportSemanticItem>();
         var exerciseParts = exercise is null ? [] : RecognizeExerciseQualifiers(exercise.Fragments, detailsCell, semanticItems);
         var workWindows = RecognizeWorkWindows(row);
         semanticItems.AddRange(workWindows);
 
-        if (exercise is null && workWindows.Count == 0)
+        if (exercise is null && workWindows.Count == 0 && blockHeading.Count == 0)
         {
             return null;
         }
@@ -85,8 +90,9 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
         var details = GetCellText(row, WorkoutImportProperty.Details);
         var notes = GetCellText(row, WorkoutImportProperty.Notes);
-        var sourceText = exercise?.Input.Text ?? workWindows[0].Origin.Source.Text;
-        var sourceReference = exercise is null ? workWindows[0].Origin.Source.Reference : exercise.Input.Cell.SourceReference;
+        var sourceText = exercise?.Input.Text ?? workWindows.FirstOrDefault()?.Origin.Source.Text ?? expectedExerciseCell!.Text;
+        var sourceReference = exercise?.Input.Cell.SourceReference ??
+            workWindows.FirstOrDefault()?.Origin.Source.Reference ?? expectedExerciseCell?.SourceReference;
 
         return new WorkoutImportRowDraft
         {
@@ -101,6 +107,24 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
             Warnings = warnings,
             UnconsumedText = unconsumedText
         };
+    }
+
+    private IReadOnlyList<WorkoutImportSemanticItem> RecognizeBlockHeading(WorkoutRowCell? cell)
+    {
+        if (cell is null || cell.Consumption.Count > 0 || string.IsNullOrWhiteSpace(cell.Text))
+        {
+            return [];
+        }
+
+        var source = new WorkoutSemanticSource(cell.Text, cell.SourceReference, 0, cell.ColumnIndex);
+        var items = setup.RecognizeBlockHeading(source);
+        foreach (var item in items)
+        {
+            var matched = item.Origin.Source;
+            cell.Consume(new TextSpan(matched.Offset, matched.Length), ConsumptionKind.Attribute);
+        }
+
+        return items;
     }
 
     private static Regex[] BuildIgnoredLabelPatterns(WorkoutImportProfile profile) =>
@@ -216,15 +240,23 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
                 semanticItems.AddRange(result.Items);
 
+                var exerciseReference = context.Exercises.FirstOrDefault(reference => reference.Id == target.ExerciseId);
+                var boxNames =
+                    (exerciseReference?.EquipmentNames ?? [])
+                        .Concat(result.Items.OfType<WorkoutEquipmentSemantic>().Select(item => item.Name))
+                        .Where(IsBoxEquipment)
+                        .Distinct(StringComparer.OrdinalIgnoreCase)
+                        .ToList();
+                var boxName = boxNames.Count == 1 ? boxNames[0] : null;
                 if (fragment.Matches.Count == 1)
                 {
-                    semanticItems.AddRange(RecognizeStandaloneAttributes(fragment.Input.Cell, fragment.Input.Span, target));
+                    semanticItems.AddRange(RecognizeStandaloneAttributes(fragment.Input.Cell, fragment.Input.Span, target, boxName));
                 }
 
                 if (resolvedExerciseCount == 1 && detailsCell is not null && detailsCell != fragment.Input.Cell)
                 {
                     var detailsSpan = new TextSpan(0, detailsCell.Text.Length);
-                    semanticItems.AddRange(RecognizeStandaloneAttributes(detailsCell, detailsSpan, target));
+                    semanticItems.AddRange(RecognizeStandaloneAttributes(detailsCell, detailsSpan, target, boxName));
                 }
 
                 parts.Add(match.Part with
@@ -240,10 +272,14 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
         return parts;
     }
 
+    private static bool IsBoxEquipment(string name) =>
+        FormatingUtilities.NormalizeNameKey(name) is "box" or "plyometricbox";
+
     private IReadOnlyList<WorkoutImportSemanticItem> RecognizeStandaloneAttributes(
         WorkoutRowCell cell,
         TextSpan region,
-        WorkoutExerciseSemanticTarget target)
+        WorkoutExerciseSemanticTarget target,
+        string? boxName)
     {
         var items = new List<WorkoutImportSemanticItem>();
         var inputsInRegion =
@@ -259,6 +295,7 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
                 attributes.FindPauses(source, target)
                     .Cast<WorkoutImportSemanticItem>()
                     .Concat(attributes.FindEquipment(source, target))
+                    .Concat(setup.FindExerciseSetup(source, target, boxName))
                     .OrderBy(item => item.Origin.Source.Offset)
                     .ThenByDescending(item => item.Origin.Source.Length);
             var previousEnd = input.Span.Start;
@@ -342,7 +379,7 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
                 : null;
             var inputText = input.Text;
             var source = CreateSemanticSource(input);
-            var tokens = WorkoutPrescriptionSyntax.Scan(inputText, context.Profile.Parsing.UseCompactRepLoadSyntax).ToList();
+            var tokens = WorkoutPrescriptionSyntax.Scan(inputText, context.Profile.Parsing).ToList();
             var instructions = tokens.OfType<RawInstructionToken>()
                 .Select(instruction => instruction.Instruction)
                 .ToHashSet();
@@ -423,8 +460,10 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
                     exerciseContext.SourceOffset,
                     fragment.Input.Cell.ColumnIndex);
                 var target = new WorkoutExerciseSemanticTarget(exerciseContext.Exercise.Id, source.Reference, source.Offset);
+                var seenQualities = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var exerciseItems =
                     itemsByTarget[target]
+                        .Where(item => item is not WorkoutMovementQualitySemantic quality || seenQualities.Add(quality.Quality))
                         .Distinct()
                         .ToList();
                 interpretations.Add(new WorkoutImportExerciseInterpretation(exerciseContext.Exercise, source, exerciseItems));

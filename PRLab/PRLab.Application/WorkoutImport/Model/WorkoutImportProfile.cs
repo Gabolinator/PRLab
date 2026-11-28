@@ -45,6 +45,10 @@ public sealed class WorkoutImportParsing
 {
     public bool UseCompactRepLoadSyntax { get; init; }
 
+    public bool? UseRepLoadSeries { get; init; }
+
+    public bool UseZeroLoadPerSide { get; init; }
+
     public WorkoutInstructionKind? CompactPairRepLoadInstruction { get; init; }
 
     public bool UseCompactSetCadence { get; init; }
@@ -56,12 +60,25 @@ public sealed class WorkoutImportParsing
 
 public sealed class WorkoutImportMappings
 {
+    public IReadOnlyDictionary<string, WorkoutTrainingIntensity> Intensities { get; init; }
+        = new Dictionary<string, WorkoutTrainingIntensity>();
+
     public IReadOnlyDictionary<string, WorkoutBlockType> BlockTypes { get; init; }
         = new Dictionary<string, WorkoutBlockType>();
 }
 
 public sealed class WorkoutImportAliases
 {
+    public IReadOnlyDictionary<string, string> EquipmentOn { get; init; } = new Dictionary<string, string>();
+
+    public IReadOnlyDictionary<string, string> CountedEquipment { get; init; } = new Dictionary<string, string>();
+
+    public IReadOnlyDictionary<string, string> MovementQualityCues { get; init; } = new Dictionary<string, string>();
+
+    public IReadOnlyList<string> UnpositionedPauses { get; init; } = [];
+
+    public IReadOnlyList<string> SelfPaced { get; init; } = [];
+
     public IReadOnlyDictionary<string, string> Equipment { get; init; }
         = new Dictionary<string, string>();
 
@@ -113,4 +130,5 @@ public enum WorkoutImportAttributeType
     WorkType,
     None,
     PausePosition,
+    EquipmentRelation,
 }

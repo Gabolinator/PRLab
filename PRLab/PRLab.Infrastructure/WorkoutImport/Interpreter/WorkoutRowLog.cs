@@ -128,8 +128,9 @@ internal static class WorkoutRowLog
         {
             WorkoutTechniqueSemantic technique => $"Technique: {technique.Technique}",
             WorkoutMovementQualitySemantic quality => $"Movement quality: {quality.Quality}",
-            WorkoutPauseSemantic pause => $"Paused at {pause.Position}",
-            WorkoutEquipmentSemantic equipment => $"Equipment: {equipment.Name}",
+            WorkoutPauseSemantic { Position: { } position } => $"Paused at {position}",
+            WorkoutPauseSemantic => "Paused",
+            WorkoutEquipmentSemantic equipment => $"Equipment: {FormatEquipment(equipment)}",
             WorkoutEquipmentQuantitySemantic quantity => $"Equipment quantity: {quantity.Quantity}",
             WorkoutEquipmentHeightSemantic height => $"Equipment height: {height.Height}",
             WorkoutEquipmentUnitSemantic unit => $"Equipment unit: {unit.Unit}",
@@ -138,6 +139,10 @@ internal static class WorkoutRowLog
             WorkoutWorkSemantic work => $"Work: {FormatWork(work)}",
             WorkoutLoadSemantic load => $"Load: {FormatLoad(load)}",
             WorkoutSetCadenceSemantic cadence => $"Every: {cadence.Seconds} s",
+            WorkoutHoldSemantic hold => $"Hold: {hold.SecondsPerRep} s per rep",
+            WorkoutSelfPacedSemantic => "Timing: Self-paced",
+            WorkoutBlockTypeSemantic block => $"Block type: {block.Type}",
+            WorkoutIntensitySemantic intensity => $"Intensity: {intensity.Intensity}",
             WorkoutCalorieRateSemantic rate => $"Pace: {rate.CaloriesPerHour} cal/h",
             WorkoutRestSemantic rest => $"Rest: {(rest.IsMinimum ? "minimum " : string.Empty)}{FormatDuration(rest.Seconds)}",
             WorkoutTimeCapSemantic cap => $"Time cap: {FormatDuration(cap.Seconds)}",
@@ -145,6 +150,15 @@ internal static class WorkoutRowLog
             WorkoutInstructionSemantic { Instruction: WorkoutInstructionKind.SplitAnyhow } => "Instruction: Split anyhow",
             _ => item.Origin.Source.Text
         };
+
+    private static string FormatEquipment(WorkoutEquipmentSemantic equipment)
+    {
+        var quantity = equipment.Quantity is { } count ? $"{count} × " : string.Empty;
+        var relation = equipment.Relation is WorkoutEquipmentRelation.On ? "on " : string.Empty;
+        var height = equipment.HeightCentimeters is { } centimeters ? $" ({centimeters} cm)" : string.Empty;
+
+        return $"{relation}{quantity}{equipment.Name}{height}";
+    }
 
     private static string FormatWork(WorkoutWorkSemantic work)
     {

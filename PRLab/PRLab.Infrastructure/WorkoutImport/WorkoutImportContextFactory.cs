@@ -74,7 +74,12 @@ public sealed class WorkoutImportContextFactory(
             NameKey = exercise.NameKey,
             DefaultWorkTargetType = defaults.Count == 1 ? defaults[0] : null,
             AllowedWorkTargetTypes = sharedTypes,
-            SupportsExternalLoad = exercise.Steps.Count > 0 && exercise.Steps.All(SupportsExternalLoad)
+            SupportsExternalLoad = exercise.Steps.Count > 0 && exercise.Steps.All(SupportsExternalLoad),
+            EquipmentNames = movements
+                .SelectMany(movement => movement.EquipmentRequirements)
+                .Select(requirement => requirement.Equipment.Name)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray()
         };
     }
 

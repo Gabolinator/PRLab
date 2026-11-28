@@ -58,6 +58,8 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger, WorkoutI
             RawWorkToken work => RecognizeWork(work, origin, exerciseContext),
             RawRepLoadToken repLoad => RecognizeRepLoad(repLoad, origin, exerciseContext, preferredLoadUnit),
             RawCompactPairToken pair => RecognizeCompactPair(pair, origin, exerciseContext, instructions),
+            RawPerSideHoldToken hold => RecognizePerSideHold(hold, source, origin, exerciseContext),
+            RawZeroLoadPerSideToken unloaded => RecognizeZeroLoadPerSide(unloaded, origin, exerciseContext),
             RawClockToken clock when profile.Parsing.UseCompactSetCadence && cadenceWork is not null =>
                 new PrescriptionRecognition(
                     [new WorkoutSetCadenceSemantic(origin with { Target = cadenceWork.Origin.Target }, clock.Seconds, cadenceWork.Origin)], null),
@@ -82,6 +84,49 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger, WorkoutI
     private static string QuoteText(string text) =>
         $"\"{text.ReplaceLineEndings("\\n")}\"";
 
+    private static PrescriptionRecognition RecognizePerSideHold(
+        RawPerSideHoldToken token,
+        WorkoutSemanticSource source,
+        WorkoutSemanticOrigin origin,
+        ExercisePrescriptionContext? exerciseContext)
+    {
+        if (exerciseContext?.Exercise.AllowedWorkTargetTypes?.Contains(WorkTargetType.Repetitions) != true)
+        {
+            return new PrescriptionRecognition([], "Per-side repetitions with a hold require an exercise that allows repetitions.");
+        }
+
+        var repOrigin = origin with { Source = ReadSourceSpan(source, token.RepSpan) };
+        var holdOrigin = origin with { Source = ReadSourceSpan(source, token.HoldSpan) };
+
+        return new PrescriptionRecognition(
+            [
+                new WorkoutWorkSemantic(repOrigin, WorkTargetType.Repetitions, token.Reps, null, WorkTargetScope.PerSide),
+                new WorkoutHoldSemantic(holdOrigin, token.HoldSeconds, repOrigin)
+            ],
+            null);
+    }
+
+    private PrescriptionRecognition RecognizeZeroLoadPerSide(
+        RawZeroLoadPerSideToken token,
+        WorkoutSemanticOrigin origin,
+        ExercisePrescriptionContext? exerciseContext)
+    {
+        if (exerciseContext?.Exercise.AllowedWorkTargetTypes?.Contains(WorkTargetType.Repetitions) != true)
+        {
+            return new PrescriptionRecognition([], "The coach's zero-load notation requires an exercise that allows repetitions.");
+        }
+
+        return new PrescriptionRecognition(
+            [
+                new WorkoutWorkSemantic(origin, WorkTargetType.Repetitions, token.Reps, null, WorkTargetScope.PerSide),
+                new WorkoutLoadSemantic(origin, 0, preferredLoadUnit)
+            ],
+            null);
+    }
+
+    private static WorkoutSemanticSource ReadSourceSpan(WorkoutSemanticSource source, TextSpan span) =>
+        source with { Text = span.Read(source.Text), Offset = source.Offset + span.Start };
+
     private static PrescriptionRecognition RecognizeWork(
         RawWorkToken token,
         WorkoutSemanticOrigin origin,
@@ -102,13 +147,15 @@ internal sealed class WorkoutPrescriptionInterpreter(IAppLogger logger, WorkoutI
         return new PrescriptionRecognition([work], warning);
     }
 
-    private static PrescriptionRecognition RecognizeRepLoad(
+    private PrescriptionRecognition RecognizeRepLoad(
         RawRepLoadToken token,
         WorkoutSemanticOrigin origin,
         ExercisePrescriptionContext? exerciseContext,
         LoadUnit loadUnit)
     {
-        if (exerciseContext?.SupportsRepLoad != true)
+        var explicitSeriesRule = profile.Parsing.UseRepLoadSeries == true && token.Loads.Count > 1 &&
+            exerciseContext?.Exercise.AllowedWorkTargetTypes?.Contains(WorkTargetType.Repetitions) == true;
+        if (exerciseContext?.SupportsRepLoad != true && !explicitSeriesRule)
         {
             return new PrescriptionRecognition([], "Compact rep/load notation requires an exercise that supports repetitions and external load.");
         }
