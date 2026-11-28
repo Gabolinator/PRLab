@@ -128,23 +128,22 @@ internal static class WorkoutRowLog
         {
             WorkoutTechniqueSemantic technique => $"Technique: {technique.Technique}",
             WorkoutMovementQualitySemantic quality => $"Movement quality: {quality.Quality}",
-            WorkoutPauseSemantic { Position: { } position } => $"Paused at {position}",
-            WorkoutPauseSemantic => "Paused",
+            WorkoutPauseSemantic pause => FormatPause(WorkoutPauseImportDraft.FromSemantic(pause)),
             WorkoutEquipmentSemantic equipment => $"Equipment: {FormatEquipment(equipment)}",
             WorkoutEquipmentQuantitySemantic quantity => $"Equipment quantity: {quantity.Quantity}",
             WorkoutEquipmentHeightSemantic height => $"Equipment height: {height.Height}",
             WorkoutEquipmentUnitSemantic unit => $"Equipment unit: {unit.Unit}",
             WorkoutAddedLoadSemantic load => $"Added load: {(load.AddedLoad ? "yes" : "no")}",
             WorkoutDistanceUnitSemantic unit => $"Distance unit: {unit.Unit}",
-            WorkoutWorkSemantic work => $"Work: {FormatWork(work)}",
-            WorkoutLoadSemantic load => $"Load: {FormatLoad(load)}",
-            WorkoutSetCadenceSemantic cadence => $"Every: {cadence.Seconds} s",
-            WorkoutHoldSemantic hold => $"Hold: {hold.SecondsPerRep} s per rep",
-            WorkoutSelfPacedSemantic => "Timing: Self-paced",
+            WorkoutWorkSemantic work => $"Work: {FormatWork(WorkoutWorkImportDraft.FromSemantic(work))}",
+            WorkoutLoadSemantic load => $"Load: {FormatLoad(WorkoutLoadImportDraft.FromSemantic(load))}",
+            WorkoutSetCadenceSemantic cadence => FormatCadence(WorkoutCadenceImportDraft.Create(cadence.Seconds, false)),
+            WorkoutHoldSemantic hold => FormatHold(WorkoutHoldImportDraft.FromSemantic(hold)),
+            WorkoutSelfPacedSemantic => FormatCadence(WorkoutCadenceImportDraft.Create(null, true)),
             WorkoutBlockTypeSemantic block => $"Block type: {block.Type}",
             WorkoutIntensitySemantic intensity => $"Intensity: {intensity.Intensity}",
-            WorkoutCalorieRateSemantic rate => $"Pace: {rate.CaloriesPerHour} cal/h",
-            WorkoutRestSemantic rest => $"Rest: {(rest.IsMinimum ? "minimum " : string.Empty)}{FormatDuration(rest.Seconds)}",
+            WorkoutCalorieRateSemantic rate => $"Pace: {FormatRate(WorkoutRateImportDraft.FromSemantic(rate))}",
+            WorkoutRestSemantic rest => FormatRest(WorkoutRestImportDraft.FromSemantic(rest)),
             WorkoutTimeCapSemantic cap => $"Time cap: {FormatDuration(cap.Seconds)}",
             WorkoutWorkWindowSemantic window => $"Work window: {FormatWorkMode(window.Mode)} {FormatDuration(window.DurationSeconds)}",
             WorkoutInstructionSemantic { Instruction: WorkoutInstructionKind.SplitAnyhow } => "Instruction: Split anyhow",
@@ -161,7 +160,7 @@ internal static class WorkoutRowLog
         return $"{relation}{quantity}{equipment.Name}{height} · Matched: \"{equipment.Origin.Source.Text}\"{hint}";
     }
 
-    private static string FormatWork(WorkoutWorkSemantic work)
+    private static string FormatWork(WorkoutWorkImportDraft work)
     {
         var unit = work.TargetType switch
         {
@@ -184,7 +183,7 @@ internal static class WorkoutRowLog
         return $"{sets}{work.Value} {unit}{scope}";
     }
 
-    private static string FormatLoad(WorkoutLoadSemantic load)
+    private static string FormatLoad(WorkoutLoadImportDraft load)
     {
         var unit = load.Unit switch
         {
@@ -194,6 +193,50 @@ internal static class WorkoutRowLog
         };
 
         return FormattableString.Invariant($"{load.Value} {unit}");
+    }
+
+    private static string FormatRest(WorkoutRestImportDraft rest) =>
+        rest.MinimumSeconds is { } minimum
+            ? $"Rest: minimum {FormatDuration(minimum)}"
+            : $"Rest: {FormatDuration(rest.Seconds!.Value)}";
+
+    private static string FormatCadence(WorkoutCadenceImportDraft? cadence) =>
+        cadence?.IntervalSeconds is { } interval ? $"Every: {interval} s" : "Timing: Self-paced";
+
+    private static string FormatHold(WorkoutHoldImportDraft hold)
+    {
+        var scope = hold.Scope switch
+        {
+            WorkoutExecutionScope.Rep => " per rep",
+            WorkoutExecutionScope.Set => " per set",
+            _ => string.Empty
+        };
+
+        return $"Hold: {hold.DurationSeconds} s{scope}";
+    }
+
+    private static string FormatPause(WorkoutPauseImportDraft pause) =>
+        pause.Position is { } position ? $"Paused at {position}" : "Paused";
+
+    private static string FormatRate(WorkoutRateImportDraft rate)
+    {
+        var metric = rate.Metric switch
+        {
+            WorkoutRateMetric.Calories => "cal",
+            WorkoutRateMetric.Meters => "m",
+            WorkoutRateMetric.Repetitions => "reps",
+            WorkoutRateMetric.Watts => "W",
+            _ => rate.Metric.ToString()
+        };
+        var period = rate.Period switch
+        {
+            WorkoutRatePeriod.Second => "s",
+            WorkoutRatePeriod.Minute => "min",
+            WorkoutRatePeriod.Hour => "h",
+            _ => rate.Period.ToString()
+        };
+
+        return $"{rate.Value} {metric}/{period}";
     }
 
     private static string FormatWorkMode(WorkMode mode) =>

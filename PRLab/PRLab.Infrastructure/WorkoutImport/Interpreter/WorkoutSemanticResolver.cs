@@ -1,7 +1,6 @@
 using System.Globalization;
 using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport.Model;
-using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.Workout;
 
 namespace PRLab.Infrastructure.WorkoutImport.Interpreter;
@@ -159,6 +158,7 @@ internal static class WorkoutSemanticResolver
                     WorkoutLoadSemantic or
                     WorkoutSetCadenceSemantic or
                     WorkoutHoldSemantic or
+                    WorkoutPauseSemantic or
                     WorkoutSelfPacedSemantic or
                     WorkoutCalorieRateSemantic or
                     WorkoutRestSemantic or
@@ -191,6 +191,7 @@ internal static class WorkoutSemanticResolver
         var load = group.OfType<WorkoutLoadSemantic>().SingleOrDefault();
         var cadence = group.OfType<WorkoutSetCadenceSemantic>().SingleOrDefault();
         var hold = group.OfType<WorkoutHoldSemantic>().SingleOrDefault();
+        var pause = group.OfType<WorkoutPauseSemantic>().MaxBy(item => item.Position.HasValue);
         var selfPaced = group.OfType<WorkoutSelfPacedSemantic>().Any();
         var calorieRate = group.OfType<WorkoutCalorieRateSemantic>().SingleOrDefault();
         var rest = group.OfType<WorkoutRestSemantic>().SingleOrDefault();
@@ -201,21 +202,18 @@ internal static class WorkoutSemanticResolver
         {
             SourceText = origin.Source.Text,
             StepKind = rest is not null ? WorkoutStepKind.Rest
-                : instruction is not null || timeCap is not null || selfPaced ? WorkoutStepKind.Instruction
+                : instruction is not null || timeCap is not null || selfPaced || (pause is not null && work is null && load is null)
+                    ? WorkoutStepKind.Instruction
                 : WorkoutStepKind.Exercise,
             ExerciseName = exercise?.Exercise.Name,
-            WorkTargetType = work?.TargetType,
-            WorkValue = work?.Value,
-            SetCount = work?.SetCount,
-            SetCadenceSeconds = cadence?.Seconds,
-            HoldSecondsPerRep = hold?.SecondsPerRep,
-            SelfPaced = selfPaced,
-            CaloriesPerHour = calorieRate?.CaloriesPerHour,
-            Scope = work?.Scope ?? WorkTargetScope.Total,
-            LoadValue = load?.Value,
-            LoadUnit = load?.Unit,
-            RestSeconds = rest is { IsMinimum: false } ? rest.Seconds : null,
-            MinimumRestSeconds = rest is { IsMinimum: true } ? rest.Seconds : null,
+            Work = work is null ? null : WorkoutWorkImportDraft.FromSemantic(work),
+            Load = load is null ? null : WorkoutLoadImportDraft.FromSemantic(load),
+            Rest = rest is null ? null : WorkoutRestImportDraft.FromSemantic(rest),
+            Cadence = WorkoutCadenceImportDraft.Create(cadence?.Seconds, selfPaced),
+            Execution = WorkoutExecutionImportDraft.Create(
+                hold is null ? null : WorkoutHoldImportDraft.FromSemantic(hold),
+                pause is null ? null : WorkoutPauseImportDraft.FromSemantic(pause)),
+            Rate = calorieRate is null ? null : WorkoutRateImportDraft.FromSemantic(calorieRate),
             Notes = instruction is null ? null : origin.Source.Text,
             Confidence = origin.Confidence
         };

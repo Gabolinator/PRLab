@@ -5,6 +5,7 @@ using PRLab.Application.Models.ImportDraft;
 using PRLab.Application.WorkoutImport.Config;
 using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Model.Value.Enum.Equipment;
+using PRLab.Domain.Model.Value.Enum.Prescription.Load;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.Workout;
 using PRLab.Domain.Model.Value.Identifier;
@@ -44,16 +45,18 @@ public sealed class CoachExcelWorkoutImportTests
         Assert.Contains(equipment, item => item is { Name: "Medicine Ball", Relation: WorkoutEquipmentRelation.On });
         Assert.Contains(equipment, item => item.Name == "Weightlifting Belt");
         var step = Assert.Single(row.Prescriptions).Step;
-        Assert.Equal(16, step.SetCount);
-        Assert.Equal(1m, step.WorkValue);
-        Assert.Equal(90m, step.LoadValue);
-        Assert.Equal(50, step.SetCadenceSeconds);
+        Assert.Equal(new WorkoutWorkImportDraft { Value = 1, SetCount = 16, TargetType = WorkTargetType.Repetitions }, step.Work);
+        Assert.Equal(new WorkoutLoadImportDraft { Value = 90, Unit = LoadUnit.Kilogram }, step.Load);
+        Assert.Equal(new WorkoutCadenceImportDraft { Type = WorkoutCadenceType.FixedInterval, IntervalSeconds = 50 }, step.Cadence);
+        Assert.Null(step.Execution);
+        Assert.Null(step.Rate);
+        Assert.Null(step.Rest);
     }
 
     [Fact]
     public async Task ImportsSpeedSquatCuesAndPreservesTheOrderedLoadSeries()
     {
-        const string details = "max speed up | paused | oly shoes | on med ball | 1x20-40-60-70-80 eigene zeit";
+        const string details = "amrap40' | max speed up | paused | oly shoes | on med ball | 1x20-40-60-70-80 eigene zeit";
         var draft = await ImportAsync("speed squat", details, null, [Reference("Squat", WorkTargetType.Repetitions)]);
         var row = Assert.Single(draft.Rows);
         var items = Assert.Single(row.ExerciseInterpretations).SemanticItems;
@@ -64,9 +67,21 @@ public sealed class CoachExcelWorkoutImportTests
         Assert.Contains(items.OfType<WorkoutEquipmentSemantic>(), item => item.Name == "Weightlifting Shoes");
         Assert.Contains(items.OfType<WorkoutEquipmentSemantic>(), item =>
             item is { Name: "Medicine Ball", Relation: WorkoutEquipmentRelation.On });
-        var series = row.Prescriptions.Where(prescription => prescription.Step.LoadValue.HasValue).ToList();
-        Assert.Equal(new decimal?[] { 20, 40, 60, 70, 80 }, series.Select(prescription => prescription.Step.LoadValue));
-        Assert.All(series, prescription => Assert.True(prescription.Step is { SetCount: 1, WorkValue: 1 }));
+        var prescriptions = row.Prescriptions.Select(prescription => prescription.Step).ToList();
+        var series = prescriptions.Where(step => step.Load is not null).ToList();
+        var blockSteps = Assert.Single(Assert.Single(draft.Blocks).Segments).Steps;
+        decimal?[] expectedLoads = [20, 40, 60, 70, 80];
+        Assert.Equal(expectedLoads, series.Select(step => step.Load?.Value));
+        Assert.Equal(expectedLoads, blockSteps.Select(step => step.Load?.Value));
+        Assert.All(series, step => Assert.True(step.Work is { SetCount: 1, Value: 1 }));
+        var pause = Assert.Single(prescriptions, step => step.Execution?.Pause is not null).Execution!.Pause;
+        Assert.Equal(new WorkoutPauseImportDraft(), pause);
+        Assert.All(blockSteps, step =>
+        {
+            Assert.Equal(pause, step.Execution?.Pause);
+            Assert.Equal(WorkoutCadenceType.SelfPaced, step.Cadence?.Type);
+            Assert.Null(step.Cadence?.IntervalSeconds);
+        });
         Assert.DoesNotContain(row.UnconsumedText, fragment => fragment.Text.Contains("max speed up", StringComparison.Ordinal));
     }
 
@@ -86,9 +101,13 @@ public sealed class CoachExcelWorkoutImportTests
         Assert.Equal(source.IndexOf("5s hold", StringComparison.Ordinal), hold.Origin.Source.Offset);
         Assert.Equal(work.Origin, hold.WorkOrigin);
         var step = Assert.Single(row.Prescriptions).Step;
-        Assert.Equal(5m, step.WorkValue);
-        Assert.Equal(WorkTargetScope.PerSide, step.Scope);
-        Assert.Equal(5, step.HoldSecondsPerRep);
+        Assert.Equal(new WorkoutWorkImportDraft
+        {
+            Value = 5,
+            TargetType = WorkTargetType.Repetitions,
+            Scope = WorkTargetScope.PerSide
+        }, step.Work);
+        Assert.Equal(new WorkoutHoldImportDraft { DurationSeconds = 5, Scope = WorkoutExecutionScope.Rep }, step.Execution?.Hold);
         var equipment = Assert.Single(items.OfType<WorkoutEquipmentSemantic>());
         Assert.Equal("Plyometric Box", equipment.Name);
         Assert.Equal("on box", equipment.Origin.Source.Text);
@@ -112,8 +131,12 @@ public sealed class CoachExcelWorkoutImportTests
         Assert.Equal(61m, height.HeightCentimeters);
         Assert.Equal("61cm", height.Origin.Source.Text);
         Assert.Contains(equipment, item => item is { Name: "Dumbbell", Quantity: 1 });
-        Assert.Contains(row.Prescriptions, entry => entry.Step is { WorkValue: 16, Scope: WorkTargetScope.PerSide, LoadValue: 0 });
-        Assert.Contains(row.Prescriptions, entry => entry.Step.SelfPaced);
+        Assert.Contains(row.Prescriptions, entry => entry.Step is
+        {
+            Work: { Value: 16, Scope: WorkTargetScope.PerSide },
+            Load: { Value: 0, Unit: LoadUnit.Kilogram }
+        });
+        Assert.Contains(row.Prescriptions, entry => entry.Step.Cadence?.Type == WorkoutCadenceType.SelfPaced);
 
         var withoutBox = await ImportAsync(exercise, "61cm", null, [boxStep with { EquipmentIds = [] }]);
         Assert.Contains(Assert.Single(withoutBox.Rows).UnconsumedText, fragment => fragment.Text == "61cm");
@@ -197,9 +220,13 @@ public sealed class CoachExcelWorkoutImportTests
         Assert.Equal(WorkoutBlockType.Metcon, block.BlockType);
         Assert.Equal(WorkoutTrainingIntensity.Low, block.Intensity);
         Assert.Equal(2400, segment.WorkWindowSeconds);
-        Assert.Equal(new decimal?[] { 30, 20 }, segment.Steps.Select(step => step.WorkValue));
-        Assert.Equal(new decimal?[] { 650, 600 }, segment.Steps.Select(step => step.CaloriesPerHour));
-        Assert.All(segment.Steps, step => Assert.Equal(WorkTargetType.Calories, step.WorkTargetType));
+        Assert.Equal(new decimal?[] { 30, 20 }, segment.Steps.Select(step => step.Work?.Value));
+        Assert.Equal(new decimal?[] { 650, 600 }, segment.Steps.Select(step => step.Rate?.Value));
+        Assert.All(segment.Steps, step =>
+        {
+            Assert.Equal(WorkTargetType.Calories, step.Work?.TargetType);
+            Assert.True(step.Rate is { Metric: WorkoutRateMetric.Calories, Period: WorkoutRatePeriod.Hour });
+        });
         var bike = draft.Rows.Single().ExerciseInterpretations.First();
         var bikeEquipment = Assert.Single(bike.SemanticItems.OfType<WorkoutEquipmentSemantic>());
         Assert.Equal("C2 Bike", bikeEquipment.Name);
@@ -282,6 +309,66 @@ public sealed class CoachExcelWorkoutImportTests
         Assert.Contains("Ambiguous equipment 'DB'", warning.Message);
         Assert.Contains("Dumbbell", warning.Message);
         Assert.Contains("Training Weight", warning.Message);
+    }
+
+    [Fact]
+    public async Task PreservesTopPauseAndBothCadenceCuesInComposedSteps()
+    {
+        var squat = Reference("Back Squat", WorkTargetType.Repetitions) with { SupportsExternalLoad = true };
+        var draft = await ImportAsync("back squat", "amrap40' | paused top | 16x1x90 0:50 | own time", null, [squat]);
+        var row = Assert.Single(draft.Rows);
+        var pause = Assert.Single(row.Prescriptions, prescription => prescription.Step.Execution?.Pause is not null);
+        var step = Assert.Single(Assert.Single(Assert.Single(draft.Blocks).Segments).Steps);
+
+        Assert.Equal("paused top", pause.Step.SourceText);
+        Assert.Equal(WorkoutPausePosition.Top, pause.Step.Execution?.Pause?.Position);
+        Assert.Equal(pause.Step.Execution?.Pause, step.Execution?.Pause);
+        Assert.Equal(WorkoutCadenceType.FixedInterval | WorkoutCadenceType.SelfPaced, step.Cadence?.Type);
+        Assert.Equal(50, step.Cadence?.IntervalSeconds);
+    }
+
+    [Fact]
+    public async Task PreservesExistingWorkLoadAndRestInterpretations()
+    {
+        (string Text, WorkTargetType Type, decimal Value, int? Sets, decimal? Load)[] examples =
+        [
+            ("25", WorkTargetType.Repetitions, 25, null, null),
+            ("4x8", WorkTargetType.Repetitions, 8, 4, null),
+            ("1x90s", WorkTargetType.DurationSeconds, 90, 1, null),
+            ("45x15 split anyhow", WorkTargetType.Repetitions, 45, null, 15),
+            ("50x17.5 split anyhow", WorkTargetType.Repetitions, 50, null, 17.5m)
+        ];
+
+        foreach (var example in examples)
+        {
+            var exercise = Reference("Squat", example.Type) with { SupportsExternalLoad = true };
+            var draft = await ImportAsync("squat", example.Text, null, [exercise]);
+            var row = Assert.Single(draft.Rows);
+            var step = Assert.Single(row.Prescriptions, prescription => prescription.Step.Work is not null).Step;
+            Assert.Equal(example.Value, step.Work!.Value);
+            Assert.Equal(example.Type, step.Work.TargetType);
+            Assert.Equal(example.Sets, step.Work.SetCount);
+            Assert.Equal(example.Load, step.Load?.Value);
+            Assert.Equal(example.Load.HasValue ? LoadUnit.Kilogram : (LoadUnit?)null, step.Load?.Unit);
+        }
+
+        var loadAndRest = await ImportAsync(
+            "squat",
+            "20kg | rest 120s | 120s+ rest",
+            null,
+            [Reference("Squat", WorkTargetType.Repetitions)]);
+        var steps =
+            Assert.Single(loadAndRest.Rows).Prescriptions
+                .Select(prescription => prescription.Step)
+                .ToList();
+
+        var load = Assert.Single(steps, step => step.Load is not null);
+        Assert.Equal(new WorkoutLoadImportDraft { Value = 20, Unit = LoadUnit.Kilogram }, load.Load);
+        Assert.Null(load.Work);
+        Assert.Collection(
+            steps.Where(step => step.StepKind == WorkoutStepKind.Rest),
+            exact => Assert.Equal(new WorkoutRestImportDraft { Seconds = 120 }, exact.Rest),
+            minimum => Assert.Equal(new WorkoutRestImportDraft { MinimumSeconds = 120 }, minimum.Rest));
     }
 
     private static WorkoutImportEquipmentReference EquipmentReference(string name, params string[] aliases) =>

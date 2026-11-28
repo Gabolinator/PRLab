@@ -1,8 +1,5 @@
-﻿using PRLab.Domain.Model.Value.Enum.Prescription.Load;
-using PRLab.Domain.Model.Value.Enum.Prescription.Work;
+﻿using PRLab.Application.WorkoutImport.Model;
 using PRLab.Domain.Model.Value.Enum.Workout;
-
-using PRLab.Application.WorkoutImport.Model;
 
 namespace PRLab.Application.Models.ImportDraft;
 
@@ -14,29 +11,17 @@ public sealed record WorkoutStepImportDraft
 
     public WorkoutStepKind StepKind { get; init; }
 
-    public decimal? WorkValue { get; init; }
+    public WorkoutWorkImportDraft? Work { get; init; }
 
-    public WorkTargetType? WorkTargetType { get; init; }
+    public WorkoutLoadImportDraft? Load { get; init; }
 
-    public WorkTargetScope Scope { get; init; } = WorkTargetScope.Total;
+    public WorkoutRestImportDraft? Rest { get; init; }
 
-    public decimal? LoadValue { get; init; }
+    public WorkoutCadenceImportDraft? Cadence { get; init; }
 
-    public LoadUnit? LoadUnit { get; init; }
+    public WorkoutExecutionImportDraft? Execution { get; init; }
 
-    public int? RestSeconds { get; init; }
-
-    public int? MinimumRestSeconds { get; init; }
-
-    public int? SetCount { get; init; }
-
-    public int? SetCadenceSeconds { get; init; }
-
-    public int? HoldSecondsPerRep { get; init; }
-
-    public bool SelfPaced { get; init; }
-
-    public decimal? CaloriesPerHour { get; init; }
+    public WorkoutRateImportDraft? Rate { get; init; }
 
     public string? Notes { get; init; }
 

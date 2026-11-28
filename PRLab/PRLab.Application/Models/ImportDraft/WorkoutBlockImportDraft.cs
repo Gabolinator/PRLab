@@ -1,4 +1,3 @@
-using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.Workout;
 
 namespace PRLab.Application.Models.ImportDraft;
@@ -50,41 +49,39 @@ public sealed record WorkoutBlockImportDraft
         WorkoutImportRowDraft row,
         WorkoutImportExercisePart part)
     {
-        var prescriptions =
+        var steps =
             row.Prescriptions
                 .Where(prescription =>
                     prescription.ExerciseId == part.ExerciseId &&
                     prescription.ExerciseSourceReference == part.SourceReference &&
                     prescription.ExerciseSourceOffset == part.SourceOffset)
+                .Select(prescription => prescription.Step)
                 .ToList();
 
-        var workTargets =
-            prescriptions
-                .Where(prescription => prescription.Step.WorkTargetType.HasValue)
-                .ToList();
-        var loadTargets =
-            prescriptions
-                .Where(prescription => prescription.Step.LoadValue.HasValue)
-                .ToList();
-        var paceTargets =
-            prescriptions
-                .Where(prescription => prescription.Step.CaloriesPerHour.HasValue)
-                .ToList();
-        var caloriesPerHour = paceTargets.Count == 1 ? paceTargets[0].Step.CaloriesPerHour : null;
-        var selfPaced = prescriptions.Any(prescription => prescription.Step.SelfPaced);
+        var workSteps = steps.Where(step => step.Work is not null).ToList();
+        var loads = steps.Select(step => step.Load).OfType<WorkoutLoadImportDraft>().ToList();
+        var rates = steps.Select(step => step.Rate).OfType<WorkoutRateImportDraft>().ToList();
+        var pause =
+            steps
+                .Select(step => step.Execution?.Pause)
+                .OfType<WorkoutPauseImportDraft>()
+                .MaxBy(pause => pause.Position.HasValue);
+        var rate = rates.Count == 1 ? rates[0] : null;
+        var selfPaced = steps.Any(step => step.Cadence?.Type.HasFlag(WorkoutCadenceType.SelfPaced) == true);
 
-        if (workTargets.Count > 1 && workTargets.All(prescription => prescription.Step.LoadValue.HasValue))
+        if (workSteps.Count > 1 && workSteps.All(step => step.Load is not null))
         {
-            return workTargets.Select(prescription => prescription.Step with
+            return workSteps.Select(step => step with
             {
                 Attributes = part.Attributes,
-                CaloriesPerHour = caloriesPerHour,
-                SelfPaced = selfPaced
+                Rate = rate,
+                Cadence = WorkoutCadenceImportDraft.Create(step.Cadence?.IntervalSeconds, selfPaced),
+                Execution = WorkoutExecutionImportDraft.Create(step.Execution?.Hold, pause)
             });
         }
 
-        var work = workTargets.Count == 1 ? workTargets[0].Step : null;
-        var load = loadTargets.Count == 1 ? loadTargets[0].Step : null;
+        var workStep = workSteps.Count == 1 ? workSteps[0] : null;
+        var load = loads.Count == 1 ? loads[0] : null;
 
         return
         [
@@ -93,16 +90,11 @@ public sealed record WorkoutBlockImportDraft
                 SourceText = part.SourceText,
                 ExerciseName = part.ExerciseName,
                 StepKind = WorkoutStepKind.Exercise,
-                WorkValue = work?.WorkValue,
-                WorkTargetType = work?.WorkTargetType,
-                Scope = work?.Scope ?? WorkTargetScope.Total,
-                SetCount = work?.SetCount,
-                SetCadenceSeconds = work?.SetCadenceSeconds,
-                HoldSecondsPerRep = work?.HoldSecondsPerRep,
-                CaloriesPerHour = caloriesPerHour,
-                SelfPaced = selfPaced,
-                LoadValue = load?.LoadValue,
-                LoadUnit = load?.LoadUnit,
+                Work = workStep?.Work,
+                Load = load,
+                Cadence = WorkoutCadenceImportDraft.Create(workStep?.Cadence?.IntervalSeconds, selfPaced),
+                Execution = WorkoutExecutionImportDraft.Create(workStep?.Execution?.Hold, pause),
+                Rate = rate,
                 Attributes = part.Attributes,
                 Confidence = 1
             }
