@@ -76,13 +76,20 @@ internal sealed class ExerciseInterpreter(
         IReadOnlyList<WorkoutImportExerciseReference> exercises)
     {
         var exercisesByKey = exercises.ToLookup(exercise => exercise.NameKey);
-        var names = exercises.Select(exercise => (Text: exercise.Name, Key: exercise.NameKey));
-        var aliases =
+        var names = exercises.Select(exercise => (Text: exercise.Name, Key: exercise.NameKey, Priority: 0));
+        var domainAliases =
+            exercises
+                .SelectMany(exercise => exercise.Aliases
+                    .Select(alias => (Text: alias, Key: exercise.NameKey, Priority: 1)));
+        var profileAliases =
             profile.Aliases.Exercises
                 .SelectMany(entry => entry.Value
-                    .Select(alias => (Text: alias, Key: FormatingUtilities.NormalizeNameKey(entry.Key))));
+                    .Select(alias => (Text: alias, Key: FormatingUtilities.NormalizeNameKey(entry.Key), Priority: 2)));
 
-        var namesAndAliases = names.Concat(aliases);
+        var namesAndAliases =
+            names
+                .Concat(domainAliases)
+                .Concat(profileAliases);
         var entriesByMatchText =
             namesAndAliases
                 .Where(entry => !string.IsNullOrWhiteSpace(entry.Text))
@@ -91,7 +98,11 @@ internal sealed class ExerciseInterpreter(
         return entriesByMatchText
             .Select(group =>
             {
-                var targetKeys = group.Select(entry => entry.Key);
+                var priority = group.Min(entry => entry.Priority);
+                var targetKeys =
+                    group
+                        .Where(entry => entry.Priority == priority)
+                        .Select(entry => entry.Key);
                 return CreateExerciseCandidate(group.Key, targetKeys, exercisesByKey);
             })
             .ToList();

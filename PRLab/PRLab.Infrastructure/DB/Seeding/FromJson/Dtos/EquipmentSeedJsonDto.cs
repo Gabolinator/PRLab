@@ -1,4 +1,4 @@
-﻿using PRLab.Application.Models.DB.Seeding;
+using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Access;
@@ -11,6 +11,8 @@ public sealed record EquipmentSeedJsonDto
     public Guid? Id { get; init; }
 
     public string Name { get; init; } = string.Empty;
+
+    public IReadOnlyList<string> Aliases { get; init; } = [];
 
     public string NameKey { get; init; } = string.Empty;
 
@@ -32,6 +34,10 @@ public sealed record EquipmentSeedJsonDto
         {
             Id = equipment.Id.Value,
             Name = equipment.Name,
+            Aliases = equipment.Aliases
+                .OrderBy(relation => relation.AliasValueKey, StringComparer.Ordinal)
+                .Select(relation => relation.Alias.Value)
+                .ToArray(),
             NameKey = equipment.NameKey,
             Description = equipment.Description is null
                 ? null

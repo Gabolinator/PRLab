@@ -1,4 +1,4 @@
-﻿using PRLab.Application.Models.DB.Seeding;
+using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Enum.Prescription;
 using PRLab.Domain.Model.Value.Enum.Prescription.Load;
@@ -17,6 +17,8 @@ public sealed record ExerciseSeedJsonDto
     public Guid? Id { get; init; }
 
     public string Name { get; init; } = string.Empty;
+
+    public IReadOnlyList<string>? Aliases { get; init; }
 
     public string NameKey { get; init; } = string.Empty;
 
@@ -40,6 +42,10 @@ public sealed record ExerciseSeedJsonDto
         {
             Id = exercise.Id.Value,
             Name = exercise.Name,
+            Aliases = exercise.Aliases
+                .OrderBy(relation => relation.AliasValueKey, StringComparer.Ordinal)
+                .Select(relation => relation.Alias.Value)
+                .ToArray(),
             NameKey = exercise.NameKey,
             Description = exercise.Description is null
                 ? null

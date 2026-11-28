@@ -1,4 +1,4 @@
-﻿using PRLab.Domain;
+using PRLab.Domain;
 using PRLab.Infrastructure.DB.Seeding.FromJson.Dtos.Muscle;
 
 namespace PRLab.Infrastructure.DB.Seeding.Validation;
@@ -8,6 +8,8 @@ public static class MuscleSeedValidator
     public static void Validate(MuscleSeedJsonDto seedDto)
     {
         ArgumentNullException.ThrowIfNull(seedDto);
+
+        AliasSeedValidator.Validate(seedDto.Name, seedDto.Aliases);
 
         try
         {

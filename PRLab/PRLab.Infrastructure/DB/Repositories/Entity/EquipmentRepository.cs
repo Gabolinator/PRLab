@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
@@ -31,6 +31,7 @@ public sealed class EquipmentRepository(
         ValidateId(id);
 
         return await BaseEquipmentWriteQuery()
+            .WithAliases()
             .FirstOrDefaultAsync(
                 equipment => equipment.Id == id,
                 ct);
@@ -40,14 +41,21 @@ public sealed class EquipmentRepository(
         string name,
         CancellationToken ct)
     {
-        ValidateName(name);
-
+        DomainGuard.NotEmptyName(name, nameof(name));
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
+        var query = BaseEquipmentReadQuery();
+        var canonical = await query.FirstOrDefaultAsync(equipment => equipment.NameKey == nameKey, ct);
+        if (canonical is not null)
+        {
+            return canonical;
+        }
 
-        return await BaseEquipmentReadQuery()
-            .FirstOrDefaultAsync(
-                equipment => equipment.NameKey == nameKey,
-                ct);
+        var aliasMatches = await query
+            .Where(equipment => equipment.Aliases.Any(relation => relation.AliasValueKey == nameKey))
+            .Take(2)
+            .ToListAsync(ct);
+
+        return aliasMatches.Count == 1 ? aliasMatches[0] : null;
     }
 
     public async Task<IReadOnlyCollection<Equipment>> ListAsync(
@@ -134,7 +142,9 @@ public sealed class EquipmentRepository(
     private IQueryable<Equipment> BaseEquipmentReadQuery()
     {
         return db.Equipments
-            .ForFullRead();
+            .ForFullRead()
+            .WithAliases()
+            .AsSplitQuery();
     }
 
     private IQueryable<Equipment> BaseEquipmentWriteQuery()

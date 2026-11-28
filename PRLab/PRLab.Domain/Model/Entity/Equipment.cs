@@ -1,4 +1,5 @@
-﻿using PRLab.Domain.Model.Interface;
+using PRLab.Domain.Model.Join;
+using PRLab.Domain.Model.Interface;
 using PRLab.Domain.Model.Value;
 using PRLab.Domain.Model.Value.Access;
 using PRLab.Domain.Model.Value.Enum.System;
@@ -17,6 +18,31 @@ public sealed record Equipment : IAudited, IDescribed, IOwnedData, IVisibilitySc
     public string Name { get; private set; } = string.Empty;
 
     public string NameKey { get; private set; } = string.Empty;
+
+    private readonly List<EquipmentAlias> aliases = [];
+
+    public IReadOnlyCollection<EquipmentAlias> Aliases => aliases.AsReadOnly();
+
+    public void AddAlias(string value) => AddAlias(Alias.New(value));
+
+    public void AddAlias(Alias alias)
+    {
+        ArgumentNullException.ThrowIfNull(alias);
+        if (aliases.Any(relation => relation.AliasValueKey == alias.ValueKey))
+        {
+            throw new InvalidOperationException($"Alias '{alias.Value}' already exists for '{Name}'.");
+        }
+
+        aliases.Add(EquipmentAlias.New(Id, alias));
+    }
+
+    public bool RemoveAlias(string value)
+    {
+        var valueKey = Alias.GetValueKey(value);
+        var relation = aliases.SingleOrDefault(link => link.AliasValueKey == valueKey);
+
+        return relation is not null && aliases.Remove(relation);
+    }
 
     public Description Description { get; private set; } = null!;
 

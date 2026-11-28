@@ -29,6 +29,12 @@ public static class ExerciseMapper
     {
         ArgumentNullException.ThrowIfNull(exercise);
 
+        var aliases =
+            exercise.Aliases
+                .OrderBy(relation => relation.AliasValueKey, StringComparer.Ordinal)
+                .Select(relation => relation.Alias.Value)
+                .ToArray();
+
         return new ExerciseGetDTO(
             exercise.Id,
             exercise.Name,
@@ -37,8 +43,10 @@ public static class ExerciseMapper
                 .OrderBy(Step => Step.Sequence)
                 .Select(Step => ToStepGetDTO(Step, language))
                 .ToList(),
-            exercise.Visibility.Scope
-        );
+            exercise.Visibility.Scope)
+        {
+            Aliases = aliases
+        };
     }
 
     public static IReadOnlyCollection<ExerciseGetDTO> ToGetDTOs(

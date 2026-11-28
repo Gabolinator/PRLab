@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Models.DB.Seeding.Catalog;
 using PRLab.Application.Models.DB.Seeding.Catalog.Movement;
 using PRLab.Domain.Model.Catalog;
@@ -14,10 +14,16 @@ public static class SeedCatalogBuilder
     public static async Task<EquipmentSeedCatalog> CreateEquipmentCatalog(
         PRLabPgDBContext db,
         CancellationToken ct,
-        bool track = true)
+        bool track = true,
+        bool includeAliases = false)
     {
-        var equipments = await db.Equipments
-            .ForFullRead()
+        var query = db.Equipments.ForFullRead();
+        if (includeAliases)
+        {
+            query = query.WithAliases();
+        }
+
+        var equipments = await query
             .OrderBy(equipment => equipment.Name)
             .ToListAsync(ct);
 
@@ -31,14 +37,16 @@ public static class SeedCatalogBuilder
     public static async Task<MuscleSeedCatalog> CreateMuscleCatalog(
         PRLabPgDBContext db,
         CancellationToken ct,
-        bool track = true)
+        bool track = true,
+        bool includeAliases = false)
     {
-        var muscles = track ? await db.Muscles
-            .ForFullWrite()
-            .OrderBy(muscle => muscle.Name)
-            .ToListAsync(ct) 
-            : await db.Muscles
-            .ForFullRead()
+        var query = track ? db.Muscles.ForFullWrite() : db.Muscles.ForFullRead();
+        if (includeAliases)
+        {
+            query = query.WithAliases();
+        }
+
+        var muscles = await query
             .OrderBy(muscle => muscle.Name)
             .ToListAsync(ct);
 
@@ -71,10 +79,16 @@ public static class SeedCatalogBuilder
 
     public static async Task<MovementSeedCatalog> CreateMovementCatalog(
         PRLabPgDBContext db,
-        CancellationToken ct)
+        CancellationToken ct,
+        bool includeAliases = false)
     {
-        var movements = await db.Movements
-            .ForFullRead()
+        var query = db.Movements.ForFullRead();
+        if (includeAliases)
+        {
+            query = query.WithAliases();
+        }
+
+        var movements = await query
             .OrderBy(movement => movement.Name)
             .ToListAsync(ct);
 
@@ -88,10 +102,16 @@ public static class SeedCatalogBuilder
 
     public static async Task<ExerciseSeedCatalog> CreateExerciseCatalog(
         PRLabPgDBContext db,
-        CancellationToken ct)
+        CancellationToken ct,
+        bool includeAliases = false)
     {
-        var exercises = await db.Exercises
-            .ForFullRead()
+        var query = db.Exercises.ForFullRead();
+        if (includeAliases)
+        {
+            query = query.WithAliases();
+        }
+
+        var exercises = await query
             .OrderBy(exercise => exercise.Name)
             .ToListAsync(ct);
 

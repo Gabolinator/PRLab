@@ -1,4 +1,4 @@
-﻿using PRLab.Application.Interface.DB.Seeding;
+using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain.Model.Entity;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Infrastructure.DB.Context;
@@ -17,7 +17,7 @@ public class ExerciseJsonDataExporter(
     protected override async Task<IReadOnlyList<ExerciseSeedJsonDto>> CreateSeedDtosAsync(
         CancellationToken ct)
     {
-        var exerciseCatalog = await SeedCatalogBuilder.CreateExerciseCatalog(db, ct);
+        var exerciseCatalog = await SeedCatalogBuilder.CreateExerciseCatalog(db, ct, includeAliases: true);
 
         return exerciseCatalog
             .GetAll()

@@ -1,4 +1,4 @@
-﻿using PRLab.Application.Models.DB.Seeding;
+using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.Movement;
 using PRLab.Domain.Model.Value.Enum.Prescription;
@@ -12,6 +12,8 @@ public sealed record MovementSeedJsonDto
     public Guid? Id { get; init; }
 
     public string Name { get; init; } = string.Empty;
+
+    public IReadOnlyList<string>? Aliases { get; init; }
 
     public string NameKey { get; init; } = string.Empty;
 
@@ -51,6 +53,10 @@ public sealed record MovementSeedJsonDto
         {
             Id = movement.Id.Value,
             Name = movement.Name,
+            Aliases = movement.Aliases
+                .OrderBy(relation => relation.AliasValueKey, StringComparer.Ordinal)
+                .Select(relation => relation.Alias.Value)
+                .ToArray(),
             NameKey = movement.NameKey,
             Category = SeedEntityReferenceJsonDto.FromCategory(movement.MovementCategory),
             Description = movement.Description is null

@@ -1,4 +1,4 @@
-﻿using PRLab.Domain;
+using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
 using PRLab.Domain.Policies;
@@ -11,6 +11,8 @@ public static class EquipmentSeedValidator
     public static void Validate(EquipmentSeedJsonDto seedDto)
     {
         ArgumentNullException.ThrowIfNull(seedDto);
+
+        AliasSeedValidator.Validate(seedDto.Name, seedDto.Aliases);
 
         var ownerUserId = seedDto.OwnerUserId.HasValue
             ? UserId.FromGuid(seedDto.OwnerUserId.Value)

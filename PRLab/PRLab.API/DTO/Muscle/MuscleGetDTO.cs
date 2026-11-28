@@ -12,4 +12,7 @@ public sealed record MuscleGetDTO(
     BodySection BodySection,
     DescriptionGetDTO? Description,
     IReadOnlyList<MuscleFunctionGetDTO> Functions,
-    IReadOnlyList<MuscleSummaryDTO> Antagonists);
+    IReadOnlyList<MuscleSummaryDTO> Antagonists)
+{
+    public IReadOnlyList<string> Aliases { get; init; } = [];
+}

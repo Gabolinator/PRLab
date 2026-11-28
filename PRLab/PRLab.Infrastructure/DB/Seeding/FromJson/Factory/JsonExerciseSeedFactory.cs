@@ -1,4 +1,4 @@
-﻿using PRLab.Application.Interface.DB;
+using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Exercise;
 using PRLab.Application.Interface.UserService;
@@ -69,6 +69,11 @@ public sealed class JsonExerciseSeedFactory(
             catalog,
             options,
             SeedUser);
+
+        foreach (var alias in seedDto.Aliases ?? [])
+        {
+            exercise.AddAlias(alias);
+        }
 
         return new SeedItem<Exercise>(
             SeedKeyGenerator.GenerateExerciseKey(exercise),

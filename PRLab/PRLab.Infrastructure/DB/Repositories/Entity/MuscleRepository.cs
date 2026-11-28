@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
@@ -135,6 +135,25 @@ public sealed class MuscleRepository(
                 ct);
     }
 
+    public async Task<Muscle?> GetByNameAsync(string name, CancellationToken ct)
+    {
+        DomainGuard.NotEmptyName(name, nameof(name));
+        var nameKey = FormatingUtilities.NormalizeNameKey(name);
+        var query = BaseMuscleReadQuery();
+        var canonical = await query.FirstOrDefaultAsync(muscle => muscle.NameKey == nameKey, ct);
+        if (canonical is not null)
+        {
+            return canonical;
+        }
+
+        var aliasMatches = await query
+            .Where(muscle => muscle.Aliases.Any(relation => relation.AliasValueKey == nameKey))
+            .Take(2)
+            .ToListAsync(ct);
+
+        return aliasMatches.Count == 1 ? aliasMatches[0] : null;
+    }
+
     public async Task<Muscle?> GetTrackedByIdAsync(
         MuscleId id,
         CancellationToken ct)
@@ -142,6 +161,7 @@ public sealed class MuscleRepository(
         ValidateId(id);
 
         return await BaseMuscleWriteQuery()
+            .WithAliases()
             .FirstOrDefaultAsync(
                 muscle => muscle.Id == id,
                 ct);
@@ -333,7 +353,8 @@ public sealed class MuscleRepository(
     private IQueryable<Muscle> BaseMuscleReadQuery()
     {
         return db.Muscles
-            .ForFullRead();
+            .ForFullRead()
+            .WithAliases();
     }
 
     private IQueryable<Muscle> BaseMuscleWriteQuery()

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
@@ -138,6 +138,7 @@ public class MovementSeeder(
 
         var existingMovement = await db.Movements
             .ForFullWrite()
+            .WithAliases()
             .FirstOrDefaultAsync(
                 movement => movement.NameKey == seedMovement.NameKey,
                 ct);
@@ -168,7 +169,12 @@ public class MovementSeeder(
                 null,
                 SeedUser));
 
-        return hasChanged
+        var aliasesChanged = SeedAliases.AddMissing(
+            existingMovement.Aliases.Select(relation => relation.Alias),
+            seedMovement.Aliases.Select(relation => relation.Alias),
+            existingMovement.AddAlias);
+
+        return hasChanged || aliasesChanged
             ? (
                 existingMovement,
                 new SeedChange(

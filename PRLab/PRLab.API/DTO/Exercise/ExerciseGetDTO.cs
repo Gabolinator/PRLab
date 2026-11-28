@@ -11,4 +11,7 @@ public sealed record ExerciseGetDTO(
     string Name,
     DescriptionGetDTO? Description,
     IReadOnlyList<ExerciseStepGetDTO> Blocks,
-    VisibilityScope Visibility);
+    VisibilityScope Visibility)
+{
+    public IReadOnlyList<string> Aliases { get; init; } = [];
+}

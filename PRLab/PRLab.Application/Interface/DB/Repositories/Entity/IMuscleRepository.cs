@@ -20,6 +20,8 @@ public interface IMuscleRepository
     
     Task<Muscle?> GetByIdAsync(MuscleId id, CancellationToken ct);
 
+    Task<Muscle?> GetByNameAsync(string name, CancellationToken ct);
+
     Task<Muscle> CreateAsync(Muscle muscle, CancellationToken ct);
 
     Task<Muscle> UpdateAsync(Muscle muscle, CancellationToken ct);

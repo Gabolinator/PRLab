@@ -24,6 +24,12 @@ public static class MovementMapper
     {
         ArgumentNullException.ThrowIfNull(movement);
 
+        var aliases =
+            movement.Aliases
+                .OrderBy(relation => relation.AliasValueKey, StringComparer.Ordinal)
+                .Select(relation => relation.Alias.Value)
+                .ToArray();
+
         return new MovementGetDTO(
             movement.Id,
             movement.Name,
@@ -60,7 +66,10 @@ public static class MovementMapper
             movement.VariantOf is null
                 ? null
                 : ToSummaryDTO(movement.VariantOf),
-            movement.Visibility.Scope);
+            movement.Visibility.Scope)
+        {
+            Aliases = aliases
+        };
     }
 
     public static IReadOnlyCollection<MovementGetDTO> ToGetDTOs(

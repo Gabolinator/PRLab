@@ -1,4 +1,4 @@
-﻿using PRLab.Domain;
+using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.Prescription.Work;
 using PRLab.Domain.Model.Value.Enum.System;
 using PRLab.Domain.Model.Value.Identifier;
@@ -12,6 +12,8 @@ public static class MovementSeedValidator
     public static void Validate(MovementSeedJsonDto seedDto)
     {
         ArgumentNullException.ThrowIfNull(seedDto);
+
+        AliasSeedValidator.Validate(seedDto.Name, seedDto.Aliases);
 
         var ownerUserId = seedDto.OwnerUserId.HasValue
             ? UserId.FromGuid(seedDto.OwnerUserId.Value)

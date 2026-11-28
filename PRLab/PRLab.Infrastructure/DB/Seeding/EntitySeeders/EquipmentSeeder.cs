@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
@@ -24,7 +24,7 @@ public sealed class EquipmentSeeder(
     public override EntityType EntityType => EntityType.Equipment;
     public override string Name => "DevelopmentEquipmentSeed";
 
-    public override string Version => "1.0.0";
+    public override string Version => "1.1.0";
 
     public override User SeedUser => userService.GetSystemAdminUser("Seed");
 
@@ -67,7 +67,8 @@ public sealed class EquipmentSeeder(
         var seedEquipment = equipmentSeedItem.Entity;
 
         var existingEquipment = await db.Equipments
-           .ForFullWrite()
+            .ForFullWrite()
+            .WithAliases()
             .FirstOrDefaultAsync(
                 equipment => equipment.NameKey == seedEquipment.NameKey,
                 ct);
@@ -96,7 +97,12 @@ public sealed class EquipmentSeeder(
                 null,
                 SeedUser));
 
-        return hasChanged
+        var aliasesChanged = SeedAliases.AddMissing(
+            existingEquipment.Aliases.Select(relation => relation.Alias),
+            seedEquipment.Aliases.Select(relation => relation.Alias),
+            existingEquipment.AddAlias);
+
+        return hasChanged || aliasesChanged
             ? (existingEquipment, new SeedChange(seedEquipment.NameKey, SeedChangeType.Updated))
             : (existingEquipment, null);
     }

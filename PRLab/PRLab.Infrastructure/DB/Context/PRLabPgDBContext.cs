@@ -40,6 +40,8 @@ public class PRLabPgDBContext(DbContextOptions<PRLabPgDBContext> options) : DbCo
     // exercises
     public DbSet<Exercise> Exercises => Set<Exercise>();
 
+    public DbSet<Alias> Aliases => Set<Alias>();
+
     // workouts
     public DbSet<Workout> Workouts => Set<Workout>();
     public DbSet<WorkoutBlock> WorkoutBlocks => Set<WorkoutBlock>();
@@ -75,6 +77,8 @@ public class PRLabPgDBContext(DbContextOptions<PRLabPgDBContext> options) : DbCo
         modelBuilder.AddMovementTableModels();
 
         modelBuilder.AddExerciseTableModels();
+
+        modelBuilder.AddAliasTableModels();
 
         modelBuilder.AddWorkoutTableModels();
 

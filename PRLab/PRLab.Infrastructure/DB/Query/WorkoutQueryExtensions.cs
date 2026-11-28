@@ -18,6 +18,8 @@ public static class WorkoutQueryExtensions
             .ThenInclude(workoutBlock => workoutBlock.Segments)
             .ThenInclude(segment => segment.Steps)
             .ThenInclude(step => step.Exercise)
+            .ThenInclude(exercise => exercise!.Aliases)
+            .ThenInclude(relation => relation.Alias)
 
             .Include(workout => workout.Blocks)
             .ThenInclude(assignment => assignment.WorkoutBlock)

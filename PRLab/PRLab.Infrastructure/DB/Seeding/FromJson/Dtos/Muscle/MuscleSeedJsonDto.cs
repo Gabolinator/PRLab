@@ -1,4 +1,4 @@
-﻿using PRLab.Application.Models.DB.Seeding;
+using PRLab.Application.Models.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.Anatomy;
 
@@ -9,6 +9,8 @@ public sealed record MuscleSeedJsonDto
     public Guid? Id { get; init; }
 
     public string Name { get; init; } = string.Empty;
+
+    public IReadOnlyList<string>? Aliases { get; init; }
 
     public string NameKey { get; init; } = string.Empty;
 
@@ -32,6 +34,10 @@ public sealed record MuscleSeedJsonDto
         {
             Id = muscle.Id.Value,
             Name = muscle.Name,
+            Aliases = muscle.Aliases
+                .OrderBy(relation => relation.AliasValueKey, StringComparer.Ordinal)
+                .Select(relation => relation.Alias.Value)
+                .ToArray(),
             NameKey = muscle.NameKey,
             LatinName = muscle.LatinName,
             BodySection = muscle.BodySection,

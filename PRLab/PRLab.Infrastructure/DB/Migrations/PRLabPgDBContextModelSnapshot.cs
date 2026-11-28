@@ -49,6 +49,28 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.ToTable("SeedHistory", "public");
                 });
 
+            modelBuilder.Entity("PRLab.Domain.Model.Entity.Alias", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("ValueKey")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ValueKey");
+
+                    b.ToTable("Alias", "public");
+                });
+
             modelBuilder.Entity("PRLab.Domain.Model.Entity.Description", b =>
                 {
                     b.Property<Guid>("Id")
@@ -361,6 +383,81 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.ToTable("DescriptionTranslations", "public");
                 });
 
+            modelBuilder.Entity("PRLab.Domain.Model.Join.EquipmentAlias", b =>
+                {
+                    b.Property<Guid>("EquipmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AliasId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AliasValueKey")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("EquipmentId", "AliasId");
+
+                    b.HasIndex("AliasValueKey");
+
+                    b.HasIndex("AliasId", "AliasValueKey");
+
+                    b.HasIndex("EquipmentId", "AliasValueKey")
+                        .IsUnique();
+
+                    b.ToTable("EquipmentAlias", "public");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Join.ExerciseAlias", b =>
+                {
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AliasId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AliasValueKey")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("ExerciseId", "AliasId");
+
+                    b.HasIndex("AliasValueKey");
+
+                    b.HasIndex("AliasId", "AliasValueKey");
+
+                    b.HasIndex("ExerciseId", "AliasValueKey")
+                        .IsUnique();
+
+                    b.ToTable("ExerciseAlias", "public");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Join.MovementAlias", b =>
+                {
+                    b.Property<Guid>("MovementId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AliasId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AliasValueKey")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("MovementId", "AliasId");
+
+                    b.HasIndex("AliasValueKey");
+
+                    b.HasIndex("AliasId", "AliasValueKey");
+
+                    b.HasIndex("MovementId", "AliasValueKey")
+                        .IsUnique();
+
+                    b.ToTable("MovementAlias", "public");
+                });
+
             modelBuilder.Entity("PRLab.Domain.Model.Join.MovementAllowedWorkTarget", b =>
                 {
                     b.Property<Guid>("MovementId")
@@ -436,6 +533,31 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.HasIndex("Pattern");
 
                     b.ToTable("MovementPatternTag", "public");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Join.MuscleAlias", b =>
+                {
+                    b.Property<Guid>("MuscleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AliasId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AliasValueKey")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("MuscleId", "AliasId");
+
+                    b.HasIndex("AliasValueKey");
+
+                    b.HasIndex("AliasId", "AliasValueKey");
+
+                    b.HasIndex("MuscleId", "AliasValueKey")
+                        .IsUnique();
+
+                    b.ToTable("MuscleAlias", "public");
                 });
 
             modelBuilder.Entity("PRLab.Domain.Model.Join.MuscleAntagonist", b =>
@@ -1317,6 +1439,60 @@ namespace PRLab.Infrastructure.DB.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PRLab.Domain.Model.Join.EquipmentAlias", b =>
+                {
+                    b.HasOne("PRLab.Domain.Model.Entity.Equipment", null)
+                        .WithMany("Aliases")
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PRLab.Domain.Model.Entity.Alias", "Alias")
+                        .WithMany()
+                        .HasForeignKey("AliasId", "AliasValueKey")
+                        .HasPrincipalKey("Id", "ValueKey")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Alias");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Join.ExerciseAlias", b =>
+                {
+                    b.HasOne("PRLab.Domain.Model.Entity.Exercise", null)
+                        .WithMany("Aliases")
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PRLab.Domain.Model.Entity.Alias", "Alias")
+                        .WithMany()
+                        .HasForeignKey("AliasId", "AliasValueKey")
+                        .HasPrincipalKey("Id", "ValueKey")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Alias");
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Join.MovementAlias", b =>
+                {
+                    b.HasOne("PRLab.Domain.Model.Entity.Movement", null)
+                        .WithMany("Aliases")
+                        .HasForeignKey("MovementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PRLab.Domain.Model.Entity.Alias", "Alias")
+                        .WithMany()
+                        .HasForeignKey("AliasId", "AliasValueKey")
+                        .HasPrincipalKey("Id", "ValueKey")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Alias");
+                });
+
             modelBuilder.Entity("PRLab.Domain.Model.Join.MovementAllowedWorkTarget", b =>
                 {
                     b.HasOne("PRLab.Domain.Model.Entity.Movement", null)
@@ -1369,6 +1545,24 @@ namespace PRLab.Infrastructure.DB.Migrations
                         .HasForeignKey("MovementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PRLab.Domain.Model.Join.MuscleAlias", b =>
+                {
+                    b.HasOne("PRLab.Domain.Model.Entity.Muscle", null)
+                        .WithMany("Aliases")
+                        .HasForeignKey("MuscleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PRLab.Domain.Model.Entity.Alias", "Alias")
+                        .WithMany()
+                        .HasForeignKey("AliasId", "AliasValueKey")
+                        .HasPrincipalKey("Id", "ValueKey")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Alias");
                 });
 
             modelBuilder.Entity("PRLab.Domain.Model.Join.MuscleAntagonist", b =>
@@ -2711,13 +2905,22 @@ namespace PRLab.Infrastructure.DB.Migrations
                     b.Navigation("Translations");
                 });
 
+            modelBuilder.Entity("PRLab.Domain.Model.Entity.Equipment", b =>
+                {
+                    b.Navigation("Aliases");
+                });
+
             modelBuilder.Entity("PRLab.Domain.Model.Entity.Exercise", b =>
                 {
+                    b.Navigation("Aliases");
+
                     b.Navigation("Steps");
                 });
 
             modelBuilder.Entity("PRLab.Domain.Model.Entity.Movement", b =>
                 {
+                    b.Navigation("Aliases");
+
                     b.Navigation("AllowedWorkTargets");
 
                     b.Navigation("EquipmentRequirements");
@@ -2731,6 +2934,8 @@ namespace PRLab.Infrastructure.DB.Migrations
 
             modelBuilder.Entity("PRLab.Domain.Model.Entity.Muscle", b =>
                 {
+                    b.Navigation("Aliases");
+
                     b.Navigation("Antagonists");
 
                     b.Navigation("Functions");

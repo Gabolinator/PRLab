@@ -23,19 +23,26 @@ public static class MuscleMapper
     {
         ArgumentNullException.ThrowIfNull(muscle);
 
+        var aliases =
+            muscle.Aliases
+                .OrderBy(relation => relation.AliasValueKey, StringComparer.Ordinal)
+                .Select(relation => relation.Alias.Value)
+                .ToArray();
+
         return new MuscleGetDTO(
-                muscle.Id,
-                muscle.Name,
-                muscle.LatinName,
-                muscle.BodySection,
-                DescriptionMapper.ToGetDTO(muscle.Description, language),
-                ToGetDTOs(muscle.Functions),
-                muscle.Antagonists
-                    .Where(antagonist => antagonist.AntagonistMuscle is not null)
-                    .Select(antagonist => ToSummaryDTO(antagonist.AntagonistMuscle))
-                    .ToList()
-            );
-        
+            muscle.Id,
+            muscle.Name,
+            muscle.LatinName,
+            muscle.BodySection,
+            DescriptionMapper.ToGetDTO(muscle.Description, language),
+            ToGetDTOs(muscle.Functions),
+            muscle.Antagonists
+                .Where(antagonist => antagonist.AntagonistMuscle is not null)
+                .Select(antagonist => ToSummaryDTO(antagonist.AntagonistMuscle))
+                .ToList())
+        {
+            Aliases = aliases
+        };
     }
     
     public static IReadOnlyList<MuscleFunctionAssignment> ToAssignments(

@@ -1,4 +1,4 @@
-﻿using PRLab.Application.Interface.DB;
+using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 using PRLab.Application.Interface.UserService;
@@ -40,6 +40,11 @@ public sealed class JsonEquipmentSeedFactory(
         var equipment = shouldUseSeedId
             ? CreateEquipmentWithId(seedDto, description)
             : CreateEquipment(seedDto, description);
+
+        foreach (var alias in seedDto.Aliases ?? [])
+        {
+            equipment.AddAlias(alias);
+        }
 
         return new SeedItem<Equipment>(
             SeedKeyGenerator.GenerateEquipmentKey(equipment),

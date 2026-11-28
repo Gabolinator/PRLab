@@ -31,6 +31,14 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
                 hint => FormatingUtilities.NormalizeNonNullString(hint.Key),
                 hint => hint.Value);
 
+    private readonly ILookup<string, string> profileAliasTargets =
+        context.Profile.Aliases.Exercises
+            .SelectMany(entry => entry.Value
+                .Where(alias => !string.IsNullOrWhiteSpace(alias))
+                .Select(alias => (Phrase: FormatingUtilities.NormalizeNonNullString(alias),
+                    Target: FormatingUtilities.NormalizeNameKey(entry.Key))))
+            .ToLookup(entry => entry.Phrase, entry => entry.Target);
+
     public WorkoutImportRowDraft? Interpret(WorkoutRowCells row)
     {
         var expectedExerciseCell = row.GetExpectedCell(WorkoutImportProperty.Exercise);
@@ -516,7 +524,11 @@ internal sealed class WorkoutRowInterpreter(WorkoutImportContext context, IAppLo
 
         var matchText = match.Span.Read(fragment.Input.Text);
         var hintKey = FormatingUtilities.NormalizeNonNullString(matchText);
-        WorkTargetType? hint = prescriptionHints.TryGetValue(hintKey, out var configuredHint) ? configuredHint : null;
+        var profileTargets = profileAliasTargets[hintKey];
+        var profileHintApplies = profileTargets.All(target => target == exercise.NameKey);
+        WorkTargetType? hint = profileHintApplies && prescriptionHints.TryGetValue(hintKey, out var configuredHint)
+            ? configuredHint
+            : null;
         var exerciseOffset = fragment.Input.Span.Start + match.Span.Start;
         return new ExercisePrescriptionContext(exercise, hint, fragment.Input.Cell.SourceReference, exerciseOffset);
     }

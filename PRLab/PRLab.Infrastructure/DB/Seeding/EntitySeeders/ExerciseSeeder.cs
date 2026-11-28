@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Exercise;
@@ -65,6 +65,7 @@ public class ExerciseSeeder(
 
         var existingExercise = await db.Exercises
             .ForFullWrite()
+            .WithAliases()
             .FirstOrDefaultAsync(
                 exercise => exercise.NameKey == seedExercise.NameKey,
                 ct);
@@ -95,7 +96,12 @@ public class ExerciseSeeder(
                 (LocalizationHelper.Language?) null,
                 SeedUser));
 
-        return hasChanged
+        var aliasesChanged = SeedAliases.AddMissing(
+            existingExercise.Aliases.Select(relation => relation.Alias),
+            seedExercise.Aliases.Select(relation => relation.Alias),
+            existingExercise.AddAlias);
+
+        return hasChanged || aliasesChanged
             ? (
                 existingExercise,
                 new SeedChange(

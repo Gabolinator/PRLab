@@ -1,4 +1,4 @@
-﻿using PRLab.Application.Interface.DB;
+using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Movement;
 using PRLab.Application.Interface.UserService;
@@ -124,6 +124,11 @@ public sealed class JsonMovementSeedFactory(
             SeedUser,
             options,
             includeVariant: false);
+
+        foreach (var alias in seedDto.Aliases ?? [])
+        {
+            movement.AddAlias(alias);
+        }
 
         return new SeedItem<Movement>(
             SeedKeyGenerator.GenerateMovementKey(movement),

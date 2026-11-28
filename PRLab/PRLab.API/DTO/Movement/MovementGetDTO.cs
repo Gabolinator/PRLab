@@ -23,4 +23,7 @@ public sealed record MovementGetDTO(
     IReadOnlyList<MovementPattern> Patterns,
     MovementLaterality Laterality,
     MovementSummaryDTO? VariantOfMovement,
-    VisibilityScope Visibility);
+    VisibilityScope Visibility)
+{
+    public IReadOnlyList<string> Aliases { get; init; } = [];
+}

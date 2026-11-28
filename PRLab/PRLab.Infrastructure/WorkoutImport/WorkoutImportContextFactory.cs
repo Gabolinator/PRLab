@@ -24,7 +24,7 @@ public sealed class WorkoutImportContextFactory(
             profileName,
             ct);
 
-        var exercises = await exerciseRepository.ListAsync(ct);
+        var exercises = await exerciseRepository.ListWithAliasesAsync(ct);
         logger.Log(nameof(WorkoutImportContextFactory), $"Retrieved exercises: {exercises.Count}");
 
         var userId = currentUserService.GetRequiredUserId();
@@ -72,6 +72,7 @@ public sealed class WorkoutImportContextFactory(
             Id = exercise.Id,
             Name = exercise.Name,
             NameKey = exercise.NameKey,
+            Aliases = exercise.Aliases.Select(relation => relation.Alias.Value).ToArray(),
             DefaultWorkTargetType = defaults.Count == 1 ? defaults[0] : null,
             AllowedWorkTargetTypes = sharedTypes,
             SupportsExternalLoad = exercise.Steps.Count > 0 && exercise.Steps.All(SupportsExternalLoad),

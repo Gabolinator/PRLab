@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.System;
@@ -16,9 +16,7 @@ public sealed class EquipmentJsonDataExporter(PRLabPgDBContext db, ISeedingConfi
 
     protected override async Task<IReadOnlyList<EquipmentSeedJsonDto>> CreateSeedDtosAsync(CancellationToken ct)
     {
-        var equipmentCatalog = await SeedCatalogBuilder.CreateEquipmentCatalog(
-            db,
-            ct);
+        var equipmentCatalog = await SeedCatalogBuilder.CreateEquipmentCatalog(db, ct, includeAliases: true);
 
         return equipmentCatalog
             .GetAll()

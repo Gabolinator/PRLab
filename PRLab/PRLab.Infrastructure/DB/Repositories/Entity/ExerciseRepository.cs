@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
@@ -35,6 +35,7 @@ public sealed class ExerciseRepository(
             nameof(id));
 
         return await BaseExerciseWriteQuery()
+            .WithAliases()
             .FirstOrDefaultAsync(
                 exercise => exercise.Id == id,
                 ct);
@@ -44,16 +45,21 @@ public sealed class ExerciseRepository(
         string name,
         CancellationToken ct)
     {
-        DomainGuard.NotEmptyName(
-            name,
-            nameof(name));
-
+        DomainGuard.NotEmptyName(name, nameof(name));
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
+        var query = BaseExerciseReadQuery();
+        var canonical = await query.FirstOrDefaultAsync(exercise => exercise.NameKey == nameKey, ct);
+        if (canonical is not null)
+        {
+            return canonical;
+        }
 
-        return await BaseExerciseReadQuery()
-            .FirstOrDefaultAsync(
-                exercise => exercise.NameKey == nameKey,
-                ct);
+        var aliasMatches = await query
+            .Where(exercise => exercise.Aliases.Any(relation => relation.AliasValueKey == nameKey))
+            .Take(2)
+            .ToListAsync(ct);
+
+        return aliasMatches.Count == 1 ? aliasMatches[0] : null;
     }
 
     public async Task<IReadOnlyCollection<Exercise>> ListAsync(
@@ -63,6 +69,9 @@ public sealed class ExerciseRepository(
             .OrderBy(exercise => exercise.Name)
             .ToListAsync(ct);
     }
+
+    public Task<IReadOnlyCollection<Exercise>> ListWithAliasesAsync(CancellationToken ct) =>
+        ListAsync(ct);
 
     public async Task<IReadOnlyCollection<Exercise>> ListByMovementAsync(
         MovementId movementId,
@@ -176,7 +185,8 @@ public sealed class ExerciseRepository(
     private IQueryable<Exercise> BaseExerciseReadQuery()
     {
         return db.Exercises
-            .ForFullRead();
+            .ForFullRead()
+            .WithAliases();
     }
 
     private IQueryable<Exercise> BaseExerciseWriteQuery()

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory;
@@ -63,6 +63,7 @@ public sealed class MuscleSeeder(
 
         var existingMuscle = await db.Muscles
             .ForFullWrite()
+            .WithAliases()
             .FirstOrDefaultAsync(
                 muscle => muscle.NameKey == seedMuscle.NameKey,
                 ct);
@@ -116,7 +117,12 @@ public sealed class MuscleSeeder(
             muscleChanged ||
             functionsChanged;
 
-        return hasChanged
+        var aliasesChanged = SeedAliases.AddMissing(
+            existingMuscle.Aliases.Select(relation => relation.Alias),
+            seedMuscle.Aliases.Select(relation => relation.Alias),
+            existingMuscle.AddAlias);
+
+        return hasChanged || aliasesChanged
             ? (
                 existingMuscle,
                 new SeedChange(

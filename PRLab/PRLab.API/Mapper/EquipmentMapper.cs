@@ -21,12 +21,20 @@ public static class EquipmentMapper
     {
         ArgumentNullException.ThrowIfNull(equipment);
 
+        var aliases =
+            equipment.Aliases
+                .OrderBy(relation => relation.AliasValueKey, StringComparer.Ordinal)
+                .Select(relation => relation.Alias.Value)
+                .ToArray();
+
         return new EquipmentGetDTO(
             equipment.Id,
             equipment.Name,
             DescriptionMapper.ToGetDTO(equipment.Description, language),
-            equipment.Visibility.Scope
-        );
+            equipment.Visibility.Scope)
+        {
+            Aliases = aliases
+        };
     }
 
     public static IReadOnlyCollection<EquipmentGetDTO> ToGetDTOs(

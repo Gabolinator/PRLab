@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Repositories.Entity;
 using PRLab.Domain;
 using PRLab.Domain.Model.Entity;
@@ -36,6 +36,7 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
         var nameKey = FormatingUtilities.NormalizeNameKey(name);
 
         return await BaseMovementWriteQuery()
+            .WithAliases()
             .FirstOrDefaultAsync(
                 movement => movement.NameKey == nameKey,
                 ct);
@@ -49,6 +50,7 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
         }
 
         return await BaseMovementWriteQuery()
+            .WithAliases()
             .FirstOrDefaultAsync(
                 movement => movement.Id == id,
                 ct);
@@ -56,17 +58,21 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
 
     public async Task<Movement?> GetByNameAsync(string name, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        DomainGuard.NotEmptyName(name, nameof(name));
+        var nameKey = FormatingUtilities.NormalizeNameKey(name);
+        var query = BaseMovementReadQuery();
+        var canonical = await query.FirstOrDefaultAsync(movement => movement.NameKey == nameKey, ct);
+        if (canonical is not null)
         {
-            throw new ArgumentException("Movement name cannot be empty.", nameof(name));
+            return canonical;
         }
 
-        var nameKey = FormatingUtilities.NormalizeNameKey(name);
+        var aliasMatches = await query
+            .Where(movement => movement.Aliases.Any(relation => relation.AliasValueKey == nameKey))
+            .Take(2)
+            .ToListAsync(ct);
 
-        return await BaseMovementReadQuery()
-            .FirstOrDefaultAsync(
-                movement => movement.NameKey == nameKey,
-                ct);
+        return aliasMatches.Count == 1 ? aliasMatches[0] : null;
     }
 
     public async Task<IReadOnlyCollection<Movement>> ListAsync(CancellationToken ct)
@@ -224,7 +230,9 @@ public sealed class MovementRepository(PRLabPgDBContext db) : IMovementRepositor
 
     private IQueryable<Movement> BaseMovementReadQuery()
     {
-        return db.Movements.ForFullRead();
+        return db.Movements
+            .ForFullRead()
+            .WithAliases();
     }
 
     private IQueryable<Movement> BaseMovementWriteQuery()

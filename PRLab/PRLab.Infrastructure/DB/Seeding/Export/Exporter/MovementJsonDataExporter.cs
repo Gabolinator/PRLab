@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.System;
@@ -18,7 +18,7 @@ public class MovementJsonDataExporter(
     protected override async Task<IReadOnlyList<MovementSeedJsonDto>> CreateSeedDtosAsync(
         CancellationToken ct)
     {
-        var movementCatalog = await SeedCatalogBuilder.CreateMovementCatalog(db, ct);
+        var movementCatalog = await SeedCatalogBuilder.CreateMovementCatalog(db, ct, includeAliases: true);
 
         return movementCatalog
             .GetAll()

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Domain;
 using PRLab.Domain.Model.Value.Enum.System;
@@ -15,9 +15,7 @@ public class MuscleJsonDataExporter(PRLabPgDBContext db, ISeedingConfig config)
     public override EntityType Entity => EntityType.Muscle;
     protected override async Task<IReadOnlyList<MuscleSeedJsonDto>> CreateSeedDtosAsync(CancellationToken ct)
     {
-        var muscleCatalog = await SeedCatalogBuilder.CreateMuscleCatalog(
-            db,
-            ct);
+        var muscleCatalog = await SeedCatalogBuilder.CreateMuscleCatalog(db, ct, includeAliases: true);
 
         return muscleCatalog
             .GetAll()

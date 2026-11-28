@@ -15,6 +15,8 @@ public interface IExerciseRepository
 
     Task<IReadOnlyCollection<Exercise>> ListAsync(CancellationToken ct);
 
+    Task<IReadOnlyCollection<Exercise>> ListWithAliasesAsync(CancellationToken ct);
+
     Task<IReadOnlyCollection<Exercise>> ListByMovementAsync(
         MovementId movementId,
         CancellationToken ct);

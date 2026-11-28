@@ -33,6 +33,9 @@
 
   <ItemGroup>
     <Folder Include="APITests\" />
+    <None Include="..\PRLab.Infrastructure\DB\Seeding\Data\equipment.seed.json"
+          Link="SeedData\equipment.seed.json"
+          CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\PRLab.Tools\WorkoutImport\Profiles\crossfit-coach.json"
           Link="WorkoutImport\Profiles\crossfit-coach.json"
           CopyToOutputDirectory="PreserveNewest" />

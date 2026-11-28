@@ -1,4 +1,4 @@
-﻿using PRLab.Application.Interface.DB;
+using PRLab.Application.Interface.DB;
 using PRLab.Application.Interface.DB.Seeding;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity;
 using PRLab.Application.Interface.DB.Seeding.Factory.Entity.Muscle;
@@ -63,6 +63,11 @@ public sealed class JsonMuscleSeedFactory(
 
         ApplyFunctions(muscle, seedDto.Functions);
         
+        foreach (var alias in seedDto.Aliases ?? [])
+        {
+            muscle.AddAlias(alias);
+        }
+
         return new SeedItem<Muscle>(
             SeedKeyGenerator.GenerateMuscleKey(muscle),
             muscle,

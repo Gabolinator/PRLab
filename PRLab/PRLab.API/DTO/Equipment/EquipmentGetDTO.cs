@@ -8,6 +8,9 @@ public record EquipmentGetDTO(
     EquipmentId Id,
     string Name,
     DescriptionGetDTO? Descriptor,
-    VisibilityScope Visibility);
+    VisibilityScope Visibility)
+{
+    public IReadOnlyList<string> Aliases { get; init; } = [];
+}
 
 
